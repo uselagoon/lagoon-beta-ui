@@ -1,4 +1,4 @@
-## Lagoon UI v2
+## Lagoon UI v3
 
 Under development
 
