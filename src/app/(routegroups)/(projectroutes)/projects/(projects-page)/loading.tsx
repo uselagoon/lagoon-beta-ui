@@ -1,5 +1,6 @@
 'use client';
 
+import BreadcrumbWithSearch from '@/components/breadcrumbWithSearch/BreadcrumbWithSearch';
 import ProjectsTableColumns from '@/components/pages/projects/DataTableColumns';
 import TableWrapper from '@/components/tableWrapper/TableWrapper';
 import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
@@ -26,7 +27,7 @@ export default function Loading() {
 
   return (
     <>
-      {/* <BreadcrumbWithSearch /> */}
+      <BreadcrumbWithSearch />
       <TableWrapper>
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Projects</h3>
         <Button className="px-0" variant="link">
