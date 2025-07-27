@@ -1,8 +1,12 @@
 'use client';
 
 import { ProjectsData } from '@/app/(routegroups)/(projectroutes)/projects/(projects-page)/page';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@uselagoon/ui-library';
+import BreadcrumbWithSearch from '@/components/breadcrumbWithSearch/BreadcrumbWithSearch';
+import TableWrapper from '@/components/tableWrapper/TableWrapper';
+import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
+
+import DataTableColumns from './DataTableColumns';
 
 export default function ProjectsPage({ data }: { data: ProjectsData }) {
   const [{ results, search }, setQuery] = useQueryStates({
@@ -24,28 +28,48 @@ export default function ProjectsPage({ data }: { data: ProjectsData }) {
   };
 
   return (
-    <div className="bg-blue-50">
-      <Table className="w-[50vw] !mx-auto">
-        <TableHeader>
-          <TableCaption className="text-3xl">Projects</TableCaption>
-          <TableRow>
-            <TableHead className="">Project name</TableHead>
-            <TableHead>Creation date</TableHead>
-            <TableHead>Environments</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.allProjects.map(project => {
-            return (
-              <TableRow>
-                <TableCell className="font-medium">{project.name}</TableCell>
-                <TableCell>{project.created}</TableCell>
-                <TableCell>{project.environments.length}</TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
+    <>
+      <BreadcrumbWithSearch />
+      <TableWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Projects</h3>
+        <Button className="px-0" variant="link">
+          View all projects
+        </Button>
+
+        <DataTable
+          columns={DataTableColumns}
+          data={data.allProjects}
+          searchableColumns={['name', 'gitUrl']}
+          onSearch={searchStr => setSearch(searchStr)}
+          initialSearch={search}
+          initialPageSize={results}
+          renderFilters={table => (
+            <SelectWithOptions
+              options={[
+                {
+                  label: '10 results per page',
+                  value: 10,
+                },
+                {
+                  label: '20 results per page',
+                  value: 20,
+                },
+                {
+                  label: '50 results per page',
+                  value: 50,
+                },
+              ]}
+              width={100}
+              value={String(results)}
+              placeholder="Results per page"
+              onValueChange={newVal => {
+                table.setPageSize(Number(newVal));
+                setResults(newVal);
+              }}
+            />
+          )}
+        />
+      </TableWrapper>
+    </>
   );
 }

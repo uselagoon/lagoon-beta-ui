@@ -7,19 +7,17 @@ import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { useEnvContext } from 'next-runtime-env';
 import { usePathname } from 'next/navigation';
 
-import { useTheme } from '@uselagoon/ui-library';
+import { RootLayout } from '@uselagoon/ui-library';
+import manualSignOut from 'utils/manualSignOut';
 
-import { getUserMenuItems, navLinks } from '../components/links';
-
-const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl?: string; logo?: ReactNode }) => {
+const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: string; logo?: ReactNode }) => {
   const { status, data } = useSession();
-  // const { theme, toggleTheme } = useTheme();
 
   const pathname = usePathname();
 
   const userData = status === 'authenticated' ? data.user : { name: '', email: '', image: '' };
 
-  const { LAGOON_UI_ICON } = useEnvContext();
+  const { LAGOON_UI_ICON, LAGOON_VERSION } = useEnvContext();
 
   const memoizedLogo = useMemo(() => {
     const getLogo = () => {
@@ -51,7 +49,18 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl?: s
   return (
     <>
       <ProgressBar height="2px" color="#00FFFF" options={{ showSpinner: false, parent: '.content' }} shallowRouting />
-      {children}
+      <RootLayout
+        appInfo={{
+          kcUrl: kcUrl,
+          name: 'Lagoon',
+          version: String(LAGOON_VERSION),
+        }}
+        userInfo={userData as any}
+        signOutFn={manualSignOut}
+        currentPath={pathname}
+      >
+        {children}
+      </RootLayout>
     </>
   );
 };

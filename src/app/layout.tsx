@@ -6,13 +6,14 @@ import RefreshTokenHandler from '@/components/auth/RefreshTokenHandler';
 import Plugins from '@/components/plugins/plugins';
 import PublicRuntimeEnvProvider from '@/contexts/PublicRuntimeEnvProvider';
 import { ApolloClientComponentWrapper } from '@/lib/apollo-client-components';
-import '@uselagoon/ui-library/dist/ui-library.css';
 
 import ClientSessionWrapper from '../components/auth/ClientSessionWrapper';
 import AppProvider from '../contexts/AppContext';
 import AuthProvider from '../contexts/AuthProvider';
-import StyleProvider from '../contexts/StyleProvider';
+import LinkProvider from '../contexts/LinkProvider';
+
 import './globals.css';
+import '@uselagoon/ui-library/dist/ui-library.css';
 
 export const metadata: Metadata = {
   title: 'Lagoon UI',
@@ -44,16 +45,16 @@ export default async function RootLayout({
           <Plugins hook="head" nonce={nonce} />
         </head>
         <body>
-          <StyleProvider>
+          <LinkProvider>
             <AuthProvider>
               <RefreshTokenHandler />
               <ClientSessionWrapper>
                 <ApolloClientComponentWrapper>
-                  <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER}>{children}</AppProvider>
+                  <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER!}>{children}</AppProvider>
                 </ApolloClientComponentWrapper>
               </ClientSessionWrapper>
             </AuthProvider>
-          </StyleProvider>
+          </LinkProvider>
           <Plugins hook="body" nonce={nonce} />
         </body>
       </PublicRuntimeEnvProvider>
