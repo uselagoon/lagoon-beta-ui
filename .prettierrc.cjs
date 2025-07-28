@@ -5,7 +5,7 @@ module.exports = {
   printWidth: 120,
   arrowParens: 'avoid',
   tabWidth: 2,
-  importOrder: ['^react(.*)$', '^next(.*)$', '<THIRD_PARTY_MODULES>', '^src/(.*)$', '^[./](?!.*\\.css$)', '^.+\\.css$'],
+  importOrder: ['^react(.*)$', '^next(.*)$', '<THIRD_PARTY_MODULES>', '^src/(.*)$', '^[./]'],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,
   trailingComma: 'es5',

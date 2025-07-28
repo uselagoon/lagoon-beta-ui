@@ -11,9 +11,7 @@ import ClientSessionWrapper from '../components/auth/ClientSessionWrapper';
 import AppProvider from '../contexts/AppContext';
 import AuthProvider from '../contexts/AuthProvider';
 import LinkProvider from '../contexts/LinkProvider';
-
 import './globals.css';
-import '@uselagoon/ui-library/dist/ui-library.css';
 
 export const metadata: Metadata = {
   title: 'Lagoon UI',
