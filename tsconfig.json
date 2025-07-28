@@ -39,7 +39,8 @@
     "src/lib/query/projectByNameQuery.js",
     // temp - until ui lib is ready
     "app/(routegroups)/(projectroutes)/projects/(projects-page)/page.tsx",
-    "app/(routegroups)/(projectroutes)/projects/(projects-page)/loading.tsx"
+    "app/(routegroups)/(projectroutes)/projects/(projects-page)/loading.tsx",
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",

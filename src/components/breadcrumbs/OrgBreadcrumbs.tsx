@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-import { BreadCrumb } from '@uselagoon/ui-library';
+import { Breadcrumb } from '@uselagoon/ui-library';
 
 export const OrgBreadcrumbs = () => {
   const { organizationSlug, projectSlug, groupSlug, userSlug } = useParams<{

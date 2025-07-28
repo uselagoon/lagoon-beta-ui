@@ -6,11 +6,11 @@ import Link from 'next/link';
 
 import { NextLinkProvider } from '@uselagoon/ui-library';
 
-const StyleProvider = ({ children }: { children: ReactNode }) => {
+const LinkProvider = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <NextLinkProvider linkComponent={Link}>{children}</NextLinkProvider>
     </>
   );
 };
-export default StyleProvider;
+export default LinkProvider;

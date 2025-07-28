@@ -134,7 +134,7 @@ export function ApolloClientComponentWrapper({ children }: React.PropsWithChildr
   const client = makeClient(GRAPHQL_API!, ws_uri, disableSubs);
 
   // dynamically updating access_token: https://github.com/apollographql/apollo-client-nextjs/issues/103#issuecomment-1790941212
-  client.defaultContext.token = session.access_token;
+  client.defaultContext.token = session?.access_token;
 
   return <ApolloNextAppProvider makeClient={() => client}>{children}</ApolloNextAppProvider>;
 }

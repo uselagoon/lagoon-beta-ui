@@ -1,23 +1,26 @@
 @import 'tailwindcss';
+@import '@uselagoon/ui-library/dist/ui-library.css';
 
-:root {
-  --background: #f2f2f2;
-  --foreground: #0c0c0c;
-}
+@layer base {
+  :root {
+    --background: #f2f2f2;
+    --foreground: #0c0c0c;
+  }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+  html,
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
 
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
 }

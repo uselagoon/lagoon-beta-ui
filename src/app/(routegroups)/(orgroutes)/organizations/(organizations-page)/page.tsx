@@ -28,5 +28,5 @@ export default async function Organizations() {
 
   const { data } = await client.query<OrgsData>({ query: allOrganizationsQuery });
 
-  return <OrganizationsPage organizations={data.allOrganizations} />;
+  // return <OrganizationsPage organizations={data.allOrganizations} />;
 }
