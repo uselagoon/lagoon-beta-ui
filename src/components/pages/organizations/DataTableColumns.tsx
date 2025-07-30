@@ -1,0 +1,170 @@
+'use client';
+
+import Link from 'next/link';
+
+import {Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn, Checkbox} from '@uselagoon/ui-library';
+import {ChevronDown, ChevronUp} from 'lucide-react';
+import {OrgType} from "@/app/(routegroups)/(orgroutes)/organizations/(organizations-page)/page";
+
+type SortDirection = 'asc' | 'desc' | false;
+
+type Column = {
+    toggleSorting: (desc: boolean) => void;
+    clearSorting: () => void;
+};
+
+export const handleSort = (sortDirection: SortDirection, column: Column) => {
+    if (sortDirection === false) {
+        column.toggleSorting(false);
+    } else if (sortDirection === 'asc') {
+        column.toggleSorting(true);
+    } else {
+        column.clearSorting();
+    }
+};
+
+export const fieldCount = (field: OrgType['groups'] | OrgType['projects'], quota: OrgType['quotaGroup'] | OrgType['quotaProject'], fieldType: string) => {
+    let count = field?.length
+    let fieldQuota = quota >= 0 ? quota : "Unlimited";
+    return `${count} of ${fieldQuota} ${fieldType}`
+}
+
+const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
+    // TODO: See if the Checkbox can be implemented in the data table component
+    {
+        accessorKey: 'name',
+        sortingFn: (rowA, rowB, columnId) => {
+            const a = rowA.getValue(columnId) as string;
+            const b = rowB.getValue(columnId) as string;
+            return a.localeCompare(b);
+        },
+        header: ({ column }) => {
+            const sortDirection = column.getIsSorted();
+
+            return (
+                <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+                    Organization
+                    <div className="ml-1 flex flex-col">
+                        <ChevronUp
+                            className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')}
+                        />
+                        <ChevronDown
+                            className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')}
+                        />
+                    </div>
+                </Button>
+            );
+        },
+
+        cell: ({ row }) => {
+            const organizationName = row.original.name;
+            return (
+                <div className="max-w-[25vw]">
+                    <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${organizationName}`}>
+                        {organizationName}
+                    </Link>
+                </div>
+            );
+        },
+    },
+    {
+        accessorKey: 'groups',
+        header: ({ column }) => {
+            const sortDirection = column.getIsSorted();
+
+            return (
+                <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+                    No. of Groups
+                    <div className="ml-1 flex flex-col">
+                        <ChevronUp
+                            className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')}
+                        />
+                        <ChevronDown
+                            className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')}
+                        />
+                    </div>
+                </Button>
+            );
+        },
+        cell: ({ row }) => {
+            const groups = row.original.groups;
+            const groupQuota = row.original.quotaGroup;
+
+            return (
+                <div className="max-w-[25vw]">
+                    {fieldCount(groups, groupQuota, "groups")}
+                </div>
+            );
+        },
+    },
+    {
+        accessorKey: 'projects',
+        header: ({ column }) => {
+            const sortDirection = column.getIsSorted();
+
+            return (
+                <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+                    No. of Projects
+                    <div className="ml-1 flex flex-col">
+                        <ChevronUp
+                            className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')}
+                        />
+                        <ChevronDown
+                            className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')}
+                        />
+                    </div>
+                </Button>
+            );
+        },
+        cell: ({ row }) => {
+            const projects = row.original.projects;
+            const projectQuota = row.original.quotaGroup;
+
+            return (
+                <div className="max-w-[25vw]">
+                    {fieldCount(projects, projectQuota, "projects")}
+                </div>
+            );
+        },
+    },
+    {
+        accessorKey: 'deployTargets',
+        header: 'Targets',
+        cell: ({ row }) => {
+            const deployTargets = row.original.deployTargets;
+            return <div className="max-w-[25vw]">{deployTargets.map(target => (
+                <div key={target.name}>{target.name}</div>
+            ))}</div>;
+        },
+    },
+];
+
+export const OrganizationsTableColumnsWithCheckbox: DataTableColumnDef<OrgType>[] = [
+    {
+        id: "select",
+        header: ({ table }) => (
+            <Checkbox
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+                label={''}
+                id=''
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+                label={''}
+                id={row.id}
+            />
+        ),
+    },
+    ...OrganizationsTableColumns
+]
+
+export default OrganizationsTableColumns;

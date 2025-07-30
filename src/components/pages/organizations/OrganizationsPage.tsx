@@ -1,14 +1,12 @@
 'use client';
 
-import { SetStateAction } from 'react';
-
 import { OrgType, OrgsData } from '@/app/(routegroups)/(orgroutes)/organizations/(organizations-page)/page';
 import { orgGroupsAndProjectsQuery } from '@/lib/query/organizations/allOrganizationsQuery';
 import { useQuery } from '@apollo/client';
-import { LagoonFilter, Table } from '@uselagoon/ui-library';
+import TableWrapper from '@/components/tableWrapper/TableWrapper';
+import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
-
-const { OrganizationsTable } = Table;
+import DataTableColumns from "@/components/pages/organizations/DataTableColumns";
 
 export default function OrganizationsPage({ organizations }: { organizations: OrgsData['allOrganizations'] }) {
   const { data: extraOrgsData } = useQuery<OrgsData>(orgGroupsAndProjectsQuery);
@@ -62,37 +60,45 @@ export default function OrganizationsPage({ organizations }: { organizations: Or
 
   return (
     <>
-      <LagoonFilter
-        searchOptions={{
-          searchText: search || '',
-          setSearchText: setSearch as React.Dispatch<SetStateAction<string>>,
-        }}
-        selectOptions={{
-          options: [
-            {
-              value: 10,
-              label: '10 Results per page',
-            },
-            {
-              value: 20,
-              label: '20 Results per page',
-            },
-            {
-              value: 50,
-              label: '50 Results per page',
-            },
-          ],
-          selectedState: results,
-          setSelectedState: setResults as React.Dispatch<SetStateAction<unknown>>,
-        }}
-      />
-
-      <OrganizationsTable
-        organizations={orgs}
-        filterString={search}
-        resultsPerPage={results}
-        basePath="/organizations"
-      />
+      <TableWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organizations</h3>
+        <Button className="px-0" variant="link">
+          View all organizations
+        </Button>
+        <DataTable
+          columns={DataTableColumns}
+          data={orgs}
+          searchableColumns={['name']}
+          onSearch={searchStr => setSearch(searchStr)}
+          initialSearch={search}
+          initialPageSize={results}
+          renderFilters={table => (
+            <SelectWithOptions
+              options={[
+                {
+                  label: '10 results per page',
+                  value: 10,
+                },
+                {
+                  label: '20 results per page',
+                  value: 20,
+                },
+                {
+                  label: '50 results per page',
+                  value: 50,
+                },
+              ]}
+              width={100}
+              value={String(results)}
+              placeholder="Results per page"
+              onValueChange={newVal => {
+                table.setPageSize(Number(newVal));
+                setResults(newVal);
+              }}
+            />
+          )}
+        />
+    </TableWrapper>
     </>
   );
 }
