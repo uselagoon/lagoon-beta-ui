@@ -1,13 +1,18 @@
 'use client';
 
-import { Head2, Table } from '@uselagoon/ui-library';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { ProjectEnvVarsPartialColumns } from '@/components/pages/projectVariables/_components/DataTableColumns';
+import { Button, DataTable } from '@uselagoon/ui-library';
 
-const { VariablesTable } = Table;
 export default function Loading() {
   return (
-    <>
-      <Head2>Project variables</Head2>
-      <VariablesTable skeleton withValues={false} />
-    </>
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Project variables</h3>
+      <Button data-testId="var-visibility-toggle" size="sm" className="max-w-max mb-4" disabled>
+        Show values
+      </Button>
+
+      <DataTable loading columns={ProjectEnvVarsPartialColumns()} data={[]} disableExtra />
+    </SectionWrapper>
   );
 }

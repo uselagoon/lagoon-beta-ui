@@ -3,31 +3,14 @@
 import Link from 'next/link';
 
 import { ProjectType } from '@/app/(routegroups)/(projectroutes)/projects/(projects-page)/page';
+import { handleSort, renderSortIcons } from '@/components/utils';
 import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
-
-type SortDirection = 'asc' | 'desc' | false;
-
-type Column = {
-  toggleSorting: (desc: boolean) => void;
-  clearSorting: () => void;
-};
-
-export const handleSort = (sortDirection: SortDirection, column: Column) => {
-  if (sortDirection === false) {
-    column.toggleSorting(false);
-  } else if (sortDirection === 'asc') {
-    column.toggleSorting(true);
-  } else {
-    column.clearSorting();
-  }
-};
 
 const getLatestDate = (environments: ProjectType['environments']) => {
   return environments
@@ -39,7 +22,9 @@ const getLatestDate = (environments: ProjectType['environments']) => {
 
 const ProjectsTableColumns: DataTableColumnDef<ProjectType>[] = [
   {
+    id: 'project_name',
     accessorKey: 'name',
+    width: '20%',
     sortingFn: (rowA, rowB, columnId) => {
       const a = rowA.getValue(columnId) as string;
       const b = rowB.getValue(columnId) as string;
@@ -49,16 +34,9 @@ const ProjectsTableColumns: DataTableColumnDef<ProjectType>[] = [
       const sortDirection = column.getIsSorted();
 
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
           Project
-          <div className="ml-1 flex flex-col">
-            <ChevronUp
-              className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')}
-            />
-            <ChevronDown
-              className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')}
-            />
-          </div>
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
       );
     },
@@ -77,6 +55,7 @@ const ProjectsTableColumns: DataTableColumnDef<ProjectType>[] = [
 
   {
     id: 'last_deployment',
+    width: '15%',
     accessorFn: row => {
       const date = getLatestDate(row.environments ?? []);
       return date ? new Date(date).getTime() : 0;
@@ -94,16 +73,9 @@ const ProjectsTableColumns: DataTableColumnDef<ProjectType>[] = [
     header: ({ column }) => {
       const sortDirection = column.getIsSorted();
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
-          Last Deployment
-          <div className="ml-1 flex flex-col">
-            <ChevronUp
-              className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')}
-            />
-            <ChevronDown
-              className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')}
-            />
-          </div>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
+          Last Deploy
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
       );
     },
@@ -123,27 +95,24 @@ const ProjectsTableColumns: DataTableColumnDef<ProjectType>[] = [
     },
   },
   {
-    id: 'prod_route',
+    id: 'production_route',
     header: 'Production Route',
+    width: '30%',
+    accessorFn: project => {
+      const prodRoute = project.environments?.find(env => env.name === project.productionEnvironment)?.route;
+      return prodRoute && prodRoute !== 'undefined' ? prodRoute.replace(/^https?:\/\//i, '') : '';
+    },
     cell: ({ row }) => {
       const project = row.original;
-      const prodRoute = project.environments.find(env => env.name === project.productionEnvironment)?.route;
+      const prodRoute = project.environments?.find(env => env.name === project.productionEnvironment)?.route;
 
-      return (
-        <div className="min-w-[20vw] truncate">
-          {prodRoute && prodRoute !== 'undefined' ? prodRoute.replace(/^https?:\/\//i, '') : ''}
-        </div>
-      );
+      return <>{prodRoute && prodRoute !== 'undefined' ? prodRoute.replace(/^https?:\/\//i, '') : ''}</>;
     },
   },
 
   {
     accessorKey: 'gitUrl',
     header: 'Git Repository URL',
-    cell: ({ row }) => {
-      const gitUrl = row.original.gitUrl;
-      return <div className="max-w-[25vw] truncate">{gitUrl}</div>;
-    },
   },
 ];
 

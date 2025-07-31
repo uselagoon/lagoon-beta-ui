@@ -4,7 +4,7 @@ import { Fragment, SetStateAction, useCallback, useState } from 'react';
 
 import { OrganizationVariablesData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
 import { AddNewVariable } from '@/components/addNewVariable/AddNewVariable';
-import { DeleteVariableModal } from '@/components/deleteVariable/DeleteVariableModal';
+import { DeleteVariableDialog } from '@/components/deleteVariable/DeleteVariableModal';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import organizationByNameWithEnvVarsValue from '@/lib/query/organizations/organizationByNameWithEnvVarsValue';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';

@@ -1,25 +1,14 @@
-import { FC, startTransition, useState } from 'react';
+import { FC, startTransition } from 'react';
 
+import { EnvVariable } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
 import addOrUpdateEnvVariable from '@/lib/mutation/addOrUpdateEnvVariable';
-import { EditOutlined } from '@ant-design/icons';
 import { useMutation } from '@apollo/client';
-import { FormItem, Input, Modal, Select } from '@uselagoon/ui-library';
-import { Variable } from '@uselagoon/ui-library/dist/components/Table/VariablesTable/VariablesTable';
-import { Form, Tooltip } from 'antd';
-import { useForm } from 'antd/es/form/Form';
-
-import ModalTip from './ModalTip';
-import {
-  ContentWrapper,
-  EditVariableButton,
-  FormItemWrapper,
-  ModalWrapper,
-  NewVariableTitle,
-  VariableSteps,
-} from './styles';
+import { Sheet } from '@uselagoon/ui-library';
+import { Edit2Icon } from 'lucide-react';
+import { toast } from 'sonner';
 
 type Props = {
-  currentEnv: Variable;
+  currentEnv: EnvVariable;
   refetch: () => void;
 } & (
   | {
@@ -61,122 +50,38 @@ const scopeOptions = [
 ];
 
 export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [addVariableForm] = useForm();
-  const [confirmDisabled, setConfirmDisabled] = useState(true);
-
   let envName = '';
   let orgName = '';
-  let projectName = '';
+  let projName = '';
 
   if (type === 'project') {
-    projectName = (rest as { projectName: string }).projectName;
+    projName = (rest as { projectName: string }).projectName;
   }
 
   if (type === 'environment') {
     envName = (rest as { environmentName: string }).environmentName;
+    projName = (rest as { projectName: string }).projectName;
   }
 
   if (type === 'organization') {
     orgName = (rest as { orgName: string }).orgName;
   }
 
-  const getRequiredFieldsValues = () => {
-    const values = addVariableForm.getFieldsValue(true);
-    const requiredValues = {};
-
-    const requiredItems = ['variable_name', 'variable_scope', 'variable_value'];
-
-    for (const key of requiredItems) {
-      if (!values[key]) {
-        return false; // return false if any required field is falsy
-      }
-      //@ts-ignore
-      requiredValues[key] = values[key];
-    }
-
-    return requiredValues;
-  };
-
   const [editVariable, { loading }] = useMutation(addOrUpdateEnvVariable, {
     onError: err => {
       console.error(err);
+      toast.error('Error updating variable', {
+        description: err.message,
+      });
     },
   });
-
-  const modalContent = (
-    <ContentWrapper>
-      <div className="inputs">
-        <Form
-          form={addVariableForm}
-          onFieldsChange={() => {
-            const fields = getRequiredFieldsValues();
-            setConfirmDisabled(!!!fields);
-          }}
-        >
-          <FormItemWrapper>
-            <div className="variable-wrap">
-              <FormItem
-                initialValue={currentEnv.name}
-                className="vertical-form-item"
-                required
-                rules={[{ required: true, message: '' }]}
-                label="Variable name"
-                name="variable_name"
-              >
-                <Input placeholder="Variable Name" disabled />
-              </FormItem>
-            </div>
-
-            <div className="variable-wrap">
-              <FormItem
-                className="vertical-form-item"
-                required
-                rules={[{ required: true, message: '' }]}
-                label="Variable scope"
-                name="variable_scope"
-                initialValue={currentEnv.scope.toLowerCase()}
-              >
-                <Select
-                  options={scopeOptions}
-                  value={scopeOptions[0].value || currentEnv.scope.toLowerCase()}
-                  placeholder="Select variable scope"
-                  defaultOpen={false}
-                  onSelect={val => {
-                    addVariableForm.setFieldValue('variable_scope', val);
-                  }}
-                />
-              </FormItem>
-            </div>
-
-            <div className="variable-wrap">
-              <FormItem
-                initialValue={currentEnv.value}
-                className="vertical-form-item"
-                required
-                rules={[{ required: true, message: '' }]}
-                label="Variable value"
-                name="variable_value"
-              >
-                <Input placeholder="Variable value" />
-              </FormItem>
-            </div>
-          </FormItemWrapper>
-        </Form>
-      </div>
-
-      <div className="explainer">
-        <ModalTip />
-      </div>
-    </ContentWrapper>
-  );
 
   const editVariablefn = (name: string, scope: string, value: string) => {
     return editVariable({
       variables: {
         input: {
           ...(orgName ? { organization: orgName } : {}),
-          ...(projectName ? { project: projectName } : {}),
+          ...(projName ? { project: projName } : {}),
           ...(envName ? { environment: envName } : {}),
           name,
           scope: scope.toUpperCase(),
@@ -186,43 +91,55 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) 
     });
   };
 
-  const handleCancel = () => {
-    setModalOpen(false);
-    addVariableForm.resetFields();
-  };
-
-  const handleCreateVariable = () => {
-    const { variable_name, variable_scope, variable_value } = addVariableForm.getFieldsValue();
-
+  const handleUpdateVariable = (variable_name: string, variable_scope: string, variable_value: string) => {
     editVariablefn(variable_name, variable_scope, variable_value).then(() => {
       startTransition(async () => {
         await refetch();
-        handleCancel();
       });
     });
   };
 
   return (
     <>
-      <EditVariableButton onClick={() => setModalOpen(true)}>
-        <Tooltip placement="bottom" title="Edit variable">
-          <EditOutlined />
-        </Tooltip>
-      </EditVariableButton>
-      <Modal
-        title={<NewVariableTitle>Edit a variable</NewVariableTitle>}
-        subTitle={<VariableSteps>Step 1 of 1</VariableSteps>}
-        open={modalOpen}
-        destroyOnClose
-        cancelText="Cancel"
-        confirmText="Update"
-        onCancel={handleCancel}
-        onOk={handleCreateVariable}
-        confirmLoading={loading}
-        confirmDisabled={confirmDisabled}
-      >
-        <ModalWrapper>{modalContent}</ModalWrapper>
-      </Modal>
+      <Sheet
+        data-cy="add-variable"
+        sheetTrigger={<Edit2Icon />}
+        sheetTitle="Edit a variable"
+        sheetFooterButton="Update"
+        sheetDescription="Create a unique name for your variable. Then choose the scope of the variables availability. For more information see our documentation"
+        loading={loading}
+        error={false}
+        additionalContent={null}
+        sheetFields={[
+          {
+            id: 'variable_name',
+            label: 'Variable name',
+            placeholder: 'Enter a name for the variable',
+            inputDefault: currentEnv.name,
+            required: true,
+          },
+          {
+            id: 'variable_scope',
+            label: 'Key Value',
+            required: true,
+            placeholder: 'Select variable scope',
+            type: 'select',
+            inputDefault: currentEnv.scope,
+            options: scopeOptions,
+          },
+
+          {
+            id: 'variable_value',
+            label: 'Variable value',
+            placeholder: 'Enter variable value',
+            inputDefault: currentEnv.value,
+            required: true,
+          },
+        ]}
+        buttonAction={(_, { variable_name, variable_scope, variable_value }) => {
+          handleUpdateVariable(variable_name, variable_scope, variable_value);
+        }}
+      />
     </>
   );
 };

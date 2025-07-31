@@ -3,17 +3,55 @@
 import { startTransition, useEffect, useState } from 'react';
 
 import { TaskData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/[taskSlug]/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import TaskNotFound from '@/components/errors/TaskNotFound';
 import { getTaskDuration } from '@/components/utils';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Switch, Table, Text } from '@uselagoon/ui-library';
+import { Badge, BasicTable, Switch } from '@uselagoon/ui-library';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
 
 import BackButton from '../../backButton/BackButton';
 import CancelTask from '../../cancelTask/CancelTask';
 import LogViewer from '../../logViewer/LogViewer';
-import { Switchers } from '../deployment/_components/styles';
 
-const { TaskTable } = Table;
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+
+export const taskColumns = [
+  {
+    title: 'Task name ',
+    dataIndex: 'taskName',
+    key: 'taskName',
+  },
+  {
+    title: 'Service ',
+    dataIndex: 'service',
+    key: 'service',
+  },
+  {
+    title: 'Created ',
+    dataIndex: 'created',
+    key: 'created',
+  },
+  {
+    title: 'Duration ',
+    dataIndex: 'duration',
+    key: 'duration',
+  },
+  {
+    title: 'Status',
+    dataIndex: 'status',
+    key: 'status',
+  },
+
+  {
+    title: 'Actions',
+    key: 'actions',
+    dataIndex: 'actons',
+  },
+];
 
 export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<TaskData>; taskName: string }) {
   const { refetch } = useQueryRefHandlers(queryRef);
@@ -54,34 +92,46 @@ export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<Ta
     }
   }, [currentTask, refetch]);
 
+  const taskDataRow = {
+    name: currentTask.name,
+    service: currentTask.service,
+    created: dayjs.utc(currentTask.created).local().fromNow(),
+    duration: getTaskDuration(currentTask),
+    status: <Badge variant="default">{currentTask.status}</Badge>,
+
+    actions: ['new', 'pending', 'queued', 'running'].includes(currentTask.status) && (
+      <CancelTask task={currentTask} projectId={environment.project.id} environmentId={environment.id} />
+    ),
+    key: String(currentTask.id),
+  };
+
   return (
-    <>
+    <SectionWrapper>
       <BackButton />
 
-      <TaskTable
-        task={currentTask}
-        cancelTask={() => (
-          <CancelTask task={currentTask} projectId={environment.project.id} environmentId={environment.id} />
-        )}
-      >
-        <Switchers>
-          <div>
-            <Text>View parsed</Text>
-            <Switch checked={showParsed} onChange={checked => handleShowParsed(checked)} showLabel={false} />
-          </div>
-        </Switchers>
-
-        <LogViewer
-          logs={currentTask.logs || null}
-          status={currentTask.status}
-          showParsed={showParsed}
-          highlightWarnings={highlightWarnings}
-          showSuccessSteps={showSuccessSteps}
-          forceLastSectionOpen={true}
-          logsTarget="task"
-          taskDuration={getTaskDuration(currentTask)}
-        />
-      </TaskTable>
-    </>
+      <section className="flex gap-6 mb-4">
+        <div className="flex gap-4">
+          <Switch
+            label="View parsed"
+            data-cy="logviewer-toggle"
+            checked={showParsed}
+            onCheckedChange={checked => handleShowParsed(checked)}
+            id=""
+            description=""
+          />
+        </div>
+      </section>
+      <BasicTable className="border rounded-md mb-4" columns={taskColumns} data={[taskDataRow]} />
+      <LogViewer
+        logs={currentTask.logs || null}
+        status={currentTask.status}
+        showParsed={showParsed}
+        highlightWarnings={highlightWarnings}
+        showSuccessSteps={showSuccessSteps}
+        forceLastSectionOpen={true}
+        logsTarget="task"
+        taskDuration={getTaskDuration(currentTask)}
+      />
+    </SectionWrapper>
   );
 }

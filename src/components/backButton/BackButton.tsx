@@ -1,17 +1,15 @@
 import { useRouter } from 'next/navigation';
 
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import { Text } from '@uselagoon/ui-library';
-
-import { StyledBackButton } from './styles';
+import { ArrowLeft } from 'lucide-react';
 
 const BackButton = () => {
   const router = useRouter();
 
   return (
-    <StyledBackButton onClick={() => router.back()}>
-      <ArrowLeftOutlined /> <Text className="text">Back</Text>
-    </StyledBackButton>
+    <div className="mb-5 flex cursor-pointer items-center gap-1" onClick={() => router.back()}>
+      <ArrowLeft />
+      <span className="text-base leading-[18px] underline">Back</span>
+    </div>
   );
 };
 

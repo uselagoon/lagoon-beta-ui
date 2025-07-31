@@ -1,11 +1,10 @@
 'use client';
 
 import { ProjectDetailsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-details/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import dayjs from '@/lib/dayjs';
-import { CopyToClipboard, DetailedStats } from '@uselagoon/ui-library';
+import { CopyToClipboard, DetailStat } from '@uselagoon/ui-library';
 import giturlparse from 'git-url-parse';
-
-import { StyledGitLink } from './styles';
 
 interface ProjectDetailsProps {
   project: ProjectDetailsData['project'];
@@ -27,41 +26,46 @@ export default function ProjectDetailsPage(props: ProjectDetailsProps) {
   const detailItems = [
     {
       key: 'created',
-      label: 'CREATED',
+      title: 'CREATED',
       children: formattedDate,
       lowercaseValue: true,
     },
     {
       key: 'origin',
-      label: 'ORIGIN',
+      title: 'ORIGIN',
       children: (
-        <StyledGitLink className="hover-state" data-cy="gitLink" target="_blank" href={`https://${gitLink}`}>
+        <a
+          className="break-words text-inherit lowercase underline"
+          data-cy="gitLink"
+          target="_blank"
+          href={`https://${gitLink}`}
+        >
           {gitLink}
-        </StyledGitLink>
+        </a>
       ),
       lowercaseValue: true,
     },
     {
       key: 'giturl',
-      label: 'GIT URL',
-      children: <CopyToClipboard fontSize="1.2rem" type="visible" withToolTip text={project.gitUrl} />,
+      title: 'GIT URL',
+      children: <CopyToClipboard fontSize="1.2rem" type="visible" withToolTip width={250} text={project.gitUrl} />,
       lowercaseValue: true,
     },
     {
       key: 'branches',
-      label: 'BRANCHES ENABLED',
+      title: 'BRANCHES ENABLED',
       children: project.branches,
       lowercaseValue: true,
     },
     {
       key: 'pulls',
-      label: 'PULL REQUESTS ENABLED',
+      title: 'PULL REQUESTS ENABLED',
       children: project.pullrequests,
       lowercaseValue: true,
     },
     {
       key: 'dev_envs',
-      label: 'DEVELOPMENT ENVIRONMENTS IN USE',
+      title: 'DEVELOPMENT ENVIRONMENTS IN USE',
       children: (
         <>
           {developEnvironmentCount} of {project.developmentEnvironmentsLimit}{' '}
@@ -70,5 +74,18 @@ export default function ProjectDetailsPage(props: ProjectDetailsProps) {
       lowercaseValue: true,
     },
   ];
-  return <DetailedStats items={detailItems} />;
+
+  const DetailedStats = detailItems.map(detail => (
+    <DetailStat key={detail.key} title={detail.title} value={detail.children} />
+  ));
+  return (
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Details</h3>
+      <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+        Key information about your project
+      </span>
+
+      <div className="grid grid-cols-3 grid-rows-3 gap-4">{DetailedStats}</div>
+    </SectionWrapper>
+  );
 }

@@ -1,6 +1,6 @@
-import { FC, useState } from 'react';
+import { FC, JSX, useState } from 'react';
 
-import { RoutesWrapper, ShowMore } from '../styles';
+import { RoutesWrapper } from '../styles';
 
 interface Props {
   routes: JSX.Element[];
@@ -14,14 +14,15 @@ const LimitedRoutes: FC<Props> = ({ routes }) => {
   const handleExpand = () => setExpanded(true);
 
   return (
-    //@ts-expect-error
     <RoutesWrapper data-cy="routes">
       {firstFiveRoutes}
 
       {expanded ? otherRoutes : null}
 
       {leftOverLength > 0 && !expanded ? (
-        <ShowMore onClick={handleExpand}>Show {leftOverLength} more ...</ShowMore>
+        <div className="text-[14px] font-normal leading-[14px] cursor-pointer" onClick={handleExpand}>
+          Show {leftOverLength} more ...
+        </div>
       ) : null}
     </RoutesWrapper>
   );

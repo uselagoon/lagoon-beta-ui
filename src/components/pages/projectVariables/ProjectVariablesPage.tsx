@@ -1,20 +1,22 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 
-import { ProjectEnvironmentsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
+import {
+  EnvVariable,
+  ProjectEnvironmentsData,
+} from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import ProjectNotFound from '@/components/errors/ProjectNotFound';
 import projectByNameWithEnvVarsValueQuery from '@/lib/query/projectByNameWithEnvVarsValueQuery';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Button, Head2, Table, useNotification } from '@uselagoon/ui-library';
-import { Variable } from '@uselagoon/ui-library/dist/components/Table/VariablesTable/VariablesTable';
+import { Button, DataTable } from '@uselagoon/ui-library';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 import { AddNewVariable } from '../../addNewVariable/AddNewVariable';
-import { DeleteVariableModal } from '../../deleteVariable/DeleteVariableModal';
-import { Space } from '../environmentVariables/_components/styles';
-import { EditVariable } from './_components/EditVariable';
+import { ProjectEnvVarsFullColumns, ProjectEnvVarsPartialColumns } from './_components/DataTableColumns';
 
-const { VariablesTable } = Table;
 export default function ProjectVariablesPage({
   queryRef,
   projectName,
@@ -42,7 +44,10 @@ export default function ProjectVariablesPage({
       variables: { name: projectName },
       onError: err => {
         console.error(err);
-        projectVarsError.trigger();
+        toast.error('Unauthorized', {
+          description:
+            "You don't have permission to view project variable values. Contact your administrator to obtain the relevant permissions",
+        });
       },
       onCompleted: () => setProjectVarsVisible(true),
     }
@@ -56,42 +61,34 @@ export default function ProjectVariablesPage({
     await getPrjEnvVarValues();
   };
 
-  const projectVarsError = useNotification({
-    type: 'error',
-    title: 'Unauthorized',
-    content:
-      "You don't have permission to view project variable values. Contact your administrator to obtain the relevant permissions",
-    requiresManualClose: true,
-  });
+  const renderTableWithValues = !prjLoading && prjEnvValues?.project?.envVariables && projectVarsVisible ? true : false;
+
+  const tableColumns = renderTableWithValues
+    ? ProjectEnvVarsFullColumns(projectName, refetch)
+    : ProjectEnvVarsPartialColumns(projectName, refetch);
 
   return (
-    <>
-      <Fragment key="projectVarsError-notification-holder"> {projectVarsError.contextHolder}</Fragment>
-      <Head2>Project variables</Head2>
-
-      <Button testId="var-visibility-toggle" size="middle" loading={prjLoading} onClick={handleShowProjectVars}>
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Project variables</h3>
+      <Button
+        data-testId="var-visibility-toggle"
+        size="sm"
+        className="max-w-max mb-4"
+        disabled={prjLoading}
+        onClick={handleShowProjectVars}
+      >
+        {prjLoading && <Loader2 className="animate-spin" />}
         {projectVarsVisible ? 'Hide values' : 'Show values'}
       </Button>
 
-      <Space />
-
-      <VariablesTable
-        type="project"
-        withValues={!prjLoading && prjEnvValues?.project?.envVariables && projectVarsVisible ? true : false}
-        editVariableModal={currentVariable => (
-          <EditVariable type="project" currentEnv={currentVariable} projectName={projectName} refetch={refetch} />
-        )}
-        deleteVariableModal={currentVariable => (
-          <DeleteVariableModal
-            type="project"
-            currentEnv={currentVariable}
-            projectName={projectName}
-            refetch={refetch}
-          />
-        )}
-        newVariableModal={<AddNewVariable type="project" projectName={projectName} refetch={refetch} />}
-        variables={prjEnvValues?.project?.envVariables || (variables as Variable[])}
+      <DataTable
+        columns={tableColumns}
+        data={prjEnvValues?.project?.envVariables || (variables as EnvVariable[])}
+        disableExtra
+        key={JSON.stringify(variables)}
       />
-    </>
+      <div className="my-4"></div>
+      <AddNewVariable type="project" projectName={projectName} refetch={refetch} />
+    </SectionWrapper>
   );
 }

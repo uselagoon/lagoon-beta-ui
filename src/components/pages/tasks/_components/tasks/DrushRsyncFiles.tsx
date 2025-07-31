@@ -1,12 +1,11 @@
-import React, { FC, Fragment, startTransition, useState } from 'react';
+import React, { FC, startTransition, useState } from 'react';
 
 import { EnvironmentWithTasks } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
 import taskDrushRsyncFiles from '@/lib/mutation/tasks/taskDrushRsyncFiles';
 import { useMutation } from '@apollo/client';
-import { Button, Select, useNotification } from '@uselagoon/ui-library';
-import { Space } from 'antd';
-
-import { SelectEnv } from '../styles';
+import { Button, SelectWithOptions } from '@uselagoon/ui-library';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Props {
   environment: EnvironmentWithTasks;
@@ -20,20 +19,12 @@ interface Props {
 const DrushRsyncFiles: FC<Props> = ({ environment, refetch, allButCurrentEnvironments }) => {
   const [selectedSourceEnv, setSelectedSourceEnv] = useState<number>();
 
-  const [taskDrushRsyncFilesMutation, { loading, error }] = useMutation(taskDrushRsyncFiles, {
+  const [taskDrushRsyncFilesMutation, { loading }] = useMutation(taskDrushRsyncFiles, {
     onError: err => {
       console.error(err);
-      trigger({ content: err.message });
+      toast.error('There was a problem running drush rsync.', { id: 'task_error', description: err?.message });
     },
     refetchQueries: ['getEnvironment'],
-  });
-
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: 'There was a problem running drush rsync.',
-    placement: 'top',
-    duration: 0,
-    content: error?.message,
   });
 
   const handleTask = async () => {
@@ -55,61 +46,47 @@ const DrushRsyncFiles: FC<Props> = ({ environment, refetch, allButCurrentEnviron
 
   return (
     <>
-      <SelectEnv>
-        <div className="warning">
-          <Space direction="vertical" size="small">
+      <div className="flex flex-col max-w-[40%] gap-3">
+        <div className="warning px-4 py-3 bg-pink-500 rounded text-[0.95rem]">
+          <div className="flex flex-col gap-2">
             <span>Warning!</span>
             <span>
               This task overwrites databases. Be careful to double check the source and destination environment!
             </span>
-          </Space>
+          </div>
         </div>
 
         <label id="source-env">Source:</label>
 
-        <Select
+        <SelectWithOptions
           data-cy="source-env"
-          allowClear
-          onClear={() => setSelectedSourceEnv(undefined)}
           placeholder="Select source environment..."
           aria-labelledby="source-env"
           aria-required
-          size="middle"
-          value={options.find(o => o.value === selectedSourceEnv)}
-          onSelect={envId => setSelectedSourceEnv(envId)}
+          onValueChange={envId => setSelectedSourceEnv(Number(envId))}
           options={options}
           defaultOpen={false}
         />
 
         <label id="dest-env">Destination:</label>
-        <Select
+
+        <SelectWithOptions
           aria-labelledby="dest-env"
           aria-required
-          size="middle"
-          value={{
-            label: environment.name,
-            value: environment.id,
-          }}
+          placeholder=""
+          value={environment.name}
           options={[
             {
               label: environment.name,
-              value: environment.id,
+              value: environment.name,
             },
           ]}
-          disabled
         />
-        <Button
-          className="task-btn"
-          size="middle"
-          testId="task-btn"
-          loading={loading}
-          onClick={handleTask}
-          disabled={!selectedSourceEnv || loading}
-        >
-          Run task
+
+        <Button className="max-w-max" data-cy="task-btn" onClick={handleTask} disabled={!selectedSourceEnv || loading}>
+          {loading && <Loader2 className="animate-spin" />} Run task
         </Button>
-      </SelectEnv>
-      <Fragment>{contextHolder}</Fragment>
+      </div>
     </>
   );
 };

@@ -1,13 +1,11 @@
-import { Fragment } from 'react';
-
 import { Deployment } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/deployments/(deployments-page)/page';
 import { default as cancelDeploy } from '@/lib/mutation/cancelDeployment';
-import { StopOutlined } from '@ant-design/icons';
 import { useMutation } from '@apollo/client';
-import { useNotification } from '@uselagoon/ui-library';
-import { Popconfirm, Tooltip } from 'antd';
+import { Button, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Ban } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { HighLightedDeployment } from './styles';
+import { HighlightedText } from './styles';
 
 interface CancelButtonProps {
   action: () => Promise<any>;
@@ -30,19 +28,11 @@ export const CancelDeploymentButton = ({
   afterText,
   deployName,
 }: CancelButtonProps) => {
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: 'There was a problem cancelling deployment.',
-    content: error?.message,
-    placement: 'top',
-    duration: 0,
-  });
-
-  if (error) trigger({ content: error.message });
+  if (error) toast.error('Error cancelling deployment', { id: 'cancel_error', description: error.message });
 
   const cancelDeployText = deployName ? (
     <>
-      Are you sure you want to cancel deployment <HighLightedDeployment>{deployName}</HighLightedDeployment>?
+      Are you sure you want to cancel deployment <HighlightedText>{deployName}</HighlightedText>?
     </>
   ) : (
     'Are you sure you want to cancel this deployment?'
@@ -50,27 +40,23 @@ export const CancelDeploymentButton = ({
 
   return (
     <>
-      <Fragment>{contextHolder}</Fragment>
-
       {!success && (
-        <Popconfirm
+        <Notification
           title="Cancel Deployment"
-          description={cancelDeployText}
-          onConfirm={action}
-          okText="Yes"
+          message={cancelDeployText}
           cancelText="No"
-          styles={{ root: { width: 350 } }}
-          okButtonProps={{
-            type: 'primary',
-            danger: true,
-            'data-cy': 'confirm-cancellation',
-          }}
-          disabled={loading || success}
+          confirmText="Yes"
+          onConfirm={action}
         >
-          <Tooltip title="Cancel Deployment" placement="right">
-            <StopOutlined data-cy="cancel-deployment" />
-          </Tooltip>
-        </Popconfirm>
+          <Button variant="ghost" disabled={loading || success}>
+            <Tooltip>
+              <TooltipTrigger>
+                <Ban data-cy="cancel-deployment" />
+              </TooltipTrigger>
+              <TooltipContent>Cancel Deployment</TooltipContent>
+            </Tooltip>
+          </Button>
+        </Notification>
       )}
 
       {success ? afterText || 'Cancelled' : beforeText || ''}

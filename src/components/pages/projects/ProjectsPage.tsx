@@ -1,8 +1,8 @@
 'use client';
 
 import { ProjectsData } from '@/app/(routegroups)/(projectroutes)/projects/(projects-page)/page';
-import BreadcrumbWithSearch from '@/components/breadcrumbWithSearch/BreadcrumbWithSearch';
-import TableWrapper from '@/components/tableWrapper/TableWrapper';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { ProjectBreadcrumbs } from '@/components/breadcrumbs/ProjectBreadcrumbs';
 import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
@@ -29,8 +29,8 @@ export default function ProjectsPage({ data }: { data: ProjectsData }) {
 
   return (
     <>
-      <BreadcrumbWithSearch />
-      <TableWrapper>
+      <ProjectBreadcrumbs />
+      <SectionWrapper>
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Projects</h3>
         <Button className="px-0" variant="link">
           View all projects
@@ -39,7 +39,7 @@ export default function ProjectsPage({ data }: { data: ProjectsData }) {
         <DataTable
           columns={DataTableColumns}
           data={data.allProjects}
-          searchableColumns={['name', 'gitUrl']}
+          searchableColumns={['project_name', 'production_route', 'gitUrl']}
           onSearch={searchStr => setSearch(searchStr)}
           initialSearch={search}
           initialPageSize={results}
@@ -69,7 +69,7 @@ export default function ProjectsPage({ data }: { data: ProjectsData }) {
             />
           )}
         />
-      </TableWrapper>
+      </SectionWrapper>
     </>
   );
 }

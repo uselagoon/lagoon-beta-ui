@@ -1,11 +1,9 @@
-import { Fragment } from 'react';
-
 import { Task } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
 import cancelTask from '@/lib/mutation/cancelTask';
-import { StopOutlined } from '@ant-design/icons';
 import { useMutation } from '@apollo/client';
-import { useNotification } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Ban } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface CancelButtonProps {
   action: () => Promise<any>;
@@ -19,23 +17,16 @@ interface CancelButtonProps {
 }
 
 export const CancelTaskButton = ({ action, success, loading, error, beforeText, afterText }: CancelButtonProps) => {
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: 'There was a problem cancelling a task.',
-    content: error?.message,
-    placement: 'top',
-    duration: 0,
-  });
-
-  if (error) trigger({ content: error.message });
+  if (error) toast.error('There was a problem cancelling a task', { description: error?.message });
 
   return (
     <>
-      <Fragment>{contextHolder}</Fragment>
-
       {!success && (
-        <Tooltip title="Cancel Task" placement="right">
-          <StopOutlined data-cy="cancel-task" onClick={action} disabled={loading || success} />
+        <Tooltip>
+          <TooltipContent>Cancel Task</TooltipContent>
+          <TooltipTrigger disabled={loading || success} onClick={action}>
+            <Ban data-cy="cancel-task" />
+          </TooltipTrigger>
         </Tooltip>
       )}
 

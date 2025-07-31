@@ -7,7 +7,7 @@ import { useParams, usePathname } from 'next/navigation';
 
 import projectByNameQuery from '@/lib/query/projectByNameQuery';
 import { useQuery } from '@apollo/client';
-import { Tabs } from '@uselagoon/ui-library';
+import { TabNavigation, Tabs } from '@uselagoon/ui-library';
 
 import { LinkContentWrapper } from '../shared/styles';
 
@@ -27,9 +27,8 @@ export const ProjectNavTabs = ({ children }: { children: ReactNode }) => {
     return children;
   }
   return (
-    <>
-      <Tabs
-        type="navigation"
+    <section className="flex flex-col gap-4">
+      <TabNavigation
         pathname={pathname}
         items={[
           {
@@ -70,10 +69,10 @@ export const ProjectNavTabs = ({ children }: { children: ReactNode }) => {
               ]
             : []),
         ]}
-      >
-        {children}
-      </Tabs>
-    </>
+      />
+
+      {children}
+    </section>
   );
 };
 

@@ -7,10 +7,9 @@ import { useParams, usePathname } from 'next/navigation';
 
 import environmentWithProblems from '@/lib/query/environmentWithProblems';
 import { useQuery } from '@apollo/client';
-import { Colors, Tabs } from '@uselagoon/ui-library';
+import { Badge, Skeleton, TabNavigation } from '@uselagoon/ui-library';
 
 import { LinkContentWrapper } from '../shared/styles';
-import { ProblemCount, ProblemCountSkeleton } from './styles';
 
 const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
   const { projectSlug, environmentSlug } = useParams<{ projectSlug: string; environmentSlug: string }>();
@@ -25,9 +24,8 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
   const showProblemsTab = data?.environment?.project?.problemsUi === 1;
 
   return (
-    <>
-      <Tabs
-        type="navigation"
+    <section className="flex flex-col gap-4">
+      <TabNavigation
         pathname={pathname}
         items={[
           {
@@ -70,14 +68,16 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
                   key: 'problems',
                   label: (
                     <Link data-cy="nav-problems" href={`/projects/${projectSlug}/${environmentSlug}/problems`}>
-                      <LinkContentWrapper>
+                      <div className="inline-flex gap-1">
                         Problems
                         {loading ? (
-                          <ProblemCountSkeleton width={23.5} height={20} />
+                          <Skeleton className="w-[24px] h-5 ml-2 rounded-full mr-2" />
                         ) : (
-                          <ProblemCount color={Colors.lagoonBlue}>{data?.environment?.problems?.length}</ProblemCount>
+                          <Badge className="rounded-full" variant="default">
+                            {data?.environment?.problems?.length}
+                          </Badge>
                         )}
-                      </LinkContentWrapper>
+                      </div>
                     </Link>
                   ),
                 },
@@ -109,10 +109,9 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
             ),
           },
         ]}
-      >
-        {children}
-      </Tabs>
-    </>
+      />
+      {children}
+    </section>
   );
 };
 

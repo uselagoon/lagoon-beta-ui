@@ -1,29 +1,29 @@
 'use client';
 
-import { Fragment, SetStateAction, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useRouter } from 'next/navigation';
 
 import { EnvVariablesData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/environment-variables/page';
+import { EnvVariable } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import environmentByProjectNameWithEnvVarsValueQuery from '@/lib/query/environmentByProjectNameWithEnvVarsValueQuery';
 import environmentProjectByProjectNameWithEnvVarsValueQuery from '@/lib/query/environmentProjectByProjectNameWithEnvVarsValueQuery';
-import { EditOutlined } from '@ant-design/icons';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Button, Head2, LagoonFilter, Select, Table, useNotification } from '@uselagoon/ui-library';
-import { Variable } from '@uselagoon/ui-library/dist/components/Table/VariablesTable/VariablesTable';
+import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { Loader2 } from 'lucide-react';
 import { useQueryStates } from 'nuqs';
+import { toast } from 'sonner';
 
 import { AddNewVariable } from '../../addNewVariable/AddNewVariable';
-import { DeleteVariableModal } from '../../deleteVariable/DeleteVariableModal';
-import { resultsFilterValues } from '../insights/_components/filterValues';
+import {
+  ProjectEnvVarsFullColumnsNoActions,
+  ProjectEnvVarsPartialColumns,
+  getEnvVarsColumns,
+} from '../projectVariables/_components/DataTableColumns';
 import { EditVariable } from '../projectVariables/_components/EditVariable';
 import { scopeOptions, sortOptions } from './_components/filterValues';
-import { EditProjectVariablesButton, Space } from './_components/styles';
-
-const { VariablesTable } = Table;
-
-type SortType = 'name_asc' | 'name_desc' | 'scope_asc' | 'scope_desc' | undefined;
 
 export default function EnvironmentVariablesPage({
   queryRef,
@@ -49,7 +49,7 @@ export default function EnvironmentVariablesPage({
     return <EnvironmentNotFound openshiftProjectName={environmentName} />;
   }
 
-  const [{ results, search, sort, scope }, setQuery] = useQueryStates({
+  const [{ results, search }, setQuery] = useQueryStates({
     results: {
       defaultValue: 10,
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : 10),
@@ -57,19 +57,6 @@ export default function EnvironmentVariablesPage({
     search: {
       defaultValue: '',
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
-    },
-    sort: {
-      defaultValue: null,
-      parse: (value: string) => {
-        if (['name_asc', 'name_desc', 'scope_asc', 'scope_desc'].includes(value)) return String(value);
-
-        return null;
-      },
-    },
-
-    scope: {
-      defaultValue: undefined,
-      parse: (value: string | undefined) => value as Variable['scope'],
     },
   });
 
@@ -81,14 +68,6 @@ export default function EnvironmentVariablesPage({
     setQuery({ results: Number(val) });
   };
 
-  const setScope = (val: Variable['scope']) => {
-    setQuery({ scope: val });
-  };
-
-  const setSort = (val: string) => {
-    setQuery({ sort: val });
-  };
-
   const variables = environmentVars.envVariables;
   const envName = environmentVars.name;
 
@@ -98,31 +77,17 @@ export default function EnvironmentVariablesPage({
     router.push(`/projects/${projectName}/project-variables`);
   };
 
-  const envVarsError = useNotification({
-    type: 'error',
-    title: 'Unauthorized',
-    content: `You don't have permission to ${envAction} environment ${
-      envAction === 'view' ? ' variable values' : 'variables'
-    }. Contact your administrator to obtain the relevant permissions.`,
-    requiresManualClose: true,
-  });
-
-  const projectVarsError = useNotification({
-    type: 'error',
-    title: 'Unauthorized',
-    content:
-      "You don't have permission to view project variable values. Contact your administrator to obtain the relevant permissions",
-    requiresManualClose: true,
-  });
-
   const [getEnvVarValues, { loading: envLoading, data: envValues }] = useLazyQuery(
     environmentByProjectNameWithEnvVarsValueQuery,
     {
       variables: { openshiftProjectName: environmentVars.openshiftProjectName },
       onError: err => {
         console.error(err);
-        envVarsError.trigger();
-        return err;
+        toast.error('Unauthorized', {
+          description: `You don't have permission to ${envAction} environment ${
+            envAction === 'view' ? ' variable values' : 'variables'
+          }. Contact your administrator to obtain the relevant permissions.`,
+        });
       },
       onCompleted: () => setEnvValuesVisible(true),
     }
@@ -143,7 +108,10 @@ export default function EnvironmentVariablesPage({
       variables: { openshiftProjectName: environmentVars.openshiftProjectName },
       onError: err => {
         console.error(err);
-        projectVarsError.trigger();
+        toast.error('Unauthorized', {
+          description:
+            "You don't have permission to view project variable values. Contact your administrator to obtain the relevant permissions",
+        });
       },
       onCompleted: () => setProjectVarsVisible(true),
     }
@@ -161,8 +129,11 @@ export default function EnvironmentVariablesPage({
     variables: { openshiftProjectName: environmentVars.openshiftProjectName },
     onError: err => {
       console.error(err);
-      envVarsError.trigger();
-      return err;
+      toast.error('Unauthorized', {
+        description: `You don't have permission to ${envAction} environment ${
+          envAction === 'view' ? ' variable values' : 'variables'
+        }. Contact your administrator to obtain the relevant permissions.`,
+      });
     },
   });
 
@@ -174,117 +145,102 @@ export default function EnvironmentVariablesPage({
   const stableAddPermissionCheck = useCallback(() => permissionCheck('add'), []);
   const stableDeletePermissionCheck = useCallback(() => permissionCheck('delete'), []);
 
+  const renderEnvTableWithValues =
+    !envLoading && envValues?.environmentVars?.envVariables && envValuesVisible ? true : false;
+
+  const envTableColumns = renderEnvTableWithValues
+    ? getEnvVarsColumns(projectName, envName, refetch)
+    : ProjectEnvVarsPartialColumns();
+
+  const renderProjectTablewithValues =
+    !prjLoading && prjEnvValues?.environmentVars?.project?.envVariables && projectVarsVisible ? true : false;
+
+  const projectEnvTableColumns = renderProjectTablewithValues
+    ? ProjectEnvVarsFullColumnsNoActions()
+    : ProjectEnvVarsPartialColumns();
+
   return (
-    <>
-      <Fragment key="envVarsError-notification-holder">{envVarsError.contextHolder}</Fragment>
-      <Fragment key="projectVarsError-notification-holder"> {projectVarsError.contextHolder}</Fragment>
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Environment variables</h3>
 
-      <Head2>Environment variables</Head2>
-
-      <LagoonFilter
-        searchOptions={{
-          searchText: search || '',
-          setSearchText: setSearch as React.Dispatch<SetStateAction<string>>,
-        }}
+      <Button
+        data-testId="var-visibility-toggle"
+        size="sm"
+        className="max-w-max mb-4"
+        disabled={envLoading}
+        onClick={handleShowEnvVars}
       >
-        <Select
-          options={sortOptions}
-          value={sort}
-          defaultOpen={false}
-          placeholder="Sort by"
-          onSelect={val => {
-            setSort(val);
-          }}
-        />
+        {envLoading && <Loader2 className="animate-spin" />}
+        {envValuesVisible ? 'Hide values' : 'Show values'}
+      </Button>
 
-        <Select
-          options={scopeOptions}
-          defaultOpen={false}
-          value={scope}
-          placeholder="Scope"
-          onSelect={val => {
-            setScope(val);
-          }}
-        />
-
-        <Button size="middle" loading={envLoading} onClick={handleShowEnvVars}>
-          {envValuesVisible ? 'Hide values' : 'Show values'}
-        </Button>
-      </LagoonFilter>
-
-      <VariablesTable
+      <DataTable
+        columns={envTableColumns}
+        data={envValues?.environmentVars?.envVariables || (variables as unknown as EnvVariable[])}
+        initialSearch={search}
+        initialPageSize={results}
+        onSearch={searchStr => setSearch(searchStr)}
+        renderFilters={table => (
+          <div className="flex gap-2 items-baseline">
+            <SelectWithOptions
+              options={scopeOptions}
+              width={100}
+              placeholder="Filter by status"
+              onValueChange={newVal => {
+                const statusColumn = table.getColumn('scope');
+                if (statusColumn && newVal != 'all') {
+                  statusColumn.setFilterValue(newVal);
+                } else {
+                  statusColumn?.setFilterValue(undefined);
+                }
+              }}
+            />
+            <SelectWithOptions
+              options={sortOptions}
+              width={100}
+              value={String(results || 10)}
+              placeholder="Results per page"
+              onValueChange={newVal => {
+                table.setPageSize(Number(newVal));
+                setResults(newVal);
+              }}
+            />
+          </div>
+        )}
+        key={JSON.stringify(variables)}
+      />
+      <AddNewVariable
+        onClick={() => stableAddPermissionCheck}
         type="environment"
-        withValues={!envLoading && envValues?.environmentVars?.envVariables && envValuesVisible ? true : false}
-        filterString={search}
-        filterScope={scope as 'build' | 'runtime' | 'global' | 'container_registry' | 'internal_container_registry'}
-        resultsPerPage={results}
-        sortBy={sort as SortType}
-        resultDropdown={
-          <Select
-            options={resultsFilterValues}
-            value={results}
-            allowClear
-            defaultOpen={false}
-            placeholder="Number of variables"
-            onSelect={(val: string) => {
-              setResults(val);
-            }}
-          />
-        }
-        editVariableModal={currentVariable => (
-          <EditVariable
-            type="environment"
-            environmentName={envName}
-            currentEnv={currentVariable}
-            projectName={projectName}
-            refetch={refetch}
-          />
-        )}
-        deleteVariableModal={currentVariable => (
-          <DeleteVariableModal
-            type="environment"
-            onClick={() => stableDeletePermissionCheck}
-            environmentName={envName}
-            currentEnv={currentVariable}
-            projectName={projectName}
-            refetch={refetch}
-          />
-        )}
-        newVariableModal={
-          <AddNewVariable
-            onClick={() => stableAddPermissionCheck}
-            type="environment"
-            projectName={projectName}
-            environmentName={envName}
-            refetch={refetch}
-          />
-        }
-        variables={envValues?.environmentVars?.envVariables || (variables as unknown as Variable[])}
+        projectName={projectName}
+        environmentName={envName}
+        refetch={refetch}
       />
 
-      <Space />
+      <section className="spacer my-8"></section>
 
-      <Head2>Project variables</Head2>
-
-      <Button size="middle" loading={prjLoading} onClick={handleShowProjectVars}>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Project variables</h3>
+      <Button
+        data-testId="var-visibility-toggle"
+        size="sm"
+        className="max-w-max mb-4"
+        disabled={prjLoading}
+        onClick={handleShowProjectVars}
+      >
+        {prjLoading && <Loader2 className="animate-spin" />}
         {projectVarsVisible ? 'Hide values' : 'Show values'}
       </Button>
-      <Space />
 
-      <VariablesTable
-        type="project"
-        withValues={
-          !prjLoading && prjEnvValues?.environmentVars?.project?.envVariables && projectVarsVisible ? true : false
-        }
-        newVariableModal={
-          <EditProjectVariablesButton onClick={() => navToProjectVars()}>
-            <EditOutlined /> Edit Variables
-          </EditProjectVariablesButton>
-        }
-        variables={prjEnvValues?.environmentVars?.project?.envVariables || (projectVariables as unknown as Variable[])}
-        editVariableModal={() => null}
-        deleteVariableModal={() => null}
+      <DataTable
+        columns={projectEnvTableColumns}
+        data={prjEnvValues?.environmentVars?.project?.envVariables || (projectVariables as EnvVariable[])}
+        disableExtra
+        key={JSON.stringify(projectVariables)}
       />
-    </>
+
+      <section className="my-4">
+        <Button onClick={navToProjectVars}>Edit Variables</Button>
+      </section>
+    </SectionWrapper>
   );
 }
