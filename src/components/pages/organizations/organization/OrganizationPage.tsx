@@ -6,13 +6,13 @@ import { CreateGroup } from '@/components/createGroup/CreateGroup';
 import { CreateProject } from '@/components/createProject/CreateProject';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import {Breadcrumb, DetailStat, TabNavigation} from '@uselagoon/ui-library';
+import {DetailStat, TabNavigation} from '@uselagoon/ui-library';
 import { usePathname, useRouter } from 'next/navigation';
 import { Description } from './_components/Description';
 import SectionWrapper from "@/components/SectionWrapper/SectionWrapper";
-import Link from "next/link";
 import React from "react";
 import {organizationNavItems} from '../../../shared/organizationNavItems';
+import { OrgBreadcrumbs } from '@/components/breadcrumbs/OrgBreadcrumbs';
 
 type Notification = 'slacks' | 'rocketchats' | 'webhook' | 'teams' | 'emails';
 export default function OrganizationPage({
@@ -128,20 +128,7 @@ export default function OrganizationPage({
 
   return (
     <>
-      <Breadcrumb
-        type="orgs"
-        items={[
-          {
-            title: <Link href="/organizations">Organizations</Link>,
-            key: "organizations"
-          },
-          {
-            title: organization.name,
-            copyText: organization.name,
-            key: "org"
-          },
-        ]}
-      />
+      <OrgBreadcrumbs />
       <TabNavigation items={navItems} pathname={path} onTabNav={(key) => router.push(`${key}`)}></TabNavigation>
       <SectionWrapper>
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>

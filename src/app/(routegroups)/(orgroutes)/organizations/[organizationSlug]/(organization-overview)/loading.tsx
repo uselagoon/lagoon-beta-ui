@@ -1,14 +1,13 @@
 'use client';
 
 import { Description } from '@/components/pages/organizations/organization/_components/Description';
-import { OrgActionsWrapper } from '@/components/pages/organizations/organization/_components/styles';
 import {CreateProject} from "@/components/createProject/CreateProject";
 import {CreateGroup} from "@/components/createGroup/CreateGroup";
 import {AddUser} from "@/components/addUserToOrg/Adduser";
-import {Breadcrumb, TabNavigation, DetailStat} from "@uselagoon/ui-library";
-import Link from "next/link";
-import TableWrapper from '@/components/tableWrapper/TableWrapper';
+import {TabNavigation, DetailStat} from "@uselagoon/ui-library";
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import {organizationNavItems} from "@/components/shared/organizationNavItems";
+import { OrgBreadcrumbs } from '@/components/breadcrumbs/OrgBreadcrumbs';
 
 export default function Loading() {
   const orgSkeletonItems = [
@@ -56,22 +55,9 @@ export default function Loading() {
 
   return (
       <>
-        <Breadcrumb
-          type="orgs"
-          items={[
-            {
-              title: <Link href="/organizations">Organizations</Link>,
-              key: "organizations"
-            },
-            {
-              title: "Loading",
-              copyText: "Loading",
-              key: "org"
-            },
-          ]}
-        />
+        <OrgBreadcrumbs />
         <TabNavigation items={navItems} pathname={""}></TabNavigation>
-        <TableWrapper>
+        <SectionWrapper>
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>
           <p>Key information about your organization</p>
           <Description loading />
@@ -87,7 +73,7 @@ export default function Loading() {
               <DetailStat title={item.label} value={item.children} key={item.key}  />
             ))}
           </div>
-        </TableWrapper>
+        </SectionWrapper>
         </>
   );
 }

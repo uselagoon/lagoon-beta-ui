@@ -117,6 +117,7 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) 
             placeholder: 'Enter a name for the variable',
             inputDefault: currentEnv.name,
             required: true,
+            readOnly: true,
           },
           {
             id: 'variable_scope',

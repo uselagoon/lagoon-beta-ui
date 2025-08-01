@@ -1,17 +1,11 @@
 'use client';
 
-import React, { SetStateAction } from 'react';
-
-import { groupFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
-import { CheckboxContainer } from '@/components/pages/organizations/groups/_components/styles';
-// import { Checkbox, LagoonFilter, Table } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
-import {Breadcrumb, TabNavigation} from "@uselagoon/ui-library";
-import Link from "next/link";
-import TableWrapper from "@/components/tableWrapper/TableWrapper";
+import React from 'react';
+import { TabNavigation} from "@uselagoon/ui-library";
+import SectionWrapper from "@/components/SectionWrapper/SectionWrapper";
 import {organizationNavItems} from "@/components/shared/organizationNavItems";
-
-// const { OrgGroupsTable } = Table;
+import { OrgBreadcrumbs } from '@/components/breadcrumbs/OrgBreadcrumbs';
+import { DataTable } from '@uselagoon/ui-library';
 
 export default function Loading() {
 
@@ -19,24 +13,15 @@ export default function Loading() {
 
   return (
     <>
-      <Breadcrumb
-        type="orgs"
-        items={[
-          {
-            title: <Link href="/organizations">Organizations</Link>,
-            key: "organizations"
-          },
-          {
-            title: "Loading",
-            copyText: "Loading",
-            key: "org"
-          },
-        ]}
-      />
+      <OrgBreadcrumbs />  
       <TabNavigation items={navItems} pathname={""}></TabNavigation>
-      <TableWrapper>
+      <SectionWrapper>
         <header>Groups</header>
-      </TableWrapper>
+        <DataTable
+          columns={[]}
+          data={[]}
+        />
+      </SectionWrapper>
     </>
   );
 }

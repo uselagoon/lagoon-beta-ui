@@ -1,26 +1,21 @@
 'use client';
 
-import React, { SetStateAction } from 'react';
+import React from 'react';
 
 import {usePathname, useRouter} from 'next/navigation';
 
 import {
-  OrgGroup,
   OrganizationGroupsData,
 } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/groups/(groups-page)/page';
-import { AddUserToGroup } from '@/components/addUserToGroup/AddUserToGroup';
 import { CreateGroup } from '@/components/createGroup/CreateGroup';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
-
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-
 import { useQueryStates } from 'nuqs';
-
-import {Breadcrumb, DetailStat, TabNavigation, DataTable, SelectWithOptions, Checkbox} from "@uselagoon/ui-library";
-import Link from "next/link";
-import TableWrapper from "@/components/tableWrapper/TableWrapper";
+import {TabNavigation, DataTable, SelectWithOptions, Checkbox} from "@uselagoon/ui-library";
+import SectionWrapper from "@/components/SectionWrapper/SectionWrapper";
 import {organizationNavItems} from "@/components/shared/organizationNavItems";
 import GroupsDataTableColumns from "./GroupsDataTableColumns";
+import { OrgBreadcrumbs } from '@/components/breadcrumbs/OrgBreadcrumbs';
 
 export default function GroupsPage({
   queryRef,
@@ -29,7 +24,7 @@ export default function GroupsPage({
   queryRef: QueryRef<OrganizationGroupsData>;
   organizationSlug: string;
 }) {
-  const [{ results, group_query, group_sort, showSystemGroups }, setQuery] = useQueryStates({
+  const [{ results, group_query, showSystemGroups }, setQuery] = useQueryStates({
     results: {
       defaultValue: undefined,
       parse: (value: string | undefined) => {
@@ -45,10 +40,6 @@ export default function GroupsPage({
         return num;
       },
     },
-    group_sort: {
-      defaultValue: null,
-      parse: (value: string | undefined) => (value !== undefined ? String(value) : null),
-    },
     group_query: {
       defaultValue: '',
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
@@ -62,13 +53,6 @@ export default function GroupsPage({
 
   const setGroupQuery = (str: string) => {
     setQuery({ group_query: str });
-  };
-  const setGroupSort = (val: string) => {
-    if (['name_asc', 'name_desc', 'memberCount_asc', 'memberCount_desc'].includes(val)) {
-      setQuery({ group_sort: val });
-    } else {
-      setQuery({ group_sort: null });
-    }
   };
 
   const setGroupsResults = (val: string) => {
@@ -89,52 +73,6 @@ export default function GroupsPage({
     data: { organization },
   } = useReadQuery(queryRef);
 
-  // const pathname = usePathname();
-
-  // const client = useApolloClient();
-
-  // const batchUpdateGroupData = (groupsWithMemberCount: Array<{ id: string; memberCount: number }>) => {
-  //   client.cache.batch({
-  //     update(cache) {
-  //       groupsWithMemberCount.forEach(group => {
-  //         const id = client.cache.identify({ __typename: 'OrgGroup', id: group.id });
-  //         cache.modify({
-  //           id,
-  //           fields: {
-  //             memberCount() {
-  //               return group.memberCount;
-  //             },
-  //           },
-  //         });
-  //       });
-  //     },
-  //   });
-  // };
-
-  // const queryOnDataChange = async (data: Partial<OrgGroup>[]) => {
-  //   const groupNames = data.map(d => d.name);
-
-  //   const promises = groupNames.map(name => {
-  //     return client.query({
-  //       query: GET_SINGLE_GROUP,
-  //       variables: { name, organization: organization.id },
-  //       fetchPolicy: 'network-only',
-  //     });
-  //   });
-
-  //   const groupsPromises = await Promise.allSettled(promises);
-
-  //   const groupsWithMemberCount = groupsPromises
-  //     .filter(pr => pr.status === 'fulfilled')
-  //     .map(({ value }) => value.data.group);
-
-  //   batchUpdateGroupData(groupsWithMemberCount);
-  // };
-
-  // const onAddUser = async (groupName: string) => {
-  //   await queryOnDataChange([{ name: groupName }]);
-  // };
-
   if (!organization) {
     return <OrganizationNotFound orgName={organizationSlug} />;
   }
@@ -144,23 +82,13 @@ export default function GroupsPage({
   const existingGroupNames = orgGroups.map(g => g.name);
   return (
     <>
-        <Breadcrumb
-          type="orgs"
-          items={[
-            {
-              title: <Link href="/organizations">Organizations</Link>,
-              key: "organizations"
-            },
-            {
-              title: organization.name,
-              copyText: organization.name,
-              key: "org"
-            },
-          ]}
-        />
+        <OrgBreadcrumbs />
         <TabNavigation items={navItems} pathname={path} onTabNav={(key) => router.push(`${key}`)}></TabNavigation>
-        <TableWrapper>
+        <SectionWrapper>
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Groups</h3>
+          <div className="gap-4 my-4">
+            <CreateGroup organizationId={organization.id} existingGroupNames={existingGroupNames} />
+          </div>
           <DataTable
             columns={GroupsDataTableColumns(organizationSlug)}
             data={orgGroups}
@@ -202,7 +130,7 @@ export default function GroupsPage({
               </div>
             )}
           />
-        </TableWrapper>
+        </SectionWrapper>
     </>
   );
 }

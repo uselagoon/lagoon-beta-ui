@@ -3,7 +3,7 @@
 import { OrgType, OrgsData } from '@/app/(routegroups)/(orgroutes)/organizations/(organizations-page)/page';
 import { orgGroupsAndProjectsQuery } from '@/lib/query/organizations/allOrganizationsQuery';
 import { useQuery } from '@apollo/client';
-import TableWrapper from '@/components/tableWrapper/TableWrapper';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 import DataTableColumns from "@/components/pages/organizations/DataTableColumns";
@@ -60,7 +60,7 @@ export default function OrganizationsPage({ organizations }: { organizations: Or
 
   return (
     <>
-      <TableWrapper>
+      <SectionWrapper>
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organizations</h3>
         <Button className="px-0" variant="link">
           View all organizations
@@ -98,7 +98,7 @@ export default function OrganizationsPage({ organizations }: { organizations: Or
             />
           )}
         />
-    </TableWrapper>
+    </SectionWrapper>
     </>
   );
 }

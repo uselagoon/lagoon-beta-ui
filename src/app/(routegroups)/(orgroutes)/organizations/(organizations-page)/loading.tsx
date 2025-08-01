@@ -1,6 +1,6 @@
 'use client';
 
-import TableWrapper from '@/components/tableWrapper/TableWrapper';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 import OrganizationsTableColumnsWithCheckbox from "@/components/pages/organizations/DataTableColumns";
@@ -26,7 +26,7 @@ export default function Loading() {
 
   return (
       <>
-        <TableWrapper>
+        <SectionWrapper>
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organizations</h3>
           <Button className="px-0" variant="link">
             View all organizations
@@ -64,7 +64,7 @@ export default function Loading() {
                   />
               )}
           />
-        </TableWrapper>
+        </SectionWrapper>
       </>
   );
 }
