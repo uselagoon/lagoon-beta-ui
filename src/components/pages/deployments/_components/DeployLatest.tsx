@@ -1,18 +1,13 @@
-import { Fragment } from 'react';
-
 import { DeploymentsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/deployments/(deployments-page)/page';
 import deployEnvironmentLatest from '@/lib/mutation/deployEnvironmentLatest';
-import { CarryOutOutlined, LoadingOutlined } from '@ant-design/icons';
 import { useMutation } from '@apollo/client';
 import { RefetchFunction } from '@apollo/client/react/hooks/useSuspenseQuery';
-import { Button, LoadingSkeleton, useNotification } from '@uselagoon/ui-library';
-import { message } from 'antd';
-
-import { StyledNewDeployment, StyledQuickAction } from './styles';
+import { Button, Skeleton } from '@uselagoon/ui-library';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Props {
   environment: DeploymentsData['environment'];
-  renderAsQuickAction?: boolean;
   refetch?: RefetchFunction<
     DeploymentsData,
     {
@@ -29,52 +24,32 @@ interface PropsWithSkeleton {
 const DeployLatest = (props: Props | PropsWithSkeleton) => {
   if (props.skeleton) {
     return (
-      <StyledNewDeployment>
-        <div className="description">
-          Start a new deployment of <LoadingSkeleton width={60} />
+      <section className="flex items-center gap-[1rem] mb-6 py-1.5">
+        <div className="description flex gap-2 items-center">
+          Start a new deployment of <Skeleton className="w-[60px] h-8" />
         </div>
-        <Button size="middle">Deploy</Button>
-      </StyledNewDeployment>
+        <Button disabled>Deploy</Button>
+      </section>
     );
   }
-  const { environment, renderAsQuickAction = false } = props;
+  const { environment } = props;
   const { id, deployType, deployBaseRef, deployHeadRef, deployTitle } = environment;
 
   const [deployEnvironmentLatestMutation, { loading, error }] = useMutation(deployEnvironmentLatest, {
     onError: err => {
       console.error(err);
-      if (renderAsQuickAction) {
-        message.error('Deployment failed');
-      } else {
-        errorNotification.trigger({ content: err.message });
-      }
+      toast.error('Deployment error', {
+        id: 'deploy_error',
+        description: (err as { message: string })?.message,
+      });
     },
     variables: {
       environmentId: id,
     },
     onCompleted: () => {
-      if (renderAsQuickAction) {
-        message.success('Deployment successfully triggered');
-      } else {
-        successNotification.trigger();
-      }
+      toast.success('Deployment triggered');
     },
-    refetchQueries: renderAsQuickAction ? ['getProject'] : ['getEnvironment'],
-  });
-
-  // error and success notifications
-  const errorNotification = useNotification({
-    type: 'error',
-    title: 'Deployment failed',
-    content: error?.message,
-    requiresManualClose: true,
-  });
-
-  const successNotification = useNotification({
-    type: 'success',
-    title: 'Deployment successfully triggered',
-    content: null,
-    requiresManualClose: false,
+    refetchQueries: ['getEnvironment'],
   });
 
   let deploymentsEnabled = true;
@@ -91,46 +66,31 @@ const DeployLatest = (props: Props | PropsWithSkeleton) => {
     deploymentsEnabled = false;
   }
 
-  // used as a quick action on /projects/[projectName] route
-  if (renderAsQuickAction) {
-    return (
-      <StyledQuickAction onClick={() => !deploymentsEnabled && deployEnvironmentLatestMutation()}>
-        {loading ? <LoadingOutlined /> : <CarryOutOutlined />}
-        <span>Trigger a deployment from {environment.name}</span>
-      </StyledQuickAction>
-    );
-  }
-
   return (
-    <StyledNewDeployment>
-      <Fragment key="success-notification-holder">{successNotification.contextHolder}</Fragment>
-      <Fragment key="error-notification-holder"> {errorNotification.contextHolder}</Fragment>
+    <section className="flex items-center gap-[1rem] mb-6 w-max  py-1.5">
       {!deploymentsEnabled ? (
         <>
-          <div className="description">Manual deployments are not available for this environment.</div>
-          <Button testId="deploy-button" size="middle" disabled>
+          <div className="description text-sm leading-[1.375rem]">
+            Manual deployments are not available for this environment.
+          </div>
+          <Button data-cy="deploy-button" disabled>
             Deploy
           </Button>
         </>
       ) : (
         <>
-          <div className="description">
+          <div className="description text-sm leading-[1.375rem] flex gap-1 items-center">
             {deployType === 'branch' && `Start a new deployment of branch ${deployBaseRef}.`}
             {deployType === 'pullrequest' && `Start a new deployment of pull request ${deployTitle}.`}
             {deployType === 'promote' &&
               `Start a new deployment from environment ${environment.project.name}-${deployBaseRef}.`}
           </div>
-          <Button
-            testId="deploy-button"
-            size="middle"
-            loading={loading}
-            onClick={() => deployEnvironmentLatestMutation()}
-          >
-            Deploy
+          <Button data-cy="deploy-button" disabled={loading} onClick={() => deployEnvironmentLatestMutation()}>
+            {loading && <Loader2 className="animate-spin" />} Deploy
           </Button>
         </>
       )}
-    </StyledNewDeployment>
+    </section>
   );
 };
 

@@ -1,15 +1,13 @@
 'use client';
 
-import { SetStateAction } from 'react';
-
-import { scopeOptions, sortOptions } from '@/components/pages/environmentVariables/_components/filterValues';
-import { Head2, LagoonFilter, Select, Table } from '@uselagoon/ui-library';
-import { Variable } from '@uselagoon/ui-library/dist/components/Table/VariablesTable/VariablesTable';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { scopeOptions } from '@/components/pages/environmentVariables/_components/filterValues';
+import { ProjectEnvVarsPartialColumns } from '@/components/pages/projectVariables/_components/DataTableColumns';
+import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-const { VariablesTable } = Table;
 export default function Loading() {
-  const [{ search, sort, scope }, setQuery] = useQueryStates({
+  const [{ search }, setQuery] = useQueryStates({
     results: {
       defaultValue: 10,
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : 10),
@@ -18,64 +16,49 @@ export default function Loading() {
       defaultValue: '',
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
     },
-    sort: {
-      defaultValue: null,
-      parse: (value: string) => {
-        if (['name_asc', 'name_desc', 'scope_asc', 'scope_desc'].includes(value)) return String(value);
-
-        return null;
-      },
-    },
-
-    scope: {
-      defaultValue: undefined,
-      parse: (value: string | undefined) => value as Variable['scope'],
-    },
   });
 
   const setSearch = (val: string) => {
     setQuery({ search: val });
   };
 
-  const setScope = (val: Variable['scope']) => {
-    setQuery({ scope: val });
-  };
-
-  const setSort = (val: string) => {
-    setQuery({ sort: val });
-  };
-
   return (
-    <>
-      <Head2>Environment variables</Head2>
-      <LagoonFilter
-        searchOptions={{
-          searchText: search || '',
-          setSearchText: setSearch as React.Dispatch<SetStateAction<string>>,
-        }}
-      >
-        <Select
-          options={sortOptions}
-          value={sort}
-          defaultOpen={false}
-          placeholder="Sort by"
-          onSelect={val => {
-            setSort(val);
-          }}
-        />
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Environment variables</h3>
+      <Button data-testId="var-visibility-toggle" size="sm" className="max-w-max mb-4" disabled>
+        Show values
+      </Button>
 
-        <Select
-          options={scopeOptions}
-          defaultOpen={false}
-          value={scope}
-          placeholder="Scope"
-          onSelect={val => {
-            setScope(val);
-          }}
-        />
-      </LagoonFilter>
+      <DataTable
+        loading
+        columns={ProjectEnvVarsPartialColumns()}
+        data={[]}
+        initialSearch={search}
+        onSearch={searchStr => setSearch(searchStr)}
+        renderFilters={table => (
+          <div className="flex gap-2 items-baseline">
+            <SelectWithOptions
+              options={scopeOptions}
+              width={100}
+              placeholder="Filter by status"
+              onValueChange={newVal => {
+                const statusColumn = table.getColumn('scope');
+                if (statusColumn && newVal != 'all') {
+                  statusColumn.setFilterValue(newVal);
+                } else {
+                  statusColumn?.setFilterValue(undefined);
+                }
+              }}
+            />
+          </div>
+        )}
+      />
 
-      <VariablesTable skeleton withValues={false} />
-    </>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Project variables</h3>
+      <Button data-testId="var-visibility-toggle" size="sm" className="max-w-max mb-4" disabled>
+        Show values
+      </Button>
+      <DataTable loading columns={ProjectEnvVarsPartialColumns()} data={[]} disableExtra />
+    </SectionWrapper>
   );
 }

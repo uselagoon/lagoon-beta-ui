@@ -38,6 +38,5 @@ export default async function Projects() {
   const client = await getClient();
 
   const { data } = await client.query<ProjectsData>({ query: allProjectsQuery });
-
   return <ProjectsPage data={data} />;
 }

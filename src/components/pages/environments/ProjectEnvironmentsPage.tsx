@@ -1,15 +1,19 @@
 'use client';
 
-import { SetStateAction } from 'react';
+import { usePathname } from 'next/navigation';
 
 import { ProjectData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/(project-overview)/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import ProjectNotFound from '@/components/errors/ProjectNotFound';
+import { NewEnvironment } from '@/components/newEnvironment/NewEnvironment';
+import { makeSafe } from '@/components/utils';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { LagoonFilter } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-import { TableView } from './_components/TableView';
-import { envFilterValues } from './_components/filterValues';
+import { createLinks } from '../environment/EnvironmentPage';
+import { RoutesWrapper } from '../environment/styles';
+import getProjectEnvsTableColumns from './ProjectEnvsTableColumns';
 
 export default function ProjectEnvironmentsPage({
   queryRef,
@@ -18,8 +22,8 @@ export default function ProjectEnvironmentsPage({
   queryRef: QueryRef<ProjectData>;
   projectName: string;
 }) {
+  const pathname = usePathname();
   const { refetch } = useQueryRefHandlers(queryRef);
-
   const {
     data: { project },
   } = useReadQuery(queryRef);
@@ -28,7 +32,7 @@ export default function ProjectEnvironmentsPage({
     return <ProjectNotFound projectName={projectName} />;
   }
 
-  const [{ search, env_count, view }, setQuery] = useQueryStates({
+  const [{ search, env_count }, setQuery] = useQueryStates({
     search: {
       defaultValue: '',
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
@@ -37,15 +41,6 @@ export default function ProjectEnvironmentsPage({
     env_count: {
       defaultValue: 5,
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : 5),
-    },
-    view: {
-      defaultValue: 'card',
-      parse: (value: string | undefined) => {
-        if (value === 'list') {
-          return 'list';
-        }
-        return 'card'; // default to 'card' for undefined or any value other than 'list'
-      },
     },
   });
 
@@ -56,47 +51,91 @@ export default function ProjectEnvironmentsPage({
   const setEnvCount = (val: string) => {
     setQuery({ env_count: Number(val) });
   };
+  const { environments } = project;
+  const productionEnvironment = project.productionEnvironment;
 
-  const setView = (val: 'card' | 'list') => {
-    setQuery({ view: val });
-  };
+  const sortedEnvironments = [
+    environments.find(env => env.name === productionEnvironment),
+    ...environments.filter(env => env.name !== productionEnvironment),
+  ].filter(env => !!env);
 
-  const commonProps = {
-    project,
-    projectName,
-    refetch,
-    resultsPerPage: env_count,
-    setResultsPerPage: setEnvCount,
-    filterString: search || '',
-    environmentCount: project.environments.length,
-  };
+  const envTableData = sortedEnvironments.map(environment => {
+    const activeEnvironment =
+      project.productionEnvironment &&
+      project.standbyProductionEnvironment &&
+      project.productionEnvironment == makeSafe(environment.name);
+    const standbyEnvironment =
+      project.productionEnvironment &&
+      project.standbyProductionEnvironment &&
+      project.standbyProductionEnvironment == makeSafe(environment.name);
+
+    const envType = activeEnvironment
+      ? 'active production'
+      : standbyEnvironment
+      ? 'standby production'
+      : environment.environmentType;
+
+    const routesToUse =
+      standbyEnvironment || activeEnvironment
+        ? standbyEnvironment
+          ? project.standbyRoutes
+          : project.productionRoutes
+        : environment.routes;
+
+    return {
+      name: environment.openshiftProjectName,
+      title: environment.name,
+      deployType: environment.deployType,
+      activeRoutes: <RoutesWrapper>{createLinks(routesToUse)}</RoutesWrapper>,
+      envType: envType as any,
+      last_deployment: environment.updated ?? '',
+      region: environment.openshift?.cloudRegion ?? '',
+    };
+  });
 
   return (
     <>
-      <LagoonFilter
-        searchOptions={{
-          searchText: search || '',
-          setSearchText: setSearch as React.Dispatch<SetStateAction<string>>,
-        }}
-        selectOptions={{
-          options: envFilterValues,
-          selectedState: env_count,
-          setSelectedState: setEnvCount as React.Dispatch<SetStateAction<unknown>>,
-        }}
-      >
-        {/* <StyledToggle onClick={() => setView('card')}>
-          <StyledGridIcon className={view === 'card' ? 'active' : ''} />
-          Card View
-        </StyledToggle> */}
-        {/* 
-        <StyledToggle onClick={() => setView('list')}>
-          <StyledListIcon className={view === 'list' ? 'active' : ''} />
-          List View
-        </StyledToggle> */}
-      </LagoonFilter>
+      <SectionWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Environments</h3>
+        <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+          A list of all available environments for this project
+        </span>
 
-      {/* {view === 'list' ? <TableView {...commonProps} /> : <CardView {...commonProps} />} */}
-      <TableView {...commonProps} />
+        <DataTable
+          columns={getProjectEnvsTableColumns(pathname)}
+          data={envTableData}
+          searchableColumns={['title', 'region', 'deployType']}
+          onSearch={searchStr => setSearch(searchStr)}
+          initialSearch={search}
+          initialPageSize={env_count}
+          renderFilters={table => (
+            <SelectWithOptions
+              options={[
+                {
+                  label: '5 results per page',
+                  value: 5,
+                },
+                {
+                  label: '10 results per page',
+                  value: 10,
+                },
+                {
+                  label: '20 results per page',
+                  value: 20,
+                },
+              ]}
+              width={100}
+              value={String(env_count)}
+              placeholder="Results per page"
+              onValueChange={newVal => {
+                table.setPageSize(Number(newVal));
+                setEnvCount(newVal);
+              }}
+            />
+          )}
+        />
+        <NewEnvironment projectName={projectName} refetch={refetch} />
+      </SectionWrapper>
     </>
   );
 }

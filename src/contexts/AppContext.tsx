@@ -7,7 +7,7 @@ import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { useEnvContext } from 'next-runtime-env';
 import { usePathname } from 'next/navigation';
 
-import { RootLayout } from '@uselagoon/ui-library';
+import { RootLayout, Toaster } from '@uselagoon/ui-library';
 import manualSignOut from 'utils/manualSignOut';
 
 const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: string; logo?: ReactNode }) => {
@@ -60,6 +60,7 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         currentPath={pathname}
       >
         {children}
+        <Toaster />
       </RootLayout>
     </>
   );

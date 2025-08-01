@@ -1,6 +1,7 @@
 /**
  * Project navigation layout wrapping settings tabs.
  */
+import { SettingsBreadcrumbs } from '@/components/breadcrumbs/SettingsBreadcrumbs';
 import SettingsNavTabs from '@/components/settingsNavtabs/SettingsNavTabs';
 
 export default async function ProjectLayout({
@@ -8,5 +9,10 @@ export default async function ProjectLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <SettingsNavTabs>{children}</SettingsNavTabs>;
+  return (
+    <>
+      <SettingsBreadcrumbs />
+      <SettingsNavTabs>{children}</SettingsNavTabs>
+    </>
+  );
 }

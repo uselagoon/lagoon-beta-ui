@@ -32,28 +32,18 @@ const ErrorPage = ({ statusCode, errorMessage, title }: Props) => {
   }, [ErorrTitle]);
 
   return (
-    <StyledErrorPage>
-      <h2>{ErorrTitle}</h2>
+    <section
+      className={`
+    fixed top-[76px] left-0 
+    w-screen h-screen 
+    flex flex-col items-center gap-8 
+    pt-[10%] 
+    bg-white dark:bg-black
+  `}
+    >
+      <h2 className="text-2xl">{ErorrTitle}</h2>
       {errorMessage && <p>{errorMessage}</p>}
-    </StyledErrorPage>
+    </section>
   );
 };
 export default ErrorPage;
-
-const StyledErrorPage = styled.section`
-  /* font-family: 'Source-sans-pro', sans-serif; */
-  position: fixed;
-  top: 76px;
-  left: 0;
-  background-color: ${props => (props.theme.colorScheme === 'dark' ? '#000' : '#fff')};
-  width: 100dvw;
-  height: 100dvh;
-  display: flex;
-  padding-top: 10%;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-  h2 {
-    font-size: 2rem;
-  }
-`;

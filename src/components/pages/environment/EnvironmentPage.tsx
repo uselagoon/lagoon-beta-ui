@@ -3,23 +3,22 @@
 import { useRouter } from 'next/navigation';
 
 import { EnvironmentData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/(environment-overview)/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import deleteEnvironment from '@/lib/mutation/deleteEnvironment';
 import switchActiveStandby from '@/lib/mutation/switchActiveStandby';
 import environmentByOpenShiftProjectNameWithFacts from '@/lib/query/environmentWIthInsightsAndFacts';
 import { QueryRef, useMutation, useQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DetailedStats, Head3, Head4, Text } from '@uselagoon/ui-library';
+import { DetailStat } from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import gitUrlParse from 'git-url-parse';
 
 import ActiveStandbyConfirm from '../../activestandbyconfirm/ActiveStandbyConfirm';
 import DeleteConfirm from '../../deleteConfirm/DeleteConfirm';
-import { StyledGitLink } from '../projectDetails/styles';
 import KeyFacts from './_components/KeyFacts';
 import LimitedRoutes from './_components/LimitedRoutes';
 import deduplicateFacts from './_components/deduplicateFacts';
-import { EnvironmentActions, RoutesSection } from './styles';
 
 dayjs.extend(utc);
 
@@ -92,38 +91,43 @@ export default function EnvironmentPage({
     {
       children: environment.environmentType,
       key: 'env_type',
-      label: 'Environment type',
+      title: 'Environment type',
       lowercaseValue: true,
     },
     {
       children: environment.deployType,
       key: 'deployment_type',
-      label: 'Deployment Type',
+      title: 'Deployment Type',
       lowercaseValue: true,
     },
     {
       children: dayjs.utc(environment.created).local().format('YYYY-MM-DD HH:mm:ss Z'),
       key: 'created',
-      label: 'Created',
+      title: 'Created',
       lowercaseValue: true,
     },
     {
       children: dayjs.utc(environment.updated).local().format('YYYY-MM-DD HH:mm:ss Z'),
       key: 'updated',
-      label: 'Updated',
+      title: 'Updated',
       lowercaseValue: true,
     },
     ...(gitBranchLink
       ? [
           {
             children: (
-              <StyledGitLink className="hover-state" data-cy="source" target="_blank" href={`https://${gitBranchLink}`}>
+              <a
+                className="break-words text-inherit lowercase underline"
+                data-cy="source"
+                target="_blank"
+                href={`https://${gitBranchLink}`}
+              >
                 {gitBranchLink}
-              </StyledGitLink>
+              </a>
             ),
             lowercaseValue: true,
             key: 'source',
-            label: 'Source',
+            title: 'Source',
           },
         ]
       : []),
@@ -140,27 +144,31 @@ export default function EnvironmentPage({
     environment.environmentType === 'production' &&
     environment.project.standbyProductionEnvironment === environment.name;
 
+  const DetailedStats = environmentDetailItems.map(detail => (
+    <DetailStat key={detail.key} title={detail.title} value={detail.children} />
+  ));
+
   const environmentDetails = (
     <>
-      <DetailedStats items={environmentDetailItems} />
+      <div className="grid grid-cols-3 grid-rows-2 gap-4">{DetailedStats}</div>
 
       {factsLoading && (
-        <>
-          <Head3>System Details</Head3>
+        <div className="mt-5">
+          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">System Details</h3>
           <KeyFacts loading />
-        </>
+        </div>
       )}
       {hasFactViewPermission && keyFacts.length > 0 && (
-        <>
-          <Head3>System Details</Head3>
+        <div className="mt-5">
+          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">System Details</h3>
           <KeyFacts keyFacts={keyFacts} />
-        </>
+        </div>
       )}
 
-      <EnvironmentActions>
-        <Head4>Actions</Head4>
+      <div className="mt-5 [&>section]:flex [&>section]:gap-4">
+        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight mb-2">Actions</h4>
 
-        <section>
+        <section className="flex gap-4">
           {shouldRenderSwitchActiveStandby ? (
             <ActiveStandbyConfirm
               activeEnvironment={environment.project.productionEnvironment}
@@ -181,6 +189,7 @@ export default function EnvironmentPage({
           ) : null}
 
           <DeleteConfirm
+            buttonText="Delete"
             deleteType="environment"
             deleteName={environment.name}
             loading={deleteLoading}
@@ -202,35 +211,43 @@ export default function EnvironmentPage({
             }
           />
         </section>
-      </EnvironmentActions>
+      </div>
     </>
   );
 
   return (
-    <>
-      <Head3>Environment details</Head3>
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>
+      <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+        Key information about your environment
+      </span>
       <section>{environmentDetails}</section>
 
-      <RoutesSection>
-        <Head3>Routes</Head3>
+      <section className="mt-10 [&>*:not(:first-child)]:mb-2">
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-5">Routes</h3>
 
-        {routes ? (
-          <>
-            <Head4>Active routes</Head4>
-            <LimitedRoutes routes={routes} />
-          </>
-        ) : null}
+        <div className="flex justify-start gap-24">
+          {routes ? (
+            <section>
+              <h4 className="scroll-m-20 text-md font-semibold tracking-tight mb-3">Active routes</h4>
+              <LimitedRoutes routes={routes} />
+            </section>
+          ) : null}
 
-        <br />
-        {standbyRoutes ? (
-          <>
-            <Head4>Standby routes</Head4>
-            <LimitedRoutes routes={standbyRoutes} />
-          </>
-        ) : null}
-
-        {envHasNoRoutes && <Text>No routes found for {environment.name}</Text>}
-      </RoutesSection>
-    </>
+          <br />
+          {standbyRoutes ? (
+            <section>
+              <h5 className="scroll-m-20 text-md font-semibold tracking-tight mb-3">Standby routes</h5>
+              <LimitedRoutes routes={standbyRoutes} />
+            </section>
+          ) : null}
+        </div>
+        {envHasNoRoutes && (
+          <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal">
+            No routes found for {environment.name}
+          </span>
+        )}
+      </section>
+    </SectionWrapper>
   );
 }

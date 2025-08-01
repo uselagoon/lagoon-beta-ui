@@ -1,7 +1,5 @@
-import { Colors } from '@uselagoon/ui-library';
-import styled from 'styled-components';
+import { ReactNode } from 'react';
 
-export const HighLightedDeployment = styled.span`
-  color: ${Colors.lagoonBlue};
-  font-weight: 500;
-`;
+export const HighlightedText = ({ children }: { children: ReactNode }) => {
+  return <span className="font-medium text-[#3A8CFF]">{children}</span>;
+};

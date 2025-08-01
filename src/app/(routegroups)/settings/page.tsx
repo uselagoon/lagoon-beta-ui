@@ -16,6 +16,7 @@ export type SshKey = {
   keyType: string;
   keyValue: string;
   keyFingerprint: string;
+  lastUsed?: string;
 };
 
 type Me = {

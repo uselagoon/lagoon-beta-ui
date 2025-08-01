@@ -1,9 +1,8 @@
 'use client';
 
 import { ProjectDeployTargetsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/deploy-targets/page';
-import { Table } from '@uselagoon/ui-library';
-
-const { DefaultTable } = Table;
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { BasicTable, Table } from '@uselagoon/ui-library';
 
 interface ProjectDetailsProps {
   project: ProjectDeployTargetsData['project'];
@@ -37,8 +36,16 @@ export default function ProjectDeployTargetsPage(props: ProjectDetailsProps) {
         depTarget.deployTarget.friendlyName != null ? depTarget.deployTarget.friendlyName : depTarget.deployTarget.name,
       branches: depTarget.branches,
       pullRequests: depTarget.pullrequests,
+      key: depTarget.deployTarget.name,
     };
   });
 
-  return <DefaultTable columns={deployTargetColumns} dataSource={deployTargetData} />;
+  return (
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-5">Deploy targets</h3>
+      <div className="rounded-md border">
+        <BasicTable columns={deployTargetColumns} data={deployTargetData} />
+      </div>
+    </SectionWrapper>
+  );
 }

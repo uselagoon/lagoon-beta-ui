@@ -27,7 +27,7 @@ export const backupResultOptions = [
 export const statusOptions = [
   {
     label: 'All',
-    value: null,
+    value: 'all',
   },
   {
     label: 'Successful',

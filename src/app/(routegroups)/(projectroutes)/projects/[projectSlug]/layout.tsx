@@ -1,6 +1,7 @@
 /**
  * Project navigation layout wrapping project tabs.
  */
+import { ProjectBreadcrumbs } from '@/components/breadcrumbs/ProjectBreadcrumbs';
 import ProjectNavTabs from '@/components/projectNavTabs/ProjectNavTabs';
 
 export default async function ProjectLayout({
@@ -8,5 +9,10 @@ export default async function ProjectLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <ProjectNavTabs>{children}</ProjectNavTabs>;
+  return (
+    <>
+      <ProjectBreadcrumbs />
+      <ProjectNavTabs>{children}</ProjectNavTabs>
+    </>
+  );
 }

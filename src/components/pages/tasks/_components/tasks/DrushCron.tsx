@@ -1,11 +1,11 @@
-import React, { FC, Fragment, startTransition } from 'react';
+import React, { FC, startTransition } from 'react';
 
 import { EnvironmentWithTasks } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
 import taskDrushCron from '@/lib/mutation/tasks/taskDrushCron';
 import { useMutation } from '@apollo/client';
-import { Button, Select, useNotification } from '@uselagoon/ui-library';
-
-import { SelectEnv } from '../styles';
+import { Button, SelectWithOptions } from '@uselagoon/ui-library';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Props {
   environment: EnvironmentWithTasks;
@@ -13,23 +13,16 @@ interface Props {
 }
 
 const DrushCron: FC<Props> = ({ environment, refetch }) => {
-  const [taskDrushCronMutation, { loading, error }] = useMutation(taskDrushCron, {
+  const [taskDrushCronMutation, { loading }] = useMutation(taskDrushCron, {
     onError: err => {
       console.error(err);
-      trigger({ content: err.message });
+
+      toast.error('There was a problem running drush cron.', { id: 'task_error', description: err?.message });
     },
     variables: {
       environment: environment.id,
     },
     refetchQueries: ['getEnvironment'],
-  });
-
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: 'There was a problem running drush cron.',
-    placement: 'top',
-    duration: 0,
-    content: error?.message,
   });
 
   const handleTask = async () => {
@@ -41,37 +34,29 @@ const DrushCron: FC<Props> = ({ environment, refetch }) => {
 
   return (
     <>
-      <SelectEnv>
-        <label id="dest-env">Environment:</label>
-        <Select
+      <div className="flex flex-col max-w-[40%] gap-3">
+        <label className="leading-6 " id="dest-env">
+          Environment:
+        </label>
+
+        <SelectWithOptions
           aria-labelledby="dest-env"
           aria-required
-          size="middle"
-          value={{
-            label: environment.name,
-            value: environment.id,
-          }}
+          placeholder=""
+          value={environment.name}
           options={[
             {
               label: environment.name,
-              value: environment.id,
+              value: environment.name,
             },
           ]}
-          disabled
         />
 
-        <Button
-          className="task-btn"
-          size="middle"
-          testId="task-btn"
-          disabled={loading}
-          loading={loading}
-          onClick={handleTask}
-        >
+        <Button className="max-w-max" data-cy="task-btn" disabled={loading} onClick={handleTask}>
+          {loading && <Loader2 className="animate-spin" />}
           Run task
         </Button>
-      </SelectEnv>
-      <Fragment>{contextHolder}</Fragment>
+      </div>
     </>
   );
 };

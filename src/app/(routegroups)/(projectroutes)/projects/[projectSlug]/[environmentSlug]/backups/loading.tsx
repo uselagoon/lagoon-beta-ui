@@ -1,77 +1,78 @@
 'use client';
 
-import { deploymentResultOptions, statusOptions } from '@/components/pages/deployments/_components/filterValues';
-import {
-  DeploymentsFilters,
-  StyledPickerWrapper,
-  StyledRangePicker,
-} from '@/components/pages/deployments/_components/styles';
-import { Select, Table } from '@uselagoon/ui-library';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import BackupsTableColumns from '@/components/pages/backups/_components/TableColumns';
+import { backupResultOptions, statusOptions } from '@/components/pages/backups/_components/filterValues';
+import { DataTable, DateRangePicker, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-const { BackupsTable } = Table;
-
 export default function Loading() {
-  const [{ results, range, status }, setQuery] = useQueryStates({
+  const [{ results }, setQuery] = useQueryStates({
     results: {
       defaultValue: undefined,
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : undefined),
     },
-    range: {
-      defaultValue: undefined,
-      parse: (value: string | undefined) => {
-        return value !== undefined ? JSON.parse(value).split(',') : undefined;
-      },
-    },
-    status: {
-      defaultValue: undefined,
-      parse: (value: string | undefined) => value,
-    },
   });
-
-  const handleRangeChange = (_: unknown, dateRange: [string, string]) => {
-    setQuery({ range: dateRange });
-  };
 
   return (
     <>
-      <DeploymentsFilters>
-        <Select
-          options={deploymentResultOptions}
-          value={results}
-          defaultOpen={false}
-          placeholder="Number of results"
-          onSelect={val => {
-            setQuery({ results: val });
-          }}
-        />
-        <Select
-          options={statusOptions}
-          defaultOpen={false}
-          value={status}
-          placeholder="Status"
-          onSelect={val => {
-            setQuery({ status: val });
-          }}
-        />
+      <SectionWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Backups</h3>
+        <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+          View backups
+        </span>
 
-        <Select
-          defaultOpen={false}
-          value={range?.every(Boolean) ? `${range[0]} - ${range[1]}` : 'Select date range'}
-          dropdownStyle={{ width: 300 }}
-          dropdownRender={() => (
-            <StyledPickerWrapper
-              onMouseDown={e => {
-                e.preventDefault();
-                e.stopPropagation();
-              }}
-            >
-              <StyledRangePicker onChange={handleRangeChange} />
-            </StyledPickerWrapper>
+        <DataTable
+          loading
+          columns={BackupsTableColumns}
+          data={[]}
+          initialPageSize={results || 10}
+          searchPlaceholder="Search backup"
+          searchableColumns={['name', 'status']}
+          renderFilters={table => (
+            <div className="flex gap-2 items-baseline">
+              <DateRangePicker
+                onUpdate={values => {
+                  const createdAtColumn = table.getColumn('created');
+                  if (createdAtColumn) {
+                    if (values.range.from && values.range.to) {
+                      createdAtColumn.setFilterValue(values.range);
+                    } else {
+                      createdAtColumn.setFilterValue(undefined);
+                    }
+                  }
+                }}
+                showCompare={false}
+                align="center"
+                rangeText="Deployment dates"
+              />
+              <SelectWithOptions
+                options={statusOptions}
+                width={100}
+                placeholder="Filter by status"
+                onValueChange={newVal => {
+                  const statusColumn = table.getColumn('status');
+                  if (statusColumn && newVal != 'all') {
+                    statusColumn.setFilterValue(newVal);
+                  } else {
+                    statusColumn?.setFilterValue(undefined);
+                  }
+                }}
+              />
+              <SelectWithOptions
+                options={backupResultOptions}
+                width={100}
+                value={String(results || 10)}
+                placeholder="Results per page"
+                onValueChange={newVal => {
+                  table.setPageSize(Number(newVal));
+                  setQuery({ results: Number(newVal) });
+                }}
+              />
+            </div>
           )}
         />
-      </DeploymentsFilters>
-      <BackupsTable skeleton />
+      </SectionWrapper>
     </>
   );
 }

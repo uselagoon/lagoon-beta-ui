@@ -9,7 +9,7 @@ export default async function AuthErrorPage(props: { searchParams: Promise<{ err
 
   return (
     <section className={styles.authErr}>
-      <h2>Auth Error</h2>
+      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">Auth Error</h2>
 
       {error && error !== 'undefined' ? <p>Error type: {error}</p> : <p>You might be offline</p>}
 

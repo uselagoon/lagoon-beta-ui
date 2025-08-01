@@ -1,81 +1,56 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
+
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import DeployLatest from '@/components/pages/deployments/_components/DeployLatest';
+import getDeploymentTableColumns from '@/components/pages/deployments/_components/TableColumns';
 import { deploymentResultOptions, statusOptions } from '@/components/pages/deployments/_components/filterValues';
-import {
-  DeploymentsFilters,
-  StyledPickerWrapper,
-  StyledRangePicker,
-} from '@/components/pages/deployments/_components/styles';
-import { Select, Table } from '@uselagoon/ui-library';
+import { DataTable, DateRangePicker, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-import { Deployment } from './page';
-
-const { DeploymentsTable } = Table;
-
 export default function Loading() {
-  const [{ results, range, status }, setQuery] = useQueryStates({
+  const [{ results }, setQuery] = useQueryStates({
     results: {
       defaultValue: undefined,
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : undefined),
     },
-    range: {
-      defaultValue: undefined,
-      parse: (value: string | undefined) => {
-        return value !== undefined ? JSON.parse(value).split(',') : undefined;
-      },
-    },
-    status: {
-      defaultValue: undefined,
-      parse: (value: string | undefined) => value as Deployment['status'],
-    },
   });
 
-  const handleRangeChange = (_: unknown, dateRange: [string, string]) => {
-    setQuery({ range: dateRange });
-  };
+  const pathname = usePathname();
 
   return (
-    <>
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Deployments</h3>
+      <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+        View previous deployments or trigger a new one
+      </span>
       <DeployLatest skeleton />
-      <DeploymentsFilters>
-        <Select
-          options={deploymentResultOptions}
-          value={results}
-          defaultOpen={false}
-          placeholder="Number of results"
-          onSelect={val => {
-            setQuery({ results: val });
-          }}
-        />
-        <Select
-          options={statusOptions}
-          defaultOpen={false}
-          value={status}
-          placeholder="Status"
-          onSelect={val => {
-            setQuery({ status: val });
-          }}
-        />
 
-        <Select
-          defaultOpen={false}
-          value={range?.every(Boolean) ? `${range[0]} - ${range[1]}` : 'Select date range'}
-          dropdownStyle={{ width: 300 }}
-          dropdownRender={() => (
-            <StyledPickerWrapper
-              onMouseDown={e => {
-                e.preventDefault();
-                e.stopPropagation();
+      <DataTable
+        loading
+        columns={getDeploymentTableColumns(pathname)}
+        data={[]}
+        initialPageSize={results || 10}
+        searchPlaceholder="Search by deployment"
+        searchableColumns={['name', 'status']}
+        renderFilters={table => (
+          <div className="flex gap-2 items-baseline">
+            <DateRangePicker />
+            <SelectWithOptions disabled options={statusOptions} width={100} placeholder="Filter by status" />
+            <SelectWithOptions
+              options={deploymentResultOptions}
+              width={100}
+              value={String(results || 10)}
+              placeholder="Results per page"
+              onValueChange={newVal => {
+                table.setPageSize(Number(newVal));
+                setQuery({ results: Number(newVal) });
               }}
-            >
-              <StyledRangePicker onChange={handleRangeChange} />
-            </StyledPickerWrapper>
-          )}
-        />
-      </DeploymentsFilters>
-      <DeploymentsTable skeleton />
-    </>
+            />
+          </div>
+        )}
+      />
+    </SectionWrapper>
   );
 }

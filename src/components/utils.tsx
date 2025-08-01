@@ -1,7 +1,9 @@
 import { Problem } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/problems/page';
+import { cn } from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import utc from 'dayjs/plugin/utc';
+import { ArrowUpDown, ChevronDown, ChevronUp } from 'lucide-react';
 
 import { Task } from './types';
 
@@ -51,4 +53,36 @@ export const getTaskDuration = (task: Task) => {
 
   let result = `${hours}:${minutes}:${seconds}`;
   return result;
+};
+
+type SortDirection = 'asc' | 'desc' | false;
+
+type DataTableColumn = {
+  toggleSorting: (desc: boolean) => void;
+  clearSorting: () => void;
+};
+
+export const handleSort = (sortDirection: SortDirection, column: DataTableColumn) => {
+  if (sortDirection === false) {
+    column.toggleSorting(false);
+  } else if (sortDirection === 'asc') {
+    column.toggleSorting(true);
+  } else {
+    column.clearSorting();
+  }
+};
+
+export const renderSortIcons = (sortDirection: SortDirection) => {
+  return !sortDirection ? (
+    <ArrowUpDown />
+  ) : (
+    <>
+      <ChevronUp
+        className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')}
+      />
+      <ChevronDown
+        className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')}
+      />
+    </>
+  );
 };

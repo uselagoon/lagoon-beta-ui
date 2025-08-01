@@ -4,31 +4,23 @@
 
 export const deploymentResultOptions = [
   {
-    label: '10',
+    label: '10 results per page',
     value: 10,
   },
   {
-    label: '25',
-    value: 25,
+    label: '20 results per page',
+    value: 20,
   },
   {
-    label: '50',
+    label: '50 results per page',
     value: 50,
-  },
-  {
-    label: '100',
-    value: 100,
-  },
-  {
-    label: 'All',
-    value: -1,
   },
 ];
 
 export const statusOptions = [
   {
-    label: 'All',
-    value: null,
+    label: 'Show all',
+    value: 'all',
   },
   {
     label: 'Running',

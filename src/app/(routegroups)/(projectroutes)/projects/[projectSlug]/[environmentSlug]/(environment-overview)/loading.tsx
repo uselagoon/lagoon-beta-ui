@@ -1,59 +1,71 @@
 'use client';
 
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import KeyFacts from '@/components/pages/environment/_components/KeyFacts';
-import { EnvironmentActions, RoutesSection } from '@/components/pages/environment/styles';
-import { DetailedStats, Head3, Head4, LoadingSkeleton } from '@uselagoon/ui-library';
+import { DetailStat, Skeleton } from '@uselagoon/ui-library';
 
 export default function Loading() {
   const environmentDetailSkeletonItems = [
     {
-      children: <LoadingSkeleton width={60} />,
+      children: <Skeleton className="w-[60px] h-6" />,
       key: 'env_type',
-      label: 'Environment type',
+      title: 'Environment type',
     },
     {
-      children: <LoadingSkeleton width={50} />,
+      children: <Skeleton className="w-[50px] h-6" />,
       key: 'deployment_type',
-      label: 'Deployment Type',
+      title: 'Deployment Type',
     },
     {
-      children: <LoadingSkeleton width={80} />,
+      children: <Skeleton className="w-[80px] h-6" />,
       key: 'created',
-      label: 'Created',
+      title: 'Created',
     },
     {
-      children: <LoadingSkeleton width={80} />,
+      children: <Skeleton className="w-[80px] h-6" />,
       key: 'updated',
-      label: 'Updated',
+      title: 'Updated',
     },
   ];
 
-  const routeSkeletons = Array.from({ length: 4 }).map(() => <LoadingSkeleton width={'60%'} />);
-  return (
+  const DetailedStats = environmentDetailSkeletonItems.map(detail => (
+    <DetailStat key={detail.key} title={detail.title} value={detail.children} />
+  ));
+
+  const routeSkeletons = Array.from({ length: 4 }).map(() => <Skeleton className="w-[60%] h-6" />);
+
+  const environmentDetails = (
     <>
-      <Head3>Environment details</Head3>
-      <DetailedStats items={environmentDetailSkeletonItems} />
+      <div className="grid grid-cols-3 grid-rows-2 gap-4">{DetailedStats}</div>
 
-      <Head3>System Details</Head3>
-      <KeyFacts loading />
+      <div className="mt-6 [&>section]:flex [&>section]:gap-4">
+        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Actions</h4>
+        <Skeleton className="w-[60px]" />
+      </div>
+    </>
+  );
 
-      <EnvironmentActions>
-        <Head4>Actions</Head4>
-        <LoadingSkeleton width={60} />
-      </EnvironmentActions>
-      <RoutesSection>
-        <Head3>Routes</Head3>
+  return (
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight ">Overview</h3>
+      <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+        Key information about your environment
+      </span>
+      <section>{environmentDetails}</section>
+
+      <section className="mt-5 [&>*:not(:first-child)]:mb-2">
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Routes</h3>
         <>
-          <Head4>Active routes</Head4>
+          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Active routes</h4>
 
           {routeSkeletons}
         </>
         <br />
         <>
-          <Head4>Standby routes</Head4>
+          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Standby routes</h4>
           {routeSkeletons}
         </>
-      </RoutesSection>
-    </>
+      </section>
+    </SectionWrapper>
   );
 }

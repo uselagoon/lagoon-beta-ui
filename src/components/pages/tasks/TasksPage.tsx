@@ -5,19 +5,15 @@ import { startTransition, useEffect, useState } from 'react';
 import { useEnvContext } from 'next-runtime-env';
 import { usePathname } from 'next/navigation';
 
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Head3, Select, Table, TaskTreeSelector, Text } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-import {
-  Task,
-  TasksData,
-} from '../../../app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
-import CancelTask from '../../cancelTask/CancelTask';
+import { TasksData } from '../../../app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
+import getTasksTableColumns from './_components/TableColumns';
 import { getDefaultTaskOptions } from './_components/defaultTaskOptions';
-import { tasksFilterOptions } from './_components/filterValues';
-import { TasksPageWrapper } from './_components/styles';
 import DrushArchiveDump from './_components/tasks/DrushArchiveDump';
 import DrushCacheClear from './_components/tasks/DrushCacheClear';
 import DrushCron from './_components/tasks/DrushCron';
@@ -37,7 +33,6 @@ type TaskType =
   | 'DrushUserLogin'
   | 'InvokeRegisteredTask';
 
-const { TasksTable } = Table;
 export default function TasksPage({
   queryRef,
   environmentSlug,
@@ -98,7 +93,7 @@ export default function TasksPage({
   // returns default task options treeData + advancedTasks(if any)
   const taskoptions = getDefaultTaskOptions(advancedTasks, blockedTasks);
 
-  const advancedTasksWithOptions = taskoptions[1]?.children;
+  const advancedTasksWithOptions = taskoptions[1]?.options;
 
   // options stores advanced task with options
   const selectedAdvancedTaskWithArgs = advancedTasksWithOptions?.find(advTask => advTask.value === selectedTask);
@@ -151,41 +146,55 @@ export default function TasksPage({
   }, [environment.tasks, refetch]);
 
   return (
-    <TasksPageWrapper>
-      <Head3>Available Tasks</Head3>
-      <Text>Run a task on this environment</Text>
-      <div className="selector" data-cy="task-select">
-        <TaskTreeSelector
-          allowClear
-          onChange={setSelectedTask}
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Available Tasks</h3>
+      <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+        Run a task on this environment
+      </span>
+
+      <div className="mb-4" data-cy="task-select">
+        <SelectWithOptions
+          options={taskoptions}
+          onValueChange={val => {
+            setSelectedTask(val as TaskType);
+          }}
           placeholder="Select a task to run"
-          treeData={taskoptions}
         />
       </div>
 
-      <div className="selected-task">{renderTask()}</div>
+      <div className="mb-4 max-w-[100%]">{renderTask()}</div>
 
-      <Head3>Recent Task Activity</Head3>
-      <TasksTable
-        basePath={pathname}
-        tasks={environment.tasks}
-        resultsPerPage={tasks_count}
-        cancelTask={(task: Task) => (
-          <CancelTask task={task} projectId={environment.project.id} environmentId={environment.id} />
-        )}
-        resultDropdown={
-          <Select
-            data-cy="select-results"
-            options={tasksFilterOptions}
-            value={tasks_count}
-            defaultOpen={false}
-            placeholder="Number of facts"
-            onSelect={val => {
-              setTasksCount(val);
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Recent Task Activity</h3>
+
+      <DataTable
+        columns={getTasksTableColumns(pathname, environment.project.id, environment.id)}
+        data={environment.tasks}
+        renderFilters={table => (
+          <SelectWithOptions
+            options={[
+              {
+                label: '10 results per page',
+                value: 10,
+              },
+              {
+                label: '20 results per page',
+                value: 20,
+              },
+              {
+                label: '50 results per page',
+                value: 50,
+              },
+            ]}
+            width={100}
+            value={String(tasks_count)}
+            placeholder="Results per page"
+            onValueChange={newVal => {
+              table.setPageSize(Number(newVal));
+              setTasksCount(newVal);
             }}
           />
-        }
+        )}
       />
-    </TasksPageWrapper>
+    </SectionWrapper>
   );
 }

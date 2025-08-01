@@ -2,10 +2,10 @@ import { FC } from 'react';
 
 import { Backup } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/backups/page';
 import addRestore from '@/lib/mutation/addRestore';
-import { CloudDownloadOutlined, RedoOutlined } from '@ant-design/icons';
 import { useMutation } from '@apollo/client';
-import { useNotification } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { CloudDownload, RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface AddRestoreButtonProps {
   action: () => Promise<any>;
@@ -14,38 +14,37 @@ interface AddRestoreButtonProps {
   error?: {
     message: string;
   };
-  type: 'failed' | 'retrievable';
+  type: 'failed' | 'retrievable' | 'unavailable';
 }
 export const AddRestoreButton: FC<AddRestoreButtonProps> = ({ action, success, loading, error, type }) => {
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: 'There was a problem retrieving backup.',
-    content: error?.message,
-    placement: 'top',
-    duration: 0,
-  });
-
   if (error) {
-    trigger();
+    toast.error('There was a problem retrieving backup', {
+      description: error.message,
+    });
   }
 
   return (
     <>
-      {contextHolder}
       {type === 'failed' ? (
-        <Tooltip placement="bottom" title="Retry">
-          <RedoOutlined data-cy="retry" onClick={action} disabled={loading || success} />
+        <Tooltip>
+          <TooltipTrigger disabled={loading || success}>
+            <RefreshCw data-cy="retry" onClick={action} />
+          </TooltipTrigger>
+          <TooltipContent>Retry</TooltipContent>
         </Tooltip>
       ) : (
-        <Tooltip placement="bottom" title="Retrieve backup">
-          <CloudDownloadOutlined data-cy="retrieve" onClick={action} disabled={loading || success} />
+        <Tooltip>
+          <TooltipTrigger disabled={loading || success}>
+            <CloudDownload data-cy="retrieve" onClick={action} />
+          </TooltipTrigger>
+          <TooltipContent>Retrieve backup</TooltipContent>
         </Tooltip>
       )}
     </>
   );
 };
 
-const AddRestore = ({ backup, type }: { backup: Backup; type: 'failed' | 'retrievable' }) => {
+const AddRestore = ({ backup, type }: { backup: Backup; type: 'failed' | 'retrievable' | 'unavailable' }) => {
   const [addRestoreMutation, { data, loading, error }] = useMutation(addRestore, {
     onError: err => {
       console.error(err);
