@@ -90,7 +90,7 @@ export default function GroupsPage({
             <CreateGroup organizationId={organization.id} existingGroupNames={existingGroupNames} />
           </div>
           <DataTable
-            columns={GroupsDataTableColumns(organizationSlug)}
+            columns={GroupsDataTableColumns(organizationSlug, refetch)}
             data={orgGroups}
             searchableColumns={['name']}
             onSearch={searchStr => setGroupQuery(searchStr)}

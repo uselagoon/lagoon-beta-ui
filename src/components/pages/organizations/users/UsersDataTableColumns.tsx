@@ -4,6 +4,7 @@ import { DataTableColumnDef, Button, cn } from '@uselagoon/ui-library';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 import { OrganizationUsersData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/users/(users-page)/page';
+import { RemoveUser } from './_components/RemoveUser';
 
 type User = OrganizationUsersData['users'][0];
 
@@ -24,7 +25,10 @@ export const handleSort = (sortDirection: SortDirection, column: Column) => {
   }
 };
 
-const UsersDataTableColumns: DataTableColumnDef<User>[] = [
+const UsersDataTableColumns = (
+  orgId: number,
+  refetch: () => void
+): DataTableColumnDef<User>[] => [
   {
     accessorKey: 'firstName',
     header: ({ column }) => {
@@ -75,7 +79,19 @@ const UsersDataTableColumns: DataTableColumnDef<User>[] = [
     header: 'Roles',
     cell: ({ row }) => {
       const groupRoles = row.original.groupRoles;
-      return <div>{groupRoles.map(groupRole => groupRole.role).join(', ')}</div>;
+      return <div>{groupRoles?.map(groupRole => groupRole.role).join(', ')}</div>;
+    },
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => {
+      const user = row.original;
+      return (
+        <div className="flex items-center gap-2">
+          <RemoveUser user={user} orgId={orgId} refetch={refetch} />
+        </div>
+      );
     },
   },
 ];

@@ -8,8 +8,11 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { resultsFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
 import { OrgEnvVariable } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
 import { VariablesDataTableColumns } from '@/components/pages/organizations/variables/_components/VariablesDataTableColumns';
+import { organizationNavItems } from '@/components/shared/organizationNavItems';
 
 export default function Loading() {
+  const navItems = organizationNavItems("loading");
+
   const [{ search, sort, scope }, setQuery] = useQueryStates({
     results: {
       defaultValue: 10,
@@ -49,7 +52,7 @@ export default function Loading() {
   return (
     <>
     <OrgBreadcrumbs />
-    <TabNavigation items={[]} pathname={""}></TabNavigation>
+    <TabNavigation items={navItems} pathname={""}></TabNavigation>
     <SectionWrapper>
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organization variables</h3>
       <div className="gap-4 my-4">

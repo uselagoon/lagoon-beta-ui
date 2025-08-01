@@ -29,7 +29,7 @@ export default function Loading() {
     <SectionWrapper>
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Users</h3>
       <DataTable
-        columns={UsersDataTableColumns}
+        columns={UsersDataTableColumns(1, () => {})}
         data={[]}
         searchableColumns={['firstName', 'lastName', 'email']}
         onSearch={searchStr => setUserQuery(searchStr)}

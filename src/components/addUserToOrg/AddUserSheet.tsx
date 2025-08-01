@@ -2,13 +2,18 @@ import React from 'react';
 import { Sheet } from "@uselagoon/ui-library";
 import { useMutation } from '@apollo/client';
 import addGroupMember from '@/lib/mutation/organizations/addGroupMember';
+import { UserRoundPlus } from 'lucide-react';
 
 const AddUserSheet = ({
                           groupSelectOptions = [],
-                          orgUserRoleOptions = []
+                          orgUserRoleOptions = [],
+                          iconOnly = false,
+                          type = 'single',
                       }: {
     groupSelectOptions: Array<{ label: string; value: string | number }>;
     orgUserRoleOptions: Array<{ label: string; value: string | number }>;
+    iconOnly?: boolean;
+    type?: 'single' | 'multiple';
 }) => {
     const [addGroupMemberMutation, { error, loading }] = useMutation(addGroupMember, {
         refetchQueries: ['getOrganization'],
@@ -42,12 +47,12 @@ const AddUserSheet = ({
     return (
         <div className="space-y-4">
             <Sheet
-                sheetTrigger="Add User"
+                sheetTrigger={iconOnly ? <UserRoundPlus className="h-5 w-5" /> : "Add User"}
                 sheetTitle="Add users"
                 sheetDescription="Enter the user details below"
                 sheetFooterButton="Confirm"
                 loading={loading}
-                // hasError={!!error}
+                error={!!error}
                 buttonAction={handleAddUser}
                 sheetFields={[
                     {
@@ -60,10 +65,12 @@ const AddUserSheet = ({
                     {
                         id: 'group',
                         label: 'Add to a Group',
-                        type: 'select',
+                        type: type === 'single' ? 'input' : 'select',
                         placeholder: 'Select a group',
+                        inputDefault: type === 'single' ? groupSelectOptions[0].value.toString() : undefined,
                         options: groupSelectOptions,
                         required: true,
+                        readOnly: type === 'single',
                     },
                     {
                         id: 'role',

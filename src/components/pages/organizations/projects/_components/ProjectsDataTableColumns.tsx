@@ -1,9 +1,9 @@
 'use client';
 
 import { OrgProject } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page';
-import { DataTableColumnDef, Button, cn } from '@uselagoon/ui-library';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-
+import { DataTableColumnDef, Button, cn, Tooltip, TooltipTrigger, TooltipContent } from '@uselagoon/ui-library';
+import { ChevronDown, ChevronUp, SquareTerminal } from 'lucide-react';
+import Link from 'next/link';
 type SortDirection = 'asc' | 'desc' | false;
 
 type Column = {
@@ -63,7 +63,19 @@ export const ProjectsDataTableColumns = (deleteProjectModal: (project: OrgProjec
   {
     id: 'actions',
     cell: ({ row }) => {
-        return <div className="text-right mx-4">{deleteProjectModal(row.original)}</div>;
+        return (
+          <div className="flex gap-4 justify-end items-center">
+            <Link className="hover:text-blue-800 transition-colors" href={`/projects/${row.original.name}`}> 
+              <Tooltip>
+                <TooltipTrigger>
+                <SquareTerminal className="ml-2 h-6 w-6" />
+                </TooltipTrigger>
+                <TooltipContent>View Project</TooltipContent>
+              </Tooltip>
+            </Link>
+            {deleteProjectModal(row.original)}
+          </div>
+        );
     },
   },
 ];

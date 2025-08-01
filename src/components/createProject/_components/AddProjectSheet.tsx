@@ -85,7 +85,7 @@ const AddProjectSheet = ({
                 loading={loading}
                 buttonAction={handleAddProject}
                 additionalContent={projectCreationInfo}
-                // error={!!error}
+                error={!!error}
                 sheetFields={[
                     {
                         id: 'projectName',

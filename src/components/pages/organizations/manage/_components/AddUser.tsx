@@ -1,13 +1,10 @@
-import { FC, startTransition, useState } from 'react';
+import { FC, startTransition } from 'react';
 
 import addUserToOrganization from '@/lib/mutation/organizations/addUserToOrganization';
-import { PlusOutlined } from '@ant-design/icons';
-import { ApolloError, useMutation } from '@apollo/client';
-import { FormItem, Input, Modal, Select, useNotification } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
-import Form, { useForm } from 'antd/es/form/Form';
+import { useMutation } from '@apollo/client';
+import { Sheet, Button } from '@uselagoon/ui-library';
+import { toast } from 'sonner';
 
-import { CreateButton, EditModalTitle, EditModalWrapper } from '../../organization/_components/styles';
 import { adminRoleSelect } from './filterOptions';
 
 type Props = {
@@ -33,137 +30,72 @@ type Props = {
  */
 
 export const AddUser: FC<Props> = ({ orgId, refetch, owners }) => {
-  const [addAdministrator, { error, loading }] = useMutation(addUserToOrganization, {
+  const [addAdministrator, { loading }] = useMutation(addUserToOrganization, {
     refetchQueries: ['getOrganization'],
-  });
-
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: `There was a problem adding an administrator`,
-    placement: 'top',
-    duration: 0,
-    content: error?.message,
-  });
-
-  const [userAlreadyExists, setUserAlreadyExists] = useState(false);
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [confirmDisabled, setConfirmDisabled] = useState(true);
-
-  const [addUserForm] = useForm();
-
-  const handleAddUser = async () => {
-    const { email, role } = addUserForm.getFieldsValue();
-
-    try {
-      await addAdministrator({
-        variables: {
-          email,
-          organization: orgId,
-          ...(role === 'admin' && { admin: true }),
-          ...(role === 'owner' && { owner: true }),
-        },
-      });
-
-      startTransition(() => {
-        (refetch ?? (() => {}))();
-      });
-      closeModal();
-    } catch (err) {
+    onError: err => {
       console.error(err);
-      trigger({ content: (err as ApolloError).message });
-    }
-  };
+      toast.error('Error adding user', {
+        description: err.message,
+      });
+    },
+  });
 
-  const closeModal = () => {
-    addUserForm.resetFields();
-    setConfirmDisabled(true);
-    setModalOpen(false);
-  };
-
-  const openModal = () => {
-    setModalOpen(true);
-  };
-
-  const getRequiredFieldsValues = () => {
-    const values: Record<string, string | boolean> = addUserForm.getFieldsValue(true);
-
-    const requiredValues: {
-      email: string;
-      role: string;
-    } = {} as any;
-
-    const requiredItems = ['email', 'role'] as const;
-
-    for (const key of requiredItems) {
-      if (values[key] == undefined) {
-        return false;
-      }
-      //@ts-ignore
-      requiredValues[key] = values[key];
+  const handleAddUser = (email: string, role: string) => {
+    const existingUser = owners.find(o => o.email === email);
+    if (existingUser) {
+      toast.error('User already exists', {
+        description: 'This user is already an administrator in this organization.',
+      });
+      return Promise.reject('User already exists');
     }
 
-    return requiredValues;
+    return addAdministrator({
+      variables: {
+        email,
+        organization: orgId,
+        ...(role === 'admin' && { admin: true }),
+        ...(role === 'owner' && { owner: true }),
+        ...(role === 'viewer' && { admin: false, owner: false }),
+      },
+    }).then(() => {
+      startTransition(() => {
+        refetch?.();
+      });
+      toast.success('User added successfully!');
+    });
   };
 
   return (
-    <>
-      <Tooltip placement="bottom" title="Add an administrator">
-        <CreateButton data-cy="add-admin" $variant="small" onClick={openModal}>
-          <PlusOutlined className="icon" /> <span className="text">Add user</span>
-        </CreateButton>
-      </Tooltip>
-
-      <Modal
-        title={<EditModalTitle>{userAlreadyExists ? 'Edit' : 'Add'} Administrator</EditModalTitle>}
-        open={modalOpen}
-        destroyOnClose
-        cancelText="Cancel"
-        confirmText={userAlreadyExists ? 'Update' : 'Add'}
-        onCancel={closeModal}
-        onOk={handleAddUser}
-        confirmLoading={loading}
-        confirmDisabled={confirmDisabled}
-        width={800}
-      >
-        <EditModalWrapper>
-          <Form
-            form={addUserForm}
-            onFieldsChange={() => {
-              const fields = getRequiredFieldsValues();
-
-              const emailField = addUserForm.getFieldValue('email');
-              setUserAlreadyExists(!!owners.find(o => o.email === emailField));
-
-              setConfirmDisabled(!!!fields);
-            }}
-          >
-            <div className="addFields">
-              <div className="wrap">
-                <FormItem name="email" label="User email" rules={[{ required: true, message: '' }]}>
-                  <Input data-cy="user-email" placeholder="Enter email" required />
-                </FormItem>
-              </div>
-
-              <div className="wrap">
-                <FormItem name="role" label="Select a role" rules={[{ required: true, message: '' }]}>
-                  <Select
-                    data-cy="user-role"
-                    options={adminRoleSelect}
-                    placeholder="Select a role for this user"
-                    defaultOpen={false}
-                    onChange={val => {
-                      addUserForm.setFieldValue('role', val);
-                    }}
-                    size="middle"
-                  />
-                </FormItem>
-              </div>
-            </div>
-          </Form>
-        </EditModalWrapper>
-        {contextHolder}
-      </Modal>
-    </>
+    <Sheet
+      data-cy="add-user"
+      sheetTrigger="Add user"
+      sheetTitle="Add Administrator"
+      sheetFooterButton="Add"
+      sheetDescription="Add a new administrator to this organization"
+      loading={loading}
+      error={false}
+      additionalContent={null}
+      sheetFields={[
+        {
+          id: 'email',
+          label: 'User Email',
+          type: 'text',
+          placeholder: 'Enter email address',
+          required: true,
+        },
+        {
+          id: 'role',
+          label: 'Role',
+          type: 'select',
+          placeholder: 'Select a role',
+          required: true,
+          options: adminRoleSelect,
+        },
+      ]}
+      buttonAction={(_, values) => {
+        const { email, role } = values;
+        return handleAddUser(email, role);
+      }}
+    />
   );
 };

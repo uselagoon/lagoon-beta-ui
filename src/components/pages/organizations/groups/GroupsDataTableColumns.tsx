@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { Button, DataTableColumnDef, cn } from '@uselagoon/ui-library';
+import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@uselagoon/ui-library';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { OrgGroup } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/groups/(groups-page)/page';
+import { DeleteGroup } from './_components/DeleteGroup';
+import { AddUser } from '@/components/addUserToOrg/Adduser';
 
 type SortDirection = 'asc' | 'desc' | false;
 
@@ -22,7 +24,7 @@ export const handleSort = (sortDirection: SortDirection, column: Column) => {
   }
 };
 
-const GroupsDataTableColumns = (organizationSlug: string): DataTableColumnDef<OrgGroup>[] => [
+const GroupsDataTableColumns = (organizationSlug: string, refetch: () => void): DataTableColumnDef<OrgGroup>[] => [
   {
     accessorKey: 'name',
     sortingFn: (rowA, rowB, columnId) => {
@@ -90,6 +92,24 @@ const GroupsDataTableColumns = (organizationSlug: string): DataTableColumnDef<Or
       return (
         <div className="max-w-[25vw]">
           {memberCount}
+        </div>
+      );
+    },
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => {
+      const group = row.original;
+      return (
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger>
+            <AddUser groupName={group.name} type="single" iconOnly />
+            </TooltipTrigger>
+            <TooltipContent>Add User to Group</TooltipContent>
+          </Tooltip>
+          <DeleteGroup group={group} refetch={refetch} />
         </div>
       );
     },

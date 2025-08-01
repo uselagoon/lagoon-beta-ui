@@ -3,7 +3,7 @@ import { FC, startTransition } from 'react';
 import { EnvVariable } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
 import addOrUpdateEnvVariable from '@/lib/mutation/addOrUpdateEnvVariable';
 import { useMutation } from '@apollo/client';
-import { Sheet } from '@uselagoon/ui-library';
+import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
 import { Edit2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -101,6 +101,8 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) 
 
   return (
     <>
+      <Tooltip>
+        <TooltipTrigger>
       <Sheet
         data-cy="add-variable"
         sheetTrigger={<Edit2Icon />}
@@ -141,6 +143,9 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) 
           handleUpdateVariable(variable_name, variable_scope, variable_value);
         }}
       />
+      </TooltipTrigger>
+      <TooltipContent>Edit Variable</TooltipContent>
+    </Tooltip>
     </>
   );
 };

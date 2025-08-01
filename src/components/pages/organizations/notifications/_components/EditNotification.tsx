@@ -8,7 +8,7 @@ import {
   UPDATE_NOTIFICATION_WEBHOOK,
 } from '@/lib/mutation/organizations/updateNotification';
 import { ApolloError, DocumentNode, useMutation } from '@apollo/client';
-import { Sheet } from '@uselagoon/ui-library';
+import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
 import { Edit2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -116,20 +116,25 @@ export const EditNotification: React.FC<EditNotificationProps> = ({ notification
   };
 
   return (
-    <Sheet
-      data-cy="edit-notification"
-      sheetTrigger={<Edit2Icon />}
-      sheetTitle="Edit Notification"
-      sheetFooterButton="Update"
-      sheetDescription={`Edit the ${notification.type} notification settings`}
-      loading={loading}
-      error={false}
-      additionalContent={null}
-      sheetFields={getSheetFields()}
-      buttonAction={(_, values) => {
-        const { name, channel, webhook, email } = values;
-        handleUpdateNotification(name, channel, webhook, email);
-      }}
-    />
+    <Tooltip>
+      <TooltipTrigger>
+        <Sheet
+          data-cy="edit-notification"
+          sheetTrigger={<Edit2Icon />}
+          sheetTitle="Edit Notification"
+          sheetFooterButton="Update"
+          sheetDescription={`Edit the ${notification.type} notification settings`}
+          loading={loading}
+          error={false}
+          additionalContent={null}
+          sheetFields={getSheetFields()}
+          buttonAction={(_, values) => {
+            const { name, channel, webhook, email } = values;
+            handleUpdateNotification(name, channel, webhook, email);
+          }}
+        />
+        </TooltipTrigger>
+      <TooltipContent>Edit Notification</TooltipContent>
+    </Tooltip>
   );
 };

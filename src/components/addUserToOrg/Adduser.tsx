@@ -19,6 +19,8 @@ type WithGroupName = {
 type Props = {
   variant?: 'default' | 'small';
   refetch?: () => void;
+  iconOnly?: boolean;
+  type: 'multiple' | 'single';
 } & (WithGroupName | WithOptions);
 
 export const AddUser: FC<Props> = props => {
@@ -36,10 +38,12 @@ export const AddUser: FC<Props> = props => {
   return (
     <>
       <div className="flex gap-2 items-center">
-        <span className="text">Add a user to a group</span>
+        {!props.iconOnly && <span className="text">Add a user to a group</span>}
         <AddUserSheet
           groupSelectOptions={groupSelectOptions}
           orgUserRoleOptions={orgUserRoleOptions}
+          iconOnly={props.iconOnly}
+          type={props.type}
         />
       </div>
 

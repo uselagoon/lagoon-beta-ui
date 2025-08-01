@@ -24,7 +24,7 @@ export const organizationNavItems = (orgSlug: string) => [
     label: 'Notifications'
   },
   {
-    key: `/organizations/${orgSlug}/administration`,
+    key: `/organizations/${orgSlug}/manage`,
     label: 'Administration'
   },
 ];

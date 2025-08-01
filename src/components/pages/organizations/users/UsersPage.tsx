@@ -81,7 +81,7 @@ export default function UsersPage({
           <AddUser groupOptions={groupSelectOptions} type="multiple" />
         </div>  
         <DataTable
-          columns={UsersDataTableColumns}
+          columns={UsersDataTableColumns(orgId, refetch)}
           data={filteredUsers}
           searchableColumns={['firstName', 'lastName', 'email']}
           onSearch={searchStr => setUserQuery(searchStr)}
