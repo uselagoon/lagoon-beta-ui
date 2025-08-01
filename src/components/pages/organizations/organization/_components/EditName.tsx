@@ -6,7 +6,8 @@ import { FormItem, Input, Modal, useNotification } from '@uselagoon/ui-library';
 import { Form } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 
-import { EditModalTitle, EditModalWrapper } from './styles';
+// import { EditModalTitle, EditModalWrapper } from './styles';
+import { EditModalWrapper } from './styles';
 
 interface Props {
   orgId: number;

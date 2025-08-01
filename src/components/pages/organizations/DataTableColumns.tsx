@@ -24,13 +24,13 @@ export const handleSort = (sortDirection: SortDirection, column: Column) => {
 };
 
 export const fieldCount = (field: OrgType['groups'] | OrgType['projects'], quota: OrgType['quotaGroup'] | OrgType['quotaProject'], fieldType: string) => {
-    let count = field?.length
+    let count = field?.length ?? 0;
     let fieldQuota = quota >= 0 ? quota : "Unlimited";
-    return `${count} of ${fieldQuota} ${fieldType}`
+    let pluralizedFieldType = quota > 1 || quota === -1 ? `${fieldType}s` : fieldType;
+    return `${count} of ${fieldQuota} ${pluralizedFieldType}`
 }
 
 const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
-    // TODO: See if the Checkbox can be implemented in the data table component
     {
         accessorKey: 'name',
         sortingFn: (rowA, rowB, columnId) => {
@@ -92,7 +92,7 @@ const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
 
             return (
                 <div className="max-w-[25vw]">
-                    {fieldCount(groups, groupQuota, "groups")}
+                    {fieldCount(groups, groupQuota, "group")}
                 </div>
             );
         },
@@ -118,11 +118,11 @@ const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
         },
         cell: ({ row }) => {
             const projects = row.original.projects;
-            const projectQuota = row.original.quotaGroup;
+            const projectQuota = row.original.quotaProject;
 
             return (
                 <div className="max-w-[25vw]">
-                    {fieldCount(projects, projectQuota, "projects")}
+                    {fieldCount(projects, projectQuota, "project")}
                 </div>
             );
         },
@@ -163,8 +163,9 @@ export const OrganizationsTableColumnsWithCheckbox: DataTableColumnDef<OrgType>[
                 id={row.id}
             />
         ),
+        size: 10,
     },
     ...OrganizationsTableColumns
 ]
 
-export default OrganizationsTableColumns;
+export default OrganizationsTableColumnsWithCheckbox;

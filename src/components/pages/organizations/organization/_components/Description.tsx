@@ -1,11 +1,10 @@
 import { FC, useState } from 'react';
 
-import { EditOutlined } from '@ant-design/icons';
-import { LoadingSkeleton } from '@uselagoon/ui-library';
+// import { LoadingSkeleton } from '@uselagoon/ui-library';
 
-import { EditDesc } from './EditDesc';
-import { EditName } from './EditName';
-import { OrgField } from './styles';
+// import { EditDesc } from './EditDesc';
+// import { EditName } from './EditName';
+import {Input} from "@uselagoon/ui-library";
 
 type DescriptionProps = {
   orgId: number;
@@ -23,23 +22,23 @@ export const Description: FC<Props> = props => {
   if (props.loading) {
     return (
       <>
-        <OrgField className="margin">
-          <span className="desc">organization name</span>
-          <section className="editField">
-            <span className="name">
-              <LoadingSkeleton width={100} />
+        <div className="flex flex-col gap-1 mb-3.5 mt-6">
+          <span>organization name</span>
+          <section>
+            <span>
+              {/*<LoadingSkeleton width={100} />*/}
             </span>
           </section>
-        </OrgField>
+        </div>
 
-        <OrgField>
-          <span className="desc">description</span>
-          <section className="editField">
-            <span className="description">
-              <LoadingSkeleton width={100} />
+        <div className="flex flex-col gap-1 mb-3.5 mt-6">
+          <span>description</span>
+          <section>
+            <span>
+              {/*<LoadingSkeleton width={100} />*/}
             </span>
           </section>
-        </OrgField>
+        </div>
       </>
     );
   }
@@ -59,26 +58,19 @@ export const Description: FC<Props> = props => {
 
   return (
     <>
-      <OrgField className="margin">
-        <span className="desc">organization name</span>
-        <section className="editField">
-          <span className="name" data-cy="friendly-name">
-            {name} <EditOutlined data-cy="edit-name" className="edit" onClick={() => setNameModalOpen(true)} />
-          </span>
+      <div className="flex flex-col gap-1 mb-3.5 mt-6">
+        <span>Organization Name</span>
+        <section>
+          <Input label='' value={name} />
         </section>
-        <EditName orgId={orgId} orgName={name} modalOpen={nameModalOpen} closeModal={closeNameModal} />
-      </OrgField>
+      </div>
 
-      <OrgField>
-        <span className="desc">description</span>
-        <section className="editField">
-          <span className="description" data-cy="org-description">
-            {description || ' - '}{' '}
-            <EditOutlined data-cy="edit-desc" className="edit" onClick={() => setDescModalOpen(true)} />
-          </span>
+      <div className="flex flex-col gap-1 mb-3.5 mt-6">
+        <span>Organization Description</span>
+        <section>
+          <Input label='' value={description || ' - '} />
         </section>
-        <EditDesc orgId={orgId} orgDesc={description} modalOpen={descModalOpen} closeModal={closeDescModal} />
-      </OrgField>
+      </div>
     </>
   );
 };

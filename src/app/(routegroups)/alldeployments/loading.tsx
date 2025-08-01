@@ -2,10 +2,10 @@
 
 import { SetStateAction } from 'react';
 
-import { LagoonFilter, Table } from '@uselagoon/ui-library';
+// import { LagoonFilter, Table } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-const { AllDeploymentsTable } = Table;
+// const { AllDeploymentsTable } = Table;
 
 export default function Loading() {
   const [{ results, search }, setQuery] = useQueryStates({

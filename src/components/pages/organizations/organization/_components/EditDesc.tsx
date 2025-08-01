@@ -6,7 +6,8 @@ import { FormItem, Input, Modal, useNotification } from '@uselagoon/ui-library';
 import { Form } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 
-import { EditModalTitle, EditModalWrapper } from './styles';
+// import { EditModalTitle, EditModalWrapper } from './styles';
+import { EditModalWrapper } from './styles';
 
 interface Props {
   orgId: number;
@@ -51,7 +52,8 @@ export const EditDesc: FC<Props> = ({ orgId, orgDesc, modalOpen, closeModal }) =
 
   return (
     <Modal
-      title={<EditModalTitle>Change Organization Description</EditModalTitle>}
+      // title={<EditModalTitle>Change Organization Description</EditModalTitle>}
+      title="Change Organization Description"
       open={modalOpen}
       destroyOnClose
       cancelText="Cancel"
@@ -65,9 +67,9 @@ export const EditDesc: FC<Props> = ({ orgId, orgDesc, modalOpen, closeModal }) =
       <EditModalWrapper>
         <Form form={editDescForm}>
           <div className="wrap">
-            <FormItem name="description" initialValue={orgDesc} label="ORGANIZATION DESCRIPTION" required>
-              <Input data-cy="edit-input" />
-            </FormItem>
+            {/*<FormItem name="description" initialValue={orgDesc} label="ORGANIZATION DESCRIPTION" required>*/}
+            {/*  <Input label='' data-cy="edit-input" />*/}
+            {/*</FormItem>*/}
           </div>
         </Form>
       </EditModalWrapper>

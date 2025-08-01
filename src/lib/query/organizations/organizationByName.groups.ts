@@ -10,7 +10,7 @@ export default gql`
         id
         name
         type
-        memberCount @client
+        memberCount
       }
     }
   }

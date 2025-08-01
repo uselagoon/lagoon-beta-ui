@@ -6,10 +6,13 @@ import { CreateGroup } from '@/components/createGroup/CreateGroup';
 import { CreateProject } from '@/components/createProject/CreateProject';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DetailedStats, Head2 } from '@uselagoon/ui-library';
-
+import {Breadcrumb, DetailStat, TabNavigation} from '@uselagoon/ui-library';
+import { usePathname, useRouter } from 'next/navigation';
 import { Description } from './_components/Description';
-import { OrgActionsWrapper } from './_components/styles';
+import TableWrapper from "@/components/tableWrapper/TableWrapper";
+import Link from "next/link";
+import React from "react";
+import {organizationNavItems} from '../../../shared/organizationNavItems';
 
 type Notification = 'slacks' | 'rocketchats' | 'webhook' | 'teams' | 'emails';
 export default function OrganizationPage({
@@ -28,7 +31,9 @@ export default function OrganizationPage({
   if (!organization) {
     return <OrganizationNotFound orgName={orgSlug} />;
   }
-
+  const path = usePathname();
+  const router = useRouter();
+  const navItems = organizationNavItems(orgSlug);
   const groupCount = Object.values(organization.groups).filter(group => group.type !== 'project-default-group').length;
 
   const totalNotificationCount = ['slacks', 'rocketchats', 'webhook', 'teams', 'emails'].reduce(
@@ -91,14 +96,25 @@ export default function OrganizationPage({
       ),
       capitalizeValue: true,
     },
-    ...organization.deployTargets?.map(target => {
-      return {
-        key: `target_${String(target.id)}`,
-        label: 'AVAILABLE DEPLOY TARGET',
-        children: target.name,
-        lowercaseValue: true,
-      };
-    }),
+      ...(organization.deployTargets ? [{
+          key: 'deploy_targets',
+          label: 'AVAILABLE DEPLOY TARGETS',
+          children: (
+              <div className="space-y-0.5">
+                  {organization.deployTargets.slice(0, 3).map(target => (
+                      <div key={target.id} className="text-sm text-center">
+                          {target.name}
+                      </div>
+                  ))}
+                  {organization.deployTargets.length >= 4 && (
+                      <div className="text-sm text-center text-muted-foreground">
+                          ... and {organization.deployTargets.length - 3} more
+                      </div>
+                  )}
+              </div>
+          ),
+          lowercaseValue: true,
+      }] : []),
   ];
 
   const deployTargetOptions = organization.deployTargets.map(deploytarget => {
@@ -112,22 +128,42 @@ export default function OrganizationPage({
 
   return (
     <>
-      <Head2>Organization Details</Head2>
+      <Breadcrumb
+        type="orgs"
+        items={[
+          {
+            title: <Link href="/organizations">Organizations</Link>,
+            key: "organizations"
+          },
+          {
+            title: organization.name,
+            copyText: organization.name,
+            key: "org"
+          },
+        ]}
+      />
+      <TabNavigation items={navItems} pathname={path} onTabNav={(key) => router.push(`${key}`)}></TabNavigation>
+      <TableWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>
+      <p>Key information about your organization</p>
       <Description
         orgId={organization.id}
         name={organization.friendlyName || organization.name}
         description={organization.description}
       />
 
-      <Head2>Create</Head2>
-
-      <OrgActionsWrapper>
+      <div className="flex flex-wrap flex-col gap-4 mb-4">
         <CreateProject organizationId={organization.id} options={deployTargetOptions} />
         <CreateGroup organizationId={organization.id} existingGroupNames={existingGroupNames} />
         <AddUser groupOptions={groupSelectOptions} type="multiple" />
-      </OrgActionsWrapper>
+      </div>
 
-      <DetailedStats items={orgDetailedItems} />
+      <div className="flex flex-wrap justify-between max-w-7xl mx-auto gap-y-4 text-center">
+        {orgDetailedItems.map((item) => (
+            <DetailStat title={item.label} value={item.children} lowercaseValue={item.lowercaseValue} key={item.key} capitalizeValue={item.capitalizeValue}  />
+        ))}
+      </div>
+      </TableWrapper>
     </>
   );
 }
