@@ -3,18 +3,14 @@
 import { startTransition, useEffect } from 'react';
 
 import { BackupsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/backups/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Select, Table } from '@uselagoon/ui-library';
-import dayjs from 'dayjs';
+import { DataTable, DateRangePicker, Select, SelectWithOptions, Table } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-import CustomRangePicker from '../../datepicker/DatePicker';
-import { DeploymentsFilters } from '../deployments/_components/styles';
-import AddRestore from './_components/AddRestore';
+import BackupsTableColumns from './_components/TableColumns';
 import { backupResultOptions, statusOptions } from './_components/filterValues';
-
-const { BackupsTable } = Table;
 
 export default function BackupsPage({
   queryRef,
@@ -23,24 +19,10 @@ export default function BackupsPage({
   queryRef: QueryRef<BackupsData>;
   environmentSlug: string;
 }) {
-  const [{ results, range, status }, setQuery] = useQueryStates({
+  const [{ results }, setQuery] = useQueryStates({
     results: {
       defaultValue: undefined,
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : undefined),
-    },
-    range: {
-      defaultValue: undefined,
-      parse: (value: string | undefined) => {
-        if (value !== undefined) {
-          const parsedRange = value.split(',').map(dateStr => dayjs(dateStr.trim()).format('YYYY-MM-DD'));
-          return parsedRange.length === 2 ? parsedRange : undefined;
-        }
-        return undefined;
-      },
-    },
-    status: {
-      defaultValue: undefined,
-      parse: (value: string | undefined) => value as 'pending' | 'failed' | 'successful',
     },
   });
   const { refetch } = useQueryRefHandlers(queryRef);
@@ -52,17 +34,6 @@ export default function BackupsPage({
   if (!environment) {
     return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
   }
-
-  const handleRangeChange = (dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null) => {
-    if (dates) {
-      const formattedRange = dates
-        .filter(Boolean) // remove falsy values
-        .map(date => date!.format('YYYY-MM-DD'));
-      setQuery({ range: formattedRange });
-    } else {
-      setQuery({ range: null });
-    }
-  };
 
   // polling every 20s if status needs to be checked
   useEffect(() => {
@@ -80,37 +51,61 @@ export default function BackupsPage({
   }, [environment.backups, refetch]);
 
   return (
-    <>
-      <DeploymentsFilters>
-        <Select
-          data-cy="select-results"
-          options={backupResultOptions}
-          value={results}
-          defaultOpen={false}
-          placeholder="Number of results"
-          onSelect={val => {
-            setQuery({ results: val });
-          }}
-        />
-        <Select
-          options={statusOptions}
-          defaultOpen={false}
-          value={status}
-          placeholder="Status"
-          onSelect={val => {
-            setQuery({ status: val });
-          }}
-        />
-        <CustomRangePicker range={range} handleRangeChange={handleRangeChange} />
-      </DeploymentsFilters>
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Backups</h3>
+      <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+        View backups
+      </span>
 
-      <BackupsTable
-        filterDateRange={range}
-        filterStatus={status ?? undefined}
-        backups={environment.backups}
-        resultsPerPage={results ?? undefined}
-        retrieveBackup={(backup, type) => <AddRestore backup={backup} type={type} />}
+      <DataTable
+        columns={BackupsTableColumns}
+        data={environment.backups}
+        initialPageSize={results || 10}
+        searchPlaceholder="Search backup"
+        searchableColumns={['backupId']}
+        renderFilters={table => (
+          <div className="flex gap-2 items-baseline">
+            <DateRangePicker
+              onUpdate={values => {
+                const createdAtColumn = table.getColumn('created');
+                if (createdAtColumn) {
+                  if (values.range.from && values.range.to) {
+                    createdAtColumn.setFilterValue(values.range);
+                  } else {
+                    createdAtColumn.setFilterValue(undefined);
+                  }
+                }
+              }}
+              showCompare={false}
+              align="center"
+              rangeText="Deployment dates"
+            />
+            <SelectWithOptions
+              options={statusOptions}
+              width={100}
+              placeholder="Filter by status"
+              onValueChange={newVal => {
+                const statusColumn = table.getColumn('status');
+                if (statusColumn && newVal != 'all') {
+                  statusColumn.setFilterValue(newVal);
+                } else {
+                  statusColumn?.setFilterValue(undefined);
+                }
+              }}
+            />
+            <SelectWithOptions
+              options={backupResultOptions}
+              width={100}
+              value={String(results || 10)}
+              placeholder="Results per page"
+              onValueChange={newVal => {
+                table.setPageSize(Number(newVal));
+                setQuery({ results: Number(newVal) });
+              }}
+            />
+          </div>
+        )}
       />
-    </>
+    </SectionWrapper>
   );
 }

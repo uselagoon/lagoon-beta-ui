@@ -1,16 +1,26 @@
 'use client';
 
+import { useMemo } from 'react';
+
 import { SettingsData } from '@/app/(routegroups)/settings/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import addUserSSHPublicKey from '@/lib/mutation/addUserSSHPublicKey';
 import deleteUserSSHPublicKey from '@/lib/mutation/deleteUserSSHPublicKey';
 import updateUserSSHPublicKey from '@/lib/mutation/updateUserSSHPublicKey';
 import Me from '@/lib/query/me';
 import { ApolloError, QueryRef, useMutation, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Head2, Table, useNotification } from '@uselagoon/ui-library';
+import { DataTable, Sheet } from '@uselagoon/ui-library';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
+import { toast } from 'sonner';
 
-const { SshTable } = Table;
+import { renderTableColumns } from './DataTableColumns';
 
-const getPK = (keyType: string, keyValue: string) => {
+dayjs.extend(utc);
+dayjs.extend(relativeTime);
+
+export const getPK = (keyType: string, keyValue: string) => {
   return keyType + ' ' + keyValue;
 };
 
@@ -21,23 +31,13 @@ const SettingsPage = ({ queryRef }: { queryRef: QueryRef<SettingsData> }) => {
     data: { me },
   } = useReadQuery(queryRef);
 
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: '',
-    placement: 'top',
-    duration: 0,
-    content: null,
-  });
+  const [deleteUserSSHPublicKeyMutation, { loading: deleteLoading }] = useMutation(deleteUserSSHPublicKey);
 
-  const [deleteUserSSHPublicKeyMutation, { data: deleteData, loading: deleteLoading }] =
-    useMutation(deleteUserSSHPublicKey);
-
-  const [updateUserSSHPublicKeyMutation, { data: updateData, loading: updateLoading }] =
-    useMutation(updateUserSSHPublicKey);
+  const [updateUserSSHPublicKeyMutation, { loading: updateLoading }] = useMutation(updateUserSSHPublicKey);
 
   const [addUserSSHPublicKeyMutation, { loading: addLoading }] = useMutation(addUserSSHPublicKey);
 
-  const deleteFn = async (id: number) => {
+  const deleteKey = async (id: number) => {
     try {
       await deleteUserSSHPublicKeyMutation({
         variables: {
@@ -48,11 +48,14 @@ const SettingsPage = ({ queryRef }: { queryRef: QueryRef<SettingsData> }) => {
       });
     } catch (err) {
       console.error(err);
-      trigger({ content: (err as ApolloError).message, title: 'There was a problem deleting SSH key' });
+      toast.error('There was a problem deleting SSH key', {
+        id: 'cancel_error',
+        description: (err as ApolloError).message,
+      });
     }
   };
 
-  const updateFn = async (id: number, keyName: string, keyType: string, keyValue: string) => {
+  const editKey = async (id: number, keyName: string, keyType: string, keyValue: string) => {
     try {
       await updateUserSSHPublicKeyMutation({
         variables: {
@@ -67,11 +70,14 @@ const SettingsPage = ({ queryRef }: { queryRef: QueryRef<SettingsData> }) => {
       });
     } catch (err) {
       console.error(err);
-      trigger({ content: (err as ApolloError).message, title: 'There was a problem updating SSH key' });
+      toast.error('There was a problem updating SSH key', {
+        id: 'cancel_error',
+        description: (err as ApolloError).message,
+      });
     }
   };
 
-  const addFn = async (keyName: string, keyValue: string) => {
+  const addKey = async (keyName: string, keyValue: string) => {
     try {
       await addUserSSHPublicKeyMutation({
         variables: {
@@ -88,32 +94,60 @@ const SettingsPage = ({ queryRef }: { queryRef: QueryRef<SettingsData> }) => {
       });
     } catch (err) {
       console.error(err);
-      trigger({ content: (err as ApolloError).message, title: 'There was a problem adding a new SSH key' });
+      toast.error('There was a problem adding a new SSH key', {
+        id: 'cancel_error',
+        description: (err as ApolloError).message,
+      });
     }
   };
 
+  const columns = useMemo(
+    () =>
+      renderTableColumns(
+        { action: editKey, loading: updateLoading },
+        { action: deleteKey, loading: deleteLoading },
+        refetch
+      ),
+    [editKey, deleteKey, updateLoading, deleteLoading, refetch]
+  );
+
   return (
     <>
-      {contextHolder}
-      <Head2>SSH Keys</Head2>
-      <SshTable
-        sshKeys={me.sshKeys}
-        refetch={refetch}
-        deleteKey={{
-          delete: deleteFn,
-          data: deleteData,
-          loading: deleteLoading,
-        }}
-        updateKey={{
-          update: updateFn,
-          data: updateData,
-          loading: updateLoading,
-        }}
-        addNewKey={{
-          add: addFn,
-          loading: addLoading,
-        }}
-      />
+      <SectionWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">SSH Keys</h3>
+        <DataTable columns={columns} data={me.sshKeys} searchableColumns={['name', 'keyType', 'keyFingerprint']} />
+
+        <Sheet
+          sheetTrigger="Add New Key"
+          sheetTitle="Add a SSH Key"
+          sheetFooterButton="Save"
+          sheetDescription=""
+          loading={addLoading}
+          error={false}
+          additionalContent={null}
+          sheetFields={[
+            {
+              id: 'key_name',
+              label: 'Key Name',
+              placeholder: 'Enter a name for the variable',
+              required: true,
+            },
+            {
+              id: 'key_value',
+              label: 'Key Value',
+              required: true,
+              placeholder:
+                "Begins with 'ssh-rsa', 'ssh-ed25519', 'ecdsa-sha2-nistp256', 'ecdsa-sha2-nistp384', 'ecdsa-sha2-nistp521'",
+              type: 'textarea',
+            },
+          ]}
+          buttonAction={(_, { key_name, key_value }) => {
+            addKey(key_name, key_value).finally(() => {
+              refetch();
+            });
+          }}
+        />
+      </SectionWrapper>
     </>
   );
 };

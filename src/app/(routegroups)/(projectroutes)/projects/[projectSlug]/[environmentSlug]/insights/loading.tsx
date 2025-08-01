@@ -1,35 +1,18 @@
 'use client';
 
-import { InsightsPageWrapper } from '@/components/pages/insights/_components/styles';
-import { Collapse, Head3, Table } from '@uselagoon/ui-library';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { FactsTableColumns, InsightsTableColumns } from '@/components/pages/insights/DataTableColumns';
+import { DataTable } from '@uselagoon/ui-library';
 
-const { FactsTable, InsightsTable } = Table;
 export default function Loading() {
   return (
-    <InsightsPageWrapper>
-      <Collapse
-        type="default"
-        borderless
-        items={[
-          {
-            children: <FactsTable skeleton />,
-            key: 'facts',
-            label: <Head3>Facts</Head3>,
-          },
-        ]}
-      />
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Facts</h3>
+      <DataTable loading columns={FactsTableColumns} data={[]} />
 
-      <Collapse
-        type="default"
-        borderless
-        items={[
-          {
-            children: <InsightsTable skeleton />,
-            key: 'insights',
-            label: <Head3>Insights</Head3>,
-          },
-        ]}
-      />
-    </InsightsPageWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight my-4">Facts</h3>
+
+      <DataTable loading columns={InsightsTableColumns} data={[]} />
+    </SectionWrapper>
   );
 }

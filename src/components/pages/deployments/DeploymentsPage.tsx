@@ -4,23 +4,17 @@ import { startTransition, useEffect } from 'react';
 
 import { usePathname } from 'next/navigation';
 
-import {
-  Deployment,
-  DeploymentsData,
-} from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/deployments/(deployments-page)/page';
+import { DeploymentsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/deployments/(deployments-page)/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Select, Table } from '@uselagoon/ui-library';
-import dayjs from 'dayjs';
+import { DataTable, DateRangePicker, SelectWithOptions, Table } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import CancelDeployment from '../../cancelDeployment/CancelDeployment';
-import CustomRangePicker from '../../datepicker/DatePicker';
 import DeployLatest from './_components/DeployLatest';
+import getDeploymentTableColumns from './_components/TableColumns';
 import { deploymentResultOptions, statusOptions } from './_components/filterValues';
-import { DeploymentsFilters } from './_components/styles';
-
-const { DeploymentsTable } = Table;
 
 export default function DeploymentsPage({
   queryRef,
@@ -31,25 +25,10 @@ export default function DeploymentsPage({
 }) {
   const pathname = usePathname();
 
-  const [{ results, range, status }, setQuery] = useQueryStates({
+  const [{ results }, setQuery] = useQueryStates({
     results: {
       defaultValue: undefined,
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : undefined),
-    },
-    range: {
-      defaultValue: undefined,
-      parse: (value: string | undefined) => {
-        if (value !== undefined) {
-          // format like "2024-11-07,2024-11-07"
-          const parsedRange = value.split(',').map(dateStr => dayjs(dateStr.trim()).format('YYYY-MM-DD'));
-          return parsedRange.length === 2 ? parsedRange : undefined;
-        }
-        return undefined;
-      },
-    },
-    status: {
-      defaultValue: undefined,
-      parse: (value: string | undefined) => value as Deployment['status'],
     },
   });
 
@@ -79,53 +58,64 @@ export default function DeploymentsPage({
     }
   }, [environment.deployments, refetch]);
 
-  const handleRangeChange = (dates: [dayjs.Dayjs | null, dayjs.Dayjs | null] | null) => {
-    if (dates) {
-      const formattedRange = dates
-        .filter(Boolean) // remove falsy values
-        .map(date => date!.format('YYYY-MM-DD'));
-      setQuery({ range: formattedRange });
-    } else {
-      setQuery({ range: null });
-    }
-  };
-
   return (
-    <>
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Deployments</h3>
+      <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+        View previous deployments or trigger a new one
+      </span>
+
       <DeployLatest environment={environment} refetch={refetch} />
 
-      <DeploymentsFilters>
-        <Select
-          data-cy="select-results"
-          options={deploymentResultOptions}
-          value={results}
-          defaultOpen={false}
-          placeholder="Number of results"
-          onSelect={val => {
-            setQuery({ results: val });
-          }}
-        />
-        <Select
-          data-cy="select-status"
-          options={statusOptions}
-          defaultOpen={false}
-          value={status}
-          placeholder="Status"
-          onSelect={val => {
-            setQuery({ status: val });
-          }}
-        />
-
-        <CustomRangePicker range={range} handleRangeChange={handleRangeChange} />
-      </DeploymentsFilters>
-      <DeploymentsTable
-        filterDateRange={range}
-        filterStatus={status ?? undefined}
-        deployments={environment.deployments}
-        basePath={pathname}
-        resultsPerPage={results ?? undefined}
-        cancelDeployment={(deployment: Deployment) => <CancelDeployment deployment={deployment} />}
+      <DataTable
+        columns={getDeploymentTableColumns(pathname)}
+        data={environment.deployments}
+        initialPageSize={results || 10}
+        searchPlaceholder="Search by deployment"
+        searchableColumns={['name', 'status']}
+        renderFilters={table => (
+          <div className="flex gap-2 items-baseline">
+            <DateRangePicker
+              onUpdate={values => {
+                const createdAtColumn = table.getColumn('created');
+                if (createdAtColumn) {
+                  if (values.range.from && values.range.to) {
+                    createdAtColumn.setFilterValue(values.range);
+                  } else {
+                    createdAtColumn.setFilterValue(undefined);
+                  }
+                }
+              }}
+              showCompare={false}
+              align="center"
+              rangeText="Deployment dates"
+            />
+            <SelectWithOptions
+              options={statusOptions}
+              width={100}
+              placeholder="Filter by status"
+              onValueChange={newVal => {
+                const statusColumn = table.getColumn('status');
+                if (statusColumn && newVal != 'all') {
+                  statusColumn.setFilterValue(newVal);
+                } else {
+                  statusColumn?.setFilterValue(undefined);
+                }
+              }}
+            />
+            <SelectWithOptions
+              options={deploymentResultOptions}
+              width={100}
+              value={String(results || 10)}
+              placeholder="Results per page"
+              onValueChange={newVal => {
+                table.setPageSize(Number(newVal));
+                setQuery({ results: Number(newVal) });
+              }}
+            />
+          </div>
+        )}
       />
-    </>
+    </SectionWrapper>
   );
 }

@@ -1,11 +1,9 @@
 'use client';
 
-import { SetStateAction } from 'react';
-
-// import { LagoonFilter, Table } from '@uselagoon/ui-library';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import AlldeploymentsTableColumns from '@/components/pages/allDeployments/TableColumns';
+import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
-
-// const { AllDeploymentsTable } = Table;
 
 export default function Loading() {
   const [{ results, search }, setQuery] = useQueryStates({
@@ -27,32 +25,44 @@ export default function Loading() {
   };
   return (
     <>
-      <LagoonFilter
-        searchOptions={{
-          searchText: search || '',
-          setSearchText: setSearch as React.Dispatch<SetStateAction<string>>,
-        }}
-        selectOptions={{
-          options: [
-            {
-              value: 10,
-              label: '10 Results per page',
-            },
-            {
-              value: 20,
-              label: '20 Results per page',
-            },
-            {
-              value: 50,
-              label: '50 Results per page',
-            },
-          ],
-          selectedState: results,
-          setSelectedState: setResults as React.Dispatch<SetStateAction<unknown>>,
-        }}
-      />
-
-      <AllDeploymentsTable skeleton />
+      <SectionWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">All Deployments</h3>
+        <DataTable
+          loading
+          columns={AlldeploymentsTableColumns}
+          data={[]}
+          searchableColumns={['project_name', 'status', 'priority', 'name', 'openshift_name', 'environment_name']}
+          searchPlaceholder="Search deployments"
+          onSearch={searchStr => setSearch(searchStr)}
+          initialSearch={search}
+          initialPageSize={results}
+          renderFilters={table => (
+            <SelectWithOptions
+              options={[
+                {
+                  label: '10 results per page',
+                  value: 10,
+                },
+                {
+                  label: '20 results per page',
+                  value: 20,
+                },
+                {
+                  label: '50 results per page',
+                  value: 50,
+                },
+              ]}
+              width={100}
+              value={String(results)}
+              placeholder="Results per page"
+              onValueChange={newVal => {
+                table.setPageSize(Number(newVal));
+                setResults(newVal);
+              }}
+            />
+          )}
+        />
+      </SectionWrapper>
     </>
   );
 }

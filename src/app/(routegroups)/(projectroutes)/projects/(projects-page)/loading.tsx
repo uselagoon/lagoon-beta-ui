@@ -1,8 +1,8 @@
 'use client';
 
-import BreadcrumbWithSearch from '@/components/breadcrumbWithSearch/BreadcrumbWithSearch';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { ProjectBreadcrumbs } from '@/components/breadcrumbs/ProjectBreadcrumbs';
 import ProjectsTableColumns from '@/components/pages/projects/DataTableColumns';
-import TableWrapper from '@/components/tableWrapper/TableWrapper';
 import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
@@ -27,8 +27,8 @@ export default function Loading() {
 
   return (
     <>
-      <BreadcrumbWithSearch />
-      <TableWrapper>
+      <ProjectBreadcrumbs />
+      <SectionWrapper>
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Projects</h3>
         <Button className="px-0" variant="link">
           View all projects
@@ -67,7 +67,7 @@ export default function Loading() {
             />
           )}
         />
-      </TableWrapper>
+      </SectionWrapper>
     </>
   );
 }

@@ -1,8 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
-import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
-
-import { ScrollButton, StyledScrollableLog } from './styles';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
@@ -40,20 +38,26 @@ const ScrollableLog: React.FC<Props> = ({ children }) => {
     logsEndRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
   return (
-    <StyledScrollableLog ref={parentRef}>
+    <div className="relative p-2 border-2 rounded-sm" ref={parentRef}>
       {showButtons && (
-        <ScrollButton ref={logsTopRef} style={{ top: 0 }}>
-          <ArrowDownOutlined className="scroll-icon" onClick={scrollToBottom} />
-        </ScrollButton>
+        <div
+          className="absolute right-5 top-5 translate-x-2 rounded-full w-[30px] h-[30px] flex justify-center items-center "
+          ref={logsTopRef}
+        >
+          <ArrowDown className="text-lg cursor-pointer rounded" onClick={scrollToBottom} />
+        </div>
       )}
 
       {children}
       {showButtons && (
-        <ScrollButton ref={logsEndRef} style={{ bottom: 0 }}>
-          <ArrowUpOutlined className="scroll-icon" onClick={scrollToTop} />
-        </ScrollButton>
+        <div
+          className="absolute right-5 bottom-5 translate-x-2 rounded-full w-[30px] h-[30px] flex justify-center items-center "
+          ref={logsEndRef}
+        >
+          <ArrowUp className="text-lg cursor-pointer rounded" onClick={scrollToTop} />
+        </div>
       )}
-    </StyledScrollableLog>
+    </div>
   );
 };
 

@@ -37,7 +37,7 @@ export default async function RootLayout({
   // ref for exposing custom variables at runtime: https://github.com/expatfile/next-runtime-env/blob/development/docs/EXPOSING_CUSTOM_ENV.md
   noStore();
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <PublicRuntimeEnvProvider>
         <head>
           <Plugins hook="head" nonce={nonce} />

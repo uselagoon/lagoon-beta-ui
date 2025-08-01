@@ -1,19 +1,16 @@
 'use client';
 
-import { SetStateAction } from 'react';
+import { usePathname } from 'next/navigation';
 
-import { envFilterValues } from '@/components/pages/environments/_components/filterValues';
-import { StyledEnvironmentsWrapper } from '@/components/pages/environments/styles';
-import { LagoonCard, LagoonFilter, Table } from '@uselagoon/ui-library';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import getProjectEnvsTableColumns from '@/components/pages/environments/ProjectEnvsTableColumns';
+import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-const { EnvironmentsTable } = Table;
 export default function Loading() {
-  const numberOfLoaders = Math.floor((window.innerHeight * 8) / 10 / 80);
+  const pathname = usePathname();
 
-  const renderCard = (key: number) => <LagoonCard type="loaderOnly" key={`loader-card-${key}`} />;
-
-  const [{ search, env_count, view }, setQuery] = useQueryStates({
+  const [{ search, env_count }, setQuery] = useQueryStates({
     search: {
       defaultValue: '',
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
@@ -22,15 +19,6 @@ export default function Loading() {
     env_count: {
       defaultValue: 5,
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : 5),
-    },
-    view: {
-      defaultValue: 'card',
-      parse: (value: string | undefined) => {
-        if (value === 'list') {
-          return 'list';
-        }
-        return 'card'; // default to 'card' for undefined or any value other than 'list'
-      },
     },
   });
 
@@ -41,29 +29,49 @@ export default function Loading() {
     setQuery({ env_count: Number(val) });
   };
 
-  const loaderToRender =
-    view === 'card' ? (
-      <StyledEnvironmentsWrapper>
-        {[...Array<undefined>(numberOfLoaders)].map((_, idx) => renderCard(idx))}
-      </StyledEnvironmentsWrapper>
-    ) : (
-      <EnvironmentsTable skeleton />
-    );
   return (
     <>
-      <LagoonFilter
-        searchOptions={{
-          searchText: search || '',
-          setSearchText: setSearch as React.Dispatch<SetStateAction<string>>,
-        }}
-        selectOptions={{
-          options: envFilterValues,
-          selectedState: env_count,
-          setSelectedState: setEnvCount as React.Dispatch<SetStateAction<unknown>>,
-        }}
-      />
+      <SectionWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Environments</h3>
+        <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+          A list of all available environments for this project
+        </span>
 
-      <EnvironmentsTable skeleton />
+        <DataTable
+          loading
+          columns={getProjectEnvsTableColumns(pathname)}
+          data={[]}
+          searchableColumns={['title', 'region', 'deployType']}
+          onSearch={searchStr => setSearch(searchStr)}
+          initialSearch={search}
+          initialPageSize={env_count}
+          renderFilters={table => (
+            <SelectWithOptions
+              options={[
+                {
+                  label: '5 results per page',
+                  value: 5,
+                },
+                {
+                  label: '10 results per page',
+                  value: 10,
+                },
+                {
+                  label: '20 results per page',
+                  value: 20,
+                },
+              ]}
+              width={100}
+              value={String(env_count)}
+              placeholder="Results per page"
+              onValueChange={newVal => {
+                table.setPageSize(Number(newVal));
+                setEnvCount(newVal);
+              }}
+            />
+          )}
+        />
+      </SectionWrapper>
     </>
   );
 }

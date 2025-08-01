@@ -9,7 +9,7 @@ import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import {Breadcrumb, DetailStat, TabNavigation} from '@uselagoon/ui-library';
 import { usePathname, useRouter } from 'next/navigation';
 import { Description } from './_components/Description';
-import TableWrapper from "@/components/tableWrapper/TableWrapper";
+import SectionWrapper from "@/components/SectionWrapper/SectionWrapper";
 import Link from "next/link";
 import React from "react";
 import {organizationNavItems} from '../../../shared/organizationNavItems';
@@ -143,7 +143,7 @@ export default function OrganizationPage({
         ]}
       />
       <TabNavigation items={navItems} pathname={path} onTabNav={(key) => router.push(`${key}`)}></TabNavigation>
-      <TableWrapper>
+      <SectionWrapper>
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>
       <p>Key information about your organization</p>
       <Description
@@ -163,7 +163,7 @@ export default function OrganizationPage({
             <DetailStat title={item.label} value={item.children} lowercaseValue={item.lowercaseValue} key={item.key} capitalizeValue={item.capitalizeValue}  />
         ))}
       </div>
-      </TableWrapper>
+      </SectionWrapper>
     </>
   );
 }

@@ -1,10 +1,9 @@
 import React, { FC, Fragment, useRef } from 'react';
 
-import { CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Collapse, Colors } from '@uselagoon/ui-library';
+import { Accordion } from '@uselagoon/ui-library';
+import { CircleAlert, CircleCheck, CircleX } from 'lucide-react';
 
 import ScrollableLog from './_components/ScrollableLog';
-import { AccordionTitle, StyledLogs } from './styles';
 
 interface SectionMetadata {
   get: (key: string) => [string, boolean] | undefined;
@@ -52,10 +51,10 @@ const LogViewer: FC<LogViewerProps> = ({
   taskDuration = null,
 }) => (
   <React.Fragment>
-    <StyledLogs className="logs">
+    <section className="logs">
       {logs !== null ? (
         showParsed ? (
-          <div className="log-viewer">
+          <div className="text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all">
             {logPreprocessor(
               logs,
               status,
@@ -67,12 +66,16 @@ const LogViewer: FC<LogViewerProps> = ({
             )}
           </div>
         ) : (
-          <div className="log-viewer with-padding">{logs}</div>
+          <div className="text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all p-[10px]">
+            {logs}
+          </div>
         )
       ) : (
-        <div className="log-viewer with-padding">Logs are not available.</div>
+        <div className="text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all p-[10px]">
+          Logs are not available.
+        </div>
       )}
-    </StyledLogs>
+    </section>
   </React.Fragment>
 );
 
@@ -117,7 +120,11 @@ const logPreprocessor = (
     console.log('Error processing logs for display: ' + e);
     return (
       <div className="processed-logs" data-cy="processed-logs">
-        <div key="logerror" className="log-text" data-cy="log-text">
+        <div
+          key="logerror"
+          className="log-text text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all"
+          data-cy="log-text"
+        >
           {logs}
         </div>
       </div>
@@ -155,7 +162,11 @@ const LogNodeRenderer: React.FC<{
 
   if (node.type === 'log-text') {
     return (
-      <div key={node.key} ref={logsContentRef} className="log-text">
+      <div
+        key={node.key}
+        ref={logsContentRef}
+        className="log-text text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all"
+      >
         {node.text}
       </div>
     );
@@ -163,15 +174,15 @@ const LogNodeRenderer: React.FC<{
   if (node.type === 'section') {
     let classes = ['data-row', 'row-heading'];
     if (errorState) {
-      classes.push('log-error-state');
+      classes.push('log-error-state bg-[#f926721a]');
     }
 
     const hasWarning = !!node.metadata[1];
     if (hasWarning) {
-      classes.push('log-warning-state');
+      classes.push('log-warning-state bg-[#fd971f1a]');
       // also add a classname if we don't want warning highlighting
       if (!highlightWarnings) {
-        classes.push('log-highlight-disabled');
+        classes.push('log-highlight-disabled !bg-transparent');
       }
     }
 
@@ -190,42 +201,33 @@ const LogNodeRenderer: React.FC<{
 
     const isSuccessfulStep = !(classes.includes('log-warning-state') || classes.includes('log-error-state'));
 
-    const accordion = (
-      <Collapse
-        bordered={false}
-        className="log-accordion"
-        useArrowIcons
-        size="small"
-        type="default"
-        defaultActiveKey={visible || hasWarning ? [node.key] : []}
-        icon={
-          errorState ? (
-            <CloseCircleOutlined style={{ color: Colors.pink }} />
-          ) : hasWarning ? (
-            <ExclamationCircleOutlined style={{ color: Colors.orange }} />
-          ) : (
-            <CheckCircleOutlined style={{ color: Colors.green }} />
-          )
-        }
-        ref={logsContentRef}
-        items={[
-          {
-            children: (
-              <ScrollableLog>
-                <div className={classes.join(' ')}>{nodeChildren}</div>
-              </ScrollableLog>
-            ),
+    const accordionItems = [
+      {
+        id: String(node.key),
+        trigger: (
+          <div className="flex items-center gap-2">
+            {errorState ? (
+              <CircleX className="text-red-400" />
+            ) : hasWarning ? (
+              <CircleAlert className="text-orange-400" />
+            ) : (
+              <CircleCheck />
+            )}
+            <section className=" text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all">
+              {node.details} {node.metadata && node.metadata[0] ? node.metadata[0] : ''}
+            </section>
+          </div>
+        ),
 
-            key: node.key,
-            label: (
-              <AccordionTitle>
-                {node.details} {node.metadata && node.metadata[0] ? node.metadata[0] : ''}
-              </AccordionTitle>
-            ),
-          },
-        ]}
-      />
-    );
+        content: (
+          <ScrollableLog>
+            <div className={classes.join(' ')}>{nodeChildren}</div>
+          </ScrollableLog>
+        ),
+      },
+    ];
+
+    const accordion = <Accordion type="multiple" items={accordionItems} />;
 
     if (showSuccessSteps) {
       return accordion;

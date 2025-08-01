@@ -1,7 +1,7 @@
 export const scopeOptions = [
   {
-    label: 'Scope',
-    value: null,
+    label: 'All',
+    value: 'all',
   },
   {
     label: 'Build',
@@ -26,23 +26,15 @@ export const scopeOptions = [
 ];
 export const sortOptions = [
   {
-    label: 'Sort by',
-    value: null,
+    label: '10 results per page',
+    value: 10,
   },
   {
-    label: 'Name asc',
-    value: 'name_asc',
+    label: '20 results per page',
+    value: 20,
   },
   {
-    label: 'Name desc',
-    value: 'name_desc',
-  },
-  {
-    label: 'Scope asc',
-    value: 'scope_asc',
-  },
-  {
-    label: 'Scope asc',
-    value: 'scope_desc',
+    label: '50 results per page',
+    value: 50,
   },
 ];

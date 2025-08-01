@@ -1,24 +1,16 @@
 import { FC, startTransition, useState } from 'react';
 
+import { EnvVariable } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
 import deleteEnvVariableByName from '@/lib/mutation/deleteEnvVariableByName';
-import { DeleteOutlined } from '@ant-design/icons';
 import { useMutation } from '@apollo/client';
-import { FormItem, Input, Modal, Text } from '@uselagoon/ui-library';
-import { Variable } from '@uselagoon/ui-library/dist/components/Table/VariablesTable/VariablesTable';
-import { Form, Tooltip } from 'antd';
-import { useForm } from 'antd/es/form/Form';
+import { Button, Input, Label, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
-import {
-  ContentWrapper,
-  DeleteVariableButton,
-  FormItemWrapper,
-  Highlighted,
-  ModalWrapper,
-  NewVariableTitle,
-} from '../pages/projectVariables/_components/styles';
+import { HighlightedText } from '../cancelDeployment/styles';
 
 type Props = {
-  currentEnv: Variable;
+  currentEnv: EnvVariable;
   refetch: () => void;
   onClick?: () => any;
 } & (
@@ -37,70 +29,39 @@ type Props = {
     }
 );
 
-export const DeleteVariableModal: FC<Props> = ({ currentEnv, refetch, type, onClick, ...rest }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [deleteVariableForm] = useForm();
-  const [confirmDisabled, setConfirmDisabled] = useState(true);
+export const DeleteVariableDialog: FC<Props> = ({ currentEnv, refetch, type, onClick, ...rest }) => {
+  const [inputValue, setInputValue] = useState('');
 
   const [deleteVariableMutation, { loading }] = useMutation(deleteEnvVariableByName, {
     onError: err => {
       console.error(err);
+      toast.error('Error deleting variable', { id: 'cancel_error', description: err.message });
     },
   });
 
   let envName = '';
   let orgName = '';
-  let projectName = '';
+  let projName = '';
 
   if (type === 'project') {
-    projectName = (rest as { projectName: string }).projectName;
+    projName = (rest as { projectName: string }).projectName;
   }
 
   if (type === 'environment') {
     envName = (rest as { environmentName: string }).environmentName;
+    projName = (rest as { projectName: string }).projectName;
   }
 
   if (type === 'organization') {
     orgName = (rest as { orgName: string }).orgName;
   }
 
-  const modalContent = (
-    <ContentWrapper>
-      <div className="inputs">
-        <Form
-          form={deleteVariableForm}
-          onFieldsChange={() => {
-            const confirmValue = deleteVariableForm.getFieldValue('variable_name');
-            setConfirmDisabled(!(confirmValue === currentEnv.name));
-          }}
-        >
-          <Text>
-            Confirm the name of the variable <Highlighted>{currentEnv.name}</Highlighted> to delete
-          </Text>
-          <FormItemWrapper>
-            <div className="variable-wrap">
-              <FormItem
-                className="vertical-form-item"
-                required
-                rules={[{ required: true, message: '' }]}
-                label="Variable name"
-                name="variable_name"
-              >
-                <Input data-cy="delete-confirm" placeholder="Variable Name" />
-              </FormItem>
-            </div>
-          </FormItemWrapper>
-        </Form>
-      </div>
-    </ContentWrapper>
-  );
-
   const deleteVariable = (name: string) => {
     return deleteVariableMutation({
       variables: {
         input: {
           ...(orgName ? { organization: orgName } : {}),
-          ...(projectName ? { project: projectName } : {}),
+          ...(projName ? { project: projName } : {}),
           ...(envName ? { environment: envName } : {}),
           name,
         },
@@ -108,51 +69,55 @@ export const DeleteVariableModal: FC<Props> = ({ currentEnv, refetch, type, onCl
     });
   };
 
-  const handleCancel = () => {
-    setModalOpen(false);
-    deleteVariableForm.resetFields();
-  };
-
-  const handleCreateVariable = () => {
-    const { variable_name } = deleteVariableForm.getFieldsValue();
+  const handleDeleteVariable = (variable_name: string) => {
+    if (confirmDisabled) return;
 
     deleteVariable(variable_name).then(() => {
       startTransition(async () => {
         await refetch();
-        handleCancel();
       });
     });
   };
 
+  const confirmDisabled = inputValue !== currentEnv.name || loading;
+
   return (
     <>
-      <DeleteVariableButton
-        data-cy="delete-button"
-        onClick={async () => {
-          let permissionResponse = onClick ? await onClick() : {};
-          if (!permissionResponse?.error) {
-            setModalOpen(true);
-          }
-        }}
-      >
-        <Tooltip placement="bottom" title="Delete variable">
-          <DeleteOutlined />
-        </Tooltip>
-      </DeleteVariableButton>
-      <Modal
-        title={<NewVariableTitle>Delete a variable</NewVariableTitle>}
-        open={modalOpen}
-        destroyOnClose
+      <Notification
+        title="Delete a variable"
+        message={
+          <>
+            Confirm the name of the variable <HighlightedText>{currentEnv.name}</HighlightedText> to delete
+            <div className="grid gap-2">
+              <Label htmlFor="variable_name" className="sr-only">
+                Variable name
+              </Label>
+              <Input label="" id="variable_name" value={inputValue} onChange={e => setInputValue(e.target.value)} />
+            </div>
+          </>
+        }
         cancelText="Cancel"
         confirmText="Delete"
-        onCancel={handleCancel}
-        onOk={handleCreateVariable}
-        confirmLoading={loading}
         confirmDisabled={confirmDisabled}
-        dangerConfirm
+        onConfirm={() => handleDeleteVariable(inputValue)}
       >
-        <ModalWrapper>{modalContent}</ModalWrapper>
-      </Modal>
+        <Button
+          variant="outline"
+          onClick={async () => {
+            let permissionResponse = onClick ? await onClick() : {};
+            if (permissionResponse?.error) {
+            }
+          }}
+          disabled={loading}
+        >
+          <Tooltip>
+            <TooltipTrigger>
+              <Trash2 data-cy="delete-variable" />
+            </TooltipTrigger>
+            <TooltipContent>Delete variable</TooltipContent>
+          </Tooltip>
+        </Button>
+      </Notification>
     </>
   );
 };

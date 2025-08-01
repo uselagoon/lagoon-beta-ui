@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-import { BreadCrumb } from '@uselagoon/ui-library';
+import { Breadcrumb, Input } from '@uselagoon/ui-library';
 
 export const ProjectBreadcrumbs = () => {
   const { projectSlug, environmentSlug } = useParams<{ projectSlug: string; environmentSlug: string }>();
@@ -35,5 +35,10 @@ export const ProjectBreadcrumbs = () => {
       : []),
   ];
 
-  return <BreadCrumb activeKey={activeKey} items={breadcrumbItems} type="default" />;
+  return (
+    <div className="flex justify-between items-baseline">
+      <Breadcrumb activeKey={activeKey} items={breadcrumbItems} type="default" />
+      <Input className="-translate-y-6" placeholder="Search" label="" />
+    </div>
+  );
 };

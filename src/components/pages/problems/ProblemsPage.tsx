@@ -1,16 +1,17 @@
 'use client';
 
+import { useState } from 'react';
+
 import {
   Problem,
   ProblemsData,
 } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/problems/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import { QueryRef, useReadQuery } from '@apollo/client';
-import { Collapse, Colors, Head3, LagoonProblemsOverview, Table } from '@uselagoon/ui-library';
+import { DataTable, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@uselagoon/ui-library';
 
-import { ProblemsWrapper } from './_components/styles';
-
-const { ProblemsTable } = Table;
+import ProblemsColumns from './ProblemsTableColumns';
 
 enum ProblemSeverityRating {
   NONE,
@@ -47,72 +48,38 @@ export default function ProblemsPage({
   const lowProblems = filterBySeverity(problems, 'LOW');
 
   // const dismissedProblems = problems.filter(problem => problem.deleted === '0000-00-00 00:00:00');
-
+  // TODO: whenever dismissal is implemented
   const dismissedProblems = [] as Problem[];
+
+  const allProblemsSorted = [...criticalProblems, ...highProblems, ...mediumProblems, ...lowProblems];
+
+  const [selectedProblemId, setSelectedProblemId] = useState<number | null>(null);
+
+  const selectedProblem = allProblemsSorted.find(problem => problem.id === selectedProblemId);
+
+  const handleSelectProblem = (id: number) => {
+    id && setSelectedProblemId(id);
+  };
   return (
-    <>
-      <ProblemsWrapper>
-        <Collapse
-          type="default"
-          customBorder={Colors.pink}
-          borderless
-          items={[
-            {
-              children: <ProblemsTable problems={criticalProblems} />,
-              key: 'critical',
-              label: <Head3>Critical Problems ({criticalProblems.length})</Head3>,
-            },
-          ]}
-        />
-        <Collapse
-          type="default"
-          customBorder={Colors.orange}
-          borderless
-          items={[
-            {
-              children: <ProblemsTable problems={highProblems} />,
-              key: 'high',
-              label: <Head3>High Rated Problems ({highProblems.length})</Head3>,
-            },
-          ]}
-        />
-        <Collapse
-          type="default"
-          customBorder={Colors.yellow}
-          borderless
-          items={[
-            {
-              children: <ProblemsTable problems={mediumProblems} />,
-              key: 'medium',
-              label: <Head3>Medium Rated Problems ({mediumProblems.length})</Head3>,
-            },
-          ]}
-        />
-        <Collapse
-          type="default"
-          customBorder={Colors.blue}
-          borderless
-          items={[
-            {
-              children: <ProblemsTable problems={lowProblems} />,
-              key: 'low',
-              label: <Head3>Low Rated Problems ({lowProblems.length})</Head3>,
-            },
-          ]}
-        />
-        <Collapse
-          type="default"
-          customBorder={Colors.white}
-          borderless
-          items={[
-            {
-              children: <ProblemsTable problems={dismissedProblems} />,
-              key: 'dismissed',
-              label: <Head3>Dismissed Problems ({dismissedProblems.length})</Head3>,
-            },
-          ]}
-        />
-      </ProblemsWrapper>
-    </>
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Problems</h3>
+      <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+        Problems are generated from SBOM data extracted for the underlying services and system
+      </span>
+
+      <DataTable data={allProblemsSorted} columns={ProblemsColumns(handleSelectProblem)} />
+
+      <Dialog open={Boolean(selectedProblem)} onOpenChange={() => setSelectedProblemId(null)}>
+        <DialogContent className="w-[80vw]">
+          <DialogHeader>
+            <DialogTitle>Problem overview</DialogTitle>
+            <DialogDescription>Details for {selectedProblem?.identifier}</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="col-span-3">{selectedProblem?.description}</div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </SectionWrapper>
   );
 }

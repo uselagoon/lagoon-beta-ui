@@ -6,9 +6,17 @@ import {
 } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
 import invokeRegisteredTask from '@/lib/mutation/tasks/invokeRegisteredTask';
 import { useMutation } from '@apollo/client';
-import { Button, Confirm, Input, Select, useNotification } from '@uselagoon/ui-library';
-
-import { SelectEnv } from '../styles';
+import {
+  Button,
+  Input,
+  Notification,
+  SelectWithOptions,
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@uselagoon/ui-library';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export type AdvancedTaskType = {
   id: number;
@@ -27,23 +35,18 @@ interface Props {
 const InvokeRegisteredTask: FC<Props> = ({ environment, advancedTask, refetch }) => {
   const [advancedTaskArguments, setAdvancedTaskArguments] = useState<Record<string, any>>({});
 
-  const [invokeRegisteredTaskMutation, { loading, error }] = useMutation(invokeRegisteredTask, {
+  const [invokeRegisteredTaskMutation, { loading }] = useMutation(invokeRegisteredTask, {
     onError: err => {
       console.error(err);
-      trigger({ content: err.message });
+      toast.error('There was a problem running drush archive-dump', {
+        id: 'cancel_error',
+        description: (err as { message: string })?.message,
+      });
     },
     variables: {
       environment: environment.id,
     },
     refetchQueries: ['getEnvironment'],
-  });
-
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: 'There was a problem running drush archive-dump.',
-    placement: 'top',
-    duration: 0,
-    content: error?.message,
   });
 
   const handleAdvancedTask = async () => {
@@ -109,33 +112,34 @@ const InvokeRegisteredTask: FC<Props> = ({ environment, advancedTask, refetch })
           case 'ENVIRONMENT_SOURCE_NAME':
           case 'ENVIRONMENT_SOURCE_NAME_EXCLUDE_SELF':
             return (
-              <SelectEnv key={`env-text-${index}`}>
-                <label id="source-env">{arg.displayName || arg.name}:</label>
-                <Select
+              <div className='className="flex flex-col max-w-[40%] gap-3"' key={`env-text-${index}`}>
+                <label className="leading-6" id="source-env">
+                  {arg.displayName || arg.name}:
+                </label>
+                <SelectWithOptions
                   aria-labelledby={arg.name}
                   placeholder="Select environment..."
-                  value={{
-                    label: advancedTaskArguments[arg.name],
-                    value: advancedTaskArguments[arg.name],
-                  }}
-                  onChange={selectedOption => {
+                  value={advancedTaskArguments[arg.name]}
+                  onValueChange={selectedOption => {
                     setAdvancedTaskArguments({
                       ...advancedTaskArguments,
-                      [arg.name]: selectedOption.value,
+                      [arg.name]: selectedOption,
                     });
                   }}
                   options={arg.range?.map(opt => ({ label: opt, value: opt }))}
                 />
-              </SelectEnv>
+              </div>
             );
 
           default:
             return (
-              <SelectEnv key={`env-text-${index}`}>
-                <label id="source-env">{arg.displayName || arg.name}:</label>
+              <div className="flex flex-col max-w-[40%] gap-3" key={`env-text-${index}`}>
+                <label className="leading-6" id="source-env">
+                  {arg.displayName || arg.name}:
+                </label>
                 <Input
+                  label=""
                   type="text"
-                  size="middle"
                   name={arg.name}
                   value={advancedTaskArguments[arg.name]}
                   onChange={event => {
@@ -145,7 +149,7 @@ const InvokeRegisteredTask: FC<Props> = ({ environment, advancedTask, refetch })
                     });
                   }}
                 />
-              </SelectEnv>
+              </div>
             );
         }
       })
@@ -158,39 +162,26 @@ const InvokeRegisteredTask: FC<Props> = ({ environment, advancedTask, refetch })
 
       {(advancedTask.confirmationText && (
         <>
-          <Confirm
-            cancelText="Cancel"
-            description={advancedTask.confirmationText}
-            okText="Confirm task"
-            onConfirm={handleAdvancedTask}
-            placement="right"
+          <Notification
             title="Confirm action"
+            message={advancedTask.confirmationText}
+            cancelText="Cancel"
+            confirmText="Confirm task"
+            onConfirm={handleAdvancedTask}
           >
-            <Button
-              testId="task-btn"
-              loading={loading}
-              className="task-btn"
-              size="middle"
-              disabled={!argumentVariablesHaveValues}
-            >
-              Run task
-            </Button>
-          </Confirm>
+            <Button disabled={loading}>{loading && <Loader2 className="animate-spin" />} Run task</Button>
+          </Notification>
         </>
       )) || (
         <Button
-          testId="task-btn"
-          className="task-btn"
-          size="middle"
+          className="mt-4"
+          data-cy="task-btn"
           disabled={(taskArgumentsExist && !argumentVariablesHaveValues) || loading}
-          loading={loading}
           onClick={handleAdvancedTask}
         >
-          Run task
+          {loading && <Loader2 className="animate-spin" />} Run task
         </Button>
       )}
-
-      <Fragment>{contextHolder}</Fragment>
     </>
   );
 };

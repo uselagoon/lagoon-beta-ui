@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 import { keyFactImageType } from '@/constants/keyFactImageMap';
-import { LoadingSkeleton } from '@uselagoon/ui-library';
+import { Skeleton } from '@uselagoon/ui-library';
 import styled from 'styled-components';
 
 import FactCard from './FactCard';
@@ -22,13 +22,13 @@ type Props = Loading | FactsProps;
 
 const KeyFacts: FC<Props> = ({ keyFacts, loading }) => {
   return (
-    <StyledKeyFacts>
-      <section>
+    <div className="flex flex-col w-full my-8">
+      <section className="w-full grid [grid-template-columns:repeat(auto-fit,_8.125rem)] grid-rows-auto gap-[0.8rem]">
         {loading ? (
           <>
-            <LoadingSkeleton width={130} height={100} />
-            <LoadingSkeleton width={130} height={100} />
-            <LoadingSkeleton width={130} height={100} />
+            <Skeleton className="w-[130px] h-24" />
+            <Skeleton className="w-[130px] h-24" />
+            <Skeleton className="w-[130px] h-24" />
           </>
         ) : (
           keyFacts.map(fact => {
@@ -36,23 +36,8 @@ const KeyFacts: FC<Props> = ({ keyFacts, loading }) => {
           })
         )}
       </section>
-    </StyledKeyFacts>
+    </div>
   );
 };
-
-const StyledKeyFacts = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-block: 2rem;
-
-  section {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, 8.125rem);
-    grid-template-rows: auto;
-    gap: 0.8rem;
-  }
-`;
 
 export default KeyFacts;

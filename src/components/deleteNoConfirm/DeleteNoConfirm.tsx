@@ -1,11 +1,10 @@
-import React, { FC, ReactNode, startTransition, useState } from 'react';
+import React, { FC, ReactNode, startTransition } from 'react';
 
-import { DeleteOutlined, DisconnectOutlined } from '@ant-design/icons';
-import { ApolloError } from '@apollo/client';
-import { Modal, Text, useNotification } from '@uselagoon/ui-library';
+import { Button, Label, Notification, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
 import { Tooltip } from 'antd';
+import { Trash, Unlink } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { ConfirmModalWrapper, ModalContent } from '../deleteConfirm/styles';
 import { capitalize } from '../utils';
 
 /**
@@ -32,24 +31,6 @@ const DeleteNoConfirm: FC<DeleteProps> = ({
   refetch,
   loading,
 }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: `There was a problem performing ${deleteType} on ${deleteItemType}.`,
-    placement: 'top',
-    duration: 0,
-    content: null,
-  });
-
-  const handleCancel = () => {
-    setModalOpen(false);
-  };
-
-  const openModal = () => {
-    setModalOpen(true);
-  };
-
   const confirmAction = async () => {
     try {
       await action();
@@ -57,46 +38,38 @@ const DeleteNoConfirm: FC<DeleteProps> = ({
       startTransition(() => {
         (refetch ?? (() => {}))();
       });
-      setModalOpen(false);
     } catch (err) {
       console.error(err);
-      trigger({ content: (err as ApolloError).message });
+      toast.error('Error', {
+        id: 'delete_error',
+        description: (err as { message: string })?.message,
+      });
     }
   };
 
   return (
-    <React.Fragment>
-      {contextHolder}
-
-      <Tooltip placement="bottom" title={`${capitalize(deleteType)} ${deleteItemType}`}>
-        {deleteType === 'delete' || deleteType === 'remove' ? (
-          <DeleteOutlined data-cy="delete-dialog" onClick={openModal} />
-        ) : (
-          <DisconnectOutlined data-cy="delete-dialog" onClick={openModal} />
-        )}
-      </Tooltip>
-
-      <Modal
-        title={<Text>{title}</Text>}
-        open={modalOpen}
-        destroyOnClose
-        cancelText="Cancel"
-        confirmText={deleteConfirmText ?? 'Confirm'}
-        onCancel={handleCancel}
-        onOk={confirmAction}
-        confirmLoading={loading}
-        dangerConfirm
-        styles={{
-          body: { minHeight: '120px' },
-        }}
-        style={{ top: 150 }}
-        width={500}
-      >
-        <ConfirmModalWrapper>
-          <ModalContent>{deleteMessage}</ModalContent>
-        </ConfirmModalWrapper>
-      </Modal>
-    </React.Fragment>
+    <Notification
+      title={title as string}
+      message={<>{deleteMessage}</>}
+      cancelText="Cancel"
+      confirmText={deleteConfirmText ?? 'Confirm'}
+      onConfirm={confirmAction}
+    >
+      <Button variant="outline" disabled={loading}>
+        <Tooltip>
+          <TooltipTrigger>
+            {deleteType === 'delete' || deleteType === 'remove' ? (
+              <Trash data-cy="delete-dialog" />
+            ) : (
+              <Unlink data-cy="delete-dialog" />
+            )}
+          </TooltipTrigger>
+          <TooltipContent>
+            {capitalize(deleteType)} {deleteItemType}
+          </TooltipContent>
+        </Tooltip>
+      </Button>
+    </Notification>
   );
 };
 
