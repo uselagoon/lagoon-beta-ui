@@ -31,13 +31,19 @@ const ProblemsColumns = (problemSelector?: (id: number) => void) =>
         );
       },
       cell: ({ row }) => {
+        const { description, identifier, id } = row.original;
         return (
-          <div
-            onClick={() => problemSelector && problemSelector(row.original.id)}
-            className="underline cursor-pointer hover:text-blue-800 transition-colors"
-          >
-            {row.original.identifier}
-          </div>
+          <Tooltip>
+            <TooltipContent className="max-w-[400px]">{description}</TooltipContent>
+            <TooltipTrigger>
+              <div
+                onClick={() => problemSelector && problemSelector(id)}
+                className="underline cursor-pointer hover:text-blue-800 transition-colors"
+              >
+                {identifier}
+              </div>
+            </TooltipTrigger>
+          </Tooltip>
         );
       },
     },
@@ -140,40 +146,6 @@ const ProblemsColumns = (problemSelector?: (id: number) => void) =>
           <>
             {associatedPackage}:{version}
           </>
-        );
-      },
-    },
-
-    {
-      accessorKey: 'description',
-      width: '20%',
-      sortingFn: (rowA, rowB, columnId) => {
-        const a = rowA.getValue(columnId) as string;
-        const b = rowB.getValue(columnId) as string;
-        return a.localeCompare(b);
-      },
-      header: ({ column }) => {
-        const sortDirection = column.getIsSorted();
-
-        return (
-          <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
-            Description
-            <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        const { description } = row.original;
-
-        return (
-          <Tooltip>
-            <TooltipContent className="max-w-[400px]">{description}</TooltipContent>
-            <TooltipTrigger>
-              <div className="max-h-[100px] overflow-hidden text-ellipsis line-clamp-4 leading-[1.25]">
-                {description}
-              </div>
-            </TooltipTrigger>
-          </Tooltip>
         );
       },
     },

@@ -59,8 +59,10 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         signOutFn={manualSignOut}
         currentPath={pathname}
       >
-        {children}
-        <Toaster />
+        <section className="my-6">
+          {children}
+          <Toaster />
+        </section>
       </RootLayout>
     </>
   );
