@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import AddGroupSheet from "@/components/createGroup/_components/AddGroupSheet";
+import AddGroupSheet from '@/components/createGroup/_components/AddGroupSheet';
 
 interface Props {
   organizationId: number;
@@ -12,11 +12,8 @@ export const CreateGroup: FC<Props> = ({ organizationId, existingGroupNames, var
   return (
     <>
       <div className="flex gap-2 items-center">
-        <span className="text">Create a new group</span>
-        <AddGroupSheet
-            organizationId={organizationId}
-            existingGroupNames={existingGroupNames}
-        />
+        <span className="text mr-4">Create a new group</span>
+        <AddGroupSheet organizationId={organizationId} existingGroupNames={existingGroupNames} />
       </div>
     </>
   );

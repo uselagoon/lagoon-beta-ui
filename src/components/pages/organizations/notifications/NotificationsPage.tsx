@@ -1,21 +1,17 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
-
 import { OrganizationNotificationData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/notifications/page';
-import { OrgBreadcrumbs } from '@/components/breadcrumbs/OrgBreadcrumbs';
-import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { organizationNavItems } from '@/components/shared/organizationNavItems';
+import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DataTable, SelectWithOptions, TabNavigation } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import { AddNotification } from './_components/AddNotification';
 import { DeleteNotification } from './_components/DeleteNotification';
 import { EditNotification, Notification } from './_components/EditNotification';
-import { notificationTypeOptions } from './_components/filterOptions';
 import { NotificationsDataTableColumns } from './_components/NotificationsDataTableColumns';
+import { notificationTypeOptions } from './_components/filterOptions';
 
 type NotificationType = 'slack' | 'rocketchat' | 'email' | 'webhook' | 'teams';
 
@@ -59,24 +55,18 @@ export default function NotificationsPage({
     }
   };
 
-  const navItems = organizationNavItems(organizationSlug);
-  const path = usePathname();
-  const router = useRouter();
-
   const allNotifications: Notification[] = [
-    ...(organization.slacks?.map(notification=> ({ ...notification, type: 'slack' as const })) || []),
-    ...(organization.rocketchats?.map(notification=> ({ ...notification, type: 'rocketchat' as const })) || []),
-    ...(organization.emails?.map(notification=> ({ ...notification, type: 'email' as const })) || []),
-    ...(organization.teams?.map(notification=> ({ ...notification, type: 'teams' as const })) || []),
-    ...(organization.webhook?.map(notification=> ({ ...notification, type: 'webhook' as const })) || []),
+    ...(organization.slacks?.map(notification => ({ ...notification, type: 'slack' as const })) || []),
+    ...(organization.rocketchats?.map(notification => ({ ...notification, type: 'rocketchat' as const })) || []),
+    ...(organization.emails?.map(notification => ({ ...notification, type: 'email' as const })) || []),
+    ...(organization.teams?.map(notification => ({ ...notification, type: 'teams' as const })) || []),
+    ...(organization.webhook?.map(notification => ({ ...notification, type: 'webhook' as const })) || []),
   ];
 
   const filteredNotifications = type ? allNotifications.filter(n => n.type === type) : allNotifications;
 
   return (
     <>
-      <OrgBreadcrumbs />
-      <TabNavigation items={navItems} pathname={path} onTabNav={key => router.push(`${key}`)}></TabNavigation>
       <SectionWrapper>
         <div className="flex items-center justify-between mb-4">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Notifications</h3>
@@ -85,8 +75,12 @@ export default function NotificationsPage({
 
         <DataTable
           columns={NotificationsDataTableColumns(
-            notification => <EditNotification notification={notification as Notification} refetch={refetch} />,
-            notification => <DeleteNotification notification={notification as Notification} refetch={refetch} />
+            notification => (
+              <EditNotification notification={notification as Notification} refetch={refetch} />
+            ),
+            notification => (
+              <DeleteNotification notification={notification as Notification} refetch={refetch} />
+            )
           )}
           data={filteredNotifications}
           searchableColumns={['name']}

@@ -1,7 +1,8 @@
 import { FC } from 'react';
 
+import AddUserSheet from '@/components/addUserToOrg/AddUserSheet';
+
 import { orgUserRoleOptions } from '../shared/selectOptions';
-import AddUserSheet from "@/components/addUserToOrg/AddUserSheet";
 
 type WithOptions = {
   type: 'multiple';
@@ -24,7 +25,6 @@ type Props = {
 } & (WithGroupName | WithOptions);
 
 export const AddUser: FC<Props> = props => {
-
   const groupSelectOptions =
     props.type === 'multiple'
       ? props.groupOptions
@@ -38,7 +38,7 @@ export const AddUser: FC<Props> = props => {
   return (
     <>
       <div className="flex gap-2 items-center">
-        {!props.iconOnly && <span className="text">Add a user to a group</span>}
+        {!props.iconOnly && <span className="text mr-4">Add a user to a group</span>}
         <AddUserSheet
           groupSelectOptions={groupSelectOptions}
           orgUserRoleOptions={orgUserRoleOptions}
@@ -46,7 +46,6 @@ export const AddUser: FC<Props> = props => {
           type={props.type}
         />
       </div>
-
     </>
   );
 };

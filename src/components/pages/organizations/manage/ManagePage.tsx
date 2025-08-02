@@ -1,6 +1,7 @@
 'use client';
 
 import { OrganizationManageData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/manage/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, SelectWithOptions, TabNavigation } from '@uselagoon/ui-library';
@@ -8,12 +9,8 @@ import { useQueryStates } from 'nuqs';
 
 import { resultsFilterValues } from '../groups/_components/groupFilterValues';
 import { AddUser } from './_components/AddUser';
-import { createManageDataTableColumns, OrgOwner } from './_components/ManageDataTableColumns';
+import { OrgOwner, createManageDataTableColumns } from './_components/ManageDataTableColumns';
 import { typeOptions } from './_components/filterOptions';
-import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { OrgBreadcrumbs } from '@/components/breadcrumbs/OrgBreadcrumbs';
-import { usePathname, useRouter } from 'next/navigation';
-import { organizationNavItems } from '@/components/shared/organizationNavItems';
 
 export default function ManagePage({
   queryRef,
@@ -60,79 +57,66 @@ export default function ManagePage({
   };
 
   const filteredOwners = organization.owners.filter((owner: OrgOwner) => {
-    const matchesSearch = !search || 
+    const matchesSearch =
+      !search ||
       (owner.firstName && owner.firstName.toLowerCase().includes(search.toLowerCase())) ||
       (owner.lastName && owner.lastName.toLowerCase().includes(search.toLowerCase())) ||
       owner.email.toLowerCase().includes(search.toLowerCase());
-    
+
     const ownerRole = getUserRole(owner);
     const matchesType = !type || ownerRole === type;
-    
+
     return matchesSearch && matchesType;
   });
 
-  const columns = createManageDataTableColumns(
-    organization.id,
-    organization.name,
-    organization.owners,
-    refetch
-  );
-
-  const path = usePathname();
-  const router = useRouter();
-  const navItems = organizationNavItems(organizationSlug);
+  const columns = createManageDataTableColumns(organization.id, organization.name, organization.owners, refetch);
 
   return (
-        <>
-            <OrgBreadcrumbs />
-            <TabNavigation items={navItems} pathname={path} onTabNav={(key) => router.push(`${key}`)}></TabNavigation>
-            <SectionWrapper>
-              <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Administration</h3>
-              <div className="gap-4 my-4">
-                <AddUser
-                  orgId={organization.id}
-                  refetch={refetch}
-                  owners={organization.owners}
+    <>
+      <SectionWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Administration</h3>
+        <div className="gap-4 my-4">
+          <AddUser orgId={organization.id} refetch={refetch} owners={organization.owners} />
+        </div>
+        <DataTable
+          columns={columns}
+          data={filteredOwners}
+          onSearch={searchStr => setSearch(searchStr)}
+          initialSearch={search}
+          initialPageSize={results || 10}
+          renderFilters={table => (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <SelectWithOptions
+                  options={[
+                    { label: 'All Roles', value: 'all' },
+                    ...typeOptions
+                      .filter(o => o.value !== null)
+                      .map(o => ({ label: o.label, value: o.value as string })),
+                  ]}
+                  width={120}
+                  value={type || 'all'}
+                  placeholder="All Roles"
+                  onValueChange={value => {
+                    if (value === 'all') {
+                      setQuery({ type: undefined });
+                    } else {
+                      setQuery({ type: value as 'admin' | 'owner' | 'viewer' });
+                    }
+                  }}
+                />
+                <SelectWithOptions
+                  options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}
+                  width={100}
+                  value={String(results || 10)}
+                  placeholder="Results per page"
+                  onValueChange={value => setResults(value)}
                 />
               </div>
-              <DataTable
-                columns={columns}
-                data={filteredOwners}
-                onSearch={searchStr => setSearch(searchStr)}
-                initialSearch={search}
-                initialPageSize={results || 10}
-                renderFilters={table => (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <SelectWithOptions
-                        options={[
-                          { label: 'All Roles', value: 'all' },
-                          ...typeOptions.filter(o => o.value !== null).map(o => ({ label: o.label, value: o.value as string }))
-                        ]}
-                        width={120}
-                        value={type || 'all'}
-                        placeholder="All Roles"
-                        onValueChange={(value) => {
-                          if (value === 'all') {
-                            setQuery({ type: undefined });
-                          } else {
-                            setQuery({ type: value as 'admin' | 'owner' | 'viewer' });
-                          }
-                        }}
-                      />
-                      <SelectWithOptions
-                        options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}
-                        width={100}
-                        value={String(results || 10)}
-                        placeholder="Results per page"
-                        onValueChange={(value) => setResults(value)}
-                      />
-                    </div>
-                  </div>
-                )}
-              />
-            </SectionWrapper>
-        </>
-
+            </div>
+          )}
+        />
+      </SectionWrapper>
+    </>
   );
 }

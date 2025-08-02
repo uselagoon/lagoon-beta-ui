@@ -8,5 +8,9 @@ export default async function OrgLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <OrgNavTabs>{children}</OrgNavTabs>;
+  return (
+    <>
+      <OrgNavTabs>{children}</OrgNavTabs>
+    </>
+  );
 }

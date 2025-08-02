@@ -2,170 +2,146 @@
 
 import Link from 'next/link';
 
-import {Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn, Checkbox} from '@uselagoon/ui-library';
-import {ChevronDown, ChevronUp} from 'lucide-react';
-import {OrgType} from "@/app/(routegroups)/(orgroutes)/organizations/(organizations-page)/page";
+import { OrgType } from '@/app/(routegroups)/(orgroutes)/organizations/(organizations-page)/page';
+import { renderSortIcons } from '@/components/utils';
+import { Button, Checkbox, DataTableColumnDef } from '@uselagoon/ui-library';
 
 type SortDirection = 'asc' | 'desc' | false;
 
 type Column = {
-    toggleSorting: (desc: boolean) => void;
-    clearSorting: () => void;
+  toggleSorting: (desc: boolean) => void;
+  clearSorting: () => void;
 };
 
 export const handleSort = (sortDirection: SortDirection, column: Column) => {
-    if (sortDirection === false) {
-        column.toggleSorting(false);
-    } else if (sortDirection === 'asc') {
-        column.toggleSorting(true);
-    } else {
-        column.clearSorting();
-    }
+  if (sortDirection === false) {
+    column.toggleSorting(false);
+  } else if (sortDirection === 'asc') {
+    column.toggleSorting(true);
+  } else {
+    column.clearSorting();
+  }
 };
 
-export const fieldCount = (field: OrgType['groups'] | OrgType['projects'], quota: OrgType['quotaGroup'] | OrgType['quotaProject'], fieldType: string) => {
-    let count = field?.length ?? 0;
-    let fieldQuota = quota >= 0 ? quota : "Unlimited";
-    let pluralizedFieldType = quota > 1 || quota === -1 ? `${fieldType}s` : fieldType;
-    return `${count} of ${fieldQuota} ${pluralizedFieldType}`
-}
+export const fieldCount = (
+  field: OrgType['groups'] | OrgType['projects'],
+  quota: OrgType['quotaGroup'] | OrgType['quotaProject'],
+  fieldType: string
+) => {
+  let count = field?.length ?? 0;
+  let fieldQuota = quota >= 0 ? quota : 'Unlimited';
+  let pluralizedFieldType = quota > 1 || quota === -1 ? `${fieldType}s` : fieldType;
+  return `${count} of ${fieldQuota} ${pluralizedFieldType}`;
+};
 
-const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
-    {
-        accessorKey: 'name',
-        sortingFn: (rowA, rowB, columnId) => {
-            const a = rowA.getValue(columnId) as string;
-            const b = rowB.getValue(columnId) as string;
-            return a.localeCompare(b);
-        },
-        header: ({ column }) => {
-            const sortDirection = column.getIsSorted();
-
-            return (
-                <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
-                    Organization
-                    <div className="ml-1 flex flex-col">
-                        <ChevronUp
-                            className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')}
-                        />
-                        <ChevronDown
-                            className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')}
-                        />
-                    </div>
-                </Button>
-            );
-        },
-
-        cell: ({ row }) => {
-            const organizationName = row.original.name;
-            return (
-                <div className="max-w-[25vw]">
-                    <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${organizationName}`}>
-                        {organizationName}
-                    </Link>
-                </div>
-            );
-        },
+export const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
+  {
+    accessorKey: 'name',
+    sortingFn: (rowA, rowB, columnId) => {
+      const a = rowA.getValue(columnId) as string;
+      const b = rowB.getValue(columnId) as string;
+      return a.localeCompare(b);
     },
-    {
-        accessorKey: 'groups',
-        header: ({ column }) => {
-            const sortDirection = column.getIsSorted();
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
 
-            return (
-                <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
-                    No. of Groups
-                    <div className="ml-1 flex flex-col">
-                        <ChevronUp
-                            className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')}
-                        />
-                        <ChevronDown
-                            className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')}
-                        />
-                    </div>
-                </Button>
-            );
-        },
-        cell: ({ row }) => {
-            const groups = row.original.groups;
-            const groupQuota = row.original.quotaGroup;
-
-            return (
-                <div className="max-w-[25vw]">
-                    {fieldCount(groups, groupQuota, "group")}
-                </div>
-            );
-        },
+      return (
+        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+          Organization
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
     },
-    {
-        accessorKey: 'projects',
-        header: ({ column }) => {
-            const sortDirection = column.getIsSorted();
 
-            return (
-                <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
-                    No. of Projects
-                    <div className="ml-1 flex flex-col">
-                        <ChevronUp
-                            className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')}
-                        />
-                        <ChevronDown
-                            className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')}
-                        />
-                    </div>
-                </Button>
-            );
-        },
-        cell: ({ row }) => {
-            const projects = row.original.projects;
-            const projectQuota = row.original.quotaProject;
+    cell: ({ row }) => {
+      const organizationName = row.original.name;
+      return (
+        <div className="max-w-[25vw]">
+          <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${organizationName}`}>
+            {organizationName}
+          </Link>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'groups',
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
 
-            return (
-                <div className="max-w-[25vw]">
-                    {fieldCount(projects, projectQuota, "project")}
-                </div>
-            );
-        },
+      return (
+        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+          No. of Groups
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
     },
-    {
-        accessorKey: 'deployTargets',
-        header: 'Targets',
-        cell: ({ row }) => {
-            const deployTargets = row.original.deployTargets;
-            return <div className="max-w-[25vw]">{deployTargets.map(target => (
-                <div key={target.name}>{target.name}</div>
-            ))}</div>;
-        },
+    cell: ({ row }) => {
+      const groups = row.original.groups;
+      const groupQuota = row.original.quotaGroup;
+
+      return <div className="max-w-[25vw]">{fieldCount(groups, groupQuota, 'group')}</div>;
     },
+  },
+  {
+    accessorKey: 'projects',
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
+
+      return (
+        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+          No. of Projects
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const projects = row.original.projects;
+      const projectQuota = row.original.quotaProject;
+
+      return <div className="max-w-[25vw]">{fieldCount(projects, projectQuota, 'project')}</div>;
+    },
+  },
+  {
+    accessorKey: 'deployTargets',
+    header: 'Targets',
+    cell: ({ row }) => {
+      const deployTargets = row.original.deployTargets;
+      return (
+        <div className="max-w-[25vw]">
+          {deployTargets.map(target => (
+            <div key={target.name}>{target.name}</div>
+          ))}
+        </div>
+      );
+    },
+  },
 ];
 
 export const OrganizationsTableColumnsWithCheckbox: DataTableColumnDef<OrgType>[] = [
-    {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-                label={''}
-                id=''
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-                label={''}
-                id={row.id}
-            />
-        ),
-        size: 10,
-    },
-    ...OrganizationsTableColumns
-]
+  {
+    id: 'select',
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+        onCheckedChange={value => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+        label={''}
+        id=""
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={value => row.toggleSelected(!!value)}
+        aria-label="Select row"
+        label={''}
+        id={row.id}
+      />
+    ),
+    size: 10,
+  },
+  ...OrganizationsTableColumns,
+];
 
 export default OrganizationsTableColumnsWithCheckbox;

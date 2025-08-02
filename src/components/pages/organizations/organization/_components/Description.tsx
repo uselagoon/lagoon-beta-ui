@@ -1,10 +1,9 @@
 import { FC, useState } from 'react';
 
-// import { LoadingSkeleton } from '@uselagoon/ui-library';
+import { Input, Skeleton } from '@uselagoon/ui-library';
 
-// import { EditDesc } from './EditDesc';
-// import { EditName } from './EditName';
-import {Input} from "@uselagoon/ui-library";
+import { EditDesc } from './EditDesc';
+import { EditName } from './EditName';
 
 type DescriptionProps = {
   orgId: number;
@@ -23,19 +22,19 @@ export const Description: FC<Props> = props => {
     return (
       <>
         <div className="flex flex-col gap-1 mb-3.5 mt-6">
-          <span>organization name</span>
+          <span>Organization Name</span>
           <section>
             <span>
-              {/*<LoadingSkeleton width={100} />*/}
+              <Skeleton className="h-10 w-[300px]" />
             </span>
           </section>
         </div>
 
         <div className="flex flex-col gap-1 mb-3.5 mt-6">
-          <span>description</span>
+          <span>Organization Description</span>
           <section>
             <span>
-              {/*<LoadingSkeleton width={100} />*/}
+              <Skeleton className="h-10 w-[300px]" />
             </span>
           </section>
         </div>
@@ -45,30 +44,27 @@ export const Description: FC<Props> = props => {
 
   const { orgId, name, description } = props;
 
-  const [nameModalOpen, setNameModalOpen] = useState(false);
-  const [descModalOpen, setDescModalOpen] = useState(false);
+  const [newName, setNewName] = useState(name);
+  const [newDesc, setNewDesc] = useState(description || '');
 
-  const closeNameModal = () => {
-    setNameModalOpen(false);
-  };
-
-  const closeDescModal = () => {
-    setDescModalOpen(false);
-  };
+  const isChangedName = newName !== name;
+  const isChangedDesc = newDesc !== (description || '');
 
   return (
     <>
       <div className="flex flex-col gap-1 mb-3.5 mt-6">
         <span>Organization Name</span>
-        <section>
-          <Input label='' value={name} />
+        <section className="flex gap-4 items-center">
+          <Input defaultValue={name} onChange={e => setNewName(e.target.value)} />
+          {isChangedName && <EditName orgId={orgId} friendlyName={newName} />}
         </section>
       </div>
 
       <div className="flex flex-col gap-1 mb-3.5 mt-6">
         <span>Organization Description</span>
-        <section>
-          <Input label='' value={description || ' - '} />
+        <section className="flex gap-4 items-center">
+          <Input defaultValue={description || ' - '} onChange={e => setNewDesc(e.target.value)} />
+          {isChangedDesc && <EditDesc orgId={orgId} description={newDesc} />}
         </section>
       </div>
     </>

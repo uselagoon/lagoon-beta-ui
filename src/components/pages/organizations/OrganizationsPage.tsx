@@ -1,12 +1,12 @@
 'use client';
 
 import { OrgType, OrgsData } from '@/app/(routegroups)/(orgroutes)/organizations/(organizations-page)/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { OrganizationsTableColumns } from '@/components/pages/organizations/DataTableColumns';
 import { orgGroupsAndProjectsQuery } from '@/lib/query/organizations/allOrganizationsQuery';
 import { useQuery } from '@apollo/client';
-import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
-import DataTableColumns from "@/components/pages/organizations/DataTableColumns";
 
 export default function OrganizationsPage({ organizations }: { organizations: OrgsData['allOrganizations'] }) {
   const { data: extraOrgsData } = useQuery<OrgsData>(orgGroupsAndProjectsQuery);
@@ -66,7 +66,7 @@ export default function OrganizationsPage({ organizations }: { organizations: Or
           View all organizations
         </Button>
         <DataTable
-          columns={DataTableColumns}
+          columns={OrganizationsTableColumns}
           data={orgs}
           searchableColumns={['name']}
           onSearch={searchStr => setSearch(searchStr)}
@@ -98,7 +98,7 @@ export default function OrganizationsPage({ organizations }: { organizations: Or
             />
           )}
         />
-    </SectionWrapper>
+      </SectionWrapper>
     </>
   );
 }

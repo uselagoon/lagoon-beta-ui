@@ -6,7 +6,7 @@ import { useEnvContext } from 'next-runtime-env';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 
-import { Tabs } from '@uselagoon/ui-library';
+import { TabNavigation } from '@uselagoon/ui-library';
 
 import { LinkContentWrapper } from '../shared/styles';
 
@@ -19,9 +19,8 @@ export const OrgNavTabs = ({ children }: { children: ReactNode }) => {
 
   const showVariablesTab = LAGOON_UI_VIEW_ENV_VARIABLES == null ? true : false;
   return (
-    <>
-      <Tabs
-        type="navigation"
+    <section className="flex flex-col gap-4">
+      <TabNavigation
         pathname={pathname}
         items={[
           {
@@ -87,10 +86,9 @@ export const OrgNavTabs = ({ children }: { children: ReactNode }) => {
             ),
           },
         ]}
-      >
-        {children}
-      </Tabs>
-    </>
+      />
+      {children}
+    </section>
   );
 };
 

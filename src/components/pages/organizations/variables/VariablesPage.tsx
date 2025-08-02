@@ -2,24 +2,23 @@
 
 import { useCallback, useState } from 'react';
 
-import { OrganizationVariablesData, OrgEnvVariable } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
+import {
+  OrgEnvVariable,
+  OrganizationVariablesData,
+} from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { AddNewVariable } from '@/components/addNewVariable/AddNewVariable';
 import { DeleteVariableDialog } from '@/components/deleteVariable/DeleteVariableModal';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import organizationByNameWithEnvVarsValue from '@/lib/query/organizations/organizationByNameWithEnvVarsValue';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Button, DataTable, SelectWithOptions, TabNavigation } from '@uselagoon/ui-library';
+import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 import { toast } from 'sonner';
-import { usePathname, useRouter } from 'next/navigation';
-
-import { OrgBreadcrumbs } from '@/components/breadcrumbs/OrgBreadcrumbs';
-import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { organizationNavItems } from '@/components/shared/organizationNavItems';
 
 import { EditVariable } from '../../projectVariables/_components/EditVariable';
-import { resultsFilterValues, scopeOptions } from './_components/filterValues';
 import { VariablesDataTableColumns } from './_components/VariablesDataTableColumns';
+import { resultsFilterValues, scopeOptions } from './_components/filterValues';
 
 export default function OrgVariablesPage({
   queryRef,
@@ -82,7 +81,6 @@ export default function OrgVariablesPage({
           }. Contact your administrator to obtain the relevant permissions.`,
           id: 'unauthorized_error',
         });
-        return err;
       },
       onCompleted: () => setOrgValuesVisible(true),
     }
@@ -109,17 +107,11 @@ export default function OrgVariablesPage({
   const stableAddPermissionCheck = useCallback(() => permissionCheck('add'), [permissionCheck]);
   const stableDeletePermissionCheck = useCallback(() => permissionCheck('delete'), [permissionCheck]);
 
-  const navItems = organizationNavItems(organizationSlug);
-  const path = usePathname();
-  const router = useRouter();
-
   const allVars = orgEnvValues?.organization?.envVariables || (variables as unknown as OrgEnvVariable[]);
   const filteredVariables = scope ? allVars.filter((v: OrgEnvVariable) => v.scope === scope) : allVars;
 
   return (
     <>
-      <OrgBreadcrumbs />
-      <TabNavigation items={navItems} pathname={path} onTabNav={key => router.push(`${key}`)}></TabNavigation>
       <SectionWrapper>
         <div className="flex items-center justify-between">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organization variables</h3>
@@ -162,12 +154,11 @@ export default function OrgVariablesPage({
           onSearch={searchStr => setSearch(searchStr)}
           initialSearch={search}
           initialPageSize={results || 10}
-          
           renderFilters={table => (
             <div className="flex items-center justify-between">
               <div className="flex gap-4">
                 <SelectWithOptions
-                  options={scopeOptions.filter(o => o.value !== null) as {label: string, value: string}[]}
+                  options={scopeOptions.filter(o => o.value !== null) as { label: string; value: string }[]}
                   value={scope || ''}
                   placeholder="Filter by scope"
                   onValueChange={newVal => {
