@@ -37,12 +37,12 @@ export const ProjectEnvVarsFullColumns = (projectName: string, refetch: () => vo
     {
       accessorKey: 'scope',
       header: 'Scope',
-      width: '20%',
+      width: '10%',
     },
     {
       accessorKey: 'value',
       header: 'Value',
-      width: '20%',
+      width: '40%',
       cell: ({ row }) => {
         const value = row.original.value ?? '';
         return <>{value ? <CopyToClipboard withToolTip text={value} type="hiddenWithIcon" /> : ''}</>;
@@ -76,12 +76,12 @@ export const getEnvVarsColumns = (projectName: string, environmentName: string, 
     {
       accessorKey: 'scope',
       header: 'Scope',
-      width: '20%',
+      width: '10%',
     },
     {
       accessorKey: 'value',
       header: 'Value',
-      width: '20%',
+      width: '40%',
       cell: ({ row }) => {
         const value = row.original.value ?? '';
         return <>{value ? <CopyToClipboard withToolTip text={value} type="hiddenWithIcon" /> : ''}</>;
