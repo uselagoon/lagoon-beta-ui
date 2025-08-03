@@ -1,68 +1,21 @@
 'use client';
 
-import { SetStateAction } from 'react';
+import React from 'react';
 
-import { groupFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
-import { CheckboxContainer } from '@/components/pages/organizations/groups/_components/styles';
-import { Checkbox, LagoonFilter, Table } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
-import { useQueryStates } from 'nuqs';
-
-const { OrgGroupsTable } = Table;
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import GroupsDataTableColumns from '@/components/pages/organizations/groups/GroupsDataTableColumns';
+import { DataTable, Skeleton } from '@uselagoon/ui-library';
 
 export default function Loading() {
-  const [{ group_query, group_sort, showDefaults }, setQuery] = useQueryStates({
-    group_sort: {
-      defaultValue: null,
-      parse: (value: string | undefined) => (value !== undefined ? String(value) : null),
-    },
-    group_query: {
-      defaultValue: '',
-      parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
-    },
-    showDefaults: {
-      defaultValue: false,
-      parse: (value: string | undefined) => value === 'true',
-      serialize: (value: boolean) => String(value),
-    },
-  });
-
-  const setGroupQuery = (str: string) => {
-    setQuery({ group_query: str });
-  };
-  const setGroupSort = (val: string) => {
-    if (['name_asc', 'name_desc', 'memberCount_asc', 'memberCount_desc'].includes(val)) {
-      setQuery({ group_sort: val });
-    } else {
-      setQuery({ group_sort: null });
-    }
-  };
-
-  const setShowDefaults = () => {
-    setQuery({ showDefaults: !showDefaults });
-  };
   return (
-    <>
-      <LagoonFilter
-        searchOptions={{
-          searchText: group_query || '',
-          setSearchText: setGroupQuery as React.Dispatch<SetStateAction<string>>,
-        }}
-        sortOptions={{
-          options: groupFilterValues,
-          selectedState: group_sort,
-          setSelectedState: setGroupSort as React.Dispatch<SetStateAction<unknown>>,
-        }}
-      >
-        <Tooltip title="Select this to show all system and default organization groups" placement="right">
-          <CheckboxContainer>
-            <Checkbox checked={showDefaults} onChange={setShowDefaults}>
-              Show System Groups
-            </Checkbox>
-          </CheckboxContainer>
-        </Tooltip>
-      </LagoonFilter>
-      <OrgGroupsTable skeleton />
-    </>
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Groups</h3>
+      <div className="flex gap-4 items-center">
+        <span className="inline-block my-4 mr-4">Create a new group</span>
+        <Skeleton className="h-8 w-[100px]" />
+      </div>
+
+      <DataTable loading columns={GroupsDataTableColumns()} data={[]} />
+    </SectionWrapper>
   );
 }

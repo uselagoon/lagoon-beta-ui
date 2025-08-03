@@ -1,13 +1,14 @@
 'use client';
 
-import { SetStateAction } from 'react';
-
-import { scopeOptions, sortOptions } from '@/components/pages/environmentVariables/_components/filterValues';
-import { Head2, LagoonFilter, Select, Table } from '@uselagoon/ui-library';
-import { Variable } from '@uselagoon/ui-library/dist/components/Table/VariablesTable/VariablesTable';
+import { OrgEnvVariable } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { AddNewVariable } from '@/components/addNewVariable/AddNewVariable';
+import { resultsFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
+import { VariablesDataTableColumns } from '@/components/pages/organizations/variables/_components/VariablesDataTableColumns';
+import { organizationNavItems } from '@/components/shared/organizationNavItems';
+import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-const { VariablesTable } = Table;
 export default function Loading() {
   const [{ search, sort, scope }, setQuery] = useQueryStates({
     results: {
@@ -29,7 +30,7 @@ export default function Loading() {
 
     scope: {
       defaultValue: undefined,
-      parse: (value: string | undefined) => value as Variable['scope'],
+      parse: (value: string | undefined) => value as OrgEnvVariable['scope'],
     },
   });
 
@@ -37,7 +38,7 @@ export default function Loading() {
     setQuery({ search: val });
   };
 
-  const setScope = (val: Variable['scope']) => {
+  const setScope = (val: OrgEnvVariable['scope']) => {
     setQuery({ scope: val });
   };
 
@@ -47,35 +48,33 @@ export default function Loading() {
 
   return (
     <>
-      <Head2>Organization variables</Head2>
-      <LagoonFilter
-        searchOptions={{
-          searchText: search || '',
-          setSearchText: setSearch as React.Dispatch<SetStateAction<string>>,
-        }}
-      >
-        <Select
-          options={sortOptions}
-          value={sort}
-          defaultOpen={false}
-          placeholder="Sort by"
-          onSelect={val => {
-            setSort(val);
-          }}
+      <SectionWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organization variables</h3>
+        <div className="gap-4 my-4">
+          <AddNewVariable type="organization" orgName="loading" refetch={() => {}} />
+        </div>
+        <DataTable
+          loading
+          columns={VariablesDataTableColumns(
+            (variable: OrgEnvVariable) => null,
+            (variable: OrgEnvVariable) => null,
+            false
+          )}
+          data={[]}
+          searchableColumns={['name']}
+          initialPageSize={10}
+          renderFilters={table => (
+            <div className="flex items-center justify-between">
+              <SelectWithOptions
+                options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}
+                width={100}
+                value={String(10)}
+                placeholder="Results per page"
+              />
+            </div>
+          )}
         />
-
-        <Select
-          options={scopeOptions}
-          defaultOpen={false}
-          value={scope}
-          placeholder="Scope"
-          onSelect={val => {
-            setScope(val);
-          }}
-        />
-      </LagoonFilter>
-
-      <VariablesTable skeleton withValues={false} />
+      </SectionWrapper>
     </>
   );
 }

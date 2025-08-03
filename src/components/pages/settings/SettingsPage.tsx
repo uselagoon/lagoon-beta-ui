@@ -1,12 +1,9 @@
 'use client';
 
-import { useMemo } from 'react';
-
 import { SettingsData } from '@/app/(routegroups)/settings/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import addUserSSHPublicKey from '@/lib/mutation/addUserSSHPublicKey';
 import deleteUserSSHPublicKey from '@/lib/mutation/deleteUserSSHPublicKey';
-import updateUserSSHPublicKey from '@/lib/mutation/updateUserSSHPublicKey';
 import Me from '@/lib/query/me';
 import { ApolloError, QueryRef, useMutation, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, Sheet } from '@uselagoon/ui-library';
@@ -31,9 +28,9 @@ const SettingsPage = ({ queryRef }: { queryRef: QueryRef<SettingsData> }) => {
     data: { me },
   } = useReadQuery(queryRef);
 
-  const [deleteUserSSHPublicKeyMutation, { loading: deleteLoading }] = useMutation(deleteUserSSHPublicKey);
-
-  const [updateUserSSHPublicKeyMutation, { loading: updateLoading }] = useMutation(updateUserSSHPublicKey);
+  const [deleteUserSSHPublicKeyMutation, { loading: deleteLoading }] = useMutation(deleteUserSSHPublicKey, {
+    refetchQueries: ['Me'],
+  });
 
   const [addUserSSHPublicKeyMutation, { loading: addLoading }] = useMutation(addUserSSHPublicKey);
 
@@ -49,28 +46,6 @@ const SettingsPage = ({ queryRef }: { queryRef: QueryRef<SettingsData> }) => {
     } catch (err) {
       console.error(err);
       toast.error('There was a problem deleting SSH key', {
-        id: 'cancel_error',
-        description: (err as ApolloError).message,
-      });
-    }
-  };
-
-  const editKey = async (id: number, keyName: string, keyType: string, keyValue: string) => {
-    try {
-      await updateUserSSHPublicKeyMutation({
-        variables: {
-          input: {
-            id: id,
-            patch: {
-              name: keyName,
-              publicKey: getPK(keyType, keyValue),
-            },
-          },
-        },
-      });
-    } catch (err) {
-      console.error(err);
-      toast.error('There was a problem updating SSH key', {
         id: 'cancel_error',
         description: (err as ApolloError).message,
       });
@@ -101,15 +76,7 @@ const SettingsPage = ({ queryRef }: { queryRef: QueryRef<SettingsData> }) => {
     }
   };
 
-  const columns = useMemo(
-    () =>
-      renderTableColumns(
-        { action: editKey, loading: updateLoading },
-        { action: deleteKey, loading: deleteLoading },
-        refetch
-      ),
-    [editKey, deleteKey, updateLoading, deleteLoading, refetch]
-  );
+  const columns = renderTableColumns({ action: deleteKey, loading: deleteLoading });
 
   return (
     <>

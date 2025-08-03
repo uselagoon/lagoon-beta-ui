@@ -1,21 +1,17 @@
 'use client';
 
-import { SetStateAction } from 'react';
-
 import { OrganizationManageData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/manage/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
-import { EditOutlined } from '@ant-design/icons';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { LagoonFilter, Select, Table } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions, TabNavigation } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import { resultsFilterValues } from '../groups/_components/groupFilterValues';
 import { AddUser } from './_components/AddUser';
-import { DeleteUser } from './_components/DeleteUser';
-import { EditUser } from './_components/EditUser';
+import { OrgOwner, createManageDataTableColumns } from './_components/ManageDataTableColumns';
 import { typeOptions } from './_components/filterOptions';
 
-const { OrgAdminsTable } = Table;
 export default function ManagePage({
   queryRef,
   organizationSlug,
@@ -29,9 +25,6 @@ export default function ManagePage({
     data: { organization },
   } = useReadQuery(queryRef);
 
-  if (!organization) {
-    return <OrganizationNotFound orgName={organizationSlug} />;
-  }
   const [{ results, search, type }, setQuery] = useQueryStates({
     results: {
       defaultValue: 10,
@@ -47,6 +40,10 @@ export default function ManagePage({
     },
   });
 
+  if (!organization) {
+    return <OrganizationNotFound orgName={organizationSlug} />;
+  }
+
   const setSearch = (str: string) => {
     setQuery({ search: str });
   };
@@ -54,51 +51,73 @@ export default function ManagePage({
     setQuery({ results: Number(val) });
   };
 
+  const getUserRole = (user: OrgOwner): string => {
+    if (user.owner) return 'owner';
+    if (user.admin) return 'admin';
+    return 'viewer';
+  };
+
+  const filteredOwners = organization.owners.filter((owner: OrgOwner) => {
+    const matchesSearch =
+      !search ||
+      (owner.firstName && owner.firstName.toLowerCase().includes(search.toLowerCase())) ||
+      (owner.lastName && owner.lastName.toLowerCase().includes(search.toLowerCase())) ||
+      owner.email.toLowerCase().includes(search.toLowerCase());
+
+    const ownerRole = getUserRole(owner);
+    const matchesType = !type || ownerRole === type;
+
+    return matchesSearch && matchesType;
+  });
+
+  const columns = createManageDataTableColumns(organization.id, organization.name, organization.owners, refetch);
+
   return (
     <>
-      <LagoonFilter
-        searchOptions={{
-          searchText: search || '',
-          setSearchText: setSearch as React.Dispatch<SetStateAction<string>>,
-        }}
-      >
-        <Select
-          options={typeOptions}
-          defaultOpen={false}
-          value={type}
-          placeholder="Badge"
-          allowClear
-          onClear={() => {
-            setQuery({ type: null });
-          }}
-          onSelect={val => {
-            setQuery({ type: val });
-          }}
+      <SectionWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Administration</h3>
+        <div className="gap-4 my-4">
+          <AddUser orgId={organization.id} refetch={refetch} owners={organization.owners} />
+        </div>
+        <DataTable
+          columns={columns}
+          data={filteredOwners}
+          onSearch={searchStr => setSearch(searchStr)}
+          initialSearch={search}
+          initialPageSize={results || 10}
+          renderFilters={table => (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <SelectWithOptions
+                  options={[
+                    { label: 'All Roles', value: 'all' },
+                    ...typeOptions
+                      .filter(o => o.value !== null)
+                      .map(o => ({ label: o.label, value: o.value as string })),
+                  ]}
+                  width={120}
+                  value={type || 'all'}
+                  placeholder="All Roles"
+                  onValueChange={value => {
+                    if (value === 'all') {
+                      setQuery({ type: undefined });
+                    } else {
+                      setQuery({ type: value as 'admin' | 'owner' | 'viewer' });
+                    }
+                  }}
+                />
+                <SelectWithOptions
+                  options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}
+                  width={100}
+                  value={String(results || 10)}
+                  placeholder="Results per page"
+                  onValueChange={value => setResults(value)}
+                />
+              </div>
+            </div>
+          )}
         />
-      </LagoonFilter>
-
-      <OrgAdminsTable
-        owners={organization.owners}
-        filterString={search}
-        filterOwnerType={type as 'admin' | 'owner' | 'viewer'}
-        resultsPerPage={results ?? resultsFilterValues[0].value}
-        resultDropdown={
-          <Select
-            options={resultsFilterValues}
-            value={results}
-            defaultOpen={false}
-            placeholder="Number of admins"
-            onSelect={val => {
-              setResults(val);
-            }}
-          />
-        }
-        addNewOwnerModal={<AddUser orgId={organization.id} refetch={refetch} owners={organization.owners} />}
-        editOwnerModal={user => <EditUser user={user} orgId={organization.id} refetch={refetch} />}
-        deleteOwnerModal={user => (
-          <DeleteUser user={user} orgId={organization.id} orgName={organization.name} refetch={refetch} />
-        )}
-      />
+      </SectionWrapper>
     </>
   );
 }

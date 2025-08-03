@@ -64,6 +64,7 @@ export default async function Users(props: { params: Promise<{ organizationSlug:
           orgId={organizationData.organization.id}
           groups={organizationData.organization.groups}
           queryRef={queryRef as QueryRef<OrganizationUsersData>}
+          organizationSlug={organizationSlug}
         />
       )}
     </PreloadQuery>

@@ -1,50 +1,39 @@
 'use client';
 
-import { SetStateAction } from 'react';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { CreateProject } from '@/components/createProject/CreateProject';
+import { resultsFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
+import { ProjectsDataTableColumns } from '@/components/pages/organizations/projects/_components/ProjectsDataTableColumns';
+import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 
-import { projectFilterOptions } from '@/components/pages/organizations/group/_components/filterValues';
-import { LagoonFilter, Table } from '@uselagoon/ui-library';
-import { useQueryStates } from 'nuqs';
+import { OrgProject } from '../../(organization-overview)/page';
 
-const { OrgProjectsTable } = Table;
 export default function Loading() {
-  const [{ project_query, project_sort }, setQuery] = useQueryStates({
-    project_sort: {
-      defaultValue: null,
-      parse: (value: string | undefined) => (value !== undefined ? String(value) : null),
-    },
-    project_query: {
-      defaultValue: '',
-      parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
-    },
-  });
-
-  const setProjectQuery = (str: string) => {
-    setQuery({ project_query: str });
-  };
-  const setProjectSort = (val: string) => {
-    if (['name_asc', 'name_desc', 'groupCount_asc', 'groupCount_desc'].includes(val)) {
-      setQuery({ project_sort: val });
-    } else {
-      setQuery({ project_sort: null });
-    }
-  };
-
   return (
     <>
-      <LagoonFilter
-        searchOptions={{
-          searchText: project_query || '',
-          setSearchText: setProjectQuery as React.Dispatch<SetStateAction<string>>,
-        }}
-        sortOptions={{
-          options: projectFilterOptions,
-          selectedState: project_sort,
-          setSelectedState: setProjectSort as React.Dispatch<SetStateAction<unknown>>,
-        }}
-      />
-
-      <OrgProjectsTable type="standalone" skeleton />
+      <SectionWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Projects</h3>
+        <div className="gap-4 my-4">
+          <CreateProject organizationId={0} options={[]} />
+        </div>
+        <DataTable
+          loading
+          columns={ProjectsDataTableColumns((_: OrgProject) => null, '')}
+          data={[]}
+          searchableColumns={['name']}
+          initialPageSize={10}
+          renderFilters={table => (
+            <div className="flex items-center justify-between">
+              <SelectWithOptions
+                options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}
+                width={100}
+                value={String(10)}
+                placeholder="Results per page"
+              />
+            </div>
+          )}
+        />
+      </SectionWrapper>
     </>
   );
 }

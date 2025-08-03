@@ -1,84 +1,76 @@
 import { FC, useState } from 'react';
 
-import { EditOutlined } from '@ant-design/icons';
-import { LoadingSkeleton } from '@uselagoon/ui-library';
+import { Input, Skeleton } from '@uselagoon/ui-library';
 
 import { EditDesc } from './EditDesc';
 import { EditName } from './EditName';
-import { OrgField } from './styles';
 
 type DescriptionProps = {
   orgId: number;
   name: string;
   description: string;
-  loading?: false;
 };
-type loadingProps = {
+
+type LoadingProps = {
   loading: true;
 };
 
-type Props = DescriptionProps | loadingProps;
+type Props = DescriptionProps | LoadingProps;
 
-export const Description: FC<Props> = props => {
-  if (props.loading) {
-    return (
-      <>
-        <OrgField className="margin">
-          <span className="desc">organization name</span>
-          <section className="editField">
-            <span className="name">
-              <LoadingSkeleton width={100} />
-            </span>
-          </section>
-        </OrgField>
+const DescriptionLoading: FC = () => (
+  <>
+    <div className="flex flex-col gap-1 mb-3.5 mt-6">
+      <span>Organization Name</span>
+      <section>
+        <span>
+          <Skeleton className="h-10 w-[300px]" />
+        </span>
+      </section>
+    </div>
 
-        <OrgField>
-          <span className="desc">description</span>
-          <section className="editField">
-            <span className="description">
-              <LoadingSkeleton width={100} />
-            </span>
-          </section>
-        </OrgField>
-      </>
-    );
-  }
+    <div className="flex flex-col gap-1 mb-3.5 mt-6">
+      <span>Organization Description</span>
+      <section>
+        <span>
+          <Skeleton className="h-10 w-[300px]" />
+        </span>
+      </section>
+    </div>
+  </>
+);
 
-  const { orgId, name, description } = props;
+const DescriptionData: FC<DescriptionProps> = ({ orgId, name, description }) => {
+  const [newName, setNewName] = useState(name);
+  const [newDesc, setNewDesc] = useState(description || '');
 
-  const [nameModalOpen, setNameModalOpen] = useState(false);
-  const [descModalOpen, setDescModalOpen] = useState(false);
-
-  const closeNameModal = () => {
-    setNameModalOpen(false);
-  };
-
-  const closeDescModal = () => {
-    setDescModalOpen(false);
-  };
+  const isChangedName = newName !== name;
+  const isChangedDesc = newDesc !== (description || '');
 
   return (
     <>
-      <OrgField className="margin">
-        <span className="desc">organization name</span>
-        <section className="editField">
-          <span className="name" data-cy="friendly-name">
-            {name} <EditOutlined data-cy="edit-name" className="edit" onClick={() => setNameModalOpen(true)} />
-          </span>
+      <div className="flex flex-col gap-1 mb-3.5 mt-6">
+        <span>Organization Name</span>
+        <section className="flex gap-4 items-center">
+          <Input defaultValue={name} onChange={e => setNewName(e.target.value)} />
+          {isChangedName && <EditName orgId={orgId} friendlyName={newName} />}
         </section>
-        <EditName orgId={orgId} orgName={name} modalOpen={nameModalOpen} closeModal={closeNameModal} />
-      </OrgField>
+      </div>
 
-      <OrgField>
-        <span className="desc">description</span>
-        <section className="editField">
-          <span className="description" data-cy="org-description">
-            {description || ' - '}{' '}
-            <EditOutlined data-cy="edit-desc" className="edit" onClick={() => setDescModalOpen(true)} />
-          </span>
+      <div className="flex flex-col gap-1 mb-3.5 mt-6">
+        <span>Organization Description</span>
+        <section className="flex gap-4 items-center">
+          <Input defaultValue={description || ' - '} onChange={e => setNewDesc(e.target.value)} />
+          {isChangedDesc && <EditDesc orgId={orgId} description={newDesc} />}
         </section>
-        <EditDesc orgId={orgId} orgDesc={description} modalOpen={descModalOpen} closeModal={closeDescModal} />
-      </OrgField>
+      </div>
     </>
   );
+};
+
+export const Description: FC<Props> = props => {
+  if ('loading' in props && props.loading) {
+    return <DescriptionLoading />;
+  }
+
+  return <DescriptionData {...(props as DescriptionProps)} />;
 };

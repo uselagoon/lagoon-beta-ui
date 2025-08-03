@@ -33,6 +33,8 @@ export default function ProblemsPage({
     data: { environment },
   } = useReadQuery(queryRef);
 
+  const [selectedProblemId, setSelectedProblemId] = useState<number | null>(null);
+
   if (!environment) {
     return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
   }
@@ -52,8 +54,6 @@ export default function ProblemsPage({
   const dismissedProblems = [] as Problem[];
 
   const allProblemsSorted = [...criticalProblems, ...highProblems, ...mediumProblems, ...lowProblems];
-
-  const [selectedProblemId, setSelectedProblemId] = useState<number | null>(null);
 
   const selectedProblem = allProblemsSorted.find(problem => problem.id === selectedProblemId);
 

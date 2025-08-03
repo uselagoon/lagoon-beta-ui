@@ -1,18 +1,3 @@
-export const userFilterOptions = [
-  {
-    value: null,
-    label: 'Sort by',
-  },
-  {
-    value: 'name_asc',
-    label: 'Name asc',
-  },
-  {
-    value: 'name_desc',
-    label: 'Name desc',
-  },
-];
-
 export const resultsFilterValues = [
   {
     label: '10 results per page',

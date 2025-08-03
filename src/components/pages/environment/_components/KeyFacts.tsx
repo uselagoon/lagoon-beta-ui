@@ -2,7 +2,6 @@ import { FC } from 'react';
 
 import { keyFactImageType } from '@/constants/keyFactImageMap';
 import { Skeleton } from '@uselagoon/ui-library';
-import styled from 'styled-components';
 
 import FactCard from './FactCard';
 

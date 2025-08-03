@@ -1,4 +1,4 @@
-import { FC, startTransition, useState } from 'react';
+import { FC, startTransition, useCallback, useState } from 'react';
 
 import {
   ADD_EMAIL_NOTIFICATION,
@@ -7,14 +7,9 @@ import {
   ADD_SLACK_NOTIFICATION,
   ADD_WEBHOOK_NOTIFICATION,
 } from '@/lib/mutation/organizations/addNotification';
-import { PlusOutlined } from '@ant-design/icons';
 import { ApolloError, useMutation } from '@apollo/client';
-import { FormItem, Input, Modal, Select, useNotification } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
-import Form, { useForm } from 'antd/es/form/Form';
-
-import { CreateButton, EditModalTitle, EditModalWrapper } from '../../organization/_components/styles';
-import { newNotificationOptions } from './filterOptions';
+import { Sheet } from '@uselagoon/ui-library';
+import { toast } from 'sonner';
 
 type AddNotificationProps = {
   orgId: number;
@@ -27,7 +22,7 @@ type AddNotificationProps = {
 
 export const AddNotification: FC<AddNotificationProps> = ({ orgId, refetch }) => {
   const [newNotificationType, setNewNotificationType] = useState<
-    'slack' | 'rocketchat' | 'teams' | 'email' | 'webhook'
+    'slack' | 'rocketchat' | 'teams' | 'email' | 'webhook' | undefined
   >();
 
   const [addSlack] = useMutation(ADD_SLACK_NOTIFICATION);
@@ -37,31 +32,31 @@ export const AddNotification: FC<AddNotificationProps> = ({ orgId, refetch }) =>
   const [addWebhook] = useMutation(ADD_WEBHOOK_NOTIFICATION);
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const [modalOpen, setModalOpen] = useState(false);
+  const newNotificationOptions = [
+    { label: 'Slack', value: 'slack' },
+    { label: 'RocketChat', value: 'rocketchat' },
+    { label: 'Microsoft Teams', value: 'teams' },
+    { label: 'Email', value: 'email' },
+    { label: 'Webhook', value: 'webhook' },
+  ];
 
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: `There was a problem adding a notification.`,
-    placement: 'top',
-    duration: 0,
-    content: '',
-  });
-
-  const [addNotificationForm] = useForm();
-
-  const getAction = async ({
-    name,
-    channel,
-    webhook,
-    email,
-  }: {
-    name: string;
-    channel?: string;
-    webhook?: string;
-    email?: string;
-  }) => {
-    switch (newNotificationType) {
+  const getAction = async (
+    notificationType: string,
+    {
+      name,
+      channel,
+      webhook,
+      email,
+    }: {
+      name: string;
+      channel?: string;
+      webhook?: string;
+      email?: string;
+    }
+  ) => {
+    switch (notificationType) {
       case 'slack':
         return await addSlack({
           variables: {
@@ -109,114 +104,108 @@ export const AddNotification: FC<AddNotificationProps> = ({ orgId, refetch }) =>
     }
   };
 
-  const handleAddNotification = async () => {
-    const { name, channel, webhook, email } = addNotificationForm.getFieldsValue();
+  const handleAddNotification = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, values: any) => {
+    const { name, channel, webhook, email, notification_type } = values;
 
     const mutationVars = { name, channel, webhook, email };
 
     try {
       setLoading(true);
+      setError(false);
 
-      await getAction(mutationVars);
+      await getAction(notification_type, mutationVars);
 
       startTransition(() => {
-        (refetch ?? (() => {}))();
+        refetch && refetch();
       });
 
-      closeModal();
+      toast.success('Notification added successfully!', {
+        position: 'top-center',
+      });
     } catch (err) {
       console.error(err);
-      trigger({ content: (err as ApolloError).message });
+      setError(true);
+      toast.error('There was a problem adding a notification.', {
+        position: 'top-center',
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const closeModal = () => {
-    addNotificationForm.resetFields();
+  const handleFieldChange = useCallback((fieldId: string, value: string | boolean) => {
+    if (fieldId === 'notification_type') {
+      setNewNotificationType(value as typeof newNotificationType);
+    }
+  }, []);
 
-    setLoading(false);
-    setNewNotificationType(undefined);
-    setModalOpen(false);
-  };
+  const getSheetFields = useCallback(() => {
+    const baseFields = [
+      {
+        id: 'notification_type',
+        label: 'Select Service',
+        type: 'select' as const,
+        placeholder: 'Make a selection',
+        required: true,
+        options: newNotificationOptions,
+        triggerFieldUpdate: true,
+      },
+      {
+        id: 'name',
+        label: 'Name',
+        type: 'text' as const,
+        placeholder: 'Enter notification name',
+        required: true,
+      },
+    ];
 
-  const openModal = () => {
-    setModalOpen(true);
-  };
+    const conditionalFields = [];
+
+    if (newNotificationType === 'email') {
+      conditionalFields.push({
+        id: 'email',
+        label: 'Email Address',
+        type: 'email' as const,
+        placeholder: 'Enter email',
+        required: true,
+      });
+    }
+
+    if (newNotificationType && newNotificationType !== 'email') {
+      conditionalFields.push({
+        id: 'webhook',
+        label: 'Webhook',
+        type: 'text' as const,
+        placeholder: 'Enter Webhook',
+        required: true,
+      });
+    }
+
+    if (newNotificationType === 'slack' || newNotificationType === 'rocketchat') {
+      conditionalFields.push({
+        id: 'channel',
+        label: 'Channel',
+        type: 'text' as const,
+        placeholder: 'Enter channel',
+        required: true,
+      });
+    }
+
+    return [...baseFields, ...conditionalFields];
+  }, [newNotificationType]);
 
   return (
-    <>
-      <Tooltip placement="bottom" title="Add a new notification">
-        <CreateButton data-cy="add-notification" $variant="small" onClick={openModal}>
-          <PlusOutlined className="icon" /> <span className="text">Add Notification</span>
-        </CreateButton>
-      </Tooltip>
-
-      <Modal
-        title={<EditModalTitle>Add Notification</EditModalTitle>}
-        open={modalOpen}
-        destroyOnClose
-        cancelText="Cancel"
-        confirmText="Add"
-        onCancel={closeModal}
-        onOk={handleAddNotification}
-        confirmDisabled={!newNotificationType}
-        confirmLoading={loading}
-        width={600}
-      >
-        <EditModalWrapper>
-          <Form form={addNotificationForm}>
-            <div className="notificationFields">
-              <div className="wrap">
-                <FormItem name="notification_type" label="Select Service" rules={[{ required: true, message: '' }]}>
-                  <Select
-                    data-cy="notification-type"
-                    options={newNotificationOptions}
-                    placeholder="Make a selection"
-                    defaultOpen={false}
-                    onChange={val => {
-                      setNewNotificationType(val);
-                      addNotificationForm.setFieldValue('notification_type', val);
-                    }}
-                    size="middle"
-                  />
-                </FormItem>
-              </div>
-
-              <div className="wrap">
-                <FormItem name="name" label="Name" rules={[{ required: true, message: '' }]}>
-                  <Input data-cy="notification-name" placeholder="Enter notification name" required />
-                </FormItem>
-              </div>
-
-              {newNotificationType === 'email' ? (
-                <div className="wrap">
-                  <FormItem name="email" label="Email Address" rules={[{ required: true, message: '', type: 'email' }]}>
-                    <Input data-cy="notification-email" placeholder="Enter email" required />
-                  </FormItem>
-                </div>
-              ) : null}
-
-              {newNotificationType && newNotificationType !== 'email' ? (
-                <div className="wrap">
-                  <FormItem name="webhook" label="Webhook" rules={[{ required: true, message: '' }]}>
-                    <Input data-cy="notification-webhook" placeholder="Enter Webhook" required />
-                  </FormItem>
-                </div>
-              ) : null}
-
-              {newNotificationType === 'slack' || newNotificationType === 'rocketchat' ? (
-                <div className="wrap">
-                  <FormItem name="channel" label="Channel" rules={[{ required: true, message: '' }]}>
-                    <Input data-cy="notification-channel" placeholder="Enter channel" required />
-                  </FormItem>
-                </div>
-              ) : null}
-            </div>
-          </Form>
-        </EditModalWrapper>
-        {contextHolder}
-      </Modal>
-    </>
+    <Sheet
+      sheetTrigger="Add Notification"
+      sheetTitle="Add Notification"
+      sheetDescription="Add a new notification to your organization"
+      sheetFooterButton="Add Notification"
+      buttonAction={handleAddNotification}
+      sheetFields={getSheetFields()}
+      loading={loading}
+      error={error}
+      additionalContent=""
+      onFieldChange={handleFieldChange}
+    />
   );
 };

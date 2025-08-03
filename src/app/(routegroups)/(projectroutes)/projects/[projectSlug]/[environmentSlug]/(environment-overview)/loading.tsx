@@ -32,7 +32,7 @@ export default function Loading() {
     <DetailStat key={detail.key} title={detail.title} value={detail.children} />
   ));
 
-  const routeSkeletons = Array.from({ length: 4 }).map(() => <Skeleton className="w-[60%] h-6" />);
+  const routeSkeletons = Array.from({ length: 4 }).map((_, idx) => <Skeleton key={idx} className="w-[60%] h-6" />);
 
   const environmentDetails = (
     <>

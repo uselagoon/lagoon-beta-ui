@@ -12,7 +12,7 @@ import { HighlightedText } from '../cancelDeployment/styles';
 interface ActiveStandbyConfirmProps {
   activeEnvironment: string;
   standbyEnvironment: string | null;
-  action: () => void | any | Promise<any>;
+  action: () => void | Promise<any>;
   loading: boolean;
 }
 

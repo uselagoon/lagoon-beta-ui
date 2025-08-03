@@ -38,6 +38,7 @@ export default function Loading() {
           loading
           columns={ProjectsTableColumns}
           data={[]}
+          searchableColumns={['name', 'gitUrl']}
           onSearch={searchStr => setSearch(searchStr)}
           initialSearch={String(search)}
           renderFilters={table => (

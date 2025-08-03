@@ -3,7 +3,7 @@ import { FC, startTransition } from 'react';
 import { EnvVariable } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
 import addOrUpdateEnvVariable from '@/lib/mutation/addOrUpdateEnvVariable';
 import { useMutation } from '@apollo/client';
-import { Sheet } from '@uselagoon/ui-library';
+import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
 import { Edit2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -101,45 +101,51 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) 
 
   return (
     <>
-      <Sheet
-        data-cy="add-variable"
-        sheetTrigger={<Edit2Icon />}
-        sheetTitle="Edit a variable"
-        sheetFooterButton="Update"
-        sheetDescription="Create a unique name for your variable. Then choose the scope of the variables availability. For more information see our documentation"
-        loading={loading}
-        error={false}
-        additionalContent={null}
-        sheetFields={[
-          {
-            id: 'variable_name',
-            label: 'Variable name',
-            placeholder: 'Enter a name for the variable',
-            inputDefault: currentEnv.name,
-            required: true,
-          },
-          {
-            id: 'variable_scope',
-            label: 'Key Value',
-            required: true,
-            placeholder: 'Select variable scope',
-            type: 'select',
-            inputDefault: currentEnv.scope,
-            options: scopeOptions,
-          },
+      <Tooltip>
+        <TooltipTrigger>
+          <Sheet
+            data-cy="add-variable"
+            sheetTrigger={<Edit2Icon />}
+            sheetTitle="Edit a variable"
+            sheetFooterButton="Update"
+            sheetDescription="Create a unique name for your variable. Then choose the scope of the variables availability. For more information see our documentation"
+            loading={loading}
+            error={false}
+            additionalContent={null}
+            sheetFields={[
+              {
+                id: 'variable_name',
+                label: 'Variable name',
+                placeholder: 'Enter a name for the variable',
+                inputDefault: currentEnv.name,
+                required: true,
+                readOnly: true,
+              },
+              {
+                id: 'variable_scope',
+                label: 'Key Value',
+                required: true,
+                placeholder: 'Select variable scope',
+                type: 'select',
+                inputDefault: currentEnv.scope,
+                options: scopeOptions,
+              },
 
-          {
-            id: 'variable_value',
-            label: 'Variable value',
-            placeholder: 'Enter variable value',
-            inputDefault: currentEnv.value,
-            required: true,
-          },
-        ]}
-        buttonAction={(_, { variable_name, variable_scope, variable_value }) => {
-          handleUpdateVariable(variable_name, variable_scope, variable_value);
-        }}
-      />
+              {
+                id: 'variable_value',
+                label: 'Variable value',
+                placeholder: 'Enter variable value',
+                inputDefault: currentEnv.value,
+                required: true,
+              },
+            ]}
+            buttonAction={(_, { variable_name, variable_scope, variable_value }) => {
+              handleUpdateVariable(variable_name, variable_scope, variable_value);
+            }}
+          />
+        </TooltipTrigger>
+        <TooltipContent>Edit Variable</TooltipContent>
+      </Tooltip>
     </>
   );
 };

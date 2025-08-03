@@ -24,7 +24,7 @@ export type Problem = {
     id: number | null;
     name: string | null;
   };
-  data: {};
+  data: Record<string, any>;
   severity: keyof typeof ProblemSeverityRating;
   source: string;
   service: string;

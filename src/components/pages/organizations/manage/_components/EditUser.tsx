@@ -1,13 +1,11 @@
-import { FC, startTransition, useState } from 'react';
+import { FC, startTransition } from 'react';
 
 import addUserToOrganization from '@/lib/mutation/organizations/addUserToOrganization';
-import { EditOutlined } from '@ant-design/icons';
 import { ApolloError, useMutation } from '@apollo/client';
-import { FormItem, Input, Modal, Select, useNotification } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
-import Form, { useForm } from 'antd/es/form/Form';
+import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Edit2Icon } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { EditModalTitle, EditModalWrapper } from '../../organization/_components/styles';
 import { adminRoleSelect } from './filterOptions';
 
 type Props = {
@@ -33,74 +31,31 @@ type Props = {
  */
 
 export const EditUser: FC<Props> = ({ orgId, refetch, user }) => {
-  const [addAdministrator, { error, loading }] = useMutation(addUserToOrganization, {
+  const [addAdministrator, { loading }] = useMutation(addUserToOrganization, {
     refetchQueries: ['getOrganization'],
-  });
-
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: `There was a problem updating administrator role`,
-    placement: 'top',
-    duration: 0,
-    content: error?.message,
-  });
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [confirmDisabled, setConfirmDisabled] = useState(true);
-
-  const [addUserForm] = useForm();
-
-  const handleAddUser = async () => {
-    const { role } = addUserForm.getFieldsValue();
-
-    try {
-      await addAdministrator({
-        variables: {
-          email: user.email,
-          organization: orgId,
-          ...(role === 'admin' && { admin: true }),
-          ...(role === 'owner' && { owner: true }),
-        },
-      });
-
-      startTransition(() => {
-        (refetch ?? (() => {}))();
-      });
-      closeModal();
-    } catch (err) {
+    onError: err => {
       console.error(err);
-      trigger({ content: (err as ApolloError).message });
-    }
-  };
+      toast.error('Error updating user role', {
+        description: err.message,
+      });
+    },
+  });
 
-  const closeModal = () => {
-    addUserForm.resetFields();
-    setConfirmDisabled(true);
-    setModalOpen(false);
-  };
-
-  const openModal = () => {
-    setModalOpen(true);
-  };
-
-  const getRequiredFieldsValues = () => {
-    const values: Record<string, string | boolean> = addUserForm.getFieldsValue(true);
-
-    const requiredValues: {
-      role: string;
-    } = {} as any;
-
-    const requiredItems = ['role'] as const;
-
-    for (const key of requiredItems) {
-      if (values[key] == undefined) {
-        return false;
-      }
-      //@ts-ignore
-      requiredValues[key] = values[key];
-    }
-
-    return requiredValues;
+  const handleUpdateUser = (role: string) => {
+    return addAdministrator({
+      variables: {
+        email: user.email,
+        organization: orgId,
+        ...(role === 'admin' && { admin: true }),
+        ...(role === 'owner' && { owner: true }),
+        ...(role === 'viewer' && { admin: false, owner: false }),
+      },
+    }).then(() => {
+      startTransition(() => {
+        refetch?.();
+      });
+      toast.success('User role updated successfully!');
+    });
   };
 
   const getDefaultUserRole = () => {
@@ -116,58 +71,35 @@ export const EditUser: FC<Props> = ({ orgId, refetch, user }) => {
   const initialRoleSelect = getDefaultUserRole();
 
   return (
-    <>
-      <Tooltip placement="bottom" title="Update administrator type">
-        <EditOutlined data-cy="update-user" onClick={openModal} />
-      </Tooltip>
-
-      <Modal
-        title={<EditModalTitle>Update Administrator</EditModalTitle>}
-        open={modalOpen}
-        destroyOnClose
-        cancelText="Cancel"
-        confirmText="Update"
-        onCancel={closeModal}
-        onOk={handleAddUser}
-        confirmLoading={loading}
-        confirmDisabled={confirmDisabled}
-        width={800}
-      >
-        <EditModalWrapper>
-          <Form
-            form={addUserForm}
-            onFieldsChange={() => {
-              const fields = getRequiredFieldsValues();
-              setConfirmDisabled(!!!fields);
-            }}
-          >
-            <div className="addFields">
-              <div className="wrap">
-                <FormItem label="User email">
-                  <Input placeholder="Enter email" value={user.email} disabled />
-                </FormItem>
-              </div>
-
-              <div className="wrap">
-                <FormItem name="role" label="Update a role" rules={[{ required: true, message: '' }]}>
-                  <Select
-                    data-cy="user-role"
-                    options={adminRoleSelect}
-                    placeholder="Update a role for this user"
-                    defaultOpen={false}
-                    defaultValue={initialRoleSelect}
-                    onChange={val => {
-                      addUserForm.setFieldValue('role', val);
-                    }}
-                    size="middle"
-                  />
-                </FormItem>
-              </div>
-            </div>
-          </Form>
-        </EditModalWrapper>
-        {contextHolder}
-      </Modal>
-    </>
+    <Tooltip>
+      <TooltipTrigger>
+        <Sheet
+          data-cy="edit-user"
+          sheetTrigger={<Edit2Icon />}
+          sheetTitle="Update User Role"
+          sheetFooterButton="Update"
+          sheetDescription={`Update the role for ${user.firstName || ''} ${user.lastName || ''} (${user.email})`}
+          loading={loading}
+          error={false}
+          additionalContent={null}
+          sheetFields={[
+            {
+              id: 'role',
+              label: 'Role',
+              type: 'select',
+              placeholder: 'Select a role',
+              inputDefault: getDefaultUserRole(),
+              required: true,
+              options: adminRoleSelect,
+            },
+          ]}
+          buttonAction={(_, values) => {
+            const { role } = values;
+            handleUpdateUser(role);
+          }}
+        />
+      </TooltipTrigger>
+      <TooltipContent>Edit User</TooltipContent>
+    </Tooltip>
   );
 };

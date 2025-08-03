@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start -p 3000",
     "start:cypress": "next start -H 0.0.0.0 -p 3000",
-    "lint": "tsc && eslint -- src/",
+    "lint": "tsc && eslint --config .eslintrc.cjs 'src/**/*.{jsx,tsx}'",
     "generateTourHash": "node tourHash.js",
     "storybook": "storybook dev -p 6006",
     "test-storybook": "test-storybook",
@@ -30,7 +30,6 @@
     "@tailwindcss/postcss": "^4.1.8",
     "@types/git-url-parse": "^9.0.3",
     "@uselagoon/ui-library": "github:uselagoon/ui-library#shadcn-components-v2",
-    "antd": "^5.26.6",
     "cryptr": "^6.3.0",
     "cypress-real-events": "^1.14.0",
     "dayjs": "^1.11.13",
@@ -46,7 +45,6 @@
     "postcss": "^8.5.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "styled-components": "^6.1.19",
     "tailwindcss": "^4.1.8"
   },
   "devDependencies": {

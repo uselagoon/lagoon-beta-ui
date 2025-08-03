@@ -1,4 +1,4 @@
-import { startTransition, useState } from 'react';
+import { startTransition } from 'react';
 
 import {
   UPDATE_NOTIFICATION_EMAIL,
@@ -7,13 +7,10 @@ import {
   UPDATE_NOTIFICATION_TEAMS,
   UPDATE_NOTIFICATION_WEBHOOK,
 } from '@/lib/mutation/organizations/updateNotification';
-import { EditOutlined } from '@ant-design/icons';
 import { ApolloError, DocumentNode, useMutation } from '@apollo/client';
-import { FormItem, Input, Modal, useNotification } from '@uselagoon/ui-library';
-import { Form, Tooltip } from 'antd';
-import { useForm } from 'antd/es/form/Form';
-
-import { EditModalTitle, EditModalWrapper } from '../../organization/_components/styles';
+import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Edit2Icon } from 'lucide-react';
+import { toast } from 'sonner';
 
 export type Notification = {
   name: string;
@@ -46,134 +43,98 @@ export const getNotificationMutation = (type: string) => {
 export const EditNotification: React.FC<EditNotificationProps> = ({ notification, refetch }) => {
   const mutationToUse = getNotificationMutation(notification.type) as DocumentNode;
 
-  const [modalOpen, setModalOpen] = useState(false);
-
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: `There was a problem updating notification.`,
-    placement: 'top',
-    duration: 0,
-    content: '',
-  });
-
-  const [editNotificationForm] = useForm();
-
   const [updateNotification, { loading }] = useMutation(mutationToUse, {
     variables: {
       name: notification.name,
     },
+    onError: err => {
+      console.error(err);
+      toast.error('Error updating notification', {
+        description: err.message,
+      });
+    },
   });
 
-  const handleUpdateNotification = async () => {
-    const { name, channel, webhook, email } = editNotificationForm.getFieldsValue();
-
-    try {
-      await updateNotification({
-        variables: {
-          patch: {
-            ...(name ? { name } : {}),
-            ...(channel ? { channel } : {}),
-            ...(webhook ? { webhook } : {}),
-            ...(email ? { emailAddress: email } : {}),
-          },
+  const handleUpdateNotification = (name: string, channel?: string, webhook?: string, email?: string) => {
+    return updateNotification({
+      variables: {
+        patch: {
+          ...(name ? { name } : {}),
+          ...(channel ? { channel } : {}),
+          ...(webhook ? { webhook } : {}),
+          ...(email ? { emailAddress: email } : {}),
         },
-      });
-
+      },
+    }).then(() => {
       startTransition(() => {
-        (refetch ?? (() => {}))();
+        refetch();
       });
+      toast.success('Notification updated successfully!');
+    });
+  };
 
-      closeModal();
-    } catch (err) {
-      console.error(err);
-      trigger({ content: (err as ApolloError).message });
+  const getSheetFields = () => {
+    const fields = [
+      {
+        id: 'name',
+        label: 'Name',
+        placeholder: 'Enter notification name',
+        inputDefault: notification.name,
+        required: true,
+      },
+    ];
+
+    if (notification.type === 'email') {
+      fields.push({
+        id: 'email',
+        label: 'Email Address',
+        placeholder: 'Enter email',
+        inputDefault: notification.emailAddress || '',
+        required: true,
+      });
+    } else {
+      fields.push({
+        id: 'webhook',
+        label: 'Webhook',
+        placeholder: 'Enter Webhook',
+        inputDefault: notification.webhook || '',
+        required: true,
+      });
     }
-  };
 
-  const closeModal = () => {
-    setModalOpen(false);
-  };
+    if (notification.type === 'slack' || notification.type === 'rocketchat' || notification.type === 'teams') {
+      fields.push({
+        id: 'channel',
+        label: 'Channel',
+        placeholder: 'Enter channel',
+        inputDefault: notification.channel || '',
+        required: true,
+      });
+    }
 
-  const openModal = () => {
-    setModalOpen(true);
+    return fields;
   };
-
-  const editNotificationType = notification.type;
 
   return (
-    <>
-      <Tooltip placement="bottom" title="Edit notification">
-        <EditOutlined data-cy="edit-notification" onClick={openModal} />
-      </Tooltip>
-
-      <Modal
-        title={<EditModalTitle>Edit Notification</EditModalTitle>}
-        open={modalOpen}
-        destroyOnClose
-        cancelText="Cancel"
-        confirmText="Update"
-        onCancel={closeModal}
-        onOk={handleUpdateNotification}
-        confirmLoading={loading}
-        width={600}
-      >
-        <EditModalWrapper>
-          <Form form={editNotificationForm}>
-            <div className="notificationFields">
-              <div className="wrap">
-                <FormItem
-                  name="name"
-                  label="Name"
-                  initialValue={notification.name}
-                  rules={[{ required: true, message: '' }]}
-                >
-                  <Input data-cy="notification-name" placeholder="Enter notification name" required />
-                </FormItem>
-              </div>
-
-              {editNotificationType === 'email' ? (
-                <div className="wrap">
-                  <FormItem
-                    name="email"
-                    initialValue={notification.emailAddress}
-                    label="Email Address"
-                    rules={[{ required: true, message: '', type: 'email' }]}
-                  >
-                    <Input data-cy="notification-email" placeholder="Enter email" required />
-                  </FormItem>
-                </div>
-              ) : null}
-
-              {editNotificationType && editNotificationType !== 'email' ? (
-                <div className="wrap">
-                  <FormItem
-                    name="webhook"
-                    initialValue={notification.webhook}
-                    label="Webhook"
-                    rules={[{ required: true, message: '' }]}
-                  >
-                    <Input data-cy="notification-webhook" placeholder="Enter Webhook" required />
-                  </FormItem>
-                </div>
-              ) : null}
-
-              {editNotificationType === 'slack' || editNotificationType === 'rocketchat' ? (
-                <div className="wrap">
-                  <FormItem
-                    name="channel"
-                    initialValue={notification.channel}
-                    label="Channel"
-                    rules={[{ required: true, message: '' }]}
-                  >
-                    <Input data-cy="notification-channel" placeholder="Enter channel" required />
-                  </FormItem>
-                </div>
-              ) : null}
-            </div>
-          </Form>
-        </EditModalWrapper>
-        {contextHolder}
-      </Modal>
-    </>
+    <Tooltip>
+      <TooltipTrigger>
+        <Sheet
+          data-cy="edit-notification"
+          sheetTrigger={<Edit2Icon />}
+          sheetTitle="Edit Notification"
+          sheetFooterButton="Update"
+          sheetDescription={`Edit the ${notification.type} notification settings`}
+          loading={loading}
+          error={false}
+          additionalContent={null}
+          sheetFields={getSheetFields()}
+          buttonAction={(_, values) => {
+            const { name, channel, webhook, email } = values;
+            handleUpdateNotification(name, channel, webhook, email);
+          }}
+        />
+      </TooltipTrigger>
+      <TooltipContent>Edit Notification</TooltipContent>
+    </Tooltip>
   );
 };

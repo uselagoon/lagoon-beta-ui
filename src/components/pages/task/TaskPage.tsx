@@ -60,10 +60,6 @@ export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<Ta
     data: { environment },
   } = useReadQuery(queryRef);
 
-  if (!environment?.tasks.length) {
-    return <TaskNotFound taskName={taskName} />;
-  }
-
   const currentTask = environment && environment.tasks[0];
 
   const [showParsed, setShowParsed] = useState(true);
@@ -79,7 +75,7 @@ export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<Ta
 
   // polling every 20s if status needs to be checked
   useEffect(() => {
-    const shouldPoll = ['new', 'pending', 'queued', 'running'].includes(currentTask.status);
+    const shouldPoll = ['new', 'pending', 'queued', 'running'].includes(currentTask?.status);
 
     if (shouldPoll) {
       const intId = setInterval(() => {
@@ -92,6 +88,9 @@ export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<Ta
     }
   }, [currentTask, refetch]);
 
+  if (!environment?.tasks.length) {
+    return <TaskNotFound taskName={taskName} />;
+  }
   const taskDataRow = {
     name: currentTask.name,
     service: currentTask.service,

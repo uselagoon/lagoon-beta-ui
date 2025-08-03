@@ -1,24 +1,18 @@
 'use client';
 
-import { SetStateAction } from 'react';
-
-import { CheckboxContainer } from '@/components/pages/organizations/groups/_components/styles';
-import { userFilterOptions } from '@/components/pages/organizations/user/_components/filterValues';
-import { Checkbox, LagoonFilter, Table } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { UserDataTableColumns } from '@/components/pages/organizations/user/_components/UserGroupsTableColumns';
+import { resultsFilterValues } from '@/components/pages/organizations/user/_components/filterValues';
+import { Checkbox, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-const { OrgUserGroupsTable } = Table;
 export default function Loading() {
-  const [{ user_query, user_sort, showDefaults }, setQuery] = useQueryStates({
+  const [{ results, user_query, showDefaults }, setQuery] = useQueryStates({
     results: {
       defaultValue: undefined,
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : undefined),
     },
-    user_sort: {
-      defaultValue: null,
-      parse: (value: string | undefined) => (value !== undefined ? String(value) : null),
-    },
+
     user_query: {
       defaultValue: '',
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
@@ -33,41 +27,58 @@ export default function Loading() {
   const setUserQuery = (str: string) => {
     setQuery({ user_query: str });
   };
-  const setUserSort = (val: string) => {
-    if (['name_asc', 'name_desc'].includes(val)) {
-      setQuery({ user_sort: val });
-    } else {
-      setQuery({ user_sort: null });
-    }
-  };
 
+  const setResults = (val: string) => {
+    setQuery({ results: Number(val) });
+  };
   const setShowDefaults = () => {
     setQuery({ showDefaults: !showDefaults });
   };
 
   return (
-    <>
-      <LagoonFilter
-        searchOptions={{
-          searchText: user_query || '',
-          setSearchText: setUserQuery as React.Dispatch<SetStateAction<string>>,
-        }}
-        sortOptions={{
-          options: userFilterOptions,
-          selectedState: user_sort,
-          setSelectedState: setUserSort as React.Dispatch<SetStateAction<unknown>>,
-        }}
-      >
-        <Tooltip title="Select this to show all system and default organization groups" placement="right">
-          <CheckboxContainer>
-            <Checkbox checked={showDefaults} onChange={setShowDefaults}>
-              Show System Groups
-            </Checkbox>
-          </CheckboxContainer>
-        </Tooltip>
-      </LagoonFilter>
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">User Groups</h3>
 
-      <OrgUserGroupsTable skeleton />
-    </>
+      <DataTable
+        loading
+        columns={UserDataTableColumns(
+          _ => (
+            <></>
+          ),
+          _ => (
+            <></>
+          ),
+
+          ''
+        )}
+        data={[]}
+        searchableColumns={['name']}
+        onSearch={searchStr => setUserQuery(searchStr)}
+        initialSearch={user_query}
+        initialPageSize={results || 10}
+        renderFilters={table => (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Checkbox
+                id="show-defaults"
+                label="Show default groups"
+                checked={showDefaults}
+                onCheckedChange={setShowDefaults}
+              />
+              <SelectWithOptions
+                options={resultsFilterValues}
+                width={100}
+                value={String(results || 10)}
+                placeholder="Results per page"
+                onValueChange={newVal => {
+                  table.setPageSize(Number(newVal));
+                  setResults(newVal);
+                }}
+              />
+            </div>
+          </div>
+        )}
+      />
+    </SectionWrapper>
   );
 }

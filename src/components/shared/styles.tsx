@@ -1,5 +1,5 @@
-import styled from 'styled-components';
+import { ReactNode } from 'react';
 
-export const LinkContentWrapper = styled.div`
-  padding-inline: 0.75rem;
-`;
+export const LinkContentWrapper = ({ children }: { children: ReactNode }) => {
+  return <section className="px-3">{children}</section>;
+};

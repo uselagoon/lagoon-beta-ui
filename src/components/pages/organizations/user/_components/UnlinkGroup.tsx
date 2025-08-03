@@ -2,7 +2,7 @@ import DeleteNoConfirm from '@/components/deleteNoConfirm/DeleteNoConfirm';
 import removeUserFromGroupById from '@/lib/mutation/organizations/removeUserFromGroupById';
 import { useMutation } from '@apollo/client';
 
-type Group = {
+export type UserGroup = {
   id: string;
   name: string;
   role: 'GUEST' | 'DEVELOPER' | 'REPORTER' | 'MAINTAINER' | 'OWNER';
@@ -11,7 +11,7 @@ type Group = {
 
 type UnlinkProps = {
   userEmail: string;
-  userGroup: Group;
+  userGroup: UserGroup;
   refetch: () => void;
 };
 

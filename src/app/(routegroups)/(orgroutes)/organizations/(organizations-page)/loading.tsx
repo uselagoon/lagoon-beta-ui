@@ -1,41 +1,70 @@
 'use client';
 
-import { SetStateAction } from 'react';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { OrganizationsTableColumns } from '@/components/pages/organizations/DataTableColumns';
+import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { useQueryStates } from 'nuqs';
 
-// import { LagoonFilter, Table } from '@uselagoon/ui-library';
-import { useQueryState } from 'nuqs';
-
-// const { OrganizationsTable } = Table;
 export default function Loading() {
-  const [search, setSearch] = useQueryState('search');
+  const [{ results, search }, setQuery] = useQueryStates({
+    results: {
+      defaultValue: 10,
+      parse: (value: string | undefined) => (value !== undefined ? Number(value) : 10),
+    },
+    search: {
+      defaultValue: '',
+      parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
+    },
+  });
+
+  const setSearch = (str: string) => {
+    setQuery({ search: str });
+  };
+  const setResults = (val: string) => {
+    setQuery({ results: Number(val) });
+  };
+
   return (
     <>
-      {/* <LagoonFilter
-        searchOptions={{
-          searchText: search || '',
-          setSearchText: setSearch as React.Dispatch<SetStateAction<string>>,
-        }}
-        selectOptions={{
-          options: [
-            {
-              value: 10,
-              label: '10 Results per page',
-            },
-            {
-              value: 20,
-              label: '20 Results per page',
-            },
-            {
-              value: 50,
-              label: '50 Results per page',
-            },
-          ],
-          selectedState: null,
-          setSelectedState: () => {},
-        }}
-      /> */}
-
-      {/* <OrganizationsTable skeleton /> */}
+      <SectionWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organizations</h3>
+        <Button className="px-0" variant="link">
+          View all organizations
+        </Button>
+        <DataTable
+          loading
+          columns={OrganizationsTableColumns}
+          data={[]}
+          searchableColumns={['name']}
+          onSearch={searchStr => setSearch(searchStr)}
+          initialSearch={String(search)}
+          renderFilters={table => (
+            <SelectWithOptions
+              options={[
+                {
+                  label: '10 results per page',
+                  value: 10,
+                },
+                {
+                  label: '20 results per page',
+                  value: 20,
+                },
+                {
+                  label: '50 results per page',
+                  value: 50,
+                },
+              ]}
+              width={100}
+              value={String(results)}
+              placeholder="Results per page"
+              onValueChange={newVal => {
+                table.setPageSize(Number(newVal));
+                setResults(newVal);
+              }}
+            />
+          )}
+        />
+      </SectionWrapper>
     </>
   );
 }

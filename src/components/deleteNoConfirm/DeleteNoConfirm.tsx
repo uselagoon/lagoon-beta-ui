@@ -1,7 +1,6 @@
 import React, { FC, ReactNode, startTransition } from 'react';
 
-import { Button, Label, Notification, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
+import { Button, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
 import { Trash, Unlink } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -16,7 +15,7 @@ interface DeleteProps {
   deleteConfirmText?: string;
   title: ReactNode;
   deleteMessage: ReactNode;
-  action: () => void | any | Promise<any>;
+  action: () => void | Promise<any>;
   refetch?: () => void;
   loading: boolean;
 }
@@ -36,7 +35,7 @@ const DeleteNoConfirm: FC<DeleteProps> = ({
       await action();
 
       startTransition(() => {
-        (refetch ?? (() => {}))();
+        refetch && refetch();
       });
     } catch (err) {
       console.error(err);

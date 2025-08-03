@@ -1,15 +1,17 @@
 'use client';
 
+import React from 'react';
+
 import { OrganizationData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { AddUser } from '@/components/addUserToOrg/Adduser';
 import { CreateGroup } from '@/components/createGroup/CreateGroup';
 import { CreateProject } from '@/components/createProject/CreateProject';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DetailedStats, Head2 } from '@uselagoon/ui-library';
+import { DetailStat } from '@uselagoon/ui-library';
 
 import { Description } from './_components/Description';
-import { OrgActionsWrapper } from './_components/styles';
 
 type Notification = 'slacks' | 'rocketchats' | 'webhook' | 'teams' | 'emails';
 export default function OrganizationPage({
@@ -91,14 +93,29 @@ export default function OrganizationPage({
       ),
       capitalizeValue: true,
     },
-    ...organization.deployTargets?.map(target => {
-      return {
-        key: `target_${String(target.id)}`,
-        label: 'AVAILABLE DEPLOY TARGET',
-        children: target.name,
-        lowercaseValue: true,
-      };
-    }),
+    ...(organization.deployTargets
+      ? [
+          {
+            key: 'deploy_targets',
+            label: 'AVAILABLE DEPLOY TARGETS',
+            children: (
+              <div className="space-y-0.5">
+                {organization.deployTargets.slice(0, 3).map(target => (
+                  <div key={target.id} className="text-sm">
+                    {target.name}
+                  </div>
+                ))}
+                {organization.deployTargets.length >= 4 && (
+                  <div className="text-sm text-muted-foreground">
+                    ... and {organization.deployTargets.length - 3} more
+                  </div>
+                )}
+              </div>
+            ),
+            lowercaseValue: true,
+          },
+        ]
+      : []),
   ];
 
   const deployTargetOptions = organization.deployTargets.map(deploytarget => {
@@ -112,22 +129,37 @@ export default function OrganizationPage({
 
   return (
     <>
-      <Head2>Organization Details</Head2>
-      <Description
-        orgId={organization.id}
-        name={organization.friendlyName || organization.name}
-        description={organization.description}
-      />
+      <SectionWrapper>
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>
 
-      <Head2>Create</Head2>
+        <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+          Key information about your organization
+        </span>
 
-      <OrgActionsWrapper>
-        <CreateProject organizationId={organization.id} options={deployTargetOptions} />
-        <CreateGroup organizationId={organization.id} existingGroupNames={existingGroupNames} />
-        <AddUser groupOptions={groupSelectOptions} type="multiple" />
-      </OrgActionsWrapper>
+        <Description
+          orgId={organization.id}
+          name={organization.friendlyName || organization.name}
+          description={organization.description}
+        />
 
-      <DetailedStats items={orgDetailedItems} />
+        <div className="flex gap-4 my-10">
+          <CreateProject organizationId={organization.id} options={deployTargetOptions} />
+          <CreateGroup organizationId={organization.id} existingGroupNames={existingGroupNames} />
+          <AddUser groupOptions={groupSelectOptions} type="multiple" />
+        </div>
+
+        <div className="flex flex-wrap justify-between max-w-7xl mx-auto gap-y-4 ">
+          {orgDetailedItems.map(item => (
+            <DetailStat
+              title={item.label}
+              value={item.children}
+              lowercaseValue={item.lowercaseValue}
+              key={item.key}
+              capitalizeValue={item.capitalizeValue}
+            />
+          ))}
+        </div>
+      </SectionWrapper>
     </>
   );
 }

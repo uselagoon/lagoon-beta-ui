@@ -63,26 +63,14 @@ export default function DeploymentPage({
     data: { environment },
   } = useReadQuery(queryRef);
 
-  if (!environment?.deployments.length) {
-    return <DeploymentNotFound deploymentName={deploymentName} />;
-  }
-
-  const deployment = environment && environment.deployments[0];
-
   const [showParsed, setShowParsed] = useState(true);
   const [showSuccessSteps, setShowSuccessSteps] = useState(true);
   const [highlightWarnings, setHighlightWarnings] = useState(true);
 
-  const handleShowParsed = (checked: boolean) => {
-    // disable fields that don't make sense for raw logs
-    setShowParsed(checked);
-    setShowSuccessSteps(checked);
-    setHighlightWarnings(checked);
-  };
-
+  const deployment = environment && environment.deployments[0];
   // polling every 20s if status needs to be checked
   useEffect(() => {
-    const shouldPoll = ['new', 'pending', 'queued', 'running'].includes(deployment.status);
+    const shouldPoll = ['new', 'pending', 'queued', 'running'].includes(deployment?.status);
 
     if (shouldPoll) {
       const intId = setInterval(() => {
@@ -94,6 +82,17 @@ export default function DeploymentPage({
       return () => clearInterval(intId);
     }
   }, [deployment, refetch]);
+
+  if (!environment?.deployments.length) {
+    return <DeploymentNotFound deploymentName={deploymentName} />;
+  }
+
+  const handleShowParsed = (checked: boolean) => {
+    // disable fields that don't make sense for raw logs
+    setShowParsed(checked);
+    setShowSuccessSteps(checked);
+    setHighlightWarnings(checked);
+  };
 
   const deploymentDataRow = {
     status: <Badge variant="default">{deployment.status}</Badge>,

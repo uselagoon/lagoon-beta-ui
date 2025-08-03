@@ -9,7 +9,7 @@ export default gql`
       projects {
         id
         name
-        groupCount @client
+        groupCount
       }
       deployTargets {
         id

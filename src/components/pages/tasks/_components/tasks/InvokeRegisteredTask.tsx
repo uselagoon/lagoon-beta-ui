@@ -1,4 +1,4 @@
-import React, { FC, Fragment, startTransition, useEffect, useState } from 'react';
+import React, { FC, startTransition, useEffect, useState } from 'react';
 
 import {
   AdvancedTaskDefinitionArgument,
@@ -6,15 +6,7 @@ import {
 } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
 import invokeRegisteredTask from '@/lib/mutation/tasks/invokeRegisteredTask';
 import { useMutation } from '@apollo/client';
-import {
-  Button,
-  Input,
-  Notification,
-  SelectWithOptions,
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@uselagoon/ui-library';
+import { Button, Input, Notification, SelectWithOptions } from '@uselagoon/ui-library';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -61,7 +53,7 @@ const InvokeRegisteredTask: FC<Props> = ({ environment, advancedTask, refetch })
           }[] = [];
 
           Object.keys(advancedTaskArguments).forEach(function (key) {
-            var value = advancedTaskArguments[key];
+            let value = advancedTaskArguments[key];
             taskArgs.push({ advancedTaskDefinitionArgumentName: key, value: value });
           });
           return taskArgs;
