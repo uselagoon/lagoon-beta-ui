@@ -1,7 +1,7 @@
 export const notificationTypeOptions = [
   {
-    label: 'All',
-    value: null,
+    label: 'All Notifications',
+    value: 'all',
   },
   {
     label: 'Slack',
@@ -9,7 +9,7 @@ export const notificationTypeOptions = [
   },
   {
     label: 'RocketChat',
-    value: 'rocketChat',
+    value: 'rocketchat',
   },
   {
     label: 'Email',

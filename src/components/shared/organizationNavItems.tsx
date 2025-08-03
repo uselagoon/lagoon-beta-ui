@@ -1,30 +1,30 @@
 export const organizationNavItems = (orgSlug: string) => [
   {
     key: `/organizations/${orgSlug}`,
-    label: 'Overview'
+    label: 'Overview',
   },
   {
     key: `/organizations/${orgSlug}/groups`,
-    label: 'Groups'
+    label: 'Groups',
   },
   {
     key: `/organizations/${orgSlug}/users`,
-    label: 'Users'
+    label: 'Users',
   },
   {
     key: `/organizations/${orgSlug}/projects`,
-    label: 'Projects'
+    label: 'Projects',
   },
   {
     key: `/organizations/${orgSlug}/variables`,
-    label: 'Variables'
+    label: 'Variables',
   },
   {
     key: `/organizations/${orgSlug}/notifications`,
-    label: 'Notifications'
+    label: 'Notifications',
   },
   {
     key: `/organizations/${orgSlug}/manage`,
-    label: 'Administration'
+    label: 'Administration',
   },
 ];

@@ -103,49 +103,49 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) 
     <>
       <Tooltip>
         <TooltipTrigger>
-      <Sheet
-        data-cy="add-variable"
-        sheetTrigger={<Edit2Icon />}
-        sheetTitle="Edit a variable"
-        sheetFooterButton="Update"
-        sheetDescription="Create a unique name for your variable. Then choose the scope of the variables availability. For more information see our documentation"
-        loading={loading}
-        error={false}
-        additionalContent={null}
-        sheetFields={[
-          {
-            id: 'variable_name',
-            label: 'Variable name',
-            placeholder: 'Enter a name for the variable',
-            inputDefault: currentEnv.name,
-            required: true,
-            readOnly: true,
-          },
-          {
-            id: 'variable_scope',
-            label: 'Key Value',
-            required: true,
-            placeholder: 'Select variable scope',
-            type: 'select',
-            inputDefault: currentEnv.scope,
-            options: scopeOptions,
-          },
+          <Sheet
+            data-cy="add-variable"
+            sheetTrigger={<Edit2Icon />}
+            sheetTitle="Edit a variable"
+            sheetFooterButton="Update"
+            sheetDescription="Create a unique name for your variable. Then choose the scope of the variables availability. For more information see our documentation"
+            loading={loading}
+            error={false}
+            additionalContent={null}
+            sheetFields={[
+              {
+                id: 'variable_name',
+                label: 'Variable name',
+                placeholder: 'Enter a name for the variable',
+                inputDefault: currentEnv.name,
+                required: true,
+                readOnly: true,
+              },
+              {
+                id: 'variable_scope',
+                label: 'Key Value',
+                required: true,
+                placeholder: 'Select variable scope',
+                type: 'select',
+                inputDefault: currentEnv.scope,
+                options: scopeOptions,
+              },
 
-          {
-            id: 'variable_value',
-            label: 'Variable value',
-            placeholder: 'Enter variable value',
-            inputDefault: currentEnv.value,
-            required: true,
-          },
-        ]}
-        buttonAction={(_, { variable_name, variable_scope, variable_value }) => {
-          handleUpdateVariable(variable_name, variable_scope, variable_value);
-        }}
-      />
-      </TooltipTrigger>
-      <TooltipContent>Edit Variable</TooltipContent>
-    </Tooltip>
+              {
+                id: 'variable_value',
+                label: 'Variable value',
+                placeholder: 'Enter variable value',
+                inputDefault: currentEnv.value,
+                required: true,
+              },
+            ]}
+            buttonAction={(_, { variable_name, variable_scope, variable_value }) => {
+              handleUpdateVariable(variable_name, variable_scope, variable_value);
+            }}
+          />
+        </TooltipTrigger>
+        <TooltipContent>Edit Variable</TooltipContent>
+      </Tooltip>
     </>
   );
 };

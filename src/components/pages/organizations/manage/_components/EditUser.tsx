@@ -73,33 +73,33 @@ export const EditUser: FC<Props> = ({ orgId, refetch, user }) => {
   return (
     <Tooltip>
       <TooltipTrigger>
-    <Sheet
-      data-cy="edit-user"
-      sheetTrigger={<Edit2Icon />}
-      sheetTitle="Update User Role"
-      sheetFooterButton="Update"
-      sheetDescription={`Update the role for ${user.firstName || ''} ${user.lastName || ''} (${user.email})`}
-      loading={loading}
-      error={false}
-      additionalContent={null}
-      sheetFields={[
-        {
-          id: 'role',
-          label: 'Role',
-          type: 'select',
-          placeholder: 'Select a role',
-          inputDefault: getDefaultUserRole(),
-          required: true,
-          options: adminRoleSelect,
-        },
-      ]}
-      buttonAction={(_, values) => {
-        const { role } = values;
-        handleUpdateUser(role);
-      }}
-    />
-    </TooltipTrigger>
-    <TooltipContent>Edit User</TooltipContent>
+        <Sheet
+          data-cy="edit-user"
+          sheetTrigger={<Edit2Icon />}
+          sheetTitle="Update User Role"
+          sheetFooterButton="Update"
+          sheetDescription={`Update the role for ${user.firstName || ''} ${user.lastName || ''} (${user.email})`}
+          loading={loading}
+          error={false}
+          additionalContent={null}
+          sheetFields={[
+            {
+              id: 'role',
+              label: 'Role',
+              type: 'select',
+              placeholder: 'Select a role',
+              inputDefault: getDefaultUserRole(),
+              required: true,
+              options: adminRoleSelect,
+            },
+          ]}
+          buttonAction={(_, values) => {
+            const { role } = values;
+            handleUpdateUser(role);
+          }}
+        />
+      </TooltipTrigger>
+      <TooltipContent>Edit User</TooltipContent>
     </Tooltip>
   );
 };

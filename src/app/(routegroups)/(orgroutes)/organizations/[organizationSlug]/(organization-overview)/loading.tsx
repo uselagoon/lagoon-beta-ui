@@ -60,7 +60,7 @@ export default function Loading() {
 
         <Description loading />
 
-        <div className="flex flex-wrap flex-col gap-4 my-10">
+        <div className="flex gap-4 my-10">
           <CreateProject organizationId={0} options={[]} />
           <CreateGroup organizationId={0} existingGroupNames={[]} />
           <AddUser groupOptions={[]} type="multiple" />

@@ -75,9 +75,12 @@ export default function OrgProjectsPage({
           <CreateProject organizationId={organization.id} options={deployTargetOptions} />
         </div>
         <DataTable
-          columns={ProjectsDataTableColumns(project => (
-            <RemoveProject project={project} refetch={refetchData} />
-          ))}
+          columns={ProjectsDataTableColumns(
+            project => (
+              <RemoveProject project={project} refetch={refetchData} />
+            ),
+            organization.name
+          )}
           data={organization.projects}
           searchableColumns={['name']}
           onSearch={searchStr => setProjectQuery(searchStr)}

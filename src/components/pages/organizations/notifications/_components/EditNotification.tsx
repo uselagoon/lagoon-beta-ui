@@ -133,7 +133,7 @@ export const EditNotification: React.FC<EditNotificationProps> = ({ notification
             handleUpdateNotification(name, channel, webhook, email);
           }}
         />
-        </TooltipTrigger>
+      </TooltipTrigger>
       <TooltipContent>Edit Notification</TooltipContent>
     </Tooltip>
   );

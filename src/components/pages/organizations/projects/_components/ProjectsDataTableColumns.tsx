@@ -8,7 +8,8 @@ import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn
 import { SquareTerminal } from 'lucide-react';
 
 export const ProjectsDataTableColumns = (
-  deleteProjectModal: (project: OrgProject) => React.ReactNode
+  deleteProjectModal: (project: OrgProject) => React.ReactNode,
+  orgName: string
 ): DataTableColumnDef<OrgProject>[] => [
   {
     accessorKey: 'name',
@@ -19,6 +20,15 @@ export const ProjectsDataTableColumns = (
           Name
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const { name } = row.original;
+
+      return (
+        <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${orgName}/projects/${name}`}>
+          {name}
+        </Link>
       );
     },
   },

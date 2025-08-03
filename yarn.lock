@@ -4375,7 +4375,7 @@
 
 "@uselagoon/ui-library@github:uselagoon/ui-library#shadcn-components-v2":
   version "2.0.2"
-  resolved "https://codeload.github.com/uselagoon/ui-library/tar.gz/1eb51fd6dc2a153951aa22a513b2fc99f1c998d9"
+  resolved "https://codeload.github.com/uselagoon/ui-library/tar.gz/42fbc355df840990bfa00e1bac27af83209de806"
   dependencies:
     "@hookform/resolvers" "^5.1.1"
     "@radix-ui/react-accordion" "^1.2.11"

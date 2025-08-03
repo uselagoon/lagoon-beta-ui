@@ -11,7 +11,6 @@ import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, DateRangePicker, SelectWithOptions, Table } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-import CancelDeployment from '../../cancelDeployment/CancelDeployment';
 import DeployLatest from './_components/DeployLatest';
 import getDeploymentTableColumns from './_components/TableColumns';
 import { deploymentResultOptions, statusOptions } from './_components/filterValues';

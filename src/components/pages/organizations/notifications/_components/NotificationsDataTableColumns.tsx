@@ -1,7 +1,7 @@
 'use client';
 
 import { Notification } from '@/components/pages/organizations/notifications/_components/EditNotification';
-import { DataTableColumnDef } from '@uselagoon/ui-library';
+import { Badge, DataTableColumnDef } from '@uselagoon/ui-library';
 
 export const NotificationsDataTableColumns = (
   editNotificationModal: (notification: Notification) => React.ReactNode,
@@ -16,9 +16,14 @@ export const NotificationsDataTableColumns = (
     accessorKey: 'type',
     header: 'Type',
     width: '30%',
+    filterFn: 'equals',
     cell: ({ row }) => {
       const type = row.original.type.replace(/_/g, ' ');
-      return <span className="capitalize">{type}</span>;
+      return (
+        <Badge>
+          <span className="uppercase">{type}</span>
+        </Badge>
+      );
     },
   },
   {

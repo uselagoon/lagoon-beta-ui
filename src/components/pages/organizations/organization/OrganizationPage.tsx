@@ -142,7 +142,7 @@ export default function OrganizationPage({
           description={organization.description}
         />
 
-        <div className="flex flex-wrap flex-col gap-4 my-10">
+        <div className="flex gap-4 my-10">
           <CreateProject organizationId={organization.id} options={deployTargetOptions} />
           <CreateGroup organizationId={organization.id} existingGroupNames={existingGroupNames} />
           <AddUser groupOptions={groupSelectOptions} type="multiple" />

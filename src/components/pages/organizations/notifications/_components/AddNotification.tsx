@@ -1,4 +1,4 @@
-import { FC, startTransition, useState, useCallback } from 'react';
+import { FC, startTransition, useCallback, useState } from 'react';
 
 import {
   ADD_EMAIL_NOTIFICATION,
@@ -8,8 +8,8 @@ import {
   ADD_WEBHOOK_NOTIFICATION,
 } from '@/lib/mutation/organizations/addNotification';
 import { ApolloError, useMutation } from '@apollo/client';
-import { toast } from 'sonner';
 import { Sheet } from '@uselagoon/ui-library';
+import { toast } from 'sonner';
 
 type AddNotificationProps = {
   orgId: number;
@@ -42,17 +42,20 @@ export const AddNotification: FC<AddNotificationProps> = ({ orgId, refetch }) =>
     { label: 'Webhook', value: 'webhook' },
   ];
 
-  const getAction = async (notificationType: string, {
-    name,
-    channel,
-    webhook,
-    email,
-  }: {
-    name: string;
-    channel?: string;
-    webhook?: string;
-    email?: string;
-  }) => {
+  const getAction = async (
+    notificationType: string,
+    {
+      name,
+      channel,
+      webhook,
+      email,
+    }: {
+      name: string;
+      channel?: string;
+      webhook?: string;
+      email?: string;
+    }
+  ) => {
     switch (notificationType) {
       case 'slack':
         return await addSlack({

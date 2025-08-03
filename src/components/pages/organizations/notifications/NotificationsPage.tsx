@@ -48,7 +48,7 @@ export default function NotificationsPage({
   };
 
   const setType = (val: string) => {
-    if (val === '') {
+    if (val === 'all') {
       setQuery({ type: null });
     } else {
       setQuery({ type: val as NotificationType });
@@ -89,11 +89,16 @@ export default function NotificationsPage({
           renderFilters={table => (
             <div className="flex items-center justify-between">
               <SelectWithOptions
-                options={notificationTypeOptions.filter(o => o.value !== null) as { label: string; value: string }[]}
-                value={type || ''}
+                options={notificationTypeOptions}
                 placeholder="Filter by type"
                 onValueChange={newVal => {
+                  const typeColumn = table.getColumn('type');
                   setType(newVal);
+                  if (typeColumn && newVal != 'all') {
+                    typeColumn.setFilterValue(newVal);
+                  } else {
+                    typeColumn?.setFilterValue(undefined);
+                  }
                 }}
               />
             </div>
