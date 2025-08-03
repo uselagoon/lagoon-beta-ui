@@ -78,7 +78,7 @@ const BulkDeploymentColumns: DataTableColumnDef<BulkDeployment>[] = [
         <div>
           <Link
             className="hover:text-blue-800 transition-colors"
-            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}/deployments`}
+            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}`}
           >
             {deployment.environment?.name}
           </Link>
