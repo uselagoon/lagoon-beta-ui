@@ -68,7 +68,7 @@ export default function NotificationsPage({
   return (
     <>
       <SectionWrapper>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col items-start gap-4 mb-4">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Notifications</h3>
           <AddNotification orgId={organization.id} refetch={refetch} />
         </div>

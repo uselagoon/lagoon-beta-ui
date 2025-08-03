@@ -2,7 +2,7 @@
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { AddNotification } from '@/components/pages/organizations/notifications/_components/AddNotification';
-import { organizationNavItems } from '@/components/shared/organizationNavItems';
+import { NotificationsDataTableColumnsLoading } from '@/components/pages/organizations/notifications/_components/NotificationsDataTableColumns';
 import { DataTable } from '@uselagoon/ui-library';
 
 export default function Loading() {
@@ -15,7 +15,7 @@ export default function Loading() {
         <div className="gap-4 my-4">
           <AddNotification orgId={0} refetch={() => {}} />
         </div>
-        <DataTable columns={[]} data={[]} />
+        <DataTable loading columns={NotificationsDataTableColumnsLoading} data={[]} />
       </SectionWrapper>
     </>
   );

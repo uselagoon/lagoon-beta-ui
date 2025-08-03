@@ -1,27 +1,15 @@
 'use client';
 
-import { OrgProject } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page';
-import { DataTableColumnDef, Button, cn, Tooltip, TooltipTrigger, TooltipContent } from '@uselagoon/ui-library';
-import { ChevronDown, ChevronUp, SquareTerminal } from 'lucide-react';
 import Link from 'next/link';
-type SortDirection = 'asc' | 'desc' | false;
 
-type Column = {
-  toggleSorting: (desc: boolean) => void;
-  clearSorting: () => void;
-};
+import { OrgProject } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page';
+import { handleSort, renderSortIcons } from '@/components/utils';
+import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@uselagoon/ui-library';
+import { SquareTerminal } from 'lucide-react';
 
-export const handleSort = (sortDirection: SortDirection, column: Column) => {
-  if (sortDirection === false) {
-    column.toggleSorting(false);
-  } else if (sortDirection === 'asc') {
-    column.toggleSorting(true);
-  } else {
-    column.clearSorting();
-  }
-};
-
-export const ProjectsDataTableColumns = (deleteProjectModal: (project: OrgProject) => React.ReactNode): DataTableColumnDef<OrgProject>[] => [
+export const ProjectsDataTableColumns = (
+  deleteProjectModal: (project: OrgProject) => React.ReactNode
+): DataTableColumnDef<OrgProject>[] => [
   {
     accessorKey: 'name',
     header: ({ column }) => {
@@ -29,10 +17,7 @@ export const ProjectsDataTableColumns = (deleteProjectModal: (project: OrgProjec
       return (
         <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
           Name
-          <div className="flex flex-col">
-            <ChevronUp className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')} />
-            <ChevronDown className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')} />
-          </div>
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
       );
     },
@@ -43,39 +28,36 @@ export const ProjectsDataTableColumns = (deleteProjectModal: (project: OrgProjec
       const sortDirection = column.getIsSorted();
       return (
         <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
-          Groups
-          <div className="flex flex-col">
-            <ChevronUp className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')} />
-            <ChevronDown className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')} />
-          </div>
+          Group count
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
       );
     },
     cell: ({ row }) => {
-        const groupCount = row.original.groupCount;
-        return (
-            <div className="ml-6">
-                {groupCount || 0}
-            </div>
-        );
+      const groupCount = row.original.groupCount;
+      return <div className="ml-6">{groupCount || 0}</div>;
     },
   },
   {
     id: 'actions',
     cell: ({ row }) => {
-        return (
-          <div className="flex gap-4 justify-end items-center">
-            <Link className="hover:text-blue-800 transition-colors" href={`/projects/${row.original.name}`}> 
-              <Tooltip>
-                <TooltipTrigger>
+      return (
+        <div className="flex gap-4 justify-end items-center">
+          <Link
+            className="hover:text-blue-800 transition-colors"
+            target="_blank"
+            href={`/projects/${row.original.name}`}
+          >
+            <Tooltip>
+              <TooltipTrigger>
                 <SquareTerminal className="ml-2 h-6 w-6" />
-                </TooltipTrigger>
-                <TooltipContent>View Project</TooltipContent>
-              </Tooltip>
-            </Link>
-            {deleteProjectModal(row.original)}
-          </div>
-        );
+              </TooltipTrigger>
+              <TooltipContent>View Project</TooltipContent>
+            </Tooltip>
+          </Link>
+          {deleteProjectModal(row.original)}
+        </div>
+      );
     },
   },
 ];

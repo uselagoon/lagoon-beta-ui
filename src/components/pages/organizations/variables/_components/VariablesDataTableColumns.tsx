@@ -1,25 +1,8 @@
 'use client';
 
 import { OrgEnvVariable } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
+import { handleSort, renderSortIcons } from '@/components/utils';
 import { Button, DataTableColumnDef, cn } from '@uselagoon/ui-library';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-
-type SortDirection = 'asc' | 'desc' | false;
-
-type Column = {
-  toggleSorting: (desc: boolean) => void;
-  clearSorting: () => void;
-};
-
-export const handleSort = (sortDirection: SortDirection, column: Column) => {
-  if (sortDirection === false) {
-    column.toggleSorting(false);
-  } else if (sortDirection === 'asc') {
-    column.toggleSorting(true);
-  } else {
-    column.clearSorting();
-  }
-};
 
 export const VariablesDataTableColumns = (
   editVariableModal: (variable: OrgEnvVariable) => React.ReactNode,
@@ -33,10 +16,7 @@ export const VariablesDataTableColumns = (
       return (
         <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
           Name
-          <div className="flex flex-col">
-            <ChevronUp className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')} />
-            <ChevronDown className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')} />
-          </div>
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
       );
     },
@@ -48,10 +28,7 @@ export const VariablesDataTableColumns = (
       return (
         <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
           Scope
-          <div className="flex flex-col">
-            <ChevronUp className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')} />
-            <ChevronDown className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')} />
-          </div>
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
       );
     },

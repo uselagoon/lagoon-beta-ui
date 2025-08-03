@@ -6,7 +6,6 @@ import {
   Button,
   DataTableColumnDef,
   Notification,
-  Sheet,
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -14,22 +13,14 @@ import {
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
-import { Edit2Icon, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
+
+import { EditSshSheet } from './EditSshSheet';
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
 
-export const renderTableColumns = (
-  edit: {
-    action: (...args: any) => Promise<void>;
-    loading: boolean;
-  },
-  remove: {
-    action: (...args: any) => Promise<void>;
-    loading: boolean;
-  },
-  refetch: () => void
-) => {
+export const renderTableColumns = (remove: { action: (...args: any) => Promise<void>; loading: boolean }) => {
   return [
     {
       accessorKey: 'name',
@@ -74,7 +65,6 @@ export const renderTableColumns = (
       width: '17.4%',
       cell: ({ row }) => {
         const lastUsed = row.original?.lastUsed;
-
         return lastUsed ? (
           <Tooltip>
             <TooltipTrigger>{dayjs.utc(lastUsed).local().fromNow()}</TooltipTrigger>
@@ -89,7 +79,6 @@ export const renderTableColumns = (
     {
       id: 'actions',
       header: 'Actions',
-
       cell: ({ row }) => {
         const key = row.original;
 
@@ -101,38 +90,12 @@ export const renderTableColumns = (
 
         return (
           <div className="flex gap-2">
-            <Sheet
-              sheetTrigger={<Edit2Icon />}
-              sheetTitle="Edit SSH Key"
-              sheetFooterButton="Save"
-              sheetDescription=""
-              loading={edit.loading}
-              error={false}
-              additionalContent={null}
-              sheetFields={[
-                {
-                  id: 'key_name',
-                  label: 'Key Name',
-                  placeholder: 'Enter a name for the variable',
-                  required: true,
-                  inputDefault: key.name,
-                },
-                {
-                  id: 'key_value',
-                  label: 'Key Value',
-                  required: true,
-                  placeholder:
-                    "Begins with 'ssh-rsa', 'ssh-ed25519', 'ecdsa-sha2-nistp256', 'ecdsa-sha2-nistp384', 'ecdsa-sha2-nistp521'",
-                  type: 'textarea',
-                  inputDefault: key.keyValue,
-                },
-              ]}
-              buttonAction={(_, { key_name, key_value }) => {
-                edit.action(key.id, key_name, key.keyType, key_value).finally(() => {
-                  refetch();
-                });
-              }}
-            />
+            <Tooltip>
+              <TooltipTrigger>
+                <EditSshSheet name={key.name} id={key.id} keyType={key.keyType} keyValue={key.keyValue} />
+              </TooltipTrigger>
+              <TooltipContent>Edit Key</TooltipContent>
+            </Tooltip>
 
             <Notification
               title="Delete SSH Key"
@@ -140,9 +103,7 @@ export const renderTableColumns = (
               cancelText="Cancel"
               confirmText="Confirm"
               onConfirm={() => {
-                remove.action(key.id).finally(() => {
-                  refetch();
-                });
+                remove.action(key.id);
               }}
             >
               <Button variant="outline" disabled={remove.loading}>
@@ -150,6 +111,64 @@ export const renderTableColumns = (
               </Button>
             </Notification>
           </div>
+        );
+      },
+    },
+  ] as DataTableColumnDef<SshKey>[];
+};
+
+export const renderSshColumnsNoActions = () => {
+  return [
+    {
+      accessorKey: 'name',
+      header: 'Key ID - Name',
+      width: '15%',
+      cell: ({ row }) => {
+        const { id, name } = row.original;
+
+        return `${id} - ${name}`;
+      },
+    },
+    {
+      accessorKey: 'keyType',
+      header: 'Type',
+      width: '10%',
+    },
+    {
+      accessorKey: 'keyFingerprint',
+      header: 'Fingerprint',
+      width: '30%',
+    },
+    {
+      header: 'Created',
+      accessorKey: 'created',
+      width: '17.4%',
+      cell: ({ row }) => {
+        const createdDate = row.original.created;
+
+        return createdDate ? (
+          <Tooltip>
+            <TooltipTrigger>{dayjs.utc(createdDate).local().fromNow()}</TooltipTrigger>
+            <TooltipContent>{dayjs.utc(createdDate).local().format('YYYY-MM-DD HH:mm:ss')}</TooltipContent>
+          </Tooltip>
+        ) : (
+          '-'
+        );
+      },
+    },
+    {
+      header: 'Last Used',
+      accessorKey: 'lastUsed',
+      width: '17.4%',
+      cell: ({ row }) => {
+        const lastUsed = row.original?.lastUsed;
+        return lastUsed ? (
+          <Tooltip>
+            <TooltipTrigger>{dayjs.utc(lastUsed).local().fromNow()}</TooltipTrigger>
+            <TooltipContent>{dayjs.utc(lastUsed).local().format('YYYY-MM-DD HH:mm:ss')}</TooltipContent>
+          </Tooltip>
+        ) : (
+          'Never'
         );
       },
     },

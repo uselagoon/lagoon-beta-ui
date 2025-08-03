@@ -1,34 +1,14 @@
 'use client';
 
-import { DataTableColumnDef, Button, cn } from '@uselagoon/ui-library';
-import { ChevronDown, ChevronUp } from 'lucide-react';
-
 import { OrganizationUsersData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/users/(users-page)/page';
+import { handleSort, renderSortIcons } from '@/components/utils';
+import { Badge, Button, DataTableColumnDef, cn } from '@uselagoon/ui-library';
+
 import { RemoveUser } from './_components/RemoveUser';
 
 type User = OrganizationUsersData['users'][0];
 
-type SortDirection = 'asc' | 'desc' | false;
-
-type Column = {
-  toggleSorting: (desc: boolean) => void;
-  clearSorting: () => void;
-};
-
-export const handleSort = (sortDirection: SortDirection, column: Column) => {
-  if (sortDirection === false) {
-    column.toggleSorting(false);
-  } else if (sortDirection === 'asc') {
-    column.toggleSorting(true);
-  } else {
-    column.clearSorting();
-  }
-};
-
-const UsersDataTableColumns = (
-  orgId: number,
-  refetch: () => void
-): DataTableColumnDef<User>[] => [
+const UsersDataTableColumns = (orgId?: number, refetch?: () => void): DataTableColumnDef<User>[] => [
   {
     accessorKey: 'firstName',
     header: ({ column }) => {
@@ -36,10 +16,7 @@ const UsersDataTableColumns = (
       return (
         <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
           First Name
-          <div className="ml-1 flex flex-col">
-            <ChevronUp className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')} />
-            <ChevronDown className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')} />
-          </div>
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
       );
     },
@@ -51,12 +28,15 @@ const UsersDataTableColumns = (
       return (
         <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
           Last Name
-          <div className="ml-1 flex flex-col">
-            <ChevronUp className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')} />
-            <ChevronDown className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')} />
-          </div>
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
       );
+    },
+    cell: ({ row }) => {
+      const { firstName, lastName, email } = row.original;
+      const isDefaultUser = !firstName && !lastName && email.startsWith('default-user');
+
+      return isDefaultUser ? <Badge>DEFAULT USER</Badge> : lastName;
     },
   },
   {
@@ -66,10 +46,7 @@ const UsersDataTableColumns = (
       return (
         <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
           Email
-          <div className="ml-1 flex flex-col">
-            <ChevronUp className={cn('h-1 w-1 transition-colors', sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400')} />
-            <ChevronDown className={cn('h-1 w-1 transition-colors', sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400')} />
-          </div>
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
       );
     },
@@ -79,7 +56,14 @@ const UsersDataTableColumns = (
     header: 'Roles',
     cell: ({ row }) => {
       const groupRoles = row.original.groupRoles;
-      return <div>{groupRoles?.map(groupRole => groupRole.role).join(', ')}</div>;
+
+      return (
+        <div className="flex flex-col gap-2">
+          {[...new Set(groupRoles.map(group => group.role))].map(uniqueRole => (
+            <Badge>{uniqueRole}</Badge>
+          ))}
+        </div>
+      );
     },
   },
   {
@@ -89,7 +73,7 @@ const UsersDataTableColumns = (
       const user = row.original;
       return (
         <div className="flex items-center gap-2">
-          <RemoveUser user={user} orgId={orgId} refetch={refetch} />
+          <RemoveUser user={user} orgId={orgId!} refetch={refetch!} />
         </div>
       );
     },

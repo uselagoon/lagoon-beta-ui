@@ -2,7 +2,7 @@
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { AddUser } from '@/components/pages/organizations/manage/_components/AddUser';
-import { organizationNavItems } from '@/components/shared/organizationNavItems';
+import { manageTableLoadingCols } from '@/components/pages/organizations/manage/_components/ManageDataTableColumns';
 import { DataTable } from '@uselagoon/ui-library';
 
 export default function Loading() {
@@ -15,7 +15,7 @@ export default function Loading() {
         <div className="gap-4 my-4">
           <AddUser orgId={0} refetch={() => {}} owners={[]} />
         </div>
-        <DataTable columns={[]} data={[]} />
+        <DataTable loading columns={manageTableLoadingCols} data={[]} />
       </SectionWrapper>
     </>
   );

@@ -54,6 +54,7 @@ export default function Loading() {
           <AddNewVariable type="organization" orgName="loading" refetch={() => {}} />
         </div>
         <DataTable
+          loading
           columns={VariablesDataTableColumns(
             (variable: OrgEnvVariable) => null,
             (variable: OrgEnvVariable) => null,

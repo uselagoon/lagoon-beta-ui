@@ -1,4 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
+import { Badge } from '@uselagoon/ui-library';
 
 import { DeleteUser } from './DeleteUser';
 import { EditUser } from './EditUser';
@@ -47,9 +48,9 @@ export const createManageDataTableColumns = (
       const user = row.original;
       const role = getUserRole(user);
       return (
-        <span className="capitalize">
-          {role}
-        </span>
+        <Badge>
+          <span className="capitalize">{role}</span>
+        </Badge>
       );
     },
   },
@@ -65,5 +66,28 @@ export const createManageDataTableColumns = (
         </div>
       );
     },
+  },
+];
+
+export const manageTableLoadingCols = [
+  {
+    accessorKey: 'firstName',
+    header: 'First Name',
+  },
+  {
+    accessorKey: 'lastName',
+    header: 'Last Name',
+  },
+  {
+    accessorKey: 'email',
+    header: 'Email',
+  },
+  {
+    id: 'role',
+    header: 'Role',
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
   },
 ];

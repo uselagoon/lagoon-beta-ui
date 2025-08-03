@@ -10,10 +10,12 @@ export const NotificationsDataTableColumns = (
   {
     accessorKey: 'name',
     header: 'Name',
+    width: '60%',
   },
   {
     accessorKey: 'type',
     header: 'Type',
+    width: '30%',
     cell: ({ row }) => {
       const type = row.original.type.replace(/_/g, ' ');
       return <span className="capitalize">{type}</span>;
@@ -21,10 +23,10 @@ export const NotificationsDataTableColumns = (
   },
   {
     id: 'actions',
-    header: () => <div className="text-right">Actions</div>,
+    header: () => <div>Actions</div>,
     cell: ({ row }) => {
       return (
-        <div className="flex justify-end gap-2">
+        <div className="flex gap-2">
           {editNotificationModal(row.original)}
           {deleteNotificationModal(row.original)}
         </div>
@@ -32,3 +34,20 @@ export const NotificationsDataTableColumns = (
     },
   },
 ];
+
+export const NotificationsDataTableColumnsLoading = [
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    width: '60%',
+  },
+  {
+    accessorKey: 'type',
+    header: 'Type',
+    width: '30%',
+  },
+  {
+    id: 'actions',
+    header: () => <div>Actions</div>,
+  },
+] as DataTableColumnDef<Notification>[];

@@ -4,7 +4,6 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { CreateProject } from '@/components/createProject/CreateProject';
 import { resultsFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
 import { ProjectsDataTableColumns } from '@/components/pages/organizations/projects/_components/ProjectsDataTableColumns';
-import { organizationNavItems } from '@/components/shared/organizationNavItems';
 import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 
 import { OrgProject } from '../../(organization-overview)/page';
@@ -18,6 +17,7 @@ export default function Loading() {
           <CreateProject organizationId={0} options={[]} />
         </div>
         <DataTable
+          loading
           columns={ProjectsDataTableColumns((project: OrgProject) => null)}
           data={[]}
           searchableColumns={['name']}

@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { OrgType } from '@/app/(routegroups)/(orgroutes)/organizations/(organizations-page)/page';
 import { renderSortIcons } from '@/components/utils';
-import { Button, Checkbox, DataTableColumnDef } from '@uselagoon/ui-library';
+import { Button, Checkbox, DataTableColumnDef, Skeleton } from '@uselagoon/ui-library';
 
 type SortDirection = 'asc' | 'desc' | false;
 
@@ -28,10 +28,14 @@ export const fieldCount = (
   quota: OrgType['quotaGroup'] | OrgType['quotaProject'],
   fieldType: string
 ) => {
-  let count = field?.length ?? 0;
+  let count = field?.length ?? <Skeleton className="w-[20] h-5" />;
   let fieldQuota = quota >= 0 ? quota : 'Unlimited';
   let pluralizedFieldType = quota > 1 || quota === -1 ? `${fieldType}s` : fieldType;
-  return `${count} of ${fieldQuota} ${pluralizedFieldType}`;
+  return (
+    <div className="flex gap-1">
+      {count} of {fieldQuota} {pluralizedFieldType}
+    </div>
+  );
 };
 
 export const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [

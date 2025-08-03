@@ -113,7 +113,7 @@ export default function OrgVariablesPage({
   return (
     <>
       <SectionWrapper>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start gap-4">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organization variables</h3>
           <div className="flex gap-4">
             <AddNewVariable
@@ -122,9 +122,7 @@ export default function OrgVariablesPage({
               orgName={organizationSlug}
               refetch={refetch}
             />
-            <Button size="sm" onClick={handleShowEnvVars}>
-              {orgValuesVisible ? 'Hide values' : 'Show values'}
-            </Button>
+            <Button onClick={handleShowEnvVars}>{orgValuesVisible ? 'Hide values' : 'Show values'}</Button>
           </div>
         </div>
 
