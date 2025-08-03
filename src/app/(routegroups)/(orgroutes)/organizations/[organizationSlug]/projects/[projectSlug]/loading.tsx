@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, ReactNode } from 'react';
+import { Fragment } from 'react';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { notificationTypeOptions } from '@/components/pages/organizations/notifications/_components/filterOptions';
@@ -83,6 +83,7 @@ export default function Loading() {
       <Skeleton className="h-8 w-[100px]" />
 
       <DataTable
+        loading
         columns={OrgProjectNotificationColumns(_ => (
           <Fragment> </Fragment>
         ))}
