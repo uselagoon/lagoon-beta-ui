@@ -1,19 +1,19 @@
 'use client';
 
-import { SetStateAction } from 'react';
-
-import {
-  projectFilterOptions,
-  userFilterOptions,
-} from '@/components/pages/organizations/group/_components/filterValues';
-import { CheckboxContainer } from '@/components/pages/organizations/groups/_components/styles';
-import { Checkbox, Head3, LagoonFilter, Table } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { GroupPageProjectColumns } from '@/components/pages/organizations/group/_components/GroupPageProjectsColumns';
+import GroupPageUsersColumns from '@/components/pages/organizations/group/_components/GroupPageUsersColumns';
+import { resultsFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
+import { Checkbox, DataTable, SelectWithOptions, Skeleton } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-const { OrgUsersTable, OrgProjectsTable } = Table;
 export default function Loading() {
-  const [{ user_query, user_sort, showDefaults, project_query, project_sort }, setQuery] = useQueryStates({
+  const [{ user_results, user_query, showDefaults, project_results, project_query }, setQuery] = useQueryStates({
+    user_results: {
+      defaultValue: undefined,
+      parse: (value: string | undefined) => (value !== undefined ? Number(value) : undefined),
+    },
+
     user_sort: {
       defaultValue: null,
       parse: (value: string | undefined) => (value !== undefined ? String(value) : null),
@@ -26,6 +26,10 @@ export default function Loading() {
       defaultValue: false,
       parse: (value: string | undefined) => value === 'true',
       serialize: (value: boolean) => String(value),
+    },
+    project_results: {
+      defaultValue: undefined,
+      parse: (value: string | undefined) => (value !== undefined ? Number(value) : undefined),
     },
 
     project_sort: {
@@ -43,20 +47,12 @@ export default function Loading() {
     setQuery({ user_query: str });
   };
 
-  const setGroupSort = (val: string) => {
-    if (['firstName_asc', 'firstName_desc', 'lastName_asc', 'lastName_desc', 'email_asc', 'email_desc'].includes(val)) {
-      setQuery({ user_sort: val });
-    } else {
-      setQuery({ user_sort: null });
-    }
+  const setProjectResults = (val: string) => {
+    setQuery({ project_results: Number(val) });
   };
 
-  const setProjectSort = (val: string) => {
-    if (['name_asc', 'name_desc'].includes(val)) {
-      setQuery({ project_sort: val });
-    } else {
-      setQuery({ project_sort: null });
-    }
+  const setUserResults = (val: string) => {
+    setQuery({ user_results: Number(val) });
   };
 
   const setProjectQuery = (str: string) => {
@@ -68,46 +64,77 @@ export default function Loading() {
   };
 
   return (
-    <>
-      <LagoonFilter
-        searchOptions={{
-          searchText: user_query || '',
-          setSearchText: setUserQuery as React.Dispatch<SetStateAction<string>>,
-        }}
-        sortOptions={{
-          options: userFilterOptions,
-          selectedState: user_sort,
-          setSelectedState: setGroupSort as React.Dispatch<SetStateAction<unknown>>,
-        }}
-      >
-        <Tooltip title="Select this to show all system and default organizastion users" placement="right">
-          <CheckboxContainer>
-            <Checkbox checked={showDefaults} onChange={setShowDefaults}>
-              Show Default Users
-            </Checkbox>
-          </CheckboxContainer>
-        </Tooltip>
-      </LagoonFilter>
-
-      <Head3>Users</Head3>
-
-      <OrgUsersTable type="subTable" skeleton />
-
-      <LagoonFilter
-        searchOptions={{
-          searchText: project_query || '',
-          setSearchText: setProjectQuery as React.Dispatch<SetStateAction<string>>,
-        }}
-        sortOptions={{
-          options: projectFilterOptions,
-          selectedState: project_sort,
-          setSelectedState: setProjectSort as React.Dispatch<SetStateAction<unknown>>,
-        }}
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Users</h3>
+      <div className="gap-4 my-4">
+        <Skeleton className="h-8 w-[100px]" />
+      </div>
+      <DataTable
+        loading
+        columns={GroupPageUsersColumns('', '', () => {})}
+        data={[]}
+        onSearch={searchStr => setUserQuery(searchStr)}
+        initialSearch={user_query}
+        initialPageSize={user_results || 10}
+        renderFilters={table => (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Checkbox
+                id="show-defaults"
+                label="Show default users"
+                checked={showDefaults}
+                onCheckedChange={setShowDefaults}
+              />
+              <SelectWithOptions
+                options={resultsFilterValues}
+                width={100}
+                value={String(user_results || 10)}
+                placeholder="Results per page"
+                onValueChange={newVal => {
+                  table.setPageSize(Number(newVal));
+                  setUserResults(newVal);
+                }}
+              />
+            </div>
+          </div>
+        )}
       />
 
-      <Head3>Projects</Head3>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Projects</h3>
 
-      <OrgProjectsTable type="subTable" skeleton />
-    </>
+      <div className="gap-4 my-4">
+        <Skeleton className="h-8 w-[100px]" />
+      </div>
+
+      <DataTable
+        loading
+        columns={GroupPageProjectColumns(
+          _ => (
+            <></>
+          ),
+          ''
+        )}
+        data={[]}
+        onSearch={searchStr => setProjectQuery(searchStr)}
+        initialSearch={project_query}
+        initialPageSize={project_results || 10}
+        renderFilters={table => (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <SelectWithOptions
+                options={resultsFilterValues}
+                width={100}
+                value={String(project_results || 10)}
+                placeholder="Results per page"
+                onValueChange={newVal => {
+                  table.setPageSize(Number(newVal));
+                  setProjectResults(newVal);
+                }}
+              />
+            </div>
+          </div>
+        )}
+      />
+    </SectionWrapper>
   );
 }

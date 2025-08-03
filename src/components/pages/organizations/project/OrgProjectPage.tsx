@@ -1,17 +1,13 @@
 'use client';
 
-import { OrgGroup } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page';
-import { Group } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/groups/[groupSlug]/page';
 import { OrganizationProjectData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/projects/[projectSlug]/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { AddGroupToProject } from '@/components/addGroupToProject/AddGroupToProject';
 import OrgProjectNotFound from '@/components/errors/OrgProjectNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Button, Checkbox, DataTable, Select, SelectWithOptions } from '@uselagoon/ui-library';
+import { Checkbox, DataTable, Select, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-import { resultsFilterValues } from '../groups/_components/groupFilterValues';
-import { CheckboxContainer } from '../groups/_components/styles';
 import { Notification } from '../notifications/_components/EditNotification';
 import { notificationTypeOptions } from '../notifications/_components/filterOptions';
 import { OrgProjectGroupColumns } from './OrgProjectGroupColumns';
@@ -19,7 +15,6 @@ import { OrgProjectNotificationColumns } from './OrgProjectNotificationColumns';
 import { AddNotificationToProject } from './_components/AddNotificationToProject';
 import { UnlinkGroup } from './_components/UnlinkGroup';
 import { UnlinkNotification } from './_components/UnlinkNotification';
-import { groupFilterOptions } from './_components/filterOptions';
 import { transformNotifications } from './_components/transformNotifications';
 
 export default function OrgProjectPage({
@@ -29,7 +24,7 @@ export default function OrgProjectPage({
   queryRef: QueryRef<OrganizationProjectData>;
   projectSlug: string;
 }) {
-  const [{ group_query, showDefaults, notification_query, notification_type }, setQuery] = useQueryStates({
+  const [{ group_query, showDefaults, notification_query }, setQuery] = useQueryStates({
     group_query: {
       defaultValue: '',
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
@@ -72,17 +67,15 @@ export default function OrgProjectPage({
     return <OrgProjectNotFound projectName={projectSlug} />;
   }
 
-  const orgBasePath = `/organizations/${organization.name}`;
-
   const projectNotificationsByType = transformNotifications(project.notifications);
 
   const filteredGroups = organization.groups.filter(group => {
     return project.groups.every(p => p.name !== group.name);
   });
 
-  let orgGroups = showDefaults
-    ? organization.groups
-    : organization.groups.filter(group => group.type !== 'project-default-group');
+  const projectGroups = showDefaults
+    ? project.groups
+    : project.groups.filter(group => group.type !== 'project-default-group');
 
   const linkedNotifications = {
     slacks: (projectNotificationsByType.slacks || []) as {
@@ -159,11 +152,11 @@ export default function OrgProjectPage({
           organization.name,
           refetch
         )}
-        data={orgGroups}
+        data={projectGroups}
         searchableColumns={['name']}
         onSearch={searchStr => setGroupQuery(searchStr)}
         initialSearch={group_query}
-        renderFilters={table => (
+        renderFilters={_ => (
           <div className="flex items-center justify-between">
             <Checkbox
               id="show-system-groups"

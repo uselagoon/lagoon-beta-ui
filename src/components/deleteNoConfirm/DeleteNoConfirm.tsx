@@ -35,7 +35,7 @@ const DeleteNoConfirm: FC<DeleteProps> = ({
       await action();
 
       startTransition(() => {
-        (refetch ?? (() => {}))();
+        refetch && refetch();
       });
     } catch (err) {
       console.error(err);

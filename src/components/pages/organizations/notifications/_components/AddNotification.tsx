@@ -116,7 +116,7 @@ export const AddNotification: FC<AddNotificationProps> = ({ orgId, refetch }) =>
       await getAction(notification_type, mutationVars);
 
       startTransition(() => {
-        (refetch ?? (() => {}))();
+        refetch && refetch();
       });
 
       toast.success('Notification added successfully!', {

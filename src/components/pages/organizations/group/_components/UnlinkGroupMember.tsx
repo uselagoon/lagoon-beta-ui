@@ -2,7 +2,7 @@ import DeleteNoConfirm from '@/components/deleteNoConfirm/DeleteNoConfirm';
 import removeUserFromGroup from '@/lib/mutation/organizations/removeUserFromGroup';
 import { useMutation } from '@apollo/client';
 
-type GroupMemberUser = {
+export type GroupMemberUser = {
   role: 'GUEST' | 'DEVELOPER' | 'REPORTER' | 'MAINTAINER' | 'OWNER';
   firstName: string | null;
   lastName: string | null;

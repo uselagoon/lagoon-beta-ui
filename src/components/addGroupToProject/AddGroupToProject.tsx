@@ -15,7 +15,7 @@ type Props = {
 };
 
 /**
- * Link group to project modal
+ * Link group to project sheet
  */
 
 export const AddGroupToProject: FC<Props> = ({ projectName, groups, refetch }) => {
@@ -36,7 +36,7 @@ export const AddGroupToProject: FC<Props> = ({ projectName, groups, refetch }) =
         },
       });
       startTransition(() => {
-        (refetch ?? (() => {}))();
+        refetch && refetch();
       });
     } catch (err) {
       console.error(err);
@@ -55,7 +55,7 @@ export const AddGroupToProject: FC<Props> = ({ projectName, groups, refetch }) =
       sheetTitle={`Link group to ${projectName}`}
       sheetFooterButton="Link"
       loading={loading}
-      error={!error}
+      error={!!error}
       additionalContent={null}
       sheetFields={[
         {

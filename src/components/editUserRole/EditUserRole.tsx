@@ -1,13 +1,11 @@
-import { FC, startTransition, useState } from 'react';
+import { FC, startTransition } from 'react';
 
 import addGroupMember from '@/lib/mutation/organizations/addGroupMember';
-import { EditOutlined } from '@ant-design/icons';
 import { ApolloError, useMutation } from '@apollo/client';
-import { FormItem, Input, Modal, Select, useNotification } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
-import Form, { useForm } from 'antd/es/form/Form';
+import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Edit2Icon } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { EditModalTitle, EditModalWrapper } from '../pages/organizations/organization/_components/styles';
 import { orgUserRoleOptions } from '../shared/selectOptions';
 
 type Props = {
@@ -18,7 +16,7 @@ type Props = {
 };
 
 /**
- * Edit user role modal for organization group / user;
+ * Edit user role sheet for organization group / user;
  */
 
 export const EditUserRole: FC<Props> = ({ groupName, email, currentRole, refetch }) => {
@@ -26,22 +24,7 @@ export const EditUserRole: FC<Props> = ({ groupName, email, currentRole, refetch
     refetchQueries: ['getOrganization'],
   });
 
-  const { contextHolder, trigger } = useNotification({
-    type: 'error',
-    title: `There was a problem changing user role.`,
-    placement: 'top',
-    duration: 0,
-    content: error?.message,
-  });
-
-  const [modalOpen, setModalOpen] = useState(false);
-  const [confirmDisabled, setConfirmDisabled] = useState(true);
-
-  const [addUserForm] = useForm();
-
-  const handleAddUser = async () => {
-    const { role } = addUserForm.getFieldsValue();
-
+  const handleEditUser = async (role: string) => {
     try {
       await updateUser({
         variables: {
@@ -51,96 +34,48 @@ export const EditUserRole: FC<Props> = ({ groupName, email, currentRole, refetch
         },
       });
       startTransition(() => {
-        (refetch ?? (() => {}))();
+        refetch && refetch();
       });
-      closeModal();
     } catch (err) {
       console.error(err);
-      trigger({ content: (err as ApolloError).message });
+      toast.error('There was a problemc hanging user role.', {
+        id: 'role_change_err',
+        description: (err as ApolloError).message,
+      });
     }
-  };
-
-  const closeModal = () => {
-    addUserForm.resetFields();
-    setConfirmDisabled(true);
-    setModalOpen(false);
-  };
-
-  const openModal = () => {
-    setModalOpen(true);
-  };
-
-  const getRequiredFieldsValues = () => {
-    const values: Record<string, string | boolean> = addUserForm.getFieldsValue(true);
-
-    const requiredValues: {
-      role: string;
-    } = {} as { role: string };
-
-    const requiredItems = ['role'] as const;
-
-    for (const key of requiredItems) {
-      if (values[key] == undefined) {
-        return false;
-      }
-      //@ts-ignore
-      requiredValues[key] = values[key];
-    }
-
-    return requiredValues;
   };
 
   return (
     <>
-      <Tooltip placement="bottom" title="Edit role">
-        <EditOutlined onClick={openModal} />
-      </Tooltip>
-      <Modal
-        title={<EditModalTitle>Edit user role</EditModalTitle>}
-        open={modalOpen}
-        destroyOnClose
-        cancelText="Cancel"
-        confirmText="Confirm"
-        onCancel={closeModal}
-        onOk={handleAddUser}
-        confirmLoading={loading}
-        confirmDisabled={confirmDisabled}
-        width={600}
-      >
-        <EditModalWrapper>
-          <Form
-            form={addUserForm}
-            onFieldsChange={() => {
-              const fields = getRequiredFieldsValues();
-              setConfirmDisabled(!!!fields);
-            }}
-          >
-            <div className="addFields">
-              <div className="wrap">
-                <FormItem label="Email">
-                  <Input placeholder="Enter email" value={email} disabled />
-                </FormItem>
-              </div>
-
-              <div className="wrap">
-                <FormItem name="role" label="Add a role" rules={[{ required: true, message: '' }]}>
-                  <Select
-                    options={orgUserRoleOptions}
-                    placeholder="Select a role for this user"
-                    defaultOpen={false}
-                    defaultValue={currentRole}
-                    onChange={val => {
-                      addUserForm.setFieldValue('role', val);
-                    }}
-                    size="middle"
-                  />
-                </FormItem>
-              </div>
-            </div>
-          </Form>
-        </EditModalWrapper>
-        {contextHolder}
-      </Modal>
+      <Sheet
+        data-cy="edit-user-role"
+        sheetTrigger={
+          <Tooltip>
+            <TooltipTrigger>
+              <Edit2Icon />
+            </TooltipTrigger>
+            <TooltipContent>Edit Role</TooltipContent>
+          </Tooltip>
+        }
+        sheetTitle={`Edit role for ${email}`}
+        sheetFooterButton="Confirm"
+        loading={loading}
+        error={!!error}
+        additionalContent={null}
+        sheetFields={[
+          {
+            id: 'user_role',
+            label: 'Role',
+            required: true,
+            placeholder: 'Add a role for this user',
+            type: 'select',
+            options: orgUserRoleOptions,
+          },
+        ]}
+        buttonAction={(_, { user_role }) => {
+          handleEditUser(user_role);
+        }}
+      />
     </>
   );
 };

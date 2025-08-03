@@ -43,7 +43,7 @@ export const DeleteConfirm: FC<DeleteProps> = ({
     try {
       await action();
       startTransition(() => {
-        (refetch ?? (() => {}))();
+        refetch && refetch();
       });
     } catch (err) {
       console.error(err);

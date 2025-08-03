@@ -71,7 +71,7 @@ export const AddNotificationToProject: FC<Props> = ({
         },
       });
       startTransition(() => {
-        (refetch ?? (() => {}))();
+        refetch && refetch();
       });
     } catch (err) {
       console.error(err);
@@ -90,7 +90,7 @@ export const AddNotificationToProject: FC<Props> = ({
         sheetTitle={`Link notification to ${projectName}`}
         sheetFooterButton="Link"
         loading={loading}
-        error={!error}
+        error={!!error}
         additionalContent={null}
         sheetFields={[
           {
