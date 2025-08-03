@@ -106,6 +106,7 @@ export const DeleteVariableDialog: FC<Props> = ({ currentEnv, refetch, type, onC
           onClick={async () => {
             let permissionResponse = onClick ? await onClick() : {};
             if (permissionResponse?.error) {
+              console.error(permissionResponse?.error);
             }
           }}
           disabled={loading}

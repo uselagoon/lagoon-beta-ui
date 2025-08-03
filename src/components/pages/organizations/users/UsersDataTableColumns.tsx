@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { OrganizationUsersData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/users/(users-page)/page';
 import { handleSort, renderSortIcons } from '@/components/utils';
 import { Badge, Button, DataTableColumnDef, cn } from '@uselagoon/ui-library';
@@ -8,7 +10,11 @@ import { RemoveUser } from './_components/RemoveUser';
 
 type User = OrganizationUsersData['users'][0];
 
-const UsersDataTableColumns = (orgId?: number, refetch?: () => void): DataTableColumnDef<User>[] => [
+const UsersDataTableColumns = (
+  orgId: number,
+  organizationSlug: string,
+  refetch?: () => void
+): DataTableColumnDef<User>[] => [
   {
     accessorKey: 'firstName',
     header: ({ column }) => {
@@ -50,6 +56,17 @@ const UsersDataTableColumns = (orgId?: number, refetch?: () => void): DataTableC
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const { email } = row.original;
+      return (
+        <Link
+          className="hover:text-blue-800 transition-colors"
+          href={`/organizations/${organizationSlug}/users/${email}`}
+        >
+          {email}
+        </Link>
+      );
+    },
   },
   {
     accessorKey: 'groupRoles',
@@ -60,7 +77,7 @@ const UsersDataTableColumns = (orgId?: number, refetch?: () => void): DataTableC
       return (
         <div className="flex flex-col gap-2">
           {[...new Set(groupRoles.map(group => group.role))].map(uniqueRole => (
-            <Badge>{uniqueRole}</Badge>
+            <Badge key={uniqueRole}>{uniqueRole}</Badge>
           ))}
         </div>
       );

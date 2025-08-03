@@ -46,10 +46,6 @@ export default function TasksPage({
     data: { environment },
   } = useReadQuery(queryRef);
 
-  if (!environment) {
-    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
-  }
-
   const pathname = usePathname();
 
   const [{ tasks_count }, setQuery] = useQueryStates({
@@ -67,6 +63,26 @@ export default function TasksPage({
 
   const { LAGOON_UI_TASK_BLOCKLIST } = useEnvContext();
   const blockedTasks = JSON.parse(LAGOON_UI_TASK_BLOCKLIST as string) as string[];
+
+  // polling every 20s if status needs to be checked
+  useEffect(() => {
+    const shouldPoll = environment?.tasks?.some(({ status }) =>
+      ['new', 'pending', 'queued', 'running'].includes(status)
+    );
+    if (shouldPoll) {
+      const intId = setInterval(() => {
+        startTransition(async () => {
+          await refetch();
+        });
+      }, 20000);
+
+      return () => clearInterval(intId);
+    }
+  }, [environment?.tasks, refetch]);
+
+  if (!environment) {
+    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
+  }
 
   const advancedTasks = environment?.advancedTasks?.map(task => {
     const commandstring = task.command ? `[${task.command}]` : '';
@@ -130,20 +146,6 @@ export default function TasksPage({
 
     return <NewTask {...sharedTaskProps} />;
   };
-
-  // polling every 20s if status needs to be checked
-  useEffect(() => {
-    const shouldPoll = environment.tasks.some(({ status }) => ['new', 'pending', 'queued', 'running'].includes(status));
-    if (shouldPoll) {
-      const intId = setInterval(() => {
-        startTransition(async () => {
-          await refetch();
-        });
-      }, 20000);
-
-      return () => clearInterval(intId);
-    }
-  }, [environment.tasks, refetch]);
 
   return (
     <SectionWrapper>

@@ -20,10 +20,6 @@ export default function InsightsPage({
     data: { environment },
   } = useReadQuery(queryRef);
 
-  if (!environment) {
-    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
-  }
-
   const [{ fact_results, fact_query, insights_query, insights_results }, setQuery] = useQueryStates({
     fact_results: {
       defaultValue: 10,
@@ -43,6 +39,10 @@ export default function InsightsPage({
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
     },
   });
+
+  if (!environment) {
+    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
+  }
 
   const setFactQuery = (str: string) => {
     setQuery({ fact_query: str });

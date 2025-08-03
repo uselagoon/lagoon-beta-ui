@@ -32,12 +32,6 @@ export default function ProjectVariablesPage({
 
   const [projectVarsVisible, setProjectVarsVisible] = useState(false);
 
-  if (!project) {
-    return <ProjectNotFound projectName={projectName} />;
-  }
-
-  const variables = project.envVariables;
-
   const [getPrjEnvVarValues, { loading: prjLoading, data: prjEnvValues }] = useLazyQuery(
     projectByNameWithEnvVarsValueQuery,
     {
@@ -52,6 +46,11 @@ export default function ProjectVariablesPage({
       onCompleted: () => setProjectVarsVisible(true),
     }
   );
+  if (!project) {
+    return <ProjectNotFound projectName={projectName} />;
+  }
+
+  const variables = project.envVariables;
 
   const handleShowProjectVars = async () => {
     if (projectVarsVisible) {

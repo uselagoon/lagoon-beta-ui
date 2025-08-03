@@ -43,14 +43,6 @@ const nextConfig = {
     // Available only with canary version of next
     // ppr: true,
   },
-  typescript: {
-    // temp - until UI lib is ready
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
-  },
 };
 
 export default nextConfig;

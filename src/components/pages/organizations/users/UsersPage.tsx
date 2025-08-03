@@ -71,7 +71,7 @@ export default function UsersPage({
           <AddUser groupOptions={groupSelectOptions} type="multiple" />
         </div>
         <DataTable
-          columns={UsersDataTableColumns(orgId, refetch)}
+          columns={UsersDataTableColumns(orgId, organizationSlug, refetch)}
           data={filteredUsers}
           searchableColumns={['firstName', 'lastName', 'email']}
           onSearch={searchStr => setUserQuery(searchStr)}
@@ -87,7 +87,7 @@ export default function UsersPage({
                   onCheckedChange={setShowDefaults}
                 />
                 <SelectWithOptions
-                  options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}
+                  options={resultsFilterValues}
                   width={100}
                   value={String(results || 10)}
                   placeholder="Results per page"

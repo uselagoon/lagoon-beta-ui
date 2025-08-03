@@ -15,7 +15,7 @@ interface DeleteProps {
   deleteConfirmText?: string;
   title: ReactNode;
   deleteMessage: ReactNode;
-  action: () => void | any | Promise<any>;
+  action: () => void | Promise<any>;
   refetch?: () => void;
   loading: boolean;
 }

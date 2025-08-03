@@ -31,14 +31,10 @@ export default function BackupsPage({
     data: { environment },
   } = useReadQuery(queryRef);
 
-  if (!environment) {
-    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
-  }
-
   // polling every 20s if status needs to be checked
   useEffect(() => {
     // only poll if any backup has a 'restore.status' of 'pending'
-    const shouldPoll = environment.backups.some(({ restore }) => restore?.status === 'pending');
+    const shouldPoll = environment?.backups?.some(({ restore }) => restore?.status === 'pending');
 
     if (shouldPoll) {
       const intId = setInterval(() => {
@@ -48,7 +44,11 @@ export default function BackupsPage({
       }, 20000);
       return () => clearInterval(intId);
     }
-  }, [environment.backups, refetch]);
+  }, [environment?.backups, refetch]);
+
+  if (!environment) {
+    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
+  }
 
   return (
     <SectionWrapper>

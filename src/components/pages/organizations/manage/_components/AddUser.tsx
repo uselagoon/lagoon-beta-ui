@@ -46,7 +46,7 @@ export const AddUser: FC<Props> = ({ orgId, refetch, owners }) => {
       toast.error('User already exists', {
         description: 'This user is already an administrator in this organization.',
       });
-      return Promise.reject('User already exists');
+      return Promise.reject(new Error('User already exists'));
     }
 
     return addAdministrator({

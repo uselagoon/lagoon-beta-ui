@@ -12,7 +12,7 @@ interface DeleteProps {
   deleteMessage?: string;
   icon?: ReactNode;
   renderAsButton?: boolean;
-  action: () => void | any | Promise<any>;
+  action: () => void | Promise<any>;
   refetch?: () => void;
   loading: boolean;
   data?: Record<string, any> | null;

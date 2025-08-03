@@ -1,7 +1,6 @@
 'use client';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { OrgBreadcrumbs } from '@/components/breadcrumbs/OrgBreadcrumbs';
 import { OrganizationsTableColumns } from '@/components/pages/organizations/DataTableColumns';
 import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';

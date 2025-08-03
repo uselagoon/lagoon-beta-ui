@@ -45,10 +45,6 @@ export default function EnvironmentVariablesPage({
     data: { environmentVars },
   } = useReadQuery(queryRef);
 
-  if (!environmentVars) {
-    return <EnvironmentNotFound openshiftProjectName={environmentName} />;
-  }
-
   const [{ results, search }, setQuery] = useQueryStates({
     results: {
       defaultValue: 10,
@@ -59,6 +55,60 @@ export default function EnvironmentVariablesPage({
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
     },
   });
+
+  const [getEnvVarValues, { loading: envLoading, data: envValues }] = useLazyQuery(
+    environmentByProjectNameWithEnvVarsValueQuery,
+    {
+      variables: { openshiftProjectName: environmentVars?.openshiftProjectName },
+      onError: err => {
+        console.error(err);
+        toast.error('Unauthorized', {
+          description: `You don't have permission to ${envAction} environment ${
+            envAction === 'view' ? ' variable values' : 'variables'
+          }. Contact your administrator to obtain the relevant permissions.`,
+        });
+      },
+      onCompleted: () => setEnvValuesVisible(true),
+    }
+  );
+  const [getPrjEnvVarValues, { loading: prjLoading, data: prjEnvValues }] = useLazyQuery(
+    environmentProjectByProjectNameWithEnvVarsValueQuery,
+    {
+      variables: { openshiftProjectName: environmentVars?.openshiftProjectName },
+      onError: err => {
+        console.error(err);
+        toast.error('Unauthorized', {
+          description:
+            "You don't have permission to view project variable values. Contact your administrator to obtain the relevant permissions",
+        });
+      },
+      onCompleted: () => setProjectVarsVisible(true),
+    }
+  );
+
+  const [checkEnvVars] = useLazyQuery(environmentByProjectNameWithEnvVarsValueQuery, {
+    variables: { openshiftProjectName: environmentVars?.openshiftProjectName },
+    onError: err => {
+      console.error(err);
+      toast.error('Unauthorized', {
+        description: `You don't have permission to ${envAction} environment ${
+          envAction === 'view' ? ' variable values' : 'variables'
+        }. Contact your administrator to obtain the relevant permissions.`,
+      });
+    },
+  });
+
+  const permissionCheck = async (action: 'add' | 'delete') => {
+    setEnvAction(action);
+    return await checkEnvVars();
+  };
+
+  const stableAddPermissionCheck = useCallback(() => permissionCheck('add'), []);
+  const stableDeletePermissionCheck = useCallback(() => permissionCheck('delete'), []);
+
+  if (!environmentVars) {
+    return <EnvironmentNotFound openshiftProjectName={environmentName} />;
+  }
 
   const setSearch = (val: string) => {
     setQuery({ search: val });
@@ -77,22 +127,6 @@ export default function EnvironmentVariablesPage({
     router.push(`/projects/${projectName}/project-variables`);
   };
 
-  const [getEnvVarValues, { loading: envLoading, data: envValues }] = useLazyQuery(
-    environmentByProjectNameWithEnvVarsValueQuery,
-    {
-      variables: { openshiftProjectName: environmentVars.openshiftProjectName },
-      onError: err => {
-        console.error(err);
-        toast.error('Unauthorized', {
-          description: `You don't have permission to ${envAction} environment ${
-            envAction === 'view' ? ' variable values' : 'variables'
-          }. Contact your administrator to obtain the relevant permissions.`,
-        });
-      },
-      onCompleted: () => setEnvValuesVisible(true),
-    }
-  );
-
   const handleShowEnvVars = async () => {
     if (envValuesVisible) {
       setEnvValuesVisible(false);
@@ -102,21 +136,6 @@ export default function EnvironmentVariablesPage({
     await getEnvVarValues();
   };
 
-  const [getPrjEnvVarValues, { loading: prjLoading, data: prjEnvValues }] = useLazyQuery(
-    environmentProjectByProjectNameWithEnvVarsValueQuery,
-    {
-      variables: { openshiftProjectName: environmentVars.openshiftProjectName },
-      onError: err => {
-        console.error(err);
-        toast.error('Unauthorized', {
-          description:
-            "You don't have permission to view project variable values. Contact your administrator to obtain the relevant permissions",
-        });
-      },
-      onCompleted: () => setProjectVarsVisible(true),
-    }
-  );
-
   const handleShowProjectVars = async () => {
     if (projectVarsVisible) {
       setProjectVarsVisible(false);
@@ -124,26 +143,6 @@ export default function EnvironmentVariablesPage({
     }
     await getPrjEnvVarValues();
   };
-
-  const [checkEnvVars] = useLazyQuery(environmentByProjectNameWithEnvVarsValueQuery, {
-    variables: { openshiftProjectName: environmentVars.openshiftProjectName },
-    onError: err => {
-      console.error(err);
-      toast.error('Unauthorized', {
-        description: `You don't have permission to ${envAction} environment ${
-          envAction === 'view' ? ' variable values' : 'variables'
-        }. Contact your administrator to obtain the relevant permissions.`,
-      });
-    },
-  });
-
-  const permissionCheck = async (action: 'add' | 'delete') => {
-    setEnvAction(action);
-    return await checkEnvVars();
-  };
-
-  const stableAddPermissionCheck = useCallback(() => permissionCheck('add'), []);
-  const stableDeletePermissionCheck = useCallback(() => permissionCheck('delete'), []);
 
   const renderEnvTableWithValues =
     !envLoading && envValues?.environmentVars?.envVariables && envValuesVisible ? true : false;

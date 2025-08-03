@@ -82,17 +82,17 @@ export default function OrgProjectPage({
       id: string;
       name: string;
       channel: string;
-      webhook: String;
+      webhook: string;
     }[],
-    webhooks: (projectNotificationsByType.webhooks || []) as { id: string; name: string; webhook: String }[],
+    webhooks: (projectNotificationsByType.webhooks || []) as { id: string; name: string; webhook: string }[],
     rocketChats: (projectNotificationsByType.rocketChats || []) as {
       id: string;
       name: string;
       channel: string;
-      webhook: String;
+      webhook: string;
     }[],
     emails: (projectNotificationsByType.emails || []) as { id: string; name: string; emailAddress: string }[],
-    teams: (projectNotificationsByType.teams || []) as { id: string; name: string; webhook: String }[],
+    teams: (projectNotificationsByType.teams || []) as { id: string; name: string; webhook: string }[],
   } as const;
 
   const allNotifications = [

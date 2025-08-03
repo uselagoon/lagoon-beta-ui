@@ -37,13 +37,9 @@ export default function DeploymentsPage({
     data: { environment },
   } = useReadQuery(queryRef);
 
-  if (!environment) {
-    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
-  }
-
   // polling every 20s if status needs to be checked
   useEffect(() => {
-    const shouldPoll = environment.deployments.some(({ status }) =>
+    const shouldPoll = environment?.deployments?.some(({ status }) =>
       ['new', 'pending', 'queued', 'running'].includes(status)
     );
     if (shouldPoll) {
@@ -55,8 +51,11 @@ export default function DeploymentsPage({
 
       return () => clearInterval(intId);
     }
-  }, [environment.deployments, refetch]);
+  }, [environment?.deployments, refetch]);
 
+  if (!environment) {
+    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
+  }
   return (
     <SectionWrapper>
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Deployments</h3>

@@ -2,8 +2,6 @@
 
 import { useEffect } from 'react';
 
-import styled from 'styled-components';
-
 const statusCodes = {
   400: 'Bad Request',
   401: 'Not Authenticated',

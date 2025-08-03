@@ -25,7 +25,7 @@ export const handleSort = (sortDirection: SortDirection, column: Column) => {
 
 export const fieldCount = (
   field: OrgType['groups'] | OrgType['projects'],
-  quota: OrgType['quotaGroup'] | OrgType['quotaProject'],
+  quota: OrgType['quotaProject'],
   fieldType: string
 ) => {
   let count = field?.length ?? <Skeleton className="w-[20] h-5" />;

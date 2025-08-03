@@ -58,7 +58,7 @@ const AddGroupSheet = ({
         sheetDescription="Enter the group details below"
         sheetFooterButton="Create Group"
         loading={loading}
-        // hasError={!!error}
+        error={!!error}
         buttonAction={handleAddGroup}
         sheetFields={[
           {

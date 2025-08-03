@@ -28,10 +28,6 @@ export default function ProjectEnvironmentsPage({
     data: { project },
   } = useReadQuery(queryRef);
 
-  if (!project) {
-    return <ProjectNotFound projectName={projectName} />;
-  }
-
   const [{ search, env_count }, setQuery] = useQueryStates({
     search: {
       defaultValue: '',
@@ -43,6 +39,10 @@ export default function ProjectEnvironmentsPage({
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : 5),
     },
   });
+
+  if (!project) {
+    return <ProjectNotFound projectName={projectName} />;
+  }
 
   const setSearch = (str: string) => {
     setQuery({ search: str });

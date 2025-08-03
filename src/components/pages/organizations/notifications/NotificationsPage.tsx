@@ -28,10 +28,6 @@ export default function NotificationsPage({
     data: { organization },
   } = useReadQuery(queryRef);
 
-  if (!organization) {
-    return <OrganizationNotFound orgName={organizationSlug} />;
-  }
-
   const [{ search, type }, setQuery] = useQueryStates({
     search: {
       defaultValue: '',
@@ -42,6 +38,10 @@ export default function NotificationsPage({
       parse: (value: string | undefined) => (value !== null ? (value as NotificationType) : null),
     },
   });
+
+  if (!organization) {
+    return <OrganizationNotFound orgName={organizationSlug} />;
+  }
 
   const setSearch = (val: string) => {
     setQuery({ search: val });

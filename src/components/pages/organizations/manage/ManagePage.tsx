@@ -25,9 +25,6 @@ export default function ManagePage({
     data: { organization },
   } = useReadQuery(queryRef);
 
-  if (!organization) {
-    return <OrganizationNotFound orgName={organizationSlug} />;
-  }
   const [{ results, search, type }, setQuery] = useQueryStates({
     results: {
       defaultValue: 10,
@@ -42,6 +39,10 @@ export default function ManagePage({
       parse: (value: string | undefined) => value as 'admin' | 'owner' | 'viewer',
     },
   });
+
+  if (!organization) {
+    return <OrganizationNotFound orgName={organizationSlug} />;
+  }
 
   const setSearch = (str: string) => {
     setQuery({ search: str });

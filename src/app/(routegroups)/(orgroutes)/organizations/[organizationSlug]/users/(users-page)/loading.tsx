@@ -31,7 +31,7 @@ export default function Loading() {
 
         <DataTable
           loading
-          columns={UsersDataTableColumns(1, () => {})}
+          columns={UsersDataTableColumns(1, '', () => {})}
           data={[]}
           searchableColumns={['firstName', 'lastName', 'email']}
           onSearch={searchStr => setUserQuery(searchStr)}

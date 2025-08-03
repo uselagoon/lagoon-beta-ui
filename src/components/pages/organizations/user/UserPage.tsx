@@ -1,31 +1,23 @@
 'use client';
 
-import { SetStateAction } from 'react';
-
 import { OrganizationUserData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/users/[userSlug]/page';
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { EditUserRole } from '@/components/editUserRole/EditUserRole';
-import { DisconnectOutlined, EditOutlined } from '@ant-design/icons';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Checkbox, Head3, LagoonFilter, Select, Table } from '@uselagoon/ui-library';
-import { Tooltip } from 'antd';
+import { Checkbox, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-import { CheckboxContainer } from '../groups/_components/styles';
 import { UnlinkGroup } from './_components/UnlinkGroup';
-import { resultsFilterValues, userFilterOptions } from './_components/filterValues';
-
-const { OrgUserGroupsTable } = Table;
+import { UserDataTableColumns } from './_components/UserGroupsTableColumns';
+import { resultsFilterValues } from './_components/filterValues';
 
 export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<OrganizationUserData>; orgName: string }) {
-  const [{ results, user_query, user_sort, showDefaults }, setQuery] = useQueryStates({
+  const [{ results, user_query, showDefaults }, setQuery] = useQueryStates({
     results: {
       defaultValue: undefined,
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : undefined),
     },
-    user_sort: {
-      defaultValue: null,
-      parse: (value: string | undefined) => (value !== undefined ? String(value) : null),
-    },
+
     user_query: {
       defaultValue: '',
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
@@ -39,13 +31,6 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
 
   const setUserQuery = (str: string) => {
     setQuery({ user_query: str });
-  };
-  const setUserSort = (val: string) => {
-    if (['name_asc', 'name_desc'].includes(val)) {
-      setQuery({ user_sort: val });
-    } else {
-      setQuery({ user_sort: null });
-    }
   };
 
   const setResults = (val: string) => {
@@ -62,61 +47,60 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
     data: { userByEmailAndOrganization },
   } = useReadQuery(queryRef);
 
-  const orgBasePath = `/organizations/${orgName}`;
+  const userGroups = userByEmailAndOrganization?.groupRoles ?? [];
+
+  const tableGroups = showDefaults
+    ? userGroups
+    : userGroups.filter(group => group.groupType !== 'project-default-group');
+
   return (
-    <>
-      <LagoonFilter
-        searchOptions={{
-          searchText: user_query || '',
-          setSearchText: setUserQuery as React.Dispatch<SetStateAction<string>>,
-        }}
-        sortOptions={{
-          options: userFilterOptions,
-          selectedState: user_sort,
-          setSelectedState: setUserSort as React.Dispatch<SetStateAction<unknown>>,
-        }}
-      >
-        <Tooltip title="Select this to show all system and default organization groups" placement="right">
-          <CheckboxContainer>
-            <Checkbox checked={showDefaults} onChange={setShowDefaults}>
-              Show System Groups
-            </Checkbox>
-          </CheckboxContainer>
-        </Tooltip>
-      </LagoonFilter>
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">User Groups</h3>
 
-      <Head3>User Groups</Head3>
+      <DataTable
+        columns={UserDataTableColumns(
+          userGroup => (
+            <UnlinkGroup refetch={refetch} userEmail={userByEmailAndOrganization.email} userGroup={userGroup} />
+          ),
+          current => (
+            <EditUserRole
+              groupName={current.name}
+              currentRole={current.role}
+              email={userByEmailAndOrganization.email}
+              refetch={refetch}
+            />
+          ),
 
-      <OrgUserGroupsTable
-        userGroups={userByEmailAndOrganization?.groupRoles ?? []}
-        filterString={user_query}
-        showDefaults={showDefaults}
-        sortBy={user_sort as 'name_asc' | 'name_desc'}
-        basePath={`${orgBasePath}/groups`}
-        resultsPerPage={results ?? resultsFilterValues[0].value}
-        resultDropdown={
-          <Select
-            options={resultsFilterValues}
-            value={results}
-            defaultOpen={false}
-            placeholder="Number of groups"
-            onSelect={val => {
-              setResults(val);
-            }}
-          />
-        }
-        unlinkGroupModal={userGroup => (
-          <UnlinkGroup refetch={refetch} userEmail={userByEmailAndOrganization.email} userGroup={userGroup} />
+          orgName
         )}
-        editUserRoleModal={current => (
-          <EditUserRole
-            groupName={current.name}
-            currentRole={current.role}
-            email={userByEmailAndOrganization.email}
-            refetch={refetch}
-          />
+        data={tableGroups}
+        searchableColumns={['name']}
+        onSearch={searchStr => setUserQuery(searchStr)}
+        initialSearch={user_query}
+        initialPageSize={results || 10}
+        renderFilters={table => (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Checkbox
+                id="show-defaults"
+                label="Show default groups"
+                checked={showDefaults}
+                onCheckedChange={setShowDefaults}
+              />
+              <SelectWithOptions
+                options={resultsFilterValues}
+                width={100}
+                value={String(results || 10)}
+                placeholder="Results per page"
+                onValueChange={newVal => {
+                  table.setPageSize(Number(newVal));
+                  setResults(newVal);
+                }}
+              />
+            </div>
+          </div>
         )}
       />
-    </>
+    </SectionWrapper>
   );
 }

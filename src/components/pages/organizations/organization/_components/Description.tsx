@@ -9,41 +9,37 @@ type DescriptionProps = {
   orgId: number;
   name: string;
   description: string;
-  loading?: false;
 };
-type loadingProps = {
+
+type LoadingProps = {
   loading: true;
 };
 
-type Props = DescriptionProps | loadingProps;
+type Props = DescriptionProps | LoadingProps;
 
-export const Description: FC<Props> = props => {
-  if (props.loading) {
-    return (
-      <>
-        <div className="flex flex-col gap-1 mb-3.5 mt-6">
-          <span>Organization Name</span>
-          <section>
-            <span>
-              <Skeleton className="h-10 w-[300px]" />
-            </span>
-          </section>
-        </div>
+const DescriptionLoading: FC = () => (
+  <>
+    <div className="flex flex-col gap-1 mb-3.5 mt-6">
+      <span>Organization Name</span>
+      <section>
+        <span>
+          <Skeleton className="h-10 w-[300px]" />
+        </span>
+      </section>
+    </div>
 
-        <div className="flex flex-col gap-1 mb-3.5 mt-6">
-          <span>Organization Description</span>
-          <section>
-            <span>
-              <Skeleton className="h-10 w-[300px]" />
-            </span>
-          </section>
-        </div>
-      </>
-    );
-  }
+    <div className="flex flex-col gap-1 mb-3.5 mt-6">
+      <span>Organization Description</span>
+      <section>
+        <span>
+          <Skeleton className="h-10 w-[300px]" />
+        </span>
+      </section>
+    </div>
+  </>
+);
 
-  const { orgId, name, description } = props;
-
+const DescriptionData: FC<DescriptionProps> = ({ orgId, name, description }) => {
   const [newName, setNewName] = useState(name);
   const [newDesc, setNewDesc] = useState(description || '');
 
@@ -69,4 +65,12 @@ export const Description: FC<Props> = props => {
       </div>
     </>
   );
+};
+
+export const Description: FC<Props> = props => {
+  if ('loading' in props && props.loading) {
+    return <DescriptionLoading />;
+  }
+
+  return <DescriptionData {...(props as DescriptionProps)} />;
 };

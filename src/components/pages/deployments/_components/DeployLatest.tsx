@@ -17,22 +17,21 @@ interface Props {
   >;
   skeleton?: false;
 }
+
 interface PropsWithSkeleton {
   skeleton: true;
 }
 
-const DeployLatest = (props: Props | PropsWithSkeleton) => {
-  if (props.skeleton) {
-    return (
-      <section className="flex items-center gap-[1rem] mb-6 py-1.5">
-        <div className="description flex gap-2 items-center">
-          Start a new deployment of <Skeleton className="w-[60px] h-8" />
-        </div>
-        <Button disabled>Deploy</Button>
-      </section>
-    );
-  }
-  const { environment } = props;
+const DeployLatestSkeleton = () => (
+  <section className="flex items-center gap-[1rem] mb-6 py-1.5">
+    <div className="description flex gap-2 items-center">
+      Start a new deployment of <Skeleton className="w-[60px] h-8" />
+    </div>
+    <Button disabled>Deploy</Button>
+  </section>
+);
+
+const DeployLatestData: React.FC<Props> = ({ environment }) => {
   const { id, deployType, deployBaseRef, deployHeadRef, deployTitle } = environment;
 
   const [deployEnvironmentLatestMutation, { loading, error }] = useMutation(deployEnvironmentLatest, {
@@ -67,7 +66,7 @@ const DeployLatest = (props: Props | PropsWithSkeleton) => {
   }
 
   return (
-    <section className="flex items-center gap-[1rem] mb-6 w-max  py-1.5">
+    <section className="flex items-center gap-[1rem] mb-6 w-max py-1.5">
       {!deploymentsEnabled ? (
         <>
           <div className="description text-sm leading-[1.375rem]">
@@ -92,6 +91,13 @@ const DeployLatest = (props: Props | PropsWithSkeleton) => {
       )}
     </section>
   );
+};
+
+const DeployLatest = (props: Props | PropsWithSkeleton) => {
+  if ('skeleton' in props && props.skeleton) {
+    return <DeployLatestSkeleton />;
+  }
+  return <DeployLatestData {...(props as Props)} />;
 };
 
 export default DeployLatest;

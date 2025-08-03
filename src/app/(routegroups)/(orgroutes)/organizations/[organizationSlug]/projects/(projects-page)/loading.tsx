@@ -18,7 +18,7 @@ export default function Loading() {
         </div>
         <DataTable
           loading
-          columns={ProjectsDataTableColumns((project: OrgProject) => null)}
+          columns={ProjectsDataTableColumns((_: OrgProject) => null, '')}
           data={[]}
           searchableColumns={['name']}
           initialPageSize={10}

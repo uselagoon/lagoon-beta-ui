@@ -36,10 +36,6 @@ export default function OrgVariablesPage({
     data: { organization },
   } = useReadQuery(queryRef);
 
-  if (!organization) {
-    return <OrganizationNotFound orgName={organizationSlug} />;
-  }
-
   const [{ results, search, scope }, setQuery] = useQueryStates({
     results: {
       defaultValue: 10,
@@ -55,6 +51,37 @@ export default function OrgVariablesPage({
     },
   });
 
+  const [getOrgEnvVarValues, { loading: orgLoading, data: orgEnvValues }] = useLazyQuery(
+    organizationByNameWithEnvVarsValue,
+    {
+      variables: { name: organization?.name },
+      onError: err => {
+        console.error(err);
+        toast.error('Unauthorized', {
+          description: `You don't have permission to ${envAction} organization ${
+            envAction === 'view' ? ' variable values' : 'variables'
+          }. Contact your administrator to obtain the relevant permissions.`,
+          id: 'unauthorized_error',
+        });
+      },
+      onCompleted: () => setOrgValuesVisible(true),
+    }
+  );
+  const permissionCheck = async (action: 'add' | 'delete' | 'view') => {
+    setEnvAction(action);
+    return await getOrgEnvVarValues();
+  };
+
+  const stableViewPermissionCheck = useCallback(() => permissionCheck('view'), [permissionCheck]);
+
+  const stableAddPermissionCheck = useCallback(() => permissionCheck('add'), [permissionCheck]);
+
+  const stableDeletePermissionCheck = useCallback(() => permissionCheck('delete'), [permissionCheck]);
+
+  if (!organization) {
+    return <OrganizationNotFound orgName={organizationSlug} />;
+  }
+
   const setSearch = (val: string) => {
     setQuery({ search: val });
   };
@@ -69,30 +96,6 @@ export default function OrgVariablesPage({
 
   const variables = organization.envVariables;
 
-  const [getOrgEnvVarValues, { loading: orgLoading, data: orgEnvValues }] = useLazyQuery(
-    organizationByNameWithEnvVarsValue,
-    {
-      variables: { name: organization.name },
-      onError: err => {
-        console.error(err);
-        toast.error('Unauthorized', {
-          description: `You don't have permission to ${envAction} organization ${
-            envAction === 'view' ? ' variable values' : 'variables'
-          }. Contact your administrator to obtain the relevant permissions.`,
-          id: 'unauthorized_error',
-        });
-      },
-      onCompleted: () => setOrgValuesVisible(true),
-    }
-  );
-
-  const permissionCheck = async (action: 'add' | 'delete' | 'view') => {
-    setEnvAction(action);
-    return await getOrgEnvVarValues();
-  };
-
-  const stableViewPermissionCheck = useCallback(() => permissionCheck('view'), [permissionCheck]);
-
   const handleShowEnvVars = async () => {
     await stableViewPermissionCheck();
 
@@ -103,9 +106,6 @@ export default function OrgVariablesPage({
 
     await getOrgEnvVarValues();
   };
-
-  const stableAddPermissionCheck = useCallback(() => permissionCheck('add'), [permissionCheck]);
-  const stableDeletePermissionCheck = useCallback(() => permissionCheck('delete'), [permissionCheck]);
 
   const allVars = orgEnvValues?.organization?.envVariables || (variables as unknown as OrgEnvVariable[]);
   const filteredVariables = scope ? allVars.filter((v: OrgEnvVariable) => v.scope === scope) : allVars;
