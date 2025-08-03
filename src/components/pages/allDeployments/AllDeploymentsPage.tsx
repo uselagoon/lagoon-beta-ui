@@ -29,6 +29,7 @@ export default function AllDeploymentsPage({
   const setResults = (val: string) => {
     setQuery({ results: Number(val) });
   };
+
   return (
     <>
       <SectionWrapper>
@@ -36,7 +37,7 @@ export default function AllDeploymentsPage({
         <DataTable
           columns={AlldeploymentsTableColumns}
           data={deployments}
-          searchableColumns={['project_name', 'status', 'priority', 'name', 'openshift_name', 'environment_name']}
+          searchableColumns={['project', 'status', 'priority', 'name', 'openshift_name', 'environment_name']}
           searchPlaceholder="Search deployments"
           onSearch={searchStr => setSearch(searchStr)}
           initialSearch={search}

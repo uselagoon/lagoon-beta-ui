@@ -36,7 +36,8 @@ export const getDeploymentDuration = (deployment: Deployment) => {
 
 const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
   {
-    accessorKey: 'project_name',
+    id: 'project',
+    accessorFn: row => row.environment?.project.name ?? '',
     width: '15%',
     sortingFn: (rowA, rowB, columnId) => {
       const a = rowA.getValue(columnId) as string;
@@ -55,7 +56,8 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
     },
 
     cell: ({ row }) => {
-      const projectName = row.original.name;
+      const { environment } = row.original;
+      const projectName = environment?.project.name;
       return (
         <div>
           <Link className="hover:text-blue-800 transition-colors" href={`/projects/${projectName}`}>
@@ -77,7 +79,7 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
         <div>
           <Link
             className="hover:text-blue-800 transition-colors"
-            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}/deployments/${deployment.name}`}
+            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}`}
           >
             {deployment.environment?.name}
           </Link>
@@ -114,6 +116,19 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
           Deployment
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const { name, environment } = row.original;
+      return (
+        <div>
+          <Link
+            className="hover:text-blue-800 transition-colors"
+            href={`/projects/${environment?.project.name}/${environment?.openshiftProjectName}/deployments/${name}`}
+          >
+            {name}
+          </Link>
+        </div>
       );
     },
   },
