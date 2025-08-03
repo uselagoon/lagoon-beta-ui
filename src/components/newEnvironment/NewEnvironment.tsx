@@ -68,8 +68,8 @@ export const NewEnvironment: FC<Props> = ({ projectName, refetch }) => {
       trigger: 'Do you need to add a Deploy key to your Git service?',
       content: (
         <div className="flex flex-col gap-2">
-          <div data-id="copy" className="border p-2 text-black  border-white bg-gray-50 rounded-sm">
-            <CopyToClipboard type="hiddenWithIcon" withToolTip text={dkValue} width={250} />
+          <div data-id="copy" className="border p-2 bg-transparent rounded-sm">
+            <CopyToClipboard type="hiddenWithIcon" withToolTip text={dkValue} />
           </div>
           Add this project's Deploy Key to your Git service. A Deploy key is used to access a repository from an
           external host eg Lagoon. Each Git provider has a slightly different process, please follow your providers
@@ -96,7 +96,7 @@ export const NewEnvironment: FC<Props> = ({ projectName, refetch }) => {
       trigger: 'Do you need a Webhook to trigger deployments?',
       content: (
         <div className="flex flex-col gap-2">
-          <div data-id="webhook" className="border p-2 border-white bg-gray-100 rounded-sm">
+          <div data-id="webhook" className="border p-2 bg-transparent rounded-sm">
             <CopyToClipboard type="visible" text={webhookURL} />
           </div>
           Add the webhook to your Git service. Webhooks allow apps or systems to communicate with each other. Each Git
