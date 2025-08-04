@@ -62,7 +62,7 @@ export default function BackupsPage({
         data={environment.backups}
         initialPageSize={results || 10}
         searchPlaceholder="Search backup"
-        searchableColumns={['backupId']}
+        searchableColumns={['source']}
         renderFilters={table => (
           <div className="flex gap-2 items-baseline">
             <DateRangePicker

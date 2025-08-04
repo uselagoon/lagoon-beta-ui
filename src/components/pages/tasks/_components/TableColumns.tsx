@@ -4,8 +4,8 @@ import Link from 'next/link';
 
 import { Task } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
 import CancelTask from '@/components/cancelTask/CancelTask';
-import { capitalize } from '@/components/utils';
-import { Badge, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import {capitalize, handleSort, renderSortIcons} from '@/components/utils';
+import {Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger} from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -33,9 +33,22 @@ const getTasksTableColumns = (basePath: string, projectId: number, environmentId
   [
     {
       accessorKey: 'status',
-      header: 'Status',
       width: '20%',
+      sortingFn: (rowA, rowB, columnId) => {
+        const a = rowA.getValue(columnId) as string;
+        const b = rowB.getValue(columnId) as string;
+        return a.localeCompare(b);
+      },
+      header: ({ column }) => {
+        const sortDirection = column.getIsSorted();
 
+        return (
+          <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
+            Status
+            <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+          </Button>
+        );
+      },
       cell: ({ row }) => {
         const status = row.original.status;
         return <Badge variant="default">{capitalize(status)}</Badge>;
@@ -43,9 +56,22 @@ const getTasksTableColumns = (basePath: string, projectId: number, environmentId
     },
     {
       accessorKey: 'name',
-      header: 'Task Name / ID',
       width: '20%',
+      sortingFn: (rowA, rowB, columnId) => {
+        const a = rowA.getValue(columnId) as string;
+        const b = rowB.getValue(columnId) as string;
+        return a.localeCompare(b);
+      },
+      header: ({ column }) => {
+        const sortDirection = column.getIsSorted();
 
+        return (
+          <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
+            Task Name / ID
+            <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+          </Button>
+        );
+      },
       cell: ({ row }) => {
         const { taskName, name } = row.original;
 

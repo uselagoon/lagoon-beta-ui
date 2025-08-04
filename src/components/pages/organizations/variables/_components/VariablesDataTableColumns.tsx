@@ -42,7 +42,7 @@ export const VariablesDataTableColumns = (
   },
   {
     id: 'actions',
-    header: () => <div className="text-right">Actions</div>,
+    header: () => <div className="text-right mr-4">Actions</div>,
     cell: ({ row }) => {
       return (
         <div className="flex justify-end gap-2">
