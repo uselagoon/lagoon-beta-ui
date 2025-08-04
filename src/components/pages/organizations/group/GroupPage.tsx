@@ -72,6 +72,10 @@ export default function GroupPage({ queryRef }: { queryRef: QueryRef<Organizatio
     role: user.role,
   }));
 
+  const hasDefaultUsers = groupMemberUsers.some(({ email }) => {
+    return email.startsWith('default-user');
+  });
+
   const filteredUsers = !showDefaults
     ? groupMemberUsers.filter(({ email, firstName, lastName }) => {
         return !(!firstName && !lastName && email.startsWith('default-user'));
@@ -103,6 +107,7 @@ export default function GroupPage({ queryRef }: { queryRef: QueryRef<Organizatio
                 label="Show default users"
                 checked={showDefaults}
                 onCheckedChange={setShowDefaults}
+                disabled={!hasDefaultUsers}
               />
               <SelectWithOptions
                 options={resultsFilterValues}

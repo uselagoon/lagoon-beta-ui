@@ -72,6 +72,10 @@ export default function GroupsPage({
     ? organization.groups
     : organization.groups.filter(group => group.type !== 'project-default-group');
 
+  const hasDefaultGroups = organization.groups.some(({ type }) => {
+    return type === 'project-default-group';
+  });
+
   const existingGroupNames = orgGroups.map(g => g.name);
   return (
     <SectionWrapper>
@@ -93,6 +97,7 @@ export default function GroupsPage({
               label="Show system groups"
               checked={showSystemGroups}
               onCheckedChange={setShowSystemGroups}
+              disabled={!hasDefaultGroups}
             />
             <SelectWithOptions
               options={[

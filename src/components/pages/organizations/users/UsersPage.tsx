@@ -63,6 +63,10 @@ export default function UsersPage({
 
   const filteredUsers = showDefaults ? users : users.filter(u => !u.email.startsWith('default-user'));
 
+  const hasDefaultUsers = users.some(({ email }) => {
+    return email.startsWith('default-user');
+  });
+
   return (
     <>
       <SectionWrapper>
@@ -85,6 +89,7 @@ export default function UsersPage({
                   label="Show default users"
                   checked={showDefaults}
                   onCheckedChange={setShowDefaults}
+                  disabled={!hasDefaultUsers}
                 />
                 <SelectWithOptions
                   options={resultsFilterValues}
