@@ -4,8 +4,8 @@ import Link from 'next/link';
 
 import { Task } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
 import CancelTask from '@/components/cancelTask/CancelTask';
-import {capitalize, handleSort, renderSortIcons} from '@/components/utils';
-import {Badge, Button, DataTableColumnDef} from '@uselagoon/ui-library';
+import { capitalize, handleSort, renderSortIcons } from '@/components/utils';
+import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';

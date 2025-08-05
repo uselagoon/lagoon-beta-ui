@@ -56,9 +56,9 @@ export const AddUser: FC<Props> = ({ orgId, refetch, owners }) => {
       variables: {
         email,
         organization: orgId,
-        ...(role === 'admin' && {admin: true}),
-        ...(role === 'owner' && {owner: true}),
-        ...(role === 'viewer' && {admin: false, owner: false}),
+        ...(role === 'admin' && { admin: true }),
+        ...(role === 'owner' && { owner: true }),
+        ...(role === 'viewer' && { admin: false, owner: false }),
       },
     });
     startTransition(() => {
