@@ -27,6 +27,7 @@
   "dependencies": {
     "@apollo/client": "^3.13.8",
     "@apollo/experimental-nextjs-app-support": "^0.11.11",
+    "@bprogress/next": "^3.2.12",
     "@tailwindcss/postcss": "^4.1.8",
     "@types/git-url-parse": "^9.0.3",
     "@uselagoon/ui-library": "github:uselagoon/ui-library#shadcn-components-v2",
@@ -39,7 +40,6 @@
     "lucide-react": "^0.526.0",
     "next": "^15.4.4",
     "next-auth": "^5.0.0-beta.28",
-    "next-nprogress-bar": "^2.3.13",
     "next-runtime-env": "^3.3.0",
     "nuqs": "^1.20.0",
     "postcss": "^8.5.4",

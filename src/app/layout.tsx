@@ -4,6 +4,7 @@ import { headers } from 'next/headers';
 
 import RefreshTokenHandler from '@/components/auth/RefreshTokenHandler';
 import Plugins from '@/components/plugins/plugins';
+import ProgressProvider from '@/contexts/ProgressProvider';
 import PublicRuntimeEnvProvider from '@/contexts/PublicRuntimeEnvProvider';
 import { ApolloClientComponentWrapper } from '@/lib/apollo-client-components';
 
@@ -43,17 +44,19 @@ export default async function RootLayout({
           <Plugins hook="head" nonce={nonce} />
         </head>
         <body>
-          <LinkProvider>
-            <AuthProvider>
-              <RefreshTokenHandler />
-              <ClientSessionWrapper>
-                <ApolloClientComponentWrapper>
-                  <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER!}>{children}</AppProvider>
-                </ApolloClientComponentWrapper>
-              </ClientSessionWrapper>
-            </AuthProvider>
-          </LinkProvider>
-          <Plugins hook="body" nonce={nonce} />
+          <ProgressProvider>
+            <LinkProvider>
+              <AuthProvider>
+                <RefreshTokenHandler />
+                <ClientSessionWrapper>
+                  <ApolloClientComponentWrapper>
+                    <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER!}>{children}</AppProvider>
+                  </ApolloClientComponentWrapper>
+                </ClientSessionWrapper>
+              </AuthProvider>
+            </LinkProvider>
+            <Plugins hook="body" nonce={nonce} />
+          </ProgressProvider>
         </body>
       </PublicRuntimeEnvProvider>
     </html>
