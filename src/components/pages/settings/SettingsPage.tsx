@@ -76,7 +76,7 @@ const SettingsPage = ({ queryRef }: { queryRef: QueryRef<SettingsData> }) => {
     }
   };
 
-  const columns = renderTableColumns({ action: deleteKey, loading: deleteLoading });
+  const columns = renderTableColumns({ action: deleteKey, loading: deleteLoading, refetchAction: refetch });
 
   return (
     <>
