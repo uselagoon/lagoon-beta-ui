@@ -32,6 +32,9 @@ type Props = {
 export const AddUser: FC<Props> = ({ orgId, refetch, owners }) => {
   const [addAdministrator, { loading }] = useMutation(addUserToOrganization, {
     refetchQueries: ['getOrganization'],
+    onCompleted: () => {
+      toast.success('User added successfully!');
+    },
     onError: err => {
       console.error(err);
       toast.error('Error adding user', {
@@ -40,7 +43,7 @@ export const AddUser: FC<Props> = ({ orgId, refetch, owners }) => {
     },
   });
 
-  const handleAddUser = (email: string, role: string) => {
+  const handleAddUser = async (email: string, role: string) => {
     const existingUser = owners.find(o => o.email === email);
     if (existingUser) {
       toast.error('User already exists', {
@@ -49,19 +52,17 @@ export const AddUser: FC<Props> = ({ orgId, refetch, owners }) => {
       return Promise.reject(new Error('User already exists'));
     }
 
-    return addAdministrator({
+    await addAdministrator({
       variables: {
         email,
         organization: orgId,
-        ...(role === 'admin' && { admin: true }),
-        ...(role === 'owner' && { owner: true }),
-        ...(role === 'viewer' && { admin: false, owner: false }),
+        ...(role === 'admin' && {admin: true}),
+        ...(role === 'owner' && {owner: true}),
+        ...(role === 'viewer' && {admin: false, owner: false}),
       },
-    }).then(() => {
-      startTransition(() => {
-        refetch?.();
-      });
-      toast.success('User added successfully!');
+    });
+    startTransition(() => {
+      refetch?.();
     });
   };
 
@@ -71,7 +72,7 @@ export const AddUser: FC<Props> = ({ orgId, refetch, owners }) => {
       sheetTrigger="Add user"
       sheetTitle="Add Administrator"
       sheetFooterButton="Add"
-      sheetDescription="Add a new administrator to this organization"
+      sheetDescription="Add a new administrator to this organization, this user must already be a Lagoon user."
       loading={loading}
       error={false}
       additionalContent={null}
