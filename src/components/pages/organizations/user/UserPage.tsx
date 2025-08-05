@@ -49,6 +49,10 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
 
   const userGroups = userByEmailAndOrganization?.groupRoles ?? [];
 
+  const hasDefaultGroups = userGroups.some(({ groupType }) => {
+    return groupType === 'project-default-group';
+  });
+
   const tableGroups = showDefaults
     ? userGroups
     : userGroups.filter(group => group.groupType !== 'project-default-group');
@@ -86,6 +90,7 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
                 label="Show default groups"
                 checked={showDefaults}
                 onCheckedChange={setShowDefaults}
+                disabled={!hasDefaultGroups}
               />
               <SelectWithOptions
                 options={resultsFilterValues}
