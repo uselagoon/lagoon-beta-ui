@@ -20,7 +20,11 @@ import { EditSshSheet } from './EditSshSheet';
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
 
-export const renderTableColumns = (remove: { action: (...args: any) => Promise<void>; loading: boolean, refetchAction: () => void }) => {
+export const renderTableColumns = (remove: {
+  action: (...args: any) => Promise<void>;
+  loading: boolean;
+  refetchAction: () => void;
+}) => {
   return [
     {
       accessorKey: 'name',

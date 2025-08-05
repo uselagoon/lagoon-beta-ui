@@ -40,7 +40,7 @@ const retrieveBackup = (backup: Backup, type: 'failed' | 'retrievable' | 'unavai
 const BackupsTableColumns: DataTableColumnDef<Backup>[] = [
   {
     accessorKey: 'status',
-    accessorFn: (row) => {
+    accessorFn: row => {
       return row.restore?.status || 'retrievable';
     },
     width: '10%',
