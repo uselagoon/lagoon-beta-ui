@@ -50,6 +50,7 @@ export const ProjectsDataTableColumns = (
   },
   {
     id: 'actions',
+    header: () => <div className="text-right mr-4">Actions</div>,
     cell: ({ row }) => {
       return (
         <div className="flex gap-4 justify-end items-center">

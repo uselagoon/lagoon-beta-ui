@@ -96,7 +96,7 @@ export default function InsightsPage({
         )}
       />
 
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight my-4">Facts</h3>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight my-4">Insights</h3>
 
       <DataTable
         columns={InsightsTableColumns}

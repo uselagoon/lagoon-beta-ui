@@ -33,17 +33,12 @@ const ProblemsColumns = (problemSelector?: (id: number) => void) =>
       cell: ({ row }) => {
         const { description, identifier, id } = row.original;
         return (
-          <Tooltip>
-            <TooltipContent className="max-w-[400px]">{description}</TooltipContent>
-            <TooltipTrigger>
-              <div
-                onClick={() => problemSelector && problemSelector(id)}
-                className="underline cursor-pointer hover:text-blue-800 transition-colors"
-              >
-                {identifier}
-              </div>
-            </TooltipTrigger>
-          </Tooltip>
+          <div
+            onClick={() => problemSelector && problemSelector(id)}
+            className="underline cursor-pointer hover:text-blue-800 transition-colors"
+          >
+            {identifier}
+          </div>
         );
       },
     },

@@ -40,6 +40,9 @@ const retrieveBackup = (backup: Backup, type: 'failed' | 'retrievable' | 'unavai
 const BackupsTableColumns: DataTableColumnDef<Backup>[] = [
   {
     accessorKey: 'status',
+    accessorFn: (row) => {
+      return row.restore?.status || 'retrievable';
+    },
     width: '10%',
     header: 'Status',
     filterFn: 'equals',
@@ -51,7 +54,7 @@ const BackupsTableColumns: DataTableColumnDef<Backup>[] = [
           {backup.restore?.status ? (
             <Badge variant="default">{capitalize(backup.restore.status)}</Badge>
           ) : (
-            <Badge variant="default">Unavailable</Badge>
+            <Badge variant="default">Retrievable</Badge>
           )}
         </section>
       );
@@ -126,7 +129,7 @@ const BackupsTableColumns: DataTableColumnDef<Backup>[] = [
           return retrieveBackup(backup, 'failed');
         // if there is no restore
         default:
-          return retrieveBackup(backup, 'unavailable');
+          return retrieveBackup(backup, 'retrievable');
       }
     },
   },

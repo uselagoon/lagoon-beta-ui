@@ -206,7 +206,7 @@ export default function EnvironmentVariablesPage({
             />
           </div>
         )}
-        key={JSON.stringify(variables)}
+        key="env-variables-table"
       />
       <AddNewVariable
         onClick={() => stableAddPermissionCheck}
@@ -234,7 +234,7 @@ export default function EnvironmentVariablesPage({
         columns={projectEnvTableColumns}
         data={prjEnvValues?.environmentVars?.project?.envVariables || (projectVariables as EnvVariable[])}
         disableExtra
-        key={JSON.stringify(projectVariables)}
+        key="project-variables-table"
       />
 
       <section className="my-4">
