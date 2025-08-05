@@ -3,7 +3,6 @@
 import React, { ReactNode, useMemo } from 'react';
 
 import { useSession } from 'next-auth/react';
-import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { useEnvContext } from 'next-runtime-env';
 import { usePathname } from 'next/navigation';
 
@@ -48,7 +47,6 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
 
   return (
     <>
-      <ProgressBar height="2px" color="#00FFFF" options={{ showSpinner: false, parent: '.content' }} shallowRouting />
       <RootLayout
         appInfo={{
           kcUrl: kcUrl,
