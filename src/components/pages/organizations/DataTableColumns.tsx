@@ -81,7 +81,9 @@ export const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
       );
     },
     cell: ({ row }) => {
-      const filteredGroups = (row.original.groups ?? []).filter((group: { type: string }) => group.type !== 'project-default-group');
+      const filteredGroups = (row.original.groups ?? []).filter(
+        (group: { type: string }) => group.type !== 'project-default-group'
+      );
       const groupQuota = row.original.quotaGroup;
 
       return <div className="max-w-[25vw]">{fieldCount(filteredGroups, groupQuota, 'group')}</div>;

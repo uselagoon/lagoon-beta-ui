@@ -4,9 +4,13 @@ import { usePathname } from 'next/navigation';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import getProjectEnvsTableColumns from '@/components/pages/environments/ProjectEnvsTableColumns';
+import { RouterType } from '@/components/types';
 import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
+const fakeRouter = {
+  push: (path: string) => {},
+};
 export default function Loading() {
   const pathname = usePathname();
 
@@ -39,7 +43,7 @@ export default function Loading() {
 
         <DataTable
           loading
-          columns={getProjectEnvsTableColumns(pathname)}
+          columns={getProjectEnvsTableColumns(pathname, fakeRouter as unknown as RouterType)}
           data={[]}
           searchableColumns={['title', 'region', 'deployType']}
           onSearch={searchStr => setSearch(searchStr)}
