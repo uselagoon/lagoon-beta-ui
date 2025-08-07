@@ -4,6 +4,7 @@ import { JSX } from 'react';
 
 import Link from 'next/link';
 
+import { RouterType } from '@/components/types';
 import { capitalize, handleSort, renderSortIcons } from '@/components/utils';
 import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
@@ -23,7 +24,7 @@ type TableDataType = {
   region: string;
 };
 
-const getProjectEnvsTableColumns = (basePath: string) =>
+const getProjectEnvsTableColumns = (basePath: string, router: RouterType) =>
   [
     {
       id: 'envType',
@@ -52,10 +53,14 @@ const getProjectEnvsTableColumns = (basePath: string) =>
           </Button>
         );
       },
+      onRowClick: row => {
+        const { name } = row.original;
+        router.push(`${basePath}/${name}`);
+      },
       cell: ({ row }) => {
         const { name, title } = row.original;
         return (
-          <Link className="hover:text-blue-800 transition-colors" href={`${basePath}/${name}`}>
+          <Link className="text-inherit hover:!underline transition-all" href={`${basePath}/${name}`}>
             {title}
           </Link>
         );

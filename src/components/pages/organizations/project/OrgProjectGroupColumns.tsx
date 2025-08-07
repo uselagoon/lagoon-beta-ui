@@ -23,7 +23,7 @@ export const OrgProjectGroupColumns = (
       const sortDirection = column.getIsSorted();
 
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
           Group Name
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
@@ -58,7 +58,7 @@ export const OrgProjectGroupColumns = (
       const sortDirection = column.getIsSorted();
 
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
           Members
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>

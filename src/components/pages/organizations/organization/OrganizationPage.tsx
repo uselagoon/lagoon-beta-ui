@@ -142,13 +142,13 @@ export default function OrganizationPage({
           description={organization.description}
         />
 
-        <div className="flex gap-4 my-10">
+        <div className="flex flex-col gap-4 my-10">
           <CreateProject organizationId={organization.id} options={deployTargetOptions} />
           <CreateGroup organizationId={organization.id} existingGroupNames={existingGroupNames} />
           <AddUser groupOptions={groupSelectOptions} type="multiple" />
         </div>
 
-        <div className="flex flex-wrap justify-between max-w-7xl mx-auto gap-y-4 ">
+        <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(370px,1fr))] [&>div[data-slot=card]]:w-full [&>div[data-slot=card]]:max-w-full [&>div[data-slot=card]]:min-w-[370px]">
           {orgDetailedItems.map(item => (
             <DetailStat
               title={item.label}

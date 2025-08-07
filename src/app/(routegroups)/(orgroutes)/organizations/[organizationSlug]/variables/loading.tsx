@@ -2,11 +2,9 @@
 
 import { OrgEnvVariable } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { AddNewVariable } from '@/components/addNewVariable/AddNewVariable';
 import { resultsFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
 import { VariablesDataTableColumns } from '@/components/pages/organizations/variables/_components/VariablesDataTableColumns';
-import { organizationNavItems } from '@/components/shared/organizationNavItems';
-import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {
@@ -50,9 +48,11 @@ export default function Loading() {
     <>
       <SectionWrapper>
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organization variables</h3>
-        <div className="gap-4 my-4">
-          <AddNewVariable type="organization" orgName="loading" refetch={() => {}} />
-        </div>
+
+        <Button data-testId="org-var-visibility-toggle" size="sm" className="max-w-max mb-4" disabled>
+          Show values
+        </Button>
+
         <DataTable
           loading
           columns={VariablesDataTableColumns(

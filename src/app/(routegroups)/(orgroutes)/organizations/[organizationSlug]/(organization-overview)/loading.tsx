@@ -60,13 +60,13 @@ export default function Loading() {
 
         <Description loading />
 
-        <div className="flex gap-4 my-10">
+        <div className="flex flex-col gap-4 my-10">
           <CreateProject organizationId={0} options={[]} />
           <CreateGroup organizationId={0} existingGroupNames={[]} />
           <AddUser groupOptions={[]} type="multiple" />
         </div>
 
-        <div className="flex flex-wrap justify-between max-w-7xl mx-auto gap-y-4">
+        <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(370px,1fr))] [&>div[data-slot=card]]:w-full [&>div[data-slot=card]]:max-w-full [&>div[data-slot=card]]:min-w-[370px]">
           {orgSkeletonItems.map(item => (
             <DetailStat title={item.label} value={item.children} key={item.key} />
           ))}

@@ -50,7 +50,9 @@ export default function Loading() {
         Key information about your project
       </span>
 
-      <div className="grid grid-cols-3 grid-rows-3 gap-4">{DetailedStats}</div>
+      <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(370px,1fr))] [&>div[data-slot=card]]:w-full [&>div[data-slot=card]]:max-w-full [&>div[data-slot=card]]:min-w-[370px]">
+        {DetailedStats}
+      </div>
     </SectionWrapper>
   );
 }
