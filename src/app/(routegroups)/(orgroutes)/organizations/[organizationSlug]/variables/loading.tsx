@@ -3,7 +3,7 @@
 import { OrgEnvVariable } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { resultsFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
-import { VariablesDataTableColumns } from '@/components/pages/organizations/variables/_components/VariablesDataTableColumns';
+import { VariablesDataTableColumnsNoValues } from '@/components/pages/organizations/variables/_components/VariablesDataTableColumns';
 import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
@@ -55,11 +55,7 @@ export default function Loading() {
 
         <DataTable
           loading
-          columns={VariablesDataTableColumns(
-            (variable: OrgEnvVariable) => null,
-            (variable: OrgEnvVariable) => null,
-            false
-          )}
+          columns={VariablesDataTableColumnsNoValues}
           data={[]}
           searchableColumns={['name']}
           initialPageSize={10}
