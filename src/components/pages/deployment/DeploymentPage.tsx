@@ -147,7 +147,6 @@ export default function DeploymentPage({
       </section>
 
       <BasicTable className="border rounded-md mb-4" columns={deploymentColumns} data={[deploymentDataRow]} />
-
       <LogViewer
         logs={deployment.buildLog}
         status={deployment.status}

@@ -50,7 +50,7 @@ export const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
       const sortDirection = column.getIsSorted();
 
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
           Organization
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
@@ -74,7 +74,7 @@ export const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
       const sortDirection = column.getIsSorted();
 
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
           No. of Groups
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
@@ -93,7 +93,7 @@ export const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
       const sortDirection = column.getIsSorted();
 
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
           No. of Projects
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>

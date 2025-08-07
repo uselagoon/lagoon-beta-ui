@@ -17,7 +17,7 @@ const GroupPageUsersColumns = (
     header: ({ column }) => {
       const sortDirection = column.getIsSorted();
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
           First Name
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
@@ -29,7 +29,7 @@ const GroupPageUsersColumns = (
     header: ({ column }) => {
       const sortDirection = column.getIsSorted();
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
           Last Name
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
@@ -47,7 +47,7 @@ const GroupPageUsersColumns = (
     header: ({ column }) => {
       const sortDirection = column.getIsSorted();
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
           Email
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>

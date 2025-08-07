@@ -38,7 +38,7 @@ const ScrollableLog: React.FC<Props> = ({ children }) => {
     logsEndRef?.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
   return (
-    <div className="relative p-2 border-2 rounded-sm" ref={parentRef}>
+    <div className="relative border-2 rounded-sm" ref={parentRef}>
       {showButtons && (
         <div
           className="absolute right-5 top-5 translate-x-2 rounded-full w-[30px] h-[30px] flex justify-center items-center "

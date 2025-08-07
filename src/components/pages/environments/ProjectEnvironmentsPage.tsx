@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import { ProjectData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/(project-overview)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
@@ -27,6 +28,8 @@ export default function ProjectEnvironmentsPage({
   const {
     data: { project },
   } = useReadQuery(queryRef);
+
+  const router = useRouter();
 
   const [{ search, env_count }, setQuery] = useQueryStates({
     search: {
@@ -102,7 +105,7 @@ export default function ProjectEnvironmentsPage({
         </span>
 
         <DataTable
-          columns={getProjectEnvsTableColumns(pathname)}
+          columns={getProjectEnvsTableColumns(pathname, router)}
           data={envTableData}
           searchableColumns={['title', 'region', 'deployType']}
           onSearch={searchStr => setSearch(searchStr)}

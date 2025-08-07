@@ -36,11 +36,8 @@ export default function Loading() {
 
   const environmentDetails = (
     <>
-      <div className="grid grid-cols-3 grid-rows-2 gap-4">{DetailedStats}</div>
-
-      <div className="mt-6 [&>section]:flex [&>section]:gap-4">
-        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Actions</h4>
-        <Skeleton className="w-[60px]" />
+      <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(370px,1fr))] [&>div[data-slot=card]]:w-full [&>div[data-slot=card]]:max-w-full [&>div[data-slot=card]]:min-w-[370px]">
+        {DetailedStats}
       </div>
     </>
   );
@@ -66,6 +63,11 @@ export default function Loading() {
           {routeSkeletons}
         </>
       </section>
+
+      <div className="mt-6 [&>section]:flex [&>section]:gap-4">
+        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">Actions</h4>
+        <Skeleton className="w-[60px]" />
+      </div>
     </SectionWrapper>
   );
 }

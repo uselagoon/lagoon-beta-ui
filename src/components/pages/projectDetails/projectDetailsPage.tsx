@@ -35,7 +35,7 @@ export default function ProjectDetailsPage(props: ProjectDetailsProps) {
       title: 'ORIGIN',
       children: (
         <a
-          className="break-words text-inherit lowercase underline"
+          className="break-words text-lg lowercase hover:underline"
           data-cy="gitLink"
           target="_blank"
           href={`https://${gitLink}`}
@@ -48,7 +48,7 @@ export default function ProjectDetailsPage(props: ProjectDetailsProps) {
     {
       key: 'giturl',
       title: 'GIT URL',
-      children: <CopyToClipboard fontSize="1.2rem" type="visible" withToolTip width={250} text={project.gitUrl} />,
+      children: <CopyToClipboard fontSize="1.15rem" type="visible" withToolTip width={250} text={project.gitUrl} />,
       lowercaseValue: true,
     },
     {
@@ -85,7 +85,9 @@ export default function ProjectDetailsPage(props: ProjectDetailsProps) {
         Key information about your project
       </span>
 
-      <div className="grid grid-cols-3 grid-rows-3 gap-4">{DetailedStats}</div>
+      <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(370px,1fr))] [&>div[data-slot=card]]:w-full [&>div[data-slot=card]]:max-w-full [&>div[data-slot=card]]:min-w-[370px]">
+        {DetailedStats}
+      </div>
     </SectionWrapper>
   );
 }

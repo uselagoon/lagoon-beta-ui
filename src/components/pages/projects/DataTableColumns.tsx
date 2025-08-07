@@ -45,7 +45,7 @@ const ProjectsTableColumns: DataTableColumnDef<ProjectType>[] = [
       const projectName = row.original.name;
       return (
         <div>
-          <Link className="hover:text-blue-800 transition-colors" href={`/projects/${projectName}`}>
+          <Link className="text-inherit hover:!underline transition-all" href={`/projects/${projectName}`}>
             {projectName}
           </Link>
         </div>

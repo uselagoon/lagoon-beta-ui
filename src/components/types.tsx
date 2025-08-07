@@ -1,3 +1,5 @@
+import { useRouter } from 'next/navigation';
+
 export type Task = {
   id: number;
   name: string;
@@ -16,3 +18,5 @@ export type Task = {
     created: string;
   }[];
 };
+
+export type RouterType = ReturnType<typeof useRouter>;

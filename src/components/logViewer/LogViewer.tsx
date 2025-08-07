@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useRef } from 'react';
+import React, { FC, Fragment, useRef, useState } from 'react';
 
 import { Accordion } from '@uselagoon/ui-library';
 import { CircleAlert, CircleCheck, CircleX } from 'lucide-react';
@@ -54,7 +54,7 @@ const LogViewer: FC<LogViewerProps> = ({
     <section className="logs">
       {logs !== null ? (
         showParsed ? (
-          <div className="text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all">
+          <div className="text-[14px] leading-[18px] font-normal m-0 break-words  whitespace-pre-wrap will-change-auto break-all">
             {logPreprocessor(
               logs,
               status,
@@ -66,12 +66,12 @@ const LogViewer: FC<LogViewerProps> = ({
             )}
           </div>
         ) : (
-          <div className="text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all p-[10px]">
+          <div className="text-[14px] leading-[18px] font-normal m-0 break-words  whitespace-pre-wrap will-change-auto break-all p-[10px]">
             {logs}
           </div>
         )
       ) : (
-        <div className="text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all p-[10px]">
+        <div className="text-[14px] leading-[18px] font-normal m-0 break-words  whitespace-pre-wrap will-change-auto break-all p-[10px]">
           Logs are not available.
         </div>
       )}
@@ -122,7 +122,7 @@ const logPreprocessor = (
       <div className="processed-logs" data-cy="processed-logs">
         <div
           key="logerror"
-          className="log-text text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all"
+          className="log-text text-[14px] leading-[18px] font-normal m-0 break-words whitespace-pre-wrap will-change-auto break-all"
           data-cy="log-text"
         >
           {logs}
@@ -157,7 +157,6 @@ const LogNodeRenderer: React.FC<{
   showSuccessSteps: boolean;
   highlightWarnings: boolean;
 }> = ({ node, visible, errorState, showSuccessSteps, highlightWarnings }) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const logsContentRef = useRef(null);
 
   if (node.type === 'log-text') {
@@ -165,7 +164,7 @@ const LogNodeRenderer: React.FC<{
       <div
         key={node.key}
         ref={logsContentRef}
-        className="log-text text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all"
+        className="log-text text-[14px] leading-[18px] font-normal m-0 break-words whitespace-pre-wrap will-change-auto break-all"
       >
         {node.text}
       </div>
@@ -174,15 +173,15 @@ const LogNodeRenderer: React.FC<{
   if (node.type === 'section') {
     let classes = ['data-row', 'row-heading'];
     if (errorState) {
-      classes.push('log-error-state bg-[#f926721a]');
+      classes.push('log-error-state', 'bg-[#f926721a]');
     }
 
     const hasWarning = !!node.metadata[1];
     if (hasWarning) {
-      classes.push('log-warning-state bg-[#fd971f1a]');
+      classes.push('log-warning-state', 'bg-[#fd971f1a]');
       // also add a classname if we don't want warning highlighting
       if (!highlightWarnings) {
-        classes.push('log-highlight-disabled !bg-transparent');
+        classes.push('log-highlight-disabled', '!bg-transparent');
       }
     }
 
@@ -209,11 +208,11 @@ const LogNodeRenderer: React.FC<{
             {errorState ? (
               <CircleX className="text-red-400" />
             ) : hasWarning ? (
-              <CircleAlert className="text-orange-400" />
+              <CircleAlert className={highlightWarnings ? `text-orange-400` : ''} />
             ) : (
               <CircleCheck />
             )}
-            <section className=" text-[14px] leading-[18px] font-normal m-0 break-words overflow-x-scroll whitespace-pre-wrap will-change-auto break-all">
+            <section className="text-[14px] leading-[18px] font-normal m-0 break-words whitespace-pre-wrap will-change-auto break-all">
               {node.details} {node.metadata && node.metadata[0] ? node.metadata[0] : ''}
             </section>
           </div>
@@ -221,7 +220,7 @@ const LogNodeRenderer: React.FC<{
 
         content: (
           <ScrollableLog>
-            <div className={classes.join(' ')}>{nodeChildren}</div>
+            <div className={`${classes.join(' ')} p-3`}>{nodeChildren}</div>
           </ScrollableLog>
         ),
       },

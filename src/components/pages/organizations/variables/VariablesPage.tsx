@@ -13,11 +13,12 @@ import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import organizationByNameWithEnvVarsValue from '@/lib/query/organizations/organizationByNameWithEnvVarsValue';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { Loader2 } from 'lucide-react';
 import { useQueryStates } from 'nuqs';
 import { toast } from 'sonner';
 
 import { EditVariable } from '../../projectVariables/_components/EditVariable';
-import { VariablesDataTableColumns } from './_components/VariablesDataTableColumns';
+import { VariablesDataTableColumns, VariablesDataTableColumnsNoValues } from './_components/VariablesDataTableColumns';
 import { resultsFilterValues, scopeOptions } from './_components/filterValues';
 
 export default function OrgVariablesPage({
@@ -110,63 +111,64 @@ export default function OrgVariablesPage({
   const allVars = orgEnvValues?.organization?.envVariables || (variables as unknown as OrgEnvVariable[]);
   const filteredVariables = scope ? allVars.filter((v: OrgEnvVariable) => v.scope === scope) : allVars;
 
+  const renderOrgVarsWithValues =
+    !orgLoading && orgEnvValues?.organization?.envVariables && orgValuesVisible ? true : false;
+
+  const orgVariablesColumns = renderOrgVarsWithValues
+    ? VariablesDataTableColumns(
+        currentVariable => (
+          <EditVariable type="organization" orgName={organizationSlug} currentEnv={currentVariable} refetch={refetch} />
+        ),
+        currentVariable => (
+          <DeleteVariableDialog
+            type="organization"
+            orgName={organizationSlug}
+            onClick={() => stableDeletePermissionCheck}
+            currentEnv={currentVariable}
+            refetch={refetch}
+          />
+        )
+      )
+    : VariablesDataTableColumnsNoValues;
+
   return (
     <>
       <SectionWrapper>
         <div className="flex flex-col items-start gap-4">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organization variables</h3>
-          <div className="flex gap-4">
-            <AddNewVariable
-              onClick={() => stableAddPermissionCheck}
-              type="organization"
-              orgName={organizationSlug}
-              refetch={refetch}
-            />
-            <Button onClick={handleShowEnvVars}>{orgValuesVisible ? 'Hide values' : 'Show values'}</Button>
-          </div>
+          <Button
+            data-testId="org-var-visibility-toggle"
+            size="sm"
+            className="max-w-max mb-4"
+            disabled={orgLoading}
+            onClick={handleShowEnvVars}
+          >
+            {orgLoading && <Loader2 className="animate-spin" />}
+            {orgValuesVisible ? 'Hide values' : 'Show values'}
+          </Button>
         </div>
 
         <DataTable
-          columns={VariablesDataTableColumns(
-            currentVariable => (
-              <EditVariable
-                type="organization"
-                orgName={organizationSlug}
-                currentEnv={currentVariable}
-                refetch={refetch}
-              />
-            ),
-            currentVariable => (
-              <DeleteVariableDialog
-                type="organization"
-                orgName={organizationSlug}
-                onClick={() => stableDeletePermissionCheck}
-                currentEnv={currentVariable}
-                refetch={refetch}
-              />
-            ),
-            orgValuesVisible
-          )}
+          columns={orgVariablesColumns}
           data={filteredVariables}
           searchableColumns={['name']}
           onSearch={searchStr => setSearch(searchStr)}
           initialSearch={search}
           initialPageSize={results || 10}
           renderFilters={table => (
-            <div className="flex items-center justify-between">
-              <div className="flex gap-4">
-                <SelectWithOptions
-                  options={scopeOptions.filter(o => o.value !== null) as { label: string; value: string }[]}
-                  value={scope || ''}
-                  placeholder="Filter by scope"
-                  onValueChange={newVal => {
-                    table.getColumn('scope')?.setFilterValue(newVal);
-                    setScope(newVal as OrgEnvVariable['scope']);
-                  }}
-                />
-              </div>
+            <div className="flex gap-2">
               <SelectWithOptions
-                options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}
+                options={scopeOptions.filter(o => o.value !== null) as { label: string; value: string }[]}
+                value={scope || ''}
+                placeholder="Filter by scope"
+                onValueChange={newVal => {
+                  table.getColumn('scope')?.setFilterValue(newVal);
+                  setScope(newVal as OrgEnvVariable['scope']);
+                }}
+              />
+
+              <SelectWithOptions
+                options={resultsFilterValues}
                 width={100}
                 value={String(results || 10)}
                 placeholder="Results per page"
@@ -177,6 +179,12 @@ export default function OrgVariablesPage({
               />
             </div>
           )}
+        />
+        <AddNewVariable
+          onClick={() => stableAddPermissionCheck}
+          type="organization"
+          orgName={organizationSlug}
+          refetch={refetch}
         />
       </SectionWrapper>
     </>

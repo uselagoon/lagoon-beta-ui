@@ -2,19 +2,15 @@
 
 import { OrgEnvVariable } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
 import { handleSort, renderSortIcons } from '@/components/utils';
-import { Button, DataTableColumnDef, cn } from '@uselagoon/ui-library';
+import { Button, DataTableColumnDef } from '@uselagoon/ui-library';
 
-export const VariablesDataTableColumns = (
-  editVariableModal: (variable: OrgEnvVariable) => React.ReactNode,
-  deleteVariableModal: (variable: OrgEnvVariable) => React.ReactNode,
-  showValues: boolean
-): DataTableColumnDef<OrgEnvVariable>[] => [
+export const VariablesDataTableColumnsNoValues: DataTableColumnDef<OrgEnvVariable>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => {
       const sortDirection = column.getIsSorted();
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
           Name
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
@@ -26,7 +22,37 @@ export const VariablesDataTableColumns = (
     header: ({ column }) => {
       const sortDirection = column.getIsSorted();
       return (
-        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
+          Scope
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
+    },
+  },
+];
+
+export const VariablesDataTableColumns = (
+  editVariableModal: (variable: OrgEnvVariable) => React.ReactNode,
+  deleteVariableModal: (variable: OrgEnvVariable) => React.ReactNode
+): DataTableColumnDef<OrgEnvVariable>[] => [
+  {
+    accessorKey: 'name',
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
+      return (
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
+          Name
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: 'scope',
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
+      return (
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
           Scope
           <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
         </Button>
@@ -37,7 +63,7 @@ export const VariablesDataTableColumns = (
     accessorKey: 'value',
     header: 'Value',
     cell: ({ row }) => {
-      return showValues ? <span>{row.original.value}</span> : <span>●●●●●●●●</span>;
+      return <span>{row.original.value}</span>;
     },
   },
   {

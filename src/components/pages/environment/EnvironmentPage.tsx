@@ -150,7 +150,9 @@ export default function EnvironmentPage({
 
   const environmentDetails = (
     <>
-      <div className="grid grid-cols-3 grid-rows-2 gap-4">{DetailedStats}</div>
+      <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(370px,1fr))] [&>div[data-slot=card]]:w-full [&>div[data-slot=card]]:max-w-full [&>div[data-slot=card]]:min-w-[370px]">
+        {DetailedStats}
+      </div>
 
       {factsLoading && (
         <div className="mt-5">
@@ -164,6 +166,42 @@ export default function EnvironmentPage({
           <KeyFacts keyFacts={keyFacts} />
         </div>
       )}
+    </>
+  );
+
+  return (
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>
+      <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
+        Key information about your environment
+      </span>
+      <section>{environmentDetails}</section>
+
+      <section className="mt-10 [&>*:not(:first-child)]:mb-2">
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-5">Routes</h3>
+
+        <div className="flex justify-start gap-24">
+          {routes ? (
+            <section>
+              <h4 className="scroll-m-20 text-md font-semibold tracking-tight mb-3">Active routes</h4>
+              <LimitedRoutes routes={routes} />
+            </section>
+          ) : null}
+
+          <br />
+          {standbyRoutes ? (
+            <section>
+              <h5 className="scroll-m-20 text-md font-semibold tracking-tight mb-3">Standby routes</h5>
+              <LimitedRoutes routes={standbyRoutes} />
+            </section>
+          ) : null}
+        </div>
+        {envHasNoRoutes && (
+          <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal">
+            No routes found for {environment.name}
+          </span>
+        )}
+      </section>
 
       <div className="mt-5 [&>section]:flex [&>section]:gap-4">
         <h4 className="scroll-m-20 text-xl font-semibold tracking-tight mb-2">Actions</h4>
@@ -212,42 +250,6 @@ export default function EnvironmentPage({
           />
         </section>
       </div>
-    </>
-  );
-
-  return (
-    <SectionWrapper>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>
-      <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
-        Key information about your environment
-      </span>
-      <section>{environmentDetails}</section>
-
-      <section className="mt-10 [&>*:not(:first-child)]:mb-2">
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-5">Routes</h3>
-
-        <div className="flex justify-start gap-24">
-          {routes ? (
-            <section>
-              <h4 className="scroll-m-20 text-md font-semibold tracking-tight mb-3">Active routes</h4>
-              <LimitedRoutes routes={routes} />
-            </section>
-          ) : null}
-
-          <br />
-          {standbyRoutes ? (
-            <section>
-              <h5 className="scroll-m-20 text-md font-semibold tracking-tight mb-3">Standby routes</h5>
-              <LimitedRoutes routes={standbyRoutes} />
-            </section>
-          ) : null}
-        </div>
-        {envHasNoRoutes && (
-          <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal">
-            No routes found for {environment.name}
-          </span>
-        )}
-      </section>
     </SectionWrapper>
   );
 }
