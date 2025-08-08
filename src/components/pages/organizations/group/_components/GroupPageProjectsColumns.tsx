@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { OrgProject } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page';
 import { handleSort, renderSortIcons } from '@/components/utils';
 import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
-import { SquareTerminal } from 'lucide-react';
+import { Link as IconLink } from 'lucide-react';
 
 export const GroupPageProjectColumns = (
   unlink: (project: OrgProject) => React.ReactNode,
@@ -38,18 +38,19 @@ export const GroupPageProjectColumns = (
     cell: ({ row }) => {
       return (
         <div className="flex gap-4 justify-start items-center">
-          <Link
-            className="hover:text-blue-800 transition-colors"
-            target="_blank"
-            href={`/projects/${row.original.name}`}
-          >
-            <Tooltip>
-              <TooltipTrigger>
-                <SquareTerminal className="ml-2 h-6 w-6" />
-              </TooltipTrigger>
-              <TooltipContent>View Project Dashboard</TooltipContent>
-            </Tooltip>
-          </Link>
+          <Button>
+            <Link
+              target="_blank"
+              href={`/projects/${row.original.name}`}
+            >
+              <Tooltip>
+                <TooltipTrigger>
+                  <IconLink className="h-6 w-6 mt-1" />
+                </TooltipTrigger>
+                <TooltipContent>View Project Dashboard</TooltipContent>
+              </Tooltip>
+            </Link>
+          </Button>
           {unlink(row.original)}
         </div>
       );
