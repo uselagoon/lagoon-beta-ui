@@ -8,9 +8,6 @@ import { RouterType } from '@/components/types';
 import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
-const fakeRouter = {
-  push: (path: string) => {},
-};
 export default function Loading() {
   const pathname = usePathname();
 
@@ -43,7 +40,7 @@ export default function Loading() {
 
         <DataTable
           loading
-          columns={getProjectEnvsTableColumns(pathname, fakeRouter as unknown as RouterType)}
+          columns={getProjectEnvsTableColumns(pathname)}
           data={[]}
           searchableColumns={['title', 'region', 'deployType']}
           onSearch={searchStr => setSearch(searchStr)}
