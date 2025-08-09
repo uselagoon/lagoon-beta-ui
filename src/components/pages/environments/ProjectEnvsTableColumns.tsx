@@ -24,7 +24,7 @@ type TableDataType = {
   region: string;
 };
 
-const getProjectEnvsTableColumns = (basePath: string, router: RouterType) =>
+const getProjectEnvsTableColumns = (basePath: string) =>
   [
     {
       id: 'envType',
@@ -52,10 +52,6 @@ const getProjectEnvsTableColumns = (basePath: string, router: RouterType) =>
             <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
           </Button>
         );
-      },
-      onRowClick: row => {
-        const { name } = row.original;
-        router.push(`${basePath}/${name}`);
       },
       cell: ({ row }) => {
         const { name, title } = row.original;

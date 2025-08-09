@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import { ProjectsData } from '@/app/(routegroups)/(projectroutes)/projects/(projects-page)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { ProjectBreadcrumbs } from '@/components/breadcrumbs/ProjectBreadcrumbs';
@@ -19,6 +21,8 @@ export default function ProjectsPage({ data }: { data: ProjectsData }) {
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
     },
   });
+
+  const router = useRouter();
 
   const setSearch = (str: string) => {
     setQuery({ search: str });
@@ -42,6 +46,10 @@ export default function ProjectsPage({ data }: { data: ProjectsData }) {
           searchableColumns={['project_name', 'production_route', 'gitUrl']}
           onSearch={searchStr => setSearch(searchStr)}
           initialSearch={search}
+          onRowClick={row => {
+            const { name } = row.original;
+            router.push(`/projects/${name}`);
+          }}
           initialPageSize={results}
           renderFilters={table => (
             <SelectWithOptions
