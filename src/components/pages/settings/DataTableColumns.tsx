@@ -1,6 +1,6 @@
 'use client';
 
-import { SshKey } from '@/app/(routegroups)/settings/page';
+import { SshKey } from '@/app/(routegroups)/settings/(ssh-keys)/page';
 import { HighlightedText } from '@/components/cancelDeployment/styles';
 import {
   Button,
