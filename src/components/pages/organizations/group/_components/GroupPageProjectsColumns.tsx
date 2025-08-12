@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { OrgProject } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page';
 import { handleSort, renderSortIcons } from '@/components/utils';
 import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
-import { Link as IconLink } from 'lucide-react';
+import { FolderCog } from 'lucide-react';
 
 export const GroupPageProjectColumns = (
   unlink: (project: OrgProject) => React.ReactNode,
@@ -45,7 +45,7 @@ export const GroupPageProjectColumns = (
             >
               <Tooltip>
                 <TooltipTrigger>
-                  <IconLink className="h-6 w-6 mt-1" />
+                  <FolderCog className="h-6 w-6 mt-1" />
                 </TooltipTrigger>
                 <TooltipContent>View Project Dashboard</TooltipContent>
               </Tooltip>
