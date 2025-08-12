@@ -11,7 +11,7 @@ import CancelDeployment from '@/components/cancelDeployment/CancelDeployment';
 import DeploymentNotFound from '@/components/errors/DeploymentNotFound';
 import LogViewer from '@/components/logViewer/LogViewer';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Badge, BasicTable, Switch, Table } from '@uselagoon/ui-library';
+import {Badge, BasicTable, Button, Switch, Table} from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -109,7 +109,7 @@ export default function DeploymentPage({
     <SectionWrapper>
       <BackButton />
 
-      <section className="flex gap-6 mb-4">
+      <section className="flex gap-6 mb-4 items-center justify-between">
         <div className="flex gap-4">
           <Switch
             label="Show successful steps"
@@ -137,13 +137,14 @@ export default function DeploymentPage({
             id=""
             description=""
           />
-
-          {deployment.bulkId ? (
-            <Link className="hover:text-blue-800 transition-colors" href={`/bulkdeployment/${deployment.bulkId}`}>
+        </div>
+        {deployment.bulkId ? (
+          <Button variant="default" className="text-right">
+            <Link className="text-inherit hover:!underline transition-all" href={`/bulkdeployment/${deployment.bulkId}`}>
               View bulk deployment
             </Link>
-          ) : null}
-        </div>
+          </Button>
+        ) : null}
       </section>
 
       <BasicTable className="border rounded-md mb-4" columns={deploymentColumns} data={[deploymentDataRow]} />
