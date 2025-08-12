@@ -105,7 +105,11 @@ export default function ProjectEnvironmentsPage({
         </span>
 
         <DataTable
-          columns={getProjectEnvsTableColumns(pathname, router)}
+          columns={getProjectEnvsTableColumns(pathname)}
+          onRowClick={row => {
+            const { name } = row.original;
+            router.push(`${pathname}/${name}`);
+          }}
           data={envTableData}
           searchableColumns={['title', 'region', 'deployType']}
           onSearch={searchStr => setSearch(searchStr)}

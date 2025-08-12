@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+
 import { OrgType, OrgsData } from '@/app/(routegroups)/(orgroutes)/organizations/(organizations-page)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { OrganizationsTableColumns } from '@/components/pages/organizations/DataTableColumns';
@@ -21,6 +23,8 @@ export default function OrganizationsPage({ organizations }: { organizations: Or
       parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
     },
   });
+
+  const router = useRouter();
 
   const setSearch = (str: string) => {
     setQuery({ search: str });
@@ -69,6 +73,10 @@ export default function OrganizationsPage({ organizations }: { organizations: Or
           columns={OrganizationsTableColumns}
           data={orgs}
           searchableColumns={['name']}
+          onRowClick={row => {
+            const { name } = row.original;
+            router.push(`/organizations/${name}`);
+          }}
           onSearch={searchStr => setSearch(searchStr)}
           initialSearch={search}
           initialPageSize={results}
