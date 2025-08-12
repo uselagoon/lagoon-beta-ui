@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { unstable_noStore as noStore } from 'next/cache';
-import { headers } from 'next/headers';
 
 import RefreshTokenHandler from '@/components/auth/RefreshTokenHandler';
 import Plugins from '@/components/plugins/plugins';
@@ -33,15 +32,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const nonce = (await headers()).get('x-nonce') as string;
-
   // ref for exposing custom variables at runtime: https://github.com/expatfile/next-runtime-env/blob/development/docs/EXPOSING_CUSTOM_ENV.md
   noStore();
   return (
     <html lang="en" suppressHydrationWarning>
       <PublicRuntimeEnvProvider>
         <head>
-          <Plugins hook="head" nonce={nonce} />
+          <Plugins hook="head" />
         </head>
         <body>
           <ProgressProvider>
@@ -55,7 +52,7 @@ export default async function RootLayout({
                 </ClientSessionWrapper>
               </AuthProvider>
             </LinkProvider>
-            <Plugins hook="body" nonce={nonce} />
+            <Plugins hook="body" />
           </ProgressProvider>
         </body>
       </PublicRuntimeEnvProvider>
