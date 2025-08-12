@@ -1,24 +1,29 @@
 # Node builder image
 FROM uselagoon/node-22-builder:latest AS builder
 
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install --frozen-lockfile --network-timeout 300000
+
 COPY . /app/
+RUN yarn run build
 
-RUN yarn install --network-timeout 300000
-
-# Node service image
+# Production image
 FROM uselagoon/node-22:latest
+
+WORKDIR /app
+
+# Copy only production node_modules
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/yarn.lock ./yarn.lock
+
+COPY auth-entrypoint.sh /lagoon/entrypoints/99-auth-entrypoint.sh
 
 ARG LAGOON_VERSION
 ENV LAGOON_VERSION=$LAGOON_VERSION
-
-# Copy the node_modules from node builder
-COPY --from=builder /app/node_modules /app/node_modules
-
-# Copying files from ui service
-COPY . /app/
-
-# Copy the auth-entrypoint.sh script
-COPY auth-entrypoint.sh /lagoon/entrypoints/99-auth-entrypoint.sh
 
 ARG GRAPHQL_API
 ENV GRAPHQL_API=$GRAPHQL_API
@@ -34,10 +39,6 @@ ENV AUTH_SECRET=$AUTH_SECRET
 
 ARG AUTH_KEYCLOAK_ISSUER
 ENV AUTH_KEYCLOAK_ISSUER=$AUTH_KEYCLOAK_ISSUER
-
-
-# Build app
-RUN yarn run build
 
 EXPOSE 3000
 CMD ["yarn", "start"]
