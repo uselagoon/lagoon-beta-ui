@@ -22,11 +22,11 @@ type ScriptDef = HeadScript | BodyScript;
 
 type GeneratedScript = ReactNode | null;
 
-const generateElementsForPlugins = (def: ScriptDef, nonce: string): GeneratedScript => {
+const generateElementsForPlugins = (def: ScriptDef): GeneratedScript => {
   if (def.type) {
     switch (def.type) {
       case 'script':
-        return <script src={def.location} async={true} nonce={nonce} key={def.location} />;
+        return <script src={def.location} async={true} key={def.location} />;
       case 'link':
         return <link href={def.href} rel="stylesheet" key={def.href} />;
       default:
@@ -36,7 +36,7 @@ const generateElementsForPlugins = (def: ScriptDef, nonce: string): GeneratedScr
   return null;
 };
 
-const Plugins = ({ hook = '', nonce = '' }: { hook: string; nonce: string }) => {
+const Plugins = ({ hook = '' }: { hook: string }) => {
   const { PLUGIN_SCRIPTS } = useEnvContext();
 
   let retPlugins: GeneratedScript[] = [];
@@ -50,14 +50,14 @@ const Plugins = ({ hook = '', nonce = '' }: { hook: string; nonce: string }) => 
     case 'head':
       if (plugins.head && plugins.head.length > 0) {
         plugins.head.forEach(element => {
-          retPlugins.push(generateElementsForPlugins(element, nonce));
+          retPlugins.push(generateElementsForPlugins(element));
         });
       }
       break;
     case 'body':
       if (plugins.body && plugins.body.length > 0) {
         plugins.body.forEach(element => {
-          retPlugins.push(generateElementsForPlugins(element, nonce));
+          retPlugins.push(generateElementsForPlugins(element));
         });
       }
       break;
