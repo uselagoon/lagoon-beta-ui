@@ -31,6 +31,7 @@ export const deploymentColumns = [
     title: 'Name / ID ',
     dataIndex: 'name',
     key: 'name',
+    columnClassName: "w-1/4",
   },
 
   {
@@ -96,7 +97,16 @@ export default function DeploymentPage({
 
   const deploymentDataRow = {
     status: <Badge variant="default">{deployment.status}</Badge>,
-    name: deployment.name,
+    name: deployment.bulkId ? (
+      <section className="flex items-center ">
+        <p>{deployment.name}</p>
+        <div className="bulk-link bg-blue-400 hover:bg-blue-600 py-1 px-2 translate-x-4/5 mr-3 rounded-sm transition-colors">
+          <Link className="text-white" href={`/bulkdeployment/${deployment.bulkId}`}>
+            BULK
+          </Link>
+        </div>
+      </section>
+      ) : deployment.name,
     created: dayjs.utc(deployment.created).local().fromNow(),
     duration: getDeploymentDuration(deployment),
     key: String(deployment.id),
@@ -138,13 +148,6 @@ export default function DeploymentPage({
             description=""
           />
         </div>
-        {deployment.bulkId ? (
-          <Button variant="default" className="text-right">
-            <Link className="text-inherit hover:!underline transition-all" href={`/bulkdeployment/${deployment.bulkId}`}>
-              View bulk deployment
-            </Link>
-          </Button>
-        ) : null}
       </section>
 
       <BasicTable className="border rounded-md mb-4" columns={deploymentColumns} data={[deploymentDataRow]} />
