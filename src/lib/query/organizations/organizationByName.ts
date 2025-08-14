@@ -32,6 +32,7 @@ export default gql`
       groups {
         id
         name
+        type
       }
       slacks: notifications(type: SLACK) {
         __typename
