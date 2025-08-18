@@ -40,6 +40,7 @@ export type EnvironmentData = {
       problemsUi: number | null;
       factsUi: number | null;
     };
+    title: string;
     facts: FactType[];
   };
 };

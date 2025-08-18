@@ -1,7 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { ProjectData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/(project-overview)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
@@ -14,7 +13,7 @@ import { useQueryStates } from 'nuqs';
 
 import { createLinks } from '../environment/EnvironmentPage';
 import { RoutesWrapper } from '../environment/styles';
-import getProjectEnvsTableColumns from './ProjectEnvsTableColumns';
+import getProjectEnvsTableColumns, { EnvTableDataType } from './ProjectEnvsTableColumns';
 
 export default function ProjectEnvironmentsPage({
   queryRef,
@@ -93,6 +92,7 @@ export default function ProjectEnvironmentsPage({
       envType: envType as any,
       last_deployment: environment.updated ?? '',
       region: environment.openshift?.cloudRegion ?? '',
+      project: environment.project,
     };
   });
 
@@ -105,12 +105,12 @@ export default function ProjectEnvironmentsPage({
         </span>
 
         <DataTable
-          columns={getProjectEnvsTableColumns(pathname)}
+          columns={getProjectEnvsTableColumns(pathname, refetch)}
           onRowClick={row => {
             const { name } = row.original;
             router.push(`${pathname}/${name}`);
           }}
-          data={envTableData}
+          data={envTableData as EnvTableDataType[]}
           searchableColumns={['title', 'region', 'deployType']}
           onSearch={searchStr => setSearch(searchStr)}
           initialSearch={search}

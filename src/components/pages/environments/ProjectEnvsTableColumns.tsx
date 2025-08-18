@@ -4,17 +4,20 @@ import { JSX } from 'react';
 
 import Link from 'next/link';
 
-import { RouterType } from '@/components/types';
+import { EnvironmentData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/(environment-overview)/page';
+import DeleteConfirm from '@/components/deleteConfirm/DeleteConfirm';
 import { capitalize, handleSort, renderSortIcons } from '@/components/utils';
 import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 
+import { DeleteAction } from './DeleteAction';
+
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
 
-type TableDataType = {
+export type EnvTableDataType = {
   name: string;
   title: string;
   deployType: string;
@@ -22,9 +25,10 @@ type TableDataType = {
   envType: any;
   last_deployment: string;
   region: string;
+  project: EnvironmentData['environment']['project'];
 };
 
-const getProjectEnvsTableColumns = (basePath: string) =>
+const getProjectEnvsTableColumns = (basePath: string, refetch?: () => void) =>
   [
     {
       id: 'envType',
@@ -121,6 +125,13 @@ const getProjectEnvsTableColumns = (basePath: string) =>
         return <>{activeRoutes}</>;
       },
     },
-  ] as DataTableColumnDef<TableDataType>[];
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        return <DeleteAction environment={row.original} refetch={refetch} />;
+      },
+    },
+  ] as DataTableColumnDef<EnvTableDataType>[];
 
 export default getProjectEnvsTableColumns;
