@@ -1,6 +1,6 @@
 'use client';
 
-import { SettingsData } from '@/app/(routegroups)/settings/page';
+import { SettingsData } from '@/app/(routegroups)/settings/(ssh-keys)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import addUserSSHPublicKey from '@/lib/mutation/addUserSSHPublicKey';
 import deleteUserSSHPublicKey from '@/lib/mutation/deleteUserSSHPublicKey';
