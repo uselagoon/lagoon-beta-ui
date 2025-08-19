@@ -53,7 +53,7 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
     return groupType === 'project-default-group';
   });
 
-  const defaultGroupsCount = userGroups.filter(group => group.groupType == 'project-default-group').length
+  const defaultGroupsCount = userGroups.filter(group => group.groupType == 'project-default-group').length;
 
   const tableGroups = showDefaults
     ? userGroups
