@@ -84,6 +84,33 @@ const UsersDataTableColumns = (
     },
   },
   {
+    id: 'Groups',
+    accessorFn: row => row.groupRoles?.length,
+    sortingFn: (rowA, rowB, columnId) => {
+      const a = rowA.getValue(columnId) as number;
+      const b = rowB.getValue(columnId) as number;
+      return a - b;
+    },
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
+
+      return (
+        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+          Groups
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const groupRoles = row.original.groupRoles;
+      return (
+        <div className="ml-4">
+          <Badge key={row.original.id}>{groupRoles?.length}</Badge>
+        </div>
+      );
+    },
+  },
+  {
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
