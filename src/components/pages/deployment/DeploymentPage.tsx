@@ -11,7 +11,7 @@ import CancelDeployment from '@/components/cancelDeployment/CancelDeployment';
 import DeploymentNotFound from '@/components/errors/DeploymentNotFound';
 import LogViewer from '@/components/logViewer/LogViewer';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Badge, BasicTable, Switch, Table } from '@uselagoon/ui-library';
+import {Badge, BasicTable, Button, Switch, Table} from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -31,6 +31,7 @@ export const deploymentColumns = [
     title: 'Name / ID ',
     dataIndex: 'name',
     key: 'name',
+    columnClassName: "w-1/4",
   },
 
   {
@@ -96,7 +97,16 @@ export default function DeploymentPage({
 
   const deploymentDataRow = {
     status: <Badge variant="default">{deployment.status}</Badge>,
-    name: deployment.name,
+    name: deployment.bulkId ? (
+      <section className="flex items-center ">
+        <p>{deployment.name}</p>
+        <div className="bulk-link bg-blue-400 hover:bg-blue-600 py-1 px-2 translate-x-4/5 mr-3 rounded-sm transition-colors">
+          <Link className="text-white" href={`/bulkdeployment/${deployment.bulkId}`}>
+            BULK
+          </Link>
+        </div>
+      </section>
+      ) : deployment.name,
     created: dayjs.utc(deployment.created).local().fromNow(),
     duration: getDeploymentDuration(deployment),
     key: String(deployment.id),
@@ -109,7 +119,7 @@ export default function DeploymentPage({
     <SectionWrapper>
       <BackButton />
 
-      <section className="flex gap-6 mb-4">
+      <section className="flex gap-6 mb-4 items-center justify-between">
         <div className="flex gap-4">
           <Switch
             label="Show successful steps"
@@ -137,12 +147,6 @@ export default function DeploymentPage({
             id=""
             description=""
           />
-
-          {deployment.bulkId ? (
-            <Link className="hover:text-blue-800 transition-colors" href={`/bulkdeployment/${deployment.bulkId}`}>
-              View bulk deployment
-            </Link>
-          ) : null}
         </div>
       </section>
 

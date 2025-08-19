@@ -9,8 +9,8 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { ExternalLink } from 'lucide-react';
-
 import CancelDeployment from '../../cancelDeployment/CancelDeployment';
+import { Row } from '@tanstack/react-table';
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
@@ -34,16 +34,24 @@ export const getDeploymentDuration = (deployment: Deployment) => {
   return result.trim();
 };
 
+const stringSortFn = (rowA: Row<Deployment>, rowB: Row<Deployment>, columnId: string) => {
+  const a = rowA.getValue(columnId) as number;
+  const b = rowB.getValue(columnId) as number;
+  return a?.toString().localeCompare(b?.toString());
+}
+
+const intSortFn = (rowA: Row<Deployment>, rowB: Row<Deployment>, columnId: string) => {
+  const a = rowA.getValue(columnId) as number;
+  const b = rowB.getValue(columnId) as number;
+  return a - b;
+};
+
 const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
   {
     id: 'project',
     accessorFn: row => row.environment?.project.name ?? '',
     width: '15%',
-    sortingFn: (rowA, rowB, columnId) => {
-      const a = rowA.getValue(columnId) as string;
-      const b = rowB.getValue(columnId) as string;
-      return a.localeCompare(b);
-    },
+    sortingFn: stringSortFn,
     header: ({ column }) => {
       const sortDirection = column.getIsSorted();
 
@@ -70,9 +78,19 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
 
   {
     id: 'environment_name',
-    header: 'Environment',
     accessorFn: deployment => deployment.environment?.name ?? '',
     width: '12%',
+    sortingFn: stringSortFn,
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
+
+      return (
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
+          Environment
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const deployment = row.original;
       return (
@@ -90,9 +108,19 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
 
   {
     id: 'openshift_name',
-    header: 'Cluster',
     width: '10%',
     accessorFn: deployment => deployment.environment?.openshift.name ?? '',
+    sortingFn: stringSortFn,
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
+
+      return (
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
+          Cluster
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const deployment = row.original;
 
@@ -103,11 +131,7 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
   {
     accessorKey: 'name',
     width: '15%',
-    sortingFn: (rowA, rowB, columnId) => {
-      const a = rowA.getValue(columnId) as string;
-      const b = rowB.getValue(columnId) as string;
-      return a.localeCompare(b);
-    },
+    sortingFn: stringSortFn,
     header: ({ column }) => {
       const sortDirection = column.getIsSorted();
 
@@ -135,8 +159,18 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
 
   {
     accessorKey: 'priority',
-    header: 'Priority',
     width: '10%',
+    sortingFn: intSortFn,
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
+
+      return (
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
+          Priority
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
+    },
   },
 
   {
@@ -180,11 +214,16 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
 
   {
     accessorKey: 'status',
-    header: 'Status',
-    sortingFn: (rowA, rowB, columnId) => {
-      const a = rowA.getValue(columnId) as string;
-      const b = rowB.getValue(columnId) as string;
-      return a.localeCompare(b);
+    sortingFn: stringSortFn,
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
+
+      return (
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
+          Status
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
     },
     cell: ({ row }) => {
       const { status, buildStep } = row.original;
@@ -219,8 +258,23 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
   },
 
   {
-    accessorKey: 'duration',
-    header: 'Duration',
+    id: 'duration',
+    accessorFn: row => {
+      const deploymentStart = row.started || row.created;
+      const durationStart = deploymentStart ? dayjs.utc(deploymentStart) : dayjs.utc();
+      const durationEnd = row.completed ? dayjs.utc(row.completed) : dayjs.utc();
+      return dayjs.duration(durationEnd.diff(durationStart)).asSeconds();
+    },
+    sortingFn: intSortFn,
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
+      return (
+        <Button variant="ghost" className="px-1" onClick={() => handleSort(sortDirection, column)}>
+          Duration
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const deployment = row.original;
 
