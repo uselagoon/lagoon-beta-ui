@@ -1,7 +1,6 @@
 /**
  * Layout wrapping Organizations related routes
  */
-import { OrgBreadcrumbs } from '@/components/breadcrumbs/OrgBreadcrumbs';
 
 export default async function ProjectRoutesLayout({
   children,
@@ -10,7 +9,6 @@ export default async function ProjectRoutesLayout({
 }>) {
   return (
     <>
-      <OrgBreadcrumbs />
       {children}
     </>
   );

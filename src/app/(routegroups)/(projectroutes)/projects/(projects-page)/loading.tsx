@@ -1,7 +1,6 @@
 'use client';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { ProjectBreadcrumbs } from '@/components/breadcrumbs/ProjectBreadcrumbs';
 import ProjectsTableColumns from '@/components/pages/projects/DataTableColumns';
 import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
@@ -27,7 +26,6 @@ export default function Loading() {
 
   return (
     <>
-      <ProjectBreadcrumbs />
       <SectionWrapper>
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Projects</h3>
         <Button className="px-0" variant="link">
