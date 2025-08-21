@@ -38,8 +38,8 @@ export default function ProjectEnvironmentsPage({
     },
 
     env_count: {
-      defaultValue: 5,
-      parse: (value: string | undefined) => (value !== undefined ? Number(value) : 5),
+      defaultValue: 10,
+      parse: (value: string | undefined) => (value !== undefined ? Number(value) : 10),
     },
   });
 
@@ -118,10 +118,6 @@ export default function ProjectEnvironmentsPage({
           renderFilters={table => (
             <SelectWithOptions
               options={[
-                {
-                  label: '5 results per page',
-                  value: 5,
-                },
                 {
                   label: '10 results per page',
                   value: 10,

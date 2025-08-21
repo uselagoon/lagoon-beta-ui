@@ -10,6 +10,7 @@ import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrig
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
+import LimitedRoutes from "@/components/pages/environment/_components/LimitedRoutes";
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
@@ -117,9 +118,9 @@ const getProjectEnvsTableColumns = (basePath: string) =>
       accessorKey: 'activeRoutes',
       cell: ({ row }) => {
         const activeRoutes = row.original.activeRoutes;
-
-        return <>{activeRoutes}</>;
-      },
+        const routes = activeRoutes?.props?.children
+        return <LimitedRoutes routes={routes} />;
+      }
     },
   ] as DataTableColumnDef<TableDataType>[];
 
