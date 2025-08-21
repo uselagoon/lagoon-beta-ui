@@ -20,7 +20,6 @@ export default gql`
         service
         type
         size
-        downloadUrl
         created
       }
       facts {

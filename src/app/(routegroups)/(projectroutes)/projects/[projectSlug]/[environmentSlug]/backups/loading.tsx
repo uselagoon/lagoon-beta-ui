@@ -24,7 +24,7 @@ export default function Loading() {
 
         <DataTable
           loading
-          columns={BackupsTableColumns}
+          columns={BackupsTableColumns(1)}
           data={[]}
           initialPageSize={results || 10}
           searchPlaceholder="Search backup"

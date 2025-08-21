@@ -12,7 +12,7 @@ export default function Loading() {
 
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight my-4">Facts</h3>
 
-      <DataTable loading columns={InsightsTableColumns} data={[]} />
+      <DataTable loading columns={InsightsTableColumns(0)} data={[]} />
     </SectionWrapper>
   );
 }

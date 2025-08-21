@@ -99,7 +99,7 @@ export default function InsightsPage({
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight my-4">Insights</h3>
 
       <DataTable
-        columns={InsightsTableColumns}
+        columns={InsightsTableColumns(environment.id)}
         data={insights}
         onSearch={searchStr => setInsightsQuery(searchStr)}
         initialSearch={insights_query}

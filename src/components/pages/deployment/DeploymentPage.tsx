@@ -11,7 +11,7 @@ import CancelDeployment from '@/components/cancelDeployment/CancelDeployment';
 import DeploymentNotFound from '@/components/errors/DeploymentNotFound';
 import LogViewer from '@/components/logViewer/LogViewer';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import {Badge, BasicTable, Button, Switch, Table} from '@uselagoon/ui-library';
+import { Badge, BasicTable, Button, Switch, Table } from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -31,7 +31,7 @@ export const deploymentColumns = [
     title: 'Name / ID ',
     dataIndex: 'name',
     key: 'name',
-    columnClassName: "w-1/4",
+    columnClassName: 'w-1/4',
   },
 
   {
@@ -106,7 +106,9 @@ export default function DeploymentPage({
           </Link>
         </div>
       </section>
-      ) : deployment.name,
+    ) : (
+      deployment.name
+    ),
     created: dayjs.utc(deployment.created).local().fromNow(),
     duration: getDeploymentDuration(deployment),
     key: String(deployment.id),
