@@ -18,8 +18,8 @@ export default function Loading() {
     },
 
     env_count: {
-      defaultValue: 5,
-      parse: (value: string | undefined) => (value !== undefined ? Number(value) : 5),
+      defaultValue: 10,
+      parse: (value: string | undefined) => (value !== undefined ? Number(value) : 10),
     },
   });
 
