@@ -53,6 +53,8 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
     return groupType === 'project-default-group';
   });
 
+  const defaultGroupsCount = userGroups.filter(group => group.groupType == 'project-default-group').length;
+
   const tableGroups = showDefaults
     ? userGroups
     : userGroups.filter(group => group.groupType !== 'project-default-group');
@@ -87,7 +89,7 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
             <div className="flex items-center gap-4">
               <Checkbox
                 id="show-defaults"
-                label="Show default groups"
+                label={`Show default groups (${defaultGroupsCount})`}
                 checked={showDefaults}
                 onCheckedChange={setShowDefaults}
                 disabled={!hasDefaultGroups}

@@ -61,6 +61,7 @@ export default function UsersPage({
     return { value: group.name, label: group.name };
   });
 
+  const defaultUsersCount = users.filter(u => u.email.startsWith('default-user')).length;
   const filteredUsers = showDefaults ? users : users.filter(u => !u.email.startsWith('default-user'));
 
   const hasDefaultUsers = users.some(({ email }) => {
@@ -86,7 +87,7 @@ export default function UsersPage({
               <div className="flex items-center gap-4">
                 <Checkbox
                   id="show-defaults"
-                  label="Show default users"
+                  label={`Show default users (${defaultUsersCount})`}
                   checked={showDefaults}
                   onCheckedChange={setShowDefaults}
                   disabled={!hasDefaultUsers}
