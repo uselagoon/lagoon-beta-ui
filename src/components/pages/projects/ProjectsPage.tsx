@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 
 import { ProjectsData } from '@/app/(routegroups)/(projectroutes)/projects/(projects-page)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { ProjectBreadcrumbs } from '@/components/breadcrumbs/ProjectBreadcrumbs';
 import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
@@ -33,7 +32,6 @@ export default function ProjectsPage({ data }: { data: ProjectsData }) {
 
   return (
     <>
-      <ProjectBreadcrumbs />
       <SectionWrapper>
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Projects</h3>
         <Button className="px-0" variant="link">

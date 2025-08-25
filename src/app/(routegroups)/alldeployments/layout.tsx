@@ -1,7 +1,6 @@
 /**
  * Layout wrapping AllDeployments page
  */
-import { AllDeploymentsBreadcrumbs } from '@/components/breadcrumbs/AllDeploymentsBreadcrumbs';
 
 export default async function ProjectRoutesLayout({
   children,
@@ -10,7 +9,6 @@ export default async function ProjectRoutesLayout({
 }>) {
   return (
     <>
-      <AllDeploymentsBreadcrumbs />
       {children}
     </>
   );

@@ -1,8 +1,6 @@
 /**
  * Project navigation layout wrapping settings tabs.
  */
-import { SettingsBreadcrumbs } from '@/components/breadcrumbs/SettingsBreadcrumbs';
-import SettingsNavTabs from '@/components/settingsNavtabs/SettingsNavTabs';
 
 export default async function ProjectLayout({
   children,
@@ -11,8 +9,7 @@ export default async function ProjectLayout({
 }>) {
   return (
     <>
-      <SettingsBreadcrumbs />
-      <SettingsNavTabs>{children}</SettingsNavTabs>
+      {children}
     </>
   );
 }

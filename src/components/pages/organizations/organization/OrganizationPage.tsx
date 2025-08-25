@@ -40,11 +40,6 @@ export default function OrganizationPage({
 
   const orgDetailedItems = [
     {
-      key: 'org_id',
-      label: 'ORG ID',
-      children: organization.id,
-    },
-    {
       key: 'org_name',
       label: 'ORG NAME',
       children: organization.name,
