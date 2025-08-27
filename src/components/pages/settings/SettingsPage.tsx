@@ -96,7 +96,7 @@ const SettingsPage = ({ queryRef }: { queryRef: QueryRef<SettingsData> }) => {
             {
               id: 'key_name',
               label: 'Key Name',
-              placeholder: 'Enter a name for the variable',
+              placeholder: 'Enter a name for this key',
               required: true,
             },
             {
