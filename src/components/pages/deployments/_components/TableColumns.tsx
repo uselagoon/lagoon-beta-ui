@@ -12,6 +12,7 @@ import isBetween from 'dayjs/plugin/isBetween';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { dateRangeFilter } from 'utils/tableDateRangeFilter';
+import { Check, X } from 'lucide-react';
 
 dayjs.extend(isBetween);
 dayjs.extend(duration);
@@ -47,7 +48,11 @@ const getDeploymentTableColumns = (basePath: string) =>
 
         return (
           <section className="flex flex-col items-start gap-2">
-            <Badge variant="default">{capitalize(status)}</Badge>
+            <div className="flex items-center gap-3">
+              {status == "complete" && <Check color="green" size="16" />}
+              {(status == "failed" || status == "cancelled") && <X color="red" size="16" />}
+              <Badge variant="default">{capitalize(status)}</Badge>
+            </div>
 
             {!['complete', 'cancelled', 'failed'].includes(status) && buildStep && (
               <Tooltip>

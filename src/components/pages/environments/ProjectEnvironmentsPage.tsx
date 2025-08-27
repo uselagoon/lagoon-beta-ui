@@ -57,8 +57,8 @@ export default function ProjectEnvironmentsPage({
   const productionEnvironment = project.productionEnvironment;
 
   const sortedEnvironments = [
-    environments.find(env => env.name === productionEnvironment),
-    ...environments.filter(env => env.name !== productionEnvironment),
+    environments.find(env => makeSafe(env.name) === productionEnvironment),
+    ...environments.filter(env => makeSafe(env.name) !== productionEnvironment),
   ].filter(env => !!env);
 
   const envTableData = sortedEnvironments.map(environment => {
