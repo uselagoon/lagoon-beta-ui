@@ -18,17 +18,21 @@ const getDownloadURL = gql`
 `;
 
 export const InsightDownload = ({ insight, environmentId }: { insight: Insight; environmentId: number }) => {
-  const [getInsightsDownload, { data, loading }] = useLazyQuery(getDownloadURL, {
+  const [getInsightsDownload, { loading }] = useLazyQuery(getDownloadURL, {
     variables: {
       environmentID: environmentId,
     },
     fetchPolicy: 'network-only',
-    onCompleted: _ => {
-      if (insight?.downloadUrl && isValidUrl(insight.downloadUrl)) {
-        const { downloadUrl } = insight;
+    onCompleted: data => {
+      const allInsights = data.environment?.insights;
+      const targetInsight = allInsights?.find((envInsight: Insight) => envInsight.id === insight.id);
+
+      if (targetInsight?.downloadUrl && isValidUrl(targetInsight.downloadUrl)) {
+        const { downloadUrl } = targetInsight;
+
         window.open(downloadUrl, '_blank', 'noopener,noreferrer');
       } else {
-        console.error(`Error fetching insights download: ${insight.id}`);
+        console.error(`Error fetching insights download: ${targetInsight.id}`);
         toast.error('Error fetching insights', {
           id: 'restore_err',
           description: 'Invalid Url',
