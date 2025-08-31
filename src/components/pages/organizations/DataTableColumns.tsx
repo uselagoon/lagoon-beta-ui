@@ -58,10 +58,10 @@ export const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
     },
 
     cell: ({ row }) => {
-      const organizationName = row.original.name;
+      const organizationName = row.original.friendlyName;
       return (
         <div className="max-w-[25vw]">
-          <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${organizationName}`}>
+          <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${row.original.name}`}>
             {organizationName}
           </Link>
         </div>

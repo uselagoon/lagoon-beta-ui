@@ -54,13 +54,13 @@ export default function ProjectDetailsPage(props: ProjectDetailsProps) {
     {
       key: 'branches',
       title: 'BRANCHES ENABLED',
-      children: project.branches,
+      children: <span className="break-words text-lg">{project.branches}</span>,
       lowercaseValue: true,
     },
     {
       key: 'pulls',
       title: 'PULL REQUESTS ENABLED',
-      children: project.pullrequests,
+      children: <span className="break-words text-lg">{project.pullrequests}</span>,
       lowercaseValue: true,
     },
     {

@@ -20,6 +20,7 @@ export default gql`
         project {
           problemsUi
           factsUi
+          name
         }
         openshift {
           friendlyName

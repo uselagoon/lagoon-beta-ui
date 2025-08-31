@@ -4,6 +4,7 @@ import addGroupMember from '@/lib/mutation/organizations/addGroupMember';
 import { useMutation } from '@apollo/client';
 import { Sheet } from '@uselagoon/ui-library';
 import { UserRoundPlus } from 'lucide-react';
+import { toast } from 'sonner';
 
 const AddUserSheet = ({
   groupSelectOptions = [],
@@ -17,11 +18,22 @@ const AddUserSheet = ({
   type?: 'single' | 'multiple';
 }) => {
   const [addGroupMemberMutation, { error, loading }] = useMutation(addGroupMember, {
+    onCompleted: () => {
+      toast.success('User added successfully');
+    },
+    onError: err => {
+      console.error('Error adding user:', err);
+      toast.error('Error adding user', {
+        id: 'add_user_error',
+        description: (err as { message: string })?.message,
+      });
+    },
     refetchQueries: ['getOrganization'],
   });
   const handleAddUser = async (e: React.MouseEvent<HTMLButtonElement>, values: any) => {
     try {
       const { email, group, role, inviteUser } = values;
+      const inviteUserBool = Boolean(inviteUser);
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
@@ -34,7 +46,7 @@ const AddUserSheet = ({
           email: email,
           group: group,
           role: role,
-          inviteUser: inviteUser,
+          inviteUser: inviteUserBool,
         },
       });
 
@@ -50,7 +62,7 @@ const AddUserSheet = ({
       <Sheet
         sheetTrigger={iconOnly ? <UserRoundPlus className="h-5 w-5" /> : 'Add User'}
         sheetTitle="Add users"
-        sheetDescription="Enter the user details below"
+        sheetDescription="Enter the user details below."
         sheetFooterButton="Confirm"
         loading={loading}
         error={!!error}
