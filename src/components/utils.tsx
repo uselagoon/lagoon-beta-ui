@@ -86,3 +86,21 @@ export const renderSortIcons = (sortDirection: SortDirection) => {
     </>
   );
 };
+
+export function humanFileSize(size: number) {
+  if (!size) {
+    return [false, null];
+  }
+  const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+  //@ts-ignore
+  const formatted = (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+
+  return [formatted.length > 5, formatted];
+}
+
+export function humanFileSizeNoOverflow(size: number): string {
+  const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+  const formatted = (size / Math.pow(1024, i)).toFixed(2) + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+
+  return formatted;
+}

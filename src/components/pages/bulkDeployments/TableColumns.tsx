@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { AllDeploymentsData } from '@/app/(routegroups)/alldeployments/page';
 import { BulkDeployment } from '@/app/(routegroups)/bulkdeployment/[bulkId]/page';
 import { capitalize, handleSort, renderSortIcons } from '@/components/utils';
+import { Row } from '@tanstack/react-table';
 import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -12,7 +13,6 @@ import utc from 'dayjs/plugin/utc';
 import { ExternalLink } from 'lucide-react';
 
 import CancelDeployment from '../../cancelDeployment/CancelDeployment';
-import {Row} from "@tanstack/react-table";
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
@@ -40,7 +40,7 @@ const stringSortFn = (rowA: Row<BulkDeployment>, rowB: Row<BulkDeployment>, colu
   const a = rowA.getValue(columnId) as number;
   const b = rowB.getValue(columnId) as number;
   return a?.toString().localeCompare(b?.toString());
-}
+};
 
 const intSortFn = (rowA: Row<BulkDeployment>, rowB: Row<BulkDeployment>, columnId: string) => {
   const a = rowA.getValue(columnId) as number;

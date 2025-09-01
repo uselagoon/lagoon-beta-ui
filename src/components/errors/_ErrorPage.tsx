@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import {Wrapper} from "@storybook/blocks";
+
+import { Wrapper } from '@storybook/blocks';
 
 const statusCodes = {
   400: 'Bad Request',

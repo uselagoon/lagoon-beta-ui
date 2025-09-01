@@ -39,10 +39,7 @@ export const GroupPageProjectColumns = (
       return (
         <div className="flex gap-4 justify-start items-center">
           <Button>
-            <Link
-              target="_blank"
-              href={`/projects/${row.original.name}`}
-            >
+            <Link target="_blank" href={`/projects/${row.original.name}`}>
               <Tooltip>
                 <TooltipTrigger>
                   <FolderCog className="h-6 w-6 mt-1" />

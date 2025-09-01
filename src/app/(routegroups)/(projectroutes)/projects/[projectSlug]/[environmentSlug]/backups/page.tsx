@@ -8,7 +8,7 @@ type Props = {
 };
 
 export type Backup = {
-  id: number;
+  id: string;
   source: string;
   backupId: string;
   created: string;

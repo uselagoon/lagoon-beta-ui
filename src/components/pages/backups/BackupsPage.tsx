@@ -58,7 +58,7 @@ export default function BackupsPage({
       </span>
 
       <DataTable
-        columns={BackupsTableColumns}
+        columns={BackupsTableColumns(environment.id)}
         data={environment.backups}
         initialPageSize={results || 10}
         searchPlaceholder="Search backup"
