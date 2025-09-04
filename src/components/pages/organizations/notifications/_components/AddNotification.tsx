@@ -1,4 +1,4 @@
-import { FC, startTransition, useCallback, useState } from 'react';
+import React, { FC, startTransition, useCallback, useState } from 'react';
 
 import {
   ADD_EMAIL_NOTIFICATION,
@@ -25,14 +25,14 @@ export const AddNotification: FC<AddNotificationProps> = ({ orgId, refetch }) =>
     'slack' | 'rocketchat' | 'teams' | 'email' | 'webhook' | undefined
   >();
 
-  const [addSlack] = useMutation(ADD_SLACK_NOTIFICATION);
-  const [addRocketChat] = useMutation(ADD_ROCKETCHAT_NOTIFICATION);
-  const [addEmail] = useMutation(ADD_EMAIL_NOTIFICATION);
-  const [addTeams] = useMutation(ADD_MICROSOFTTEAMS_NOTIFICATION);
-  const [addWebhook] = useMutation(ADD_WEBHOOK_NOTIFICATION);
+  const [addSlack, { loading: slackLoading, error: slackError }] = useMutation(ADD_SLACK_NOTIFICATION);
+  const [addRocketChat, { loading: rocketLoading, error: rocketError }] = useMutation(ADD_ROCKETCHAT_NOTIFICATION);
+  const [addEmail, { loading: emailLoading, error: emailError }] = useMutation(ADD_EMAIL_NOTIFICATION);
+  const [addTeams, { loading: teamsLoading, error: teamsError }] = useMutation(ADD_MICROSOFTTEAMS_NOTIFICATION);
+  const [addWebhook, { loading: webhookLoading, error: webhookError }] = useMutation(ADD_WEBHOOK_NOTIFICATION);
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+  const loading = slackLoading || rocketLoading || emailLoading || teamsLoading || webhookLoading;
+  const error = slackError || rocketError || emailError || teamsError || webhookError;
 
   const newNotificationOptions = [
     { label: 'Slack', value: 'slack' },
@@ -110,26 +110,16 @@ export const AddNotification: FC<AddNotificationProps> = ({ orgId, refetch }) =>
     const mutationVars = { name, channel, webhook, email };
 
     try {
-      setLoading(true);
-      setError(false);
-
       await getAction(notification_type, mutationVars);
 
       startTransition(() => {
         refetch && refetch();
       });
 
-      toast.success('Notification added successfully!', {
-        position: 'top-center',
-      });
+      toast.success('Notification added successfully!');
     } catch (err) {
       console.error(err);
-      setError(true);
-      toast.error('There was a problem adding a notification.', {
-        position: 'top-center',
-      });
-    } finally {
-      setLoading(false);
+      return false
     }
   };
 
@@ -203,8 +193,16 @@ export const AddNotification: FC<AddNotificationProps> = ({ orgId, refetch }) =>
       buttonAction={handleAddNotification}
       sheetFields={getSheetFields()}
       loading={loading}
-      error={error}
-      additionalContent=""
+      error={!!error}
+      additionalContent={
+        <>
+          {error && (
+            <div className="text-red-500 p-3 border border-red-300 rounded-md mt-2 bg-red-50">
+              <strong>Error:</strong> {error.message}
+            </div>
+          )}
+        </>
+      }
       onFieldChange={handleFieldChange}
     />
   );

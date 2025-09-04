@@ -3,6 +3,7 @@ import React from 'react';
 import addProjectToOrganization from '@/lib/mutation/organizations/addProjectToOrganization';
 import { useMutation } from '@apollo/client';
 import { Sheet } from '@uselagoon/ui-library';
+import {toast} from "sonner";
 
 const AddProjectSheet = ({
   organizationId,
@@ -13,17 +14,17 @@ const AddProjectSheet = ({
 }) => {
   const [addProjectMutation, { error, loading }] = useMutation(addProjectToOrganization, {
     refetchQueries: ['getOrganization'],
+    onCompleted: _ => {
+      toast.success('Project created successfully.');
+    },
   });
+
+  const hasSpaces = (str: string) => str?.indexOf(' ') > 0;
 
   const handleAddProject = async (e: React.MouseEvent<HTMLButtonElement>, values: any) => {
     try {
       const { projectName, gitUrl, prodEnv, deployTarget, branches, pullRequests, addUserToProject } = values;
-      const hasSpaces = (str: string) => str?.indexOf(' ') > 0;
 
-      if (hasSpaces(projectName) || hasSpaces(gitUrl) || hasSpaces(prodEnv)) {
-        console.error('Project name, Git URL, and Production environment cannot contain spaces');
-        return false;
-      }
       await addProjectMutation({
         variables: {
           organization: organizationId,
@@ -38,6 +39,7 @@ const AddProjectSheet = ({
       });
     } catch (err) {
       console.error('Error adding project:', err);
+      return false;
     }
   };
 
@@ -69,7 +71,7 @@ const AddProjectSheet = ({
         </p>
       </div>
       {error && (
-        <div className="text-red-500 p-3 border border-red-300 rounded-md bg-red-50">
+        <div className="text-red-500 p-3 border mt-2 border-red-300 rounded-md bg-red-50">
           <strong>Error creating project:</strong> {error.message}
         </div>
       )}
@@ -94,6 +96,13 @@ const AddProjectSheet = ({
             type: 'text',
             placeholder: 'Enter a project name',
             required: true,
+            validate: (value) => {
+              const projectName = value as string;
+              if (hasSpaces(projectName)) {
+                return "Project name cannot contain spaces"
+              }
+              return null
+            }
           },
           {
             id: 'gitUrl',
@@ -101,6 +110,13 @@ const AddProjectSheet = ({
             type: 'text',
             placeholder: 'Enter the URL',
             required: true,
+            validate: (value) => {
+              const gitURL = value as string;
+              if (hasSpaces(gitURL)) {
+                return "Git URL cannot contain spaces"
+              }
+              return null
+            }
           },
           {
             id: 'prodEnv',
@@ -108,6 +124,13 @@ const AddProjectSheet = ({
             type: 'text',
             placeholder: 'Enter prod environment',
             required: true,
+            validate: (value) => {
+              const prodEnv = value as string;
+              if (hasSpaces(prodEnv)) {
+                return "Production environment cannot contain spaces"
+              }
+              return null
+            }
           },
           {
             id: 'deployTarget',

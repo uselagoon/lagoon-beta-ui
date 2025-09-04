@@ -40,6 +40,7 @@ export const AddUserToGroup: FC<Props> = ({ groupName, refetch }) => {
         id: 'group_error',
         description: (err as ApolloError).message,
       });
+      return false;
     }
   };
 
@@ -69,6 +70,11 @@ export const AddUserToGroup: FC<Props> = ({ groupName, refetch }) => {
             required: true,
             placeholder: 'Enter email',
             type: 'input',
+            validate: (value) => {
+              const email = value as string;
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              return !email ? null : emailRegex.test(email) ? null : "Invalid email";
+            }
           },
           {
             id: 'user_role',
@@ -86,7 +92,7 @@ export const AddUserToGroup: FC<Props> = ({ groupName, refetch }) => {
           },
         ]}
         buttonAction={(_, { user_email, user_role, invite_user }) => {
-          handleAddUser(user_email, user_role, invite_user);
+          return handleAddUser(user_email, user_role, invite_user);
         }}
       />
     </>
