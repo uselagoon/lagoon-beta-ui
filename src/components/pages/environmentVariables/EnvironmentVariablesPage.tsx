@@ -11,7 +11,7 @@ import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import environmentByProjectNameWithEnvVarsValueQuery from '@/lib/query/environmentByProjectNameWithEnvVarsValueQuery';
 import environmentProjectByProjectNameWithEnvVarsValueQuery from '@/lib/query/environmentProjectByProjectNameWithEnvVarsValueQuery';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import {Button, DataTable, SelectWithOptions, Switch} from '@uselagoon/ui-library';
 import { Loader2 } from 'lucide-react';
 import { useQueryStates } from 'nuqs';
 import { toast } from 'sonner';
@@ -160,19 +160,18 @@ export default function EnvironmentVariablesPage({
 
   return (
     <SectionWrapper>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Environment variables</h3>
-
-      <Button
-        data-testId="var-visibility-toggle"
-        size="sm"
-        className="max-w-max mb-4"
-        disabled={envLoading}
-        onClick={handleShowEnvVars}
-      >
-        {envLoading && <Loader2 className="animate-spin" />}
-        {envValuesVisible ? 'Hide values' : 'Show values'}
-      </Button>
-
+      <div className="flex gap-2 items-center justify-between">
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Environment variables</h3>
+        <Switch
+          label="Edit values"
+          disabled={envLoading}
+          loading={envLoading}
+          checked={envValuesVisible}
+          id=""
+          description=""
+          onCheckedChange={handleShowEnvVars}
+        />
+      </div>
       <DataTable
         columns={envTableColumns}
         data={envValues?.environmentVars?.envVariables || (variables as unknown as EnvVariable[])}
@@ -208,27 +207,30 @@ export default function EnvironmentVariablesPage({
         )}
         key="env-variables-table"
       />
-      <AddNewVariable
-        onClick={() => stableAddPermissionCheck}
-        type="environment"
-        projectName={projectName}
-        environmentName={envName}
-        refetch={refetch}
-      />
+      <div className="flex justify-end">
+        <AddNewVariable
+          onClick={() => stableAddPermissionCheck}
+          type="environment"
+          projectName={projectName}
+          environmentName={envName}
+          refetch={refetch}
+        />
+      </div>
 
-      <section className="spacer my-8"></section>
-
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Project variables</h3>
-      <Button
-        data-testId="var-visibility-toggle"
-        size="sm"
-        className="max-w-max mb-4"
-        disabled={prjLoading}
-        onClick={handleShowProjectVars}
-      >
-        {prjLoading && <Loader2 className="animate-spin" />}
-        {projectVarsVisible ? 'Hide values' : 'Show values'}
-      </Button>
+      <section className="spacer my-8"><hr/></section>
+      <div className="flex gap-2 items-center justify-between">
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Project variables</h3>
+        <Button
+          data-testId="var-visibility-toggle"
+          size="sm"
+          className="max-w-max mb-4 py-2 px-4"
+          disabled={prjLoading}
+          onClick={handleShowProjectVars}
+        >
+          {prjLoading && <Loader2 className="animate-spin" />}
+          {projectVarsVisible ? 'Hide values' : 'Edit values'}
+        </Button>
+      </div>
 
       <DataTable
         columns={projectEnvTableColumns}
@@ -237,7 +239,7 @@ export default function EnvironmentVariablesPage({
         key="project-variables-table"
       />
 
-      <section className="my-4">
+      <section className="my-4 flex justify-end">
         <Button onClick={navToProjectVars}>Edit Variables</Button>
       </section>
     </SectionWrapper>

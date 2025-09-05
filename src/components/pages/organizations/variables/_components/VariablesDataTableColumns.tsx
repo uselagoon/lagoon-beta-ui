@@ -2,7 +2,7 @@
 
 import { OrgEnvVariable } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
 import { handleSort, renderSortIcons } from '@/components/utils';
-import { Button, DataTableColumnDef } from '@uselagoon/ui-library';
+import {Button, CopyToClipboard, DataTableColumnDef} from '@uselagoon/ui-library';
 
 export const VariablesDataTableColumnsNoValues: DataTableColumnDef<OrgEnvVariable>[] = [
   {
@@ -63,7 +63,8 @@ export const VariablesDataTableColumns = (
     accessorKey: 'value',
     header: 'Value',
     cell: ({ row }) => {
-      return <span>{row.original.value}</span>;
+      const value = row.original.value ?? '';
+      return <>{value ? <CopyToClipboard withToolTip text={value} type="hiddenWithIcon" /> : ''}</>;
     },
   },
   {

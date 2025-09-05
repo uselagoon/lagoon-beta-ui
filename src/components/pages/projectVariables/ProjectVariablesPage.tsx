@@ -10,8 +10,7 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import ProjectNotFound from '@/components/errors/ProjectNotFound';
 import projectByNameWithEnvVarsValueQuery from '@/lib/query/projectByNameWithEnvVarsValueQuery';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Button, DataTable } from '@uselagoon/ui-library';
-import { Loader2 } from 'lucide-react';
+import {DataTable, Switch} from '@uselagoon/ui-library';
 import { toast } from 'sonner';
 
 import { AddNewVariable } from '../../addNewVariable/AddNewVariable';
@@ -68,17 +67,19 @@ export default function ProjectVariablesPage({
 
   return (
     <SectionWrapper>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Project variables</h3>
-      <Button
-        data-testId="var-visibility-toggle"
-        size="sm"
-        className="max-w-max mb-4"
-        disabled={prjLoading}
-        onClick={handleShowProjectVars}
-      >
-        {prjLoading && <Loader2 className="animate-spin" />}
-        {projectVarsVisible ? 'Hide values' : 'Show values'}
-      </Button>
+      <div className="flex gap-2 mb-4 items-center justify-between">
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Project variables</h3>
+        <Switch
+          data-testId="var-visibility-toggle"
+          label="Edit values"
+          disabled={prjLoading}
+          loading={prjLoading}
+          checked={projectVarsVisible}
+          id=""
+          description=""
+          onCheckedChange={handleShowProjectVars}
+        />
+      </div>
 
       <DataTable
         columns={tableColumns}
@@ -86,8 +87,9 @@ export default function ProjectVariablesPage({
         disableExtra
         key={JSON.stringify(variables)}
       />
-      <div className="my-4"></div>
+      <div className="mt-4 flex justify-end">
       <AddNewVariable type="project" projectName={projectName} refetch={refetch} />
+      </div>
     </SectionWrapper>
   );
 }

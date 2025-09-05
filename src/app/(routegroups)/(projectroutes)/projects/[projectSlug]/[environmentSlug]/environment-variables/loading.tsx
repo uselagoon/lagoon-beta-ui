@@ -3,7 +3,7 @@
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { scopeOptions } from '@/components/pages/environmentVariables/_components/filterValues';
 import { ProjectEnvVarsPartialColumns } from '@/components/pages/projectVariables/_components/DataTableColumns';
-import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import {Button, DataTable, SelectWithOptions, Switch} from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {
@@ -24,10 +24,14 @@ export default function Loading() {
 
   return (
     <SectionWrapper>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Environment variables</h3>
-      <Button data-testId="var-visibility-toggle" size="sm" className="max-w-max mb-4" disabled>
-        Show values
-      </Button>
+      <div className="flex gap-2 items-center justify-between">
+        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Environment variables</h3>
+        <Switch
+          label="Edit values"
+          id=""
+          description=""
+        />
+      </div>
 
       <DataTable
         loading
@@ -55,9 +59,11 @@ export default function Loading() {
       />
 
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Project variables</h3>
-      <Button data-testId="var-visibility-toggle" size="sm" className="max-w-max mb-4" disabled>
-        Show values
-      </Button>
+      <Switch
+        label="Edit values"
+        id=""
+        description=""
+      />
       <DataTable loading columns={ProjectEnvVarsPartialColumns()} data={[]} disableExtra />
     </SectionWrapper>
   );
