@@ -12,8 +12,7 @@ import { DeleteVariableDialog } from '@/components/deleteVariable/DeleteVariable
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import organizationByNameWithEnvVarsValue from '@/lib/query/organizations/organizationByNameWithEnvVarsValue';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
-import { Loader2 } from 'lucide-react';
+import {DataTable, SelectWithOptions, Switch} from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 import { toast } from 'sonner';
 
@@ -134,18 +133,18 @@ export default function OrgVariablesPage({
   return (
     <>
       <SectionWrapper>
-        <div className="flex flex-col items-start gap-4">
+        <div className="flex items-start justify-between">
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organization variables</h3>
-          <Button
-            data-testId="org-var-visibility-toggle"
-            size="sm"
-            className="max-w-max mb-4"
+          <Switch
+            data-testId="var-visibility-toggle"
+            label="Edit values"
             disabled={orgLoading}
-            onClick={handleShowEnvVars}
-          >
-            {orgLoading && <Loader2 className="animate-spin" />}
-            {orgValuesVisible ? 'Hide values' : 'Show values'}
-          </Button>
+            loading={orgLoading}
+            checked={orgValuesVisible}
+            id=""
+            description=""
+            onCheckedChange={handleShowEnvVars}
+          />
         </div>
 
         <DataTable
@@ -180,12 +179,14 @@ export default function OrgVariablesPage({
             </div>
           )}
         />
-        <AddNewVariable
-          onClick={() => stableAddPermissionCheck}
-          type="organization"
-          orgName={organizationSlug}
-          refetch={refetch}
-        />
+        <div className="flex justify-end mt-4">
+          <AddNewVariable
+            onClick={() => stableAddPermissionCheck}
+            type="organization"
+            orgName={organizationSlug}
+            refetch={refetch}
+          />
+        </div>
       </SectionWrapper>
     </>
   );

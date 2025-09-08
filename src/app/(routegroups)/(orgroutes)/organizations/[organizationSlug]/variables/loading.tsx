@@ -4,7 +4,7 @@ import { OrgEnvVariable } from '@/app/(routegroups)/(orgroutes)/organizations/[o
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { resultsFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
 import { VariablesDataTableColumnsNoValues } from '@/components/pages/organizations/variables/_components/VariablesDataTableColumns';
-import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import {DataTable, SelectWithOptions, Switch} from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {
@@ -49,9 +49,11 @@ export default function Loading() {
       <SectionWrapper>
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organization variables</h3>
 
-        <Button data-testId="org-var-visibility-toggle" size="sm" className="max-w-max mb-4" disabled>
-          Show values
-        </Button>
+        <Switch
+          label="Edit values"
+          id=""
+          description=""
+        />
 
         <DataTable
           loading
