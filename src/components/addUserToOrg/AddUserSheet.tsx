@@ -21,25 +21,12 @@ const AddUserSheet = ({
     onCompleted: () => {
       toast.success('User added successfully');
     },
-    onError: err => {
-      console.error('Error adding user:', err);
-      toast.error('Error adding user', {
-        id: 'add_user_error',
-        description: (err as { message: string })?.message,
-      });
-    },
     refetchQueries: ['getOrganization'],
   });
   const handleAddUser = async (e: React.MouseEvent<HTMLButtonElement>, values: any) => {
     try {
       const { email, group, role, inviteUser } = values;
       const inviteUserBool = Boolean(inviteUser);
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        console.error('Invalid email');
-        return false;
-      }
 
       await addGroupMemberMutation({
         variables: {
@@ -50,7 +37,6 @@ const AddUserSheet = ({
         },
       });
 
-      return true;
     } catch (err) {
       console.error('Error adding user:', err);
       return false;
@@ -74,6 +60,11 @@ const AddUserSheet = ({
             type: 'email',
             placeholder: 'Enter email',
             required: true,
+            validate: (value) => {
+              const email = value as string;
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              return !email ? null : emailRegex.test(email) ? null : "Invalid email";
+            }
           },
           {
             id: 'group',
@@ -109,7 +100,7 @@ const AddUserSheet = ({
               </p>
             </div>
             {error && (
-              <div className="text-red-500 p-3 border border-red-300 rounded-md bg-red-50">
+              <div className="text-red-500 p-3 mt-2 border border-red-300 rounded-md bg-red-50">
                 <strong>Error adding user:</strong> {error.message}
               </div>
             )}

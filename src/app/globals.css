@@ -18,6 +18,15 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  button:not([disabled]),
+  [role=button]:not([disabled]) {
+    cursor: pointer;
+  }
+
+  [data-lastpass-icon-root] {
+    display: none !important;
+  }
+
   * {
     box-sizing: border-box;
     padding: 0;

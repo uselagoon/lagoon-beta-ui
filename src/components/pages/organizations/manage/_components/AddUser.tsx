@@ -1,4 +1,4 @@
-import { FC, startTransition } from 'react';
+import React, { FC, startTransition } from 'react';
 
 import addUserToOrganization from '@/lib/mutation/organizations/addUserToOrganization';
 import { useMutation } from '@apollo/client';
@@ -30,28 +30,14 @@ type Props = {
  */
 
 export const AddUser: FC<Props> = ({ orgId, refetch, owners }) => {
-  const [addAdministrator, { loading }] = useMutation(addUserToOrganization, {
+  const [addAdministrator, { loading, error }] = useMutation(addUserToOrganization, {
     refetchQueries: ['getOrganization'],
     onCompleted: () => {
       toast.success('User added successfully!');
     },
-    onError: err => {
-      console.error(err);
-      toast.error('Error adding user', {
-        description: err.message,
-      });
-    },
   });
 
   const handleAddUser = async (email: string, role: string) => {
-    const existingUser = owners.find(o => o.email === email);
-    if (existingUser) {
-      toast.error('User already exists', {
-        description: 'This user is already an administrator in this organization.',
-      });
-      return Promise.reject(new Error('User already exists'));
-    }
-
     await addAdministrator({
       variables: {
         email,
@@ -74,8 +60,16 @@ export const AddUser: FC<Props> = ({ orgId, refetch, owners }) => {
       sheetFooterButton="Add"
       sheetDescription="Add a new administrator to this organization, this user must already be a Lagoon user."
       loading={loading}
-      error={false}
-      additionalContent={null}
+      error={!!error}
+      additionalContent={
+        <>
+          {error && (
+            <div className="text-red-500 p-3 mt-2 border border-red-300 rounded-md bg-red-50">
+              <strong>Error adding user:</strong> {error.message}
+            </div>
+          )}
+        </>
+      }
       sheetFields={[
         {
           id: 'email',
@@ -83,6 +77,22 @@ export const AddUser: FC<Props> = ({ orgId, refetch, owners }) => {
           type: 'text',
           placeholder: 'Enter email address',
           required: true,
+          validate: (value) => {
+            const email = value as string;
+            if (!email) return null;
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+              return "Invalid email format";
+            }
+
+            const existingUser = owners.find(o => o.email === email);
+            if (existingUser) {
+              return "User already exists in this organization";
+            }
+
+            return null;
+          }
         },
         {
           id: 'role',

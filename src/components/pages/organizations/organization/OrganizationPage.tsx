@@ -50,43 +50,39 @@ export default function OrganizationPage({
       label: 'GROUPS',
       children: (
         <>
-          Group quota: {groupCount} of {organization.quotaGroup === -1 ? 'unlimited' : organization.quotaGroup}
+          Group Quota: {groupCount} of {organization.quotaGroup === -1 ? 'unlimited' : organization.quotaGroup}
         </>
       ),
-      capitalizeValue: true,
     },
     {
       key: 'projects',
       label: 'PROJECTS',
       children: (
         <>
-          Project quota: {organization.projects.length} of{' '}
+          Project Quota: {organization.projects.length} of{' '}
           {organization.quotaProject === -1 ? 'unlimited' : organization.quotaProject}
         </>
       ),
-      capitalizeValue: true,
     },
     {
       key: 'notifications',
       label: 'NOTIFICATIONS',
       children: (
         <>
-          Notification quota: {totalNotificationCount} of{' '}
+          Notification Quota: {totalNotificationCount} of{' '}
           {organization.quotaNotification === -1 ? 'unlimited' : organization.quotaNotification}
         </>
       ),
-      capitalizeValue: true,
     },
     {
       key: 'environments',
       label: 'ENVIRONMENTS',
       children: (
         <>
-          Environment quota: {organization.environments.length} of{' '}
+          Environment Quota: {organization.environments.length} of{' '}
           {organization.quotaEnvironment === -1 ? 'unlimited' : organization.quotaEnvironment}
         </>
       ),
-      capitalizeValue: true,
     },
     ...(organization.deployTargets
       ? [
@@ -150,7 +146,6 @@ export default function OrganizationPage({
               value={item.children}
               lowercaseValue={item.lowercaseValue}
               key={item.key}
-              capitalizeValue={item.capitalizeValue}
             />
           ))}
         </div>
