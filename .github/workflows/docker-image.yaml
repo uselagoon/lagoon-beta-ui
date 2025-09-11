@@ -112,7 +112,7 @@ jobs:
         uses: docker/scout-action@v1
         with:
           command: compare
-          image: ${{ steps.meta.outputs.tags }}
+          image: ghcr.io/${{ env.IMAGE_NAME }}:pr-${{ github.event.pull_request.number }}
           to: ghcr.io/${{ env.IMAGE_NAME }}:latest
           ignore-unchanged: true
           only-severities: critical,high
