@@ -1,7 +1,7 @@
 'use client';
 
 import { Notification } from '@/components/pages/organizations/notifications/_components/EditNotification';
-import { Badge, DataTableColumnDef } from '@uselagoon/ui-library';
+import {DataTableColumnDef, Label} from '@uselagoon/ui-library';
 import Image from 'next/image';
 import {Mail, Webhook} from "lucide-react";
 
@@ -41,9 +41,7 @@ export const NotificationsDataTableColumns = (
       return (
         <div className="flex items-center justify-center gap-2">
           {setNotificationIcon({type: type})}
-          <Badge>
-            <span className="uppercase">{type}</span>
-          </Badge>
+          <Label className="uppercase">{type}</Label>
         </div>
       );
     },
