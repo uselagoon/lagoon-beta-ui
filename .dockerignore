@@ -1,6 +1,5 @@
 .dockerignore
 README.md
-
 **/.next
 **/Dockerfile
 **/build/
@@ -8,6 +7,11 @@ README.md
 **/.gitignore
 node_modules
 build
+cache
 
 # Envs
 **/.env.local
+
+Makefile
+docker-compose.yml
+lagoon-core.*
