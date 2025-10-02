@@ -4,7 +4,7 @@ type WrapperProps = {
   children: ReactNode;
 };
 const SectionWrapper = ({ children }: WrapperProps) => {
-  return <section className="py-[24px] px-[28px] rounded-lg border">{children}</section>;
+  return <section className="py-[16px] px-[18px] rounded-lg border">{children}</section>;
 };
 
 export default SectionWrapper;
