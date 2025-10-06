@@ -9,6 +9,7 @@ import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrig
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
+import {getBadgeVariant} from "../../../../../utils/setBadgeStatus";
 
 export const getTaskDuration = (task: Task) => {
   const taskStart = task.started || task.created;
@@ -51,7 +52,7 @@ const getTasksTableColumns = (basePath: string, projectId: number, environmentId
       },
       cell: ({ row }) => {
         const status = row.original.status;
-        return <Badge variant="default">{capitalize(status)}</Badge>;
+        return <Badge variant={getBadgeVariant(status, null)}>{capitalize(status)}</Badge>;
       },
     },
     {

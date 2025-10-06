@@ -52,16 +52,15 @@ const getDeploymentTableColumns = (basePath: string) =>
             <div className="flex items-center gap-3">
               {status == "complete" && <Check color="green" size="16" />}
               {(status == "failed" || status == "cancelled") && <X color="red" size="16" />}
-              {/*<Badge className={getBadgeVariant(status, buildStep)} variant="default">{capitalize(status)}</Badge>*/}
               <Badge variant={getBadgeVariant(status, buildStep)}>
-                {status}
+                {capitalize(status)}
               </Badge>
             </div>
 
             {!['complete', 'cancelled', 'failed'].includes(status) && buildStep && (
               <Tooltip>
                 <TooltipTrigger>
-                  <Badge className="bg-blue-500 text-white dark:bg-blue-600" variant="secondary">
+                  <Badge variant="lagoon">
                     {buildStep}
                   </Badge>
                 </TooltipTrigger>
@@ -72,7 +71,7 @@ const getDeploymentTableColumns = (basePath: string) =>
             {buildStep && ['deployCompletedWithWarnings'].includes(buildStep) && (
               <Tooltip>
                 <TooltipTrigger>
-                  <Badge className="text-[#ffbe00]" variant="secondary">
+                  <Badge className="text-[#ffbe00]" variant="outline">
                     Completed with warnings
                   </Badge>
                 </TooltipTrigger>
