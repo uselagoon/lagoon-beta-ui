@@ -1,7 +1,7 @@
 CI_BUILD_TAG ?= lagoon-ui
 CORE_REPO=https://github.com/uselagoon/lagoon.git
 # CORE_REPO = ../lagoon
-CORE_TREEISH=main
+CORE_TREEISH=api-defined-routes
 
 # for the `stable` targets, images with these tags will be used
 LAGOON_CORE_IMAGE_REPO=testlagoon
