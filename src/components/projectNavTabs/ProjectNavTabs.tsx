@@ -55,7 +55,17 @@ export const ProjectNavTabs = ({ children }: { children: ReactNode }) => {
               </Link>
             ),
           },
-
+          {
+            key: 'routes',
+            label: (
+              <Link
+                data-cy="nav-env-routes"
+                href={`/projects/${projectSlug}/routes`}
+              >
+                <LinkContentWrapper>Routes</LinkContentWrapper>
+              </Link>
+            ),
+          },
           ...(showDeployTargets
             ? [
                 {
