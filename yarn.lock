@@ -4224,7 +4224,7 @@
 
 "@uselagoon/ui-library@github:uselagoon/ui-library#main":
   version "2.0.2"
-  resolved "https://codeload.github.com/uselagoon/ui-library/tar.gz/3e418cc0dd86b012f47ebee13d4c45cd9f3b5984"
+  resolved "https://codeload.github.com/uselagoon/ui-library/tar.gz/c9e03fd62cb706f7f2ed443f59acade8da826b9b"
   dependencies:
     "@hookform/resolvers" "^5.1.1"
     "@radix-ui/react-accordion" "^1.2.11"
@@ -11175,6 +11175,7 @@ wordwrap@^1.0.0:
   integrity sha512-gvVzJFlPycKc5dZN4yPkP8w7Dc37BtP1yczEneOb4uq34pXZcvrtRTmWV8W+Ume+XCxKgbjM+nevkyFPMybd4Q==
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
