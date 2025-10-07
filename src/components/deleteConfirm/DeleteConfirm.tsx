@@ -90,7 +90,7 @@ export const DeleteConfirm: FC<DeleteProps> = ({
       confirmDisabled={confirmDisabled}
       onConfirm={confirmAction}
     >
-      <Button disabled={loading}>
+      <Button variant="outline" disabled={loading}>
         <Tooltip>
           <TooltipTrigger>
             {icon ? icon : buttonText ? buttonText : <Trash data-cy="delete-variable" />}
