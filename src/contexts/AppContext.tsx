@@ -4,19 +4,39 @@ import React, { ReactNode, useMemo } from 'react';
 
 import { useSession } from 'next-auth/react';
 import { useEnvContext } from 'next-runtime-env';
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 
+import { useSidenavItems } from '@/components/dynamicNavigation/useSidenavItems';
 import { RootLayout, Toaster } from '@uselagoon/ui-library';
 import manualSignOut from 'utils/manualSignOut';
+
+export type SidebarItem = {
+  title: string;
+  url: string;
+  icon?: React.ComponentType<any>;
+  target?: string;
+  onClick?: () => void;
+  children?: SidebarItem[];
+};
+export type SidebarSection = {
+  section: string;
+  sectionItems: SidebarItem[];
+};
 
 const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: string; logo?: ReactNode }) => {
   const { status, data } = useSession();
 
-  const pathname = usePathname();
+  const { projectSlug, environmentSlug, organizationSlug } = useParams();
 
   const userData = status === 'authenticated' ? data.user : { name: '', email: '', image: '' };
 
   const { LAGOON_UI_ICON, LAGOON_VERSION } = useEnvContext();
+
+  const pathname = usePathname();
+
+  // notion style dynamic sidenav items
+  const sidenavItems = useSidenavItems(kcUrl, projectSlug, environmentSlug, organizationSlug);
+
 
   const memoizedLogo = useMemo(() => {
     const getLogo = () => {
@@ -56,8 +76,9 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         userInfo={userData as any}
         signOutFn={manualSignOut}
         currentPath={pathname}
+        sidenavItems={sidenavItems}
       >
-        <section className="my-6">
+        <section className="my-10">
           {children}
           <Toaster />
         </section>
