@@ -29,6 +29,7 @@ export const getProjectNav = (
         },
         { title: 'Details', url: `/projects/${projectSlug}/project-details` },
         { title: 'Variables', url: `/projects/${projectSlug}/project-variables` },
+        { title: 'Routes', url: `/projects/${projectSlug}/routes` },
         ...(showDeployTargets ? [{ title: 'Deploy Targets', url: `/projects/${projectSlug}/deploy-targets` }] : []),
       ],
     },

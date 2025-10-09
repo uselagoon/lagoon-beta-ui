@@ -8,14 +8,14 @@ import {Route} from "@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/
 
 export const RoutesDataTableColumns: DataTableColumnDef<Route>[] = [
 	{
-		accessorKey: 'primary',
+		accessorKey: 'type',
 		header: 'Type',
 		cell: ({ row }) => {
-			const { primary } = row.original;
+			const { type } = row.original;
 			// Need to check what field is determining 'type' here
 			// Adding Primary as a placeholder
 			return (
-				<Badge>{primary}</Badge>
+				<Badge>{type}</Badge>
 			);
 		},
 	},
@@ -41,21 +41,7 @@ export const RoutesDataTableColumns: DataTableColumnDef<Route>[] = [
 		header: 'Attached to',
 		cell: ({ row }) => {
 			const { environment } = row.original;
-			return <div className="ml-6">{environment?.name}</div>;
-		},
-	},
-	{
-		accessorKey: 'verification',
-		header: 'Verification',
-		cell: ({ row }) => {
-			// Placeholder logic for verification status
-			const { verified } = row.original;
-			const verificationStatus = verified.includes('new') ? <Badge variant="danger"><CircleAlert /></Badge> : <Badge variant="success"><CircleCheck /></Badge>;
-			return (
-				<div className="ml-6">
-					{verificationStatus}
-				</div>
-			)
+			return <div className="ml-6">{environment?.name} </div>;
 		},
 	},
 	{
@@ -65,6 +51,7 @@ export const RoutesDataTableColumns: DataTableColumnDef<Route>[] = [
 			return (
 				// TODO
 				<div className="flex gap-4 justify-end items-center">
+							{/* <DeleteVariableDialog type="project" currentEnv={variable} projectName={projectName} refetch={refetch} /> */}
 
 				</div>
 			);

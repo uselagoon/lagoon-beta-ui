@@ -8,11 +8,12 @@ export default gql`
 				id
 				domain
 				primary
-				verified
+				type
 				environment {
 					id
 					name
-        }	
+        		}
+          		service
 			}
 		}
 	}

@@ -15,9 +15,10 @@ type Environment = {
 export type Route = {
 	id: number;
 	domain: string;
+	type: string;
 	primary: boolean;
 	environment: Environment;
-	verified: string
+	service: string;
 };
 
 type Project = {
