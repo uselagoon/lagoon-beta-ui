@@ -30,7 +30,7 @@ start-ui:
 	&& export CALLBACK_URL=$(CALLBACK_URL) \
 	&& export AUTH_KEYCLOAK_ISSUER=$(AUTH_KEYCLOAK_ISSUER) \
 	&& export AUTH_KEYCLOAK_SECRET=$(AUTH_KEYCLOAK_SECRET) \
-	&& docker compose -p $(CI_BUILD_TAG) --compatibility up -d ui
+	&& docker compose -p $(CI_BUILD_TAG) --compatibility up -d ui --build
 
 .PHONY: checkout-core
 checkout-core:
