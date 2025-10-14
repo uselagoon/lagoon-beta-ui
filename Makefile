@@ -32,6 +32,14 @@ start-ui:
 	&& export AUTH_KEYCLOAK_SECRET=$(AUTH_KEYCLOAK_SECRET) \
 	&& docker compose -p $(CI_BUILD_TAG) --compatibility up -d ui --build
 
+.PHONY: start-ui-k3d
+start-ui-k3d:
+	$(MAKE) start-ui \
+		GRAPHQL_API=https://lagoon-api.172.18.0.240.nip.io/graphql \
+		KEYCLOAK_FRONTEND_URL=https://lagoon-keycloak.172.18.0.240.nip.io/auth \
+		AUTH_KEYCLOAK_SECRET=$$(kubectl -n lagoon-core get secrets lagoon-core-keycloak -o json | jq -r '.data["KEYCLOAK_LAGOON_UI_OIDC_CLIENT_SECRET"] | @base64d')
+	docker network connect k3d lagoon-ui_ui_1
+
 .PHONY: checkout-core
 checkout-core:
 	export COREDIR=$$(mktemp -d ./lagoon-core.XXX) \
