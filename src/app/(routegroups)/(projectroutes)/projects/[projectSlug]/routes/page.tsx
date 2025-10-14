@@ -2,6 +2,7 @@ import { PreloadQuery } from '@/lib/apolloClient';
 import { QueryRef } from '@apollo/client';
 import RoutesPage from "@/components/pages/routes/RoutesPage";
 import projectWithRoutes from "@/lib/query/projectWithRoutes";
+import { ProjectEnvironment } from '../(project-overview)/page';
 
 type Props = {
 	params: Promise<{ projectSlug: string }>;
@@ -10,6 +11,7 @@ type Props = {
 type Environment = {
 	id: number;
 	name: string;
+	kubernetesNamespaceName: string;
 };
 
 export type Route = {
@@ -19,11 +21,16 @@ export type Route = {
 	primary: boolean;
 	environment: Environment;
 	service: string;
+	created: string;
+	updated: string;
 };
 
 type Project = {
 	id: number;
 	name: string;
+	environments: ProjectEnvironment[];
+	productionEnvironment?: string;
+	standbyProductionEnvironment?: string;
 	apiRoutes: Route[];
 };
 

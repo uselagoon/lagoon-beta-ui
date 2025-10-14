@@ -20,3 +20,18 @@ export const orgUserRoleOptions = [
     value: 'OWNER',
   },
 ];
+
+export const routeTypeOptions = [
+  {
+    label: 'Standard',
+    value: 'STANDARD',
+  },
+  {
+    label: 'Active',
+    value: 'ACTIVE',
+  },
+  {
+    label: 'Standby',
+    value: 'STANDBY',
+  },
+];

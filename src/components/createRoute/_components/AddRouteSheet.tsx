@@ -4,6 +4,8 @@ import addRouteToProject from '@/lib/mutation/addRouteToProject';
 import { useMutation } from '@apollo/client';
 import { Sheet } from '@uselagoon/ui-library';
 import { toast } from 'sonner';
+import { CirclePlus } from 'lucide-react';
+import { isDNS1123Subdomain } from '@/components/utils';
 
 const AddRouteSheet = ({ projectName }: { projectName: string }) => {
 	const [addRouteMutation, { error, loading }] = useMutation(addRouteToProject, {
@@ -13,7 +15,6 @@ const AddRouteSheet = ({ projectName }: { projectName: string }) => {
 		},
 	});
 
-	const hasSpaces = (str: string) => str?.indexOf(' ') > 0;
 	const handleAddRoute = async (e: React.MouseEvent<HTMLButtonElement>, values: any) => {
 		try {
 			const { domain } = values;
@@ -34,18 +35,6 @@ const AddRouteSheet = ({ projectName }: { projectName: string }) => {
 
 	const customRouteInfo =
 		<>
-			<div className="mt-4 p-4 text-sm">
-				<div className="mb-2">
-					<a
-						rel="noopener noreferrer"
-						href="#"
-						className="underline hover:text-blue-900"
-					>
-						Learn more about custom routing
-					</a>{' '}
-				</div>
-				<p>We will verify these settings once you click create, time to live will vary depending on your host.</p>
-			</div>
 			{error && (
 			<div className="text-red-500 p-3 border mt-4 border-red-300 rounded-md bg-red-50">
 				<strong>Error adding route:</strong> {error.message}
@@ -56,7 +45,7 @@ const AddRouteSheet = ({ projectName }: { projectName: string }) => {
 	return (
 		<div className="space-y-4">
 			<Sheet
-				sheetTrigger="Create Route"
+				sheetTrigger={<><CirclePlus className="h-5 w-5" /> Create Route</>}
 				sheetTitle="Create a custom route"
 				sheetDescription="Point a route from a domain you manage to an environment."
 				sheetFooterButton="Create"
@@ -73,8 +62,8 @@ const AddRouteSheet = ({ projectName }: { projectName: string }) => {
 						required: true,
 						validate: value => {
 							const domain = value as string;
-							if (hasSpaces(domain)) {
-								return 'Domain cannot contain spaces';
+							if (!isDNS1123Subdomain(domain)) {
+								return 'Is not a valid domain name';
 							}
 							return null;
 						},
