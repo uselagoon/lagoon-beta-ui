@@ -43,10 +43,6 @@ const scopeOptions = [
     label: 'Container registry',
     value: 'container_registry',
   },
-  {
-    label: 'Internal container registry',
-    value: 'internal_container_registry',
-  },
 ];
 
 export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) => {
