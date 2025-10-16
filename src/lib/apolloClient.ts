@@ -26,18 +26,18 @@ export const { getClient, PreloadQuery, query } = registerApolloClient(async () 
   });
 
   const HttpWebsocketLink = () => {
+    if (disableSubscriptions) {
+      return httpLink;
+    }
+
     const wsLink = new GraphQLWsLink(
       createClient({
         url: WEBSOCKET_URI,
         connectionParams: () => {
-          if (!session) {
-            return {};
-          }
-          return {
-            Authorization: `Bearer ${session?.access_token}`,
-          };
+          if (!session) return {};
+          return { Authorization: `Bearer ${session?.access_token}` };
         },
-        lazy: disableSubscriptions,
+        lazy: true,
         shouldRetry: () => true,
       })
     );
@@ -51,6 +51,7 @@ export const { getClient, PreloadQuery, query } = registerApolloClient(async () 
       httpLink
     );
   };
+
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {
       graphQLErrors.forEach(({ message, locations, path }) =>
