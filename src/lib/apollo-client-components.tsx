@@ -19,7 +19,12 @@ import manualSignOut from 'utils/manualSignOut';
 /*
   makeclient runs once and persists throughout the entire lifecycle of ApolloNextAppProvider.
 */
-function makeClient(GRAPHQL_API: string, WEBSOCKET_URI: string, disableSubscriptions: boolean) {
+function makeClient(
+  GRAPHQL_API: string,
+  WEBSOCKET_URI: string,
+  disableSubscriptions: boolean,
+  getAccessToken: () => string | null
+) {
   const httpLink = new HttpLink({
     uri: GRAPHQL_API,
     fetchOptions: { cache: 'no-store' },
@@ -51,12 +56,27 @@ function makeClient(GRAPHQL_API: string, WEBSOCKET_URI: string, disableSubscript
   });
 
   const HttpWebsocketLink = () => {
+    if (disableSubscriptions) {
+      return httpLink;
+    }
     const wsLink = new GraphQLWsLink(
       createClient({
         url: WEBSOCKET_URI,
         lazy: disableSubscriptions,
         shouldRetry: () => true,
         retryAttempts: 3,
+        connectionParams: async () => {
+          const token = getAccessToken();
+
+          if (!token) {
+            return {};
+          }
+          return {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          };
+        },
       })
     );
 
@@ -124,16 +144,16 @@ function makeClient(GRAPHQL_API: string, WEBSOCKET_URI: string, disableSubscript
 export function ApolloClientComponentWrapper({ children }: React.PropsWithChildren) {
   const { data: session, status } = useSession();
 
-  const { GRAPHQL_API, disableSubscriptions } = useEnvContext();
+  const { GRAPHQL_API, DISABLE_SUBSCRIPTIONS } = useEnvContext();
 
   const ws_uri = GRAPHQL_API!.replace(/https/, 'wss').replace(/http/, 'ws');
-  const disableSubs = disableSubscriptions?.toLowerCase() === 'true';
+  const disableSubs = DISABLE_SUBSCRIPTIONS?.toLowerCase() === 'true';
 
   if (status === 'loading' || !session) {
     return null;
   }
 
-  const client = makeClient(GRAPHQL_API!, ws_uri, disableSubs);
+  const client = makeClient(GRAPHQL_API!, ws_uri, disableSubs, () => session?.access_token ?? null);
 
   // dynamically updating access_token: https://github.com/apollographql/apollo-client-nextjs/issues/103#issuecomment-1790941212
   client.defaultContext.token = session?.access_token;
