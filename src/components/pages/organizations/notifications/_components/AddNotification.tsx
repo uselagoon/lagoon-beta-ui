@@ -10,6 +10,8 @@ import {
 import { ApolloError, useMutation } from '@apollo/client';
 import { Sheet } from '@uselagoon/ui-library';
 import { toast } from 'sonner';
+import Image from "next/image";
+import {Mail, Webhook} from "lucide-react";
 
 type AddNotificationProps = {
   orgId: number;
@@ -35,11 +37,11 @@ export const AddNotification: FC<AddNotificationProps> = ({ orgId, refetch }) =>
   const error = slackError || rocketError || emailError || teamsError || webhookError;
 
   const newNotificationOptions = [
-    { label: 'Slack', value: 'slack' },
-    { label: 'RocketChat', value: 'rocketchat' },
-    { label: 'Microsoft Teams', value: 'teams' },
-    { label: 'Email', value: 'email' },
-    { label: 'Webhook', value: 'webhook' },
+    { label: 'Slack', value: 'slack', icon: <Image src="/notification-icons/Slack.svg" width={20} height={20} alt="slack" /> },
+    { label: 'RocketChat', value: 'rocketchat', icon: <Image src="/notification-icons/RocketChat.svg" width={20} height={20} alt="rocketchat" /> },
+    { label: 'Microsoft Teams', value: 'teams', icon: <Image src="/notification-icons/Teams.svg" width={20} height={20} alt="rocketchat" /> },
+    { label: 'Email', value: 'email', icon: <Mail size={20} color={"rgb(76, 132, 255)"}/> },
+    { label: 'Webhook', value: 'webhook', icon: <Webhook size={20} color={"rgb(76, 132, 255)"}/> },
   ];
 
   const getAction = async (

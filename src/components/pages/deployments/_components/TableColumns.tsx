@@ -12,7 +12,7 @@ import isBetween from 'dayjs/plugin/isBetween';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { dateRangeFilter } from 'utils/tableDateRangeFilter';
-import { Check, X } from 'lucide-react';
+import { Check, Loader2, X } from 'lucide-react';
 import { getBadgeVariant } from 'utils/setBadgeStatus';
 
 dayjs.extend(isBetween);
@@ -46,7 +46,10 @@ const getDeploymentTableColumns = (basePath: string) =>
       filterFn: 'equals',
       cell: ({ row }) => {
         const { status, buildStep } = row.original;
-
+        let cleanedBuildStep = buildStep;
+        if (buildStep?.includes('running'.toLowerCase())) {
+          cleanedBuildStep = buildStep?.replace('running', '');
+        }
         return (
           <section className="flex flex-col items-start gap-2">
             <div className="flex items-center gap-3">
@@ -54,28 +57,29 @@ const getDeploymentTableColumns = (basePath: string) =>
               {(status == "failed" || status == "cancelled") && <X color="red" size="16" />}
               <Badge variant={getBadgeVariant(status, buildStep)}>
                 {capitalize(status)}
+                {!['complete', 'cancelled', 'failed'].includes(status) && <Loader2 className="h-4 w-4 animate-spin t"/>}
               </Badge>
             </div>
 
-            {!['complete', 'cancelled', 'failed'].includes(status) && buildStep && (
+            {!['complete', 'cancelled', 'failed'].includes(status) && cleanedBuildStep && (
               <Tooltip>
                 <TooltipTrigger>
-                  <Badge variant="lagoon">
-                    {buildStep}
+                  <Badge className="bg-blue-500 text-white dark:bg-blue-600" variant="secondary">
+                    {cleanedBuildStep}
                   </Badge>
                 </TooltipTrigger>
-                <TooltipContent>{buildStep}</TooltipContent>
+                <TooltipContent>{cleanedBuildStep}</TooltipContent>
               </Tooltip>
             )}
 
-            {buildStep && ['deployCompletedWithWarnings'].includes(buildStep) && (
+            {cleanedBuildStep && ['deployCompletedWithWarnings'].includes(cleanedBuildStep) && (
               <Tooltip>
                 <TooltipTrigger>
                   <Badge className="text-[#ffbe00]" variant="outline">
                     Completed with warnings
                   </Badge>
                 </TooltipTrigger>
-                <TooltipContent>{buildStep}</TooltipContent>
+                <TooltipContent>{cleanedBuildStep}</TooltipContent>
               </Tooltip>
             )}
           </section>

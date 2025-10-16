@@ -46,6 +46,7 @@ module.exports = {
         '@typescript-eslint/no-unused-expressions': ['warn'],
         '@typescript-eslint/restrict-plus-operands': ['warn'],
         '@typescript-eslint/only-throw-error': ['warn'],
+        '@typescript-eslint/restrict-template-expressions': ['warn'],
         'no-unused-vars': 'off',
         'prefer-const': 'off',
         'require-await': 'off',

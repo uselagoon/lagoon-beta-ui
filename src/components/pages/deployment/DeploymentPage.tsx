@@ -17,6 +17,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 
 import { getDeploymentDuration } from '../allDeployments/TableColumns';
+import {capitalize} from "@/components/utils";
+import {Loader2} from "lucide-react";
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
@@ -96,7 +98,9 @@ export default function DeploymentPage({
   };
 
   const deploymentDataRow = {
-    status: <Badge variant="default">{deployment.status}</Badge>,
+    status: <Badge variant="default">{capitalize(deployment.status)} {!['complete', 'cancelled', 'failed'].includes(deployment.status) &&
+      <Loader2 className="h-4 w-4 animate-spin t"/>}
+    </Badge>,
     name: deployment.bulkId ? (
       <section className="flex items-center ">
         <p>{deployment.name}</p>

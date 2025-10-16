@@ -9,7 +9,7 @@ import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrig
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Loader2 } from 'lucide-react';
 
 import CancelDeployment from '../../cancelDeployment/CancelDeployment';
 
@@ -228,29 +228,38 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
     },
     cell: ({ row }) => {
       const { status, buildStep } = row.original;
+      let cleanedBuildStep = buildStep;
+      if (buildStep?.includes('running'.toLowerCase())) {
+        cleanedBuildStep = buildStep?.replace('running', '');
+      }
       return (
         <section className="flex flex-col items-start gap-2">
-          <Badge variant="default">{capitalize(status)}</Badge>
+          <div className="flex items-center">
+            <Badge variant="default">
+              {capitalize(status)}
+              {!['complete', 'cancelled', 'failed'].includes(status) && <Loader2 className="h-4 w-4 animate-spin t"/>}
+            </Badge>
+          </div>
 
-          {!['complete', 'cancelled', 'failed'].includes(status) && buildStep && (
+          {!['complete', 'cancelled', 'failed'].includes(status) && cleanedBuildStep && (
             <Tooltip>
               <TooltipTrigger>
                 <Badge className="bg-blue-500 text-white dark:bg-blue-600" variant="secondary">
-                  {buildStep}
+                  {cleanedBuildStep}
                 </Badge>
               </TooltipTrigger>
-              <TooltipContent>{buildStep}</TooltipContent>
+              <TooltipContent>{cleanedBuildStep}</TooltipContent>
             </Tooltip>
           )}
 
-          {buildStep && ['deployCompletedWithWarnings'].includes(buildStep) && (
+          {cleanedBuildStep && ['deployCompletedWithWarnings'].includes(cleanedBuildStep) && (
             <Tooltip>
               <TooltipTrigger>
                 <Badge className="text-[#ffbe00]" variant="secondary">
                   Completed with warnings
                 </Badge>
               </TooltipTrigger>
-              <TooltipContent>{buildStep}</TooltipContent>
+              <TooltipContent>{cleanedBuildStep}</TooltipContent>
             </Tooltip>
           )}
         </section>
