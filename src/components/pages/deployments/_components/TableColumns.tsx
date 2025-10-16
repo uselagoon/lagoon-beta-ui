@@ -12,7 +12,8 @@ import isBetween from 'dayjs/plugin/isBetween';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { dateRangeFilter } from 'utils/tableDateRangeFilter';
-import {Check, Loader2, X} from 'lucide-react';
+import { Check, Loader2, X } from 'lucide-react';
+import { getBadgeVariant } from 'utils/setBadgeStatus';
 
 dayjs.extend(isBetween);
 dayjs.extend(duration);
@@ -54,7 +55,7 @@ const getDeploymentTableColumns = (basePath: string) =>
             <div className="flex items-center gap-3">
               {status == "complete" && <Check color="green" size="16" />}
               {(status == "failed" || status == "cancelled") && <X color="red" size="16" />}
-              <Badge variant="default">
+              <Badge variant={getBadgeVariant(status, buildStep)}>
                 {capitalize(status)}
                 {!['complete', 'cancelled', 'failed'].includes(status) && <Loader2 className="h-4 w-4 animate-spin t"/>}
               </Badge>
@@ -74,7 +75,7 @@ const getDeploymentTableColumns = (basePath: string) =>
             {cleanedBuildStep && ['deployCompletedWithWarnings'].includes(cleanedBuildStep) && (
               <Tooltip>
                 <TooltipTrigger>
-                  <Badge className="text-[#ffbe00]" variant="secondary">
+                  <Badge className="text-[#ffbe00]" variant="outline">
                     Completed with warnings
                   </Badge>
                 </TooltipTrigger>

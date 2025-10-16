@@ -14,6 +14,7 @@ import utc from 'dayjs/plugin/utc';
 import LimitedRoutes from "@/components/pages/environment/_components/LimitedRoutes";
 
 import { DeleteAction } from './DeleteAction';
+import {getBadgeEnvVariant} from "../../../../utils/setBadgeStatus";
 
 dayjs.extend(utc);
 dayjs.extend(relativeTime);
@@ -38,7 +39,7 @@ const getProjectEnvsTableColumns = (basePath: string, refetch?: () => void) =>
       header: 'Usage',
       cell: ({ row }) => {
         const envType = row.original.envType;
-        return <Badge variant="default">{capitalize(envType)}</Badge>;
+        return <Badge variant={getBadgeEnvVariant(envType)}>{capitalize(envType)}</Badge>;
       },
     },
     {

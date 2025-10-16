@@ -20,6 +20,7 @@ import { isValidUrl } from 'utils/isValidUrl';
 
 import { dateRangeFilter } from '../../../../../utils/tableDateRangeFilter';
 import AddRestore from './AddRestore';
+import {getBadgeVariant} from "../../../../../utils/setBadgeStatus";
 
 dayjs.extend(isBetween);
 dayjs.extend(duration);
@@ -44,9 +45,9 @@ const BackupsTableColumns = (envId: number) =>
         return (
           <section className="flex flex-col items-start gap-2">
             {backup.restore?.status ? (
-              <Badge variant="default">{capitalize(backup.restore.status)}</Badge>
+              <Badge variant={getBadgeVariant(backup.restore?.status, null)}>{capitalize(backup.restore.status)}</Badge>
             ) : (
-              <Badge variant="default">Retrievable</Badge>
+              <Badge variant="lagoon">Retrievable</Badge>
             )}
           </section>
         );
