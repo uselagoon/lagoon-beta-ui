@@ -43,13 +43,16 @@ export const RoutesDataTableColumns = (projectName: string, environments: Projec
 			const { domain, primary, type} = row.original;
 			let typeBadge
 			if (type === "ACTIVE" || type === "STANDBY") {
-				typeBadge = <Badge className="ml-2">{type}</Badge>
+				typeBadge = <Badge className="">{type}</Badge>
 			}
 			let primaryBadge
 			if (primary) {
-				primaryBadge = <Badge className="ml-2">PRIMARY</Badge>
+				primaryBadge = <Badge className={typeBadge ? "ml-2" : ""}>PRIMARY</Badge>
 			}
-			return <div className="ml-2">{domain}{typeBadge}{primaryBadge}</div>;
+			return <div className="ml-2">
+				<div><Link target="_blank" href={`https://${domain}`}>{domain}</Link></div>
+				<div>{typeBadge}{primaryBadge}</div>
+				</div>;
 		},
 	},
 	{
@@ -70,13 +73,13 @@ export const RoutesDataTableColumns = (projectName: string, environments: Projec
 			if (environment?.kubernetesNamespaceName) {
 				let badge
 				if (environment?.name === producitonEnvironment) {
-					badge = <Badge className="ml-2">Active production</Badge>
+					badge = <Badge className="">Active production</Badge>
 				} else if (environment?.name === standbyEnvironment) {
-					badge = <Badge className="ml-2">Standby production</Badge>
+					badge = <Badge className="">Standby production</Badge>
 				}
 				return <div className="ml-2">
-					<Link href={`/projects/${projectName}/${environment?.kubernetesNamespaceName}`}>{environment?.name}</Link>
-					{badge}
+					<div><Link href={`/projects/${projectName}/${environment?.kubernetesNamespaceName}`}>{environment?.name}</Link></div>
+					<div>{badge}</div>
 				</div>;
 			}
 		},
