@@ -6,10 +6,25 @@ import { Sheet } from '@uselagoon/ui-library';
 import { toast } from 'sonner';
 import { CirclePlus } from 'lucide-react';
 import { isDNS1123Subdomain } from '@/components/utils';
+import { ProjectEnvironment } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/(project-overview)/page';
 
-const AddRouteSheet = ({ projectName }: { projectName: string }) => {
+const AddRouteSheet = (
+	{
+		projectName,
+		environmentName,
+		environments,
+		prodEnvironment,
+		standbyEnvironment,
+	}: {
+		projectName: string;
+		environmentName?: string;
+		environments?: ProjectEnvironment[];
+		prodEnvironment?: string;
+		standbyEnvironment?: string;
+	}
+) => {
 	const [addRouteMutation, { error, loading }] = useMutation(addRouteToProject, {
-		refetchQueries: ['getProject'],
+		refetchQueries: ['getProject', 'getEnvironment'],
 		onCompleted: _ => {
 			toast.success('Route added successfully.');
 		},
@@ -17,13 +32,15 @@ const AddRouteSheet = ({ projectName }: { projectName: string }) => {
 
 	const handleAddRoute = async (e: React.MouseEvent<HTMLButtonElement>, values: any) => {
 		try {
-			const { domain } = values;
+			const { domain, service, environment } = values;
 
 			await addRouteMutation({
 				variables: {
 					input: {
 						project: projectName,
 						domain: domain,
+						environment: environment,
+						service: service,
 					},
 				},
 			});
@@ -33,11 +50,23 @@ const AddRouteSheet = ({ projectName }: { projectName: string }) => {
 		}
 	};
 
+	const options = environments?.map(env => ({
+		label: (env.name == standbyEnvironment ? (env.name + " (standby)") : (env.name == prodEnvironment ? (env.name + " (production)") : (env.name))),
+		value: env.name,
+	}));
+
+
 	const customRouteInfo =
 		<>
+			<div className="p-4 bg-blue-50 border border-blue-200 rounded-md text-sm">
+			<p className="text-blue-800">
+				<strong>Note:</strong> Only one route can be the primary route per environment, if one is already set,
+				then the existing primary route will be unset.
+			</p>
+			</div>
 			{error && (
-			<div className="text-red-500 p-3 border mt-4 border-red-300 rounded-md bg-red-50">
-				<strong>Error adding route:</strong> {error.message}
+			<div className="text-red-500 p-3 mt-2 border border-red-300 rounded-md bg-red-50">
+				<strong>Error updating route:</strong> {error.message}
 			</div>
 			)}
 		</>;
@@ -67,6 +96,23 @@ const AddRouteSheet = ({ projectName }: { projectName: string }) => {
 							}
 							return null;
 						},
+					},
+					{
+						id: 'environment',
+						label: 'Name of the environment',
+						type: environmentName ? 'text' : 'select',
+						placeholder: 'Select environment',
+						options: options,
+						required: environmentName ? true : false,
+						readOnly: environmentName ? true : false,
+						inputDefault: environmentName,
+					},
+					{
+						id: 'service',
+						label: 'Name of the service to attach to',
+						type: 'text',
+						required: environmentName ? true : false,
+						placeholder: 'Enter service name',
 					},
 				]}
 			/>

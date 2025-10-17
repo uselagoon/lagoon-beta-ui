@@ -46,7 +46,7 @@ export const getEnvironmentNav = (
 
   return [
     {
-      title: String(environmentSlug),
+      title: String(environmentData?.environment?.name),
       url: `/projects/${projectSlug}/${environmentSlug}`,
       icon: GitPullRequestDraft,
       children: [
@@ -54,6 +54,7 @@ export const getEnvironmentNav = (
         { title: 'Deployments', url: `/projects/${projectSlug}/${environmentSlug}/deployments` },
         { title: 'Backups', url: `/projects/${projectSlug}/${environmentSlug}/backups` },
         { title: 'Tasks', url: `/projects/${projectSlug}/${environmentSlug}/tasks` },
+        { title: 'Routes', url: `/projects/${projectSlug}/${environmentSlug}/routes` },
         ...(showProblemsTab
           ? [{ title: 'Problems', url: `/projects/${projectSlug}/${environmentSlug}/problems` }]
           : []),

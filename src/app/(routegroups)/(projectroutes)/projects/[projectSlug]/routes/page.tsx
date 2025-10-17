@@ -12,6 +12,7 @@ type Environment = {
 	id: number;
 	name: string;
 	kubernetesNamespaceName: string;
+	environmentType: string;
 };
 
 export type Route = {
@@ -23,6 +24,7 @@ export type Route = {
 	service: string;
 	created: string;
 	updated: string;
+	source: string;
 };
 
 type Project = {

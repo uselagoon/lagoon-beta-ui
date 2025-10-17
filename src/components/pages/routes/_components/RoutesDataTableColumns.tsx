@@ -1,9 +1,7 @@
 'use client';
 
-
-import { handleSort, renderSortIcons } from '@/components/utils';
+import { capitalize, handleSort, makeSafe, renderSortIcons } from '@/components/utils';
 import {Button, DataTableColumnDef, Badge, Tooltip, TooltipContent, TooltipTrigger} from '@uselagoon/ui-library';
-import {CircleAlert, CircleCheck} from 'lucide-react';
 import {Route} from "@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/routes/page";
 import { DeleteRouteDialog } from '@/components/deleteRoute/DeleteRoute';
 import { AttachRoute } from '@/components/addRouteToEnvironment/AttachRoute';
@@ -16,8 +14,7 @@ import duration from 'dayjs/plugin/duration';
 import isBetween from 'dayjs/plugin/isBetween';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
-
-
+import {getBadgeEnvVariant, getBadgeRouteVariant} from "../../../../../utils/setBadgeStatus"
 import { EditRoute } from './EditRoute';
 
 dayjs.extend(isBetween);
@@ -25,11 +22,11 @@ dayjs.extend(duration);
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
-export const RoutesDataTableColumns = (projectName: string, environments: ProjectEnvironment[], refetch: () => void, producitonEnvironment?: string, standbyEnvironment?: string) =>
+export const RoutesDataTableColumns = (projectName: string, environments: ProjectEnvironment[], refetch: () => void, productionEnvironment?: string, standbyEnvironment?: string) =>
 [
 	{
 		accessorKey: 'domain',
-		width: '45%',
+		width: '40%',
 		header: ({ column }) => {
 			const sortDirection = column.getIsSorted();
 			return (
@@ -40,18 +37,18 @@ export const RoutesDataTableColumns = (projectName: string, environments: Projec
 			);
 		},
 		cell: ({ row }) => {
-			const { domain, primary, type} = row.original;
+			const { domain, primary, type, source} = row.original;
 			let typeBadge
 			if (type === "ACTIVE" || type === "STANDBY") {
-				typeBadge = <Badge className="">{type}</Badge>
+				typeBadge = <Badge className="ml-2" variant={getBadgeRouteVariant(type.toLowerCase())}>{capitalize(type.toLowerCase())}</Badge>
 			}
 			let primaryBadge
 			if (primary) {
-				primaryBadge = <Badge className={typeBadge ? "ml-2" : ""}>PRIMARY</Badge>
+				primaryBadge = <Badge className="ml-2" variant={getBadgeRouteVariant('primary')}>Primary</Badge>
 			}
 			return <div className="ml-2">
 				<div><Link target="_blank" href={`https://${domain}`}>{domain}</Link></div>
-				<div>{typeBadge}{primaryBadge}</div>
+				<div><Badge variant={getBadgeRouteVariant(source.toLowerCase())}>{source}</Badge>{typeBadge}{primaryBadge}</div>
 				</div>;
 		},
 	},
@@ -71,14 +68,22 @@ export const RoutesDataTableColumns = (projectName: string, environments: Projec
 		cell: ({ row }) => {
 			const { environment } = row.original;
 			if (environment?.kubernetesNamespaceName) {
-				let badge
-				if (standbyEnvironment) {
-					if (environment?.name === producitonEnvironment) {
-						badge = <Badge className="">Active production</Badge>
-					} else if (environment?.name === standbyEnvironment) {
-						badge = <Badge className="">Standby production</Badge>
-					}
-				}
+				const activeEnvironment =
+					productionEnvironment &&
+					standbyEnvironment &&
+					productionEnvironment == makeSafe(environment.name);
+				const standbyProdEnvironment =
+					productionEnvironment &&
+					standbyEnvironment &&
+					standbyEnvironment == makeSafe(environment.name);
+
+				const envType = activeEnvironment
+					? 'active production'
+					: standbyProdEnvironment
+					? 'standby production'
+					: environment.environmentType;
+				const badge = <Badge variant={getBadgeEnvVariant(envType)}>{capitalize(envType)}</Badge>
+
 				return <div className="ml-2">
 					<div><Link href={`/projects/${projectName}/${environment?.kubernetesNamespaceName}`}>{environment?.name}</Link></div>
 					<div>{badge}</div>
@@ -169,14 +174,29 @@ export const RoutesDataTableColumns = (projectName: string, environments: Projec
 			return (
 				// TODO
 				<div className="flex gap-2 justify-end items-center">
-					
-					{row.original.environment?.name ? 
-					<>
-						<EditRoute domainName={row.original.domain} projectName={projectName} service={row.original?.service} routeType={row.original.type} primary={row.original.primary} iconOnly environmentName={row.original.environment.name} standbyEnvironment={standbyEnvironment} />
-						<RemoveRouteFromEnvDialog domainName={row.original.domain} environmentName={row.original.environment.name} projectName={projectName} refetch={refetch} iconOnly/>
-					</> : 
-					<AttachRoute domainName={row.original.domain} projectName={projectName} iconOnly environments={environments} prodEnvironment={producitonEnvironment} standbyEnvironment={standbyEnvironment}/>}					
-					<DeleteRouteDialog route={row.original} projectName={projectName} refetch={refetch} />
+					{ row.original.source === "API" ?
+						// only api routes can be modified directly by users
+						// lagoon yaml and autogenerated will be handled by lagoon itself
+						(row.original.environment?.name ?
+							<>
+								<EditRoute domainName={row.original.domain} projectName={projectName} service={row.original?.service} routeType={row.original.type} primary={row.original.primary} iconOnly environmentName={row.original.environment.name} standbyEnvironment={standbyEnvironment} />
+								<RemoveRouteFromEnvDialog domainName={row.original.domain} environmentName={row.original.environment.name} projectName={projectName} refetch={refetch} iconOnly/>
+							</> :
+							<AttachRoute domainName={row.original.domain} projectName={projectName} iconOnly environments={environments} prodEnvironment={productionEnvironment} standbyEnvironment={standbyEnvironment}/>
+						)
+						: (
+						// yaml routes can be edited, editing a yaml route will make it an api route
+						row.original.environment?.name && row.original.source === "YAML" ?
+							<EditRoute domainName={row.original.domain} projectName={projectName} service={row.original?.service} routeType={row.original.type} primary={row.original.primary} iconOnly environmentName={row.original.environment.name} standbyEnvironment={standbyEnvironment} />
+						: '')
+					}
+					{
+						// only api routes can be deleted by users, the API will return an error if a user did this
+						// just no need to show the button otherwise
+						row.original.source === "API" ?
+							<DeleteRouteDialog route={row.original} projectName={projectName} refetch={refetch} />
+						: ''
+					}
 				</div>
 			);
 		},

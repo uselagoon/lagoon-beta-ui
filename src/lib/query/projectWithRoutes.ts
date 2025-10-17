@@ -15,10 +15,12 @@ export default gql`
 					id
 					name
 					kubernetesNamespaceName
-        		}
-          		service
+					environmentType
+				}
+				service
 				created
 				updated
+				source
 			}
 			environments {
 				id

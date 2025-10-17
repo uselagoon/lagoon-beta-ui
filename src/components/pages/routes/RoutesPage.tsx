@@ -54,7 +54,7 @@ export default function RoutesPage({queryRef,	projectName,}: {
 					Manage routes for your project and environments
 				</span>
 				<div className="gap-4 my-2">
-					<CreateRoute projectName={projectName} options={[]}  />
+					<CreateRoute projectName={projectName} options={[]} environments={projectRoutes.environments} prodEnvironment={projectRoutes?.productionEnvironment} standbyEnvironment={projectRoutes?.standbyProductionEnvironment} />
 				</div>
 				<div className="p-4 bg-blue-50 border border-blue-200 rounded-md text-sm">
 					<p className="text-blue-800">
