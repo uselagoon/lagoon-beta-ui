@@ -72,10 +72,12 @@ export const RoutesDataTableColumns = (projectName: string, environments: Projec
 			const { environment } = row.original;
 			if (environment?.kubernetesNamespaceName) {
 				let badge
-				if (environment?.name === producitonEnvironment) {
-					badge = <Badge className="">Active production</Badge>
-				} else if (environment?.name === standbyEnvironment) {
-					badge = <Badge className="">Standby production</Badge>
+				if (standbyEnvironment) {
+					if (environment?.name === producitonEnvironment) {
+						badge = <Badge className="">Active production</Badge>
+					} else if (environment?.name === standbyEnvironment) {
+						badge = <Badge className="">Standby production</Badge>
+					}
 				}
 				return <div className="ml-2">
 					<div><Link href={`/projects/${projectName}/${environment?.kubernetesNamespaceName}`}>{environment?.name}</Link></div>
