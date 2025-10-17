@@ -16,6 +16,7 @@ x-environment: &default-environment
   AUTH_KEYCLOAK_ISSUER: "${AUTH_KEYCLOAK_ISSUER:-http://0.0.0.0:8088/auth/realms/lagoon}"
   LAGOON_UI_TOURS_ENABLED: enabled
   NODE_TLS_REJECT_UNAUTHORIZED: 0
+  DISABLE_SUBSCRIPTIONS: 'true'
 
 services:
   ui:
