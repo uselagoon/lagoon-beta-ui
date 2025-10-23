@@ -67,7 +67,7 @@ const LogViewer: FC<LogViewerProps> = ({
           </div>
         ) : (
           <div className="text-[14px] leading-[18px] font-normal m-0 break-words  whitespace-pre-wrap will-change-auto break-all p-[10px]">
-            {logs}
+            <code>{logs}</code>
           </div>
         )
       ) : (
@@ -125,7 +125,7 @@ const logPreprocessor = (
           className="log-text text-[14px] leading-[18px] font-normal m-0 break-words whitespace-pre-wrap will-change-auto break-all"
           data-cy="log-text"
         >
-          {logs}
+          <code>{logs}</code>
         </div>
       </div>
     );
@@ -166,7 +166,7 @@ const LogNodeRenderer: React.FC<{
         ref={logsContentRef}
         className="log-text text-[14px] leading-[18px] font-normal m-0 break-words whitespace-pre-wrap will-change-auto break-all"
       >
-        {node.text}
+        <code>{node.text}</code>
       </div>
     );
   }
