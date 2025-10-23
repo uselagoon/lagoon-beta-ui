@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -26,8 +26,11 @@ interface UsePendingChangesNotificationOptions {
 export const usePendingChangesNotification = (options: UsePendingChangesNotificationOptions) => {
   const router = useRouter();
   const { environment, environmentSlug, deploymentUrl } = options;
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
+    const toastId = 'pending-changes';
+    
     // Handle single environment case
     if (environment?.pendingChanges && environment.pendingChanges.length > 0) {
       const defaultDeploymentUrl = `/projects/${environment.project?.name}/${environmentSlug}/deployments`;
@@ -60,9 +63,25 @@ export const usePendingChangesNotification = (options: UsePendingChangesNotifica
         ),
         {
           duration: Infinity,
-          id: 'pending-changes',
+          id: toastId,
         }
       );
+    } else {
+      // Dismiss toast if no pending changes
+      toast.dismiss(toastId);
     }
+
+    // Cleanup function - but only dismiss on real unmount, not Strict Mode re-renders
+    return () => {
+      if (isFirstRender.current) {
+        // This is likely a Strict Mode double-mount, don't dismiss
+        isFirstRender.current = false;
+        console.log('Skipping cleanup - likely Strict Mode double-mount');
+      } else {
+        // This is a real cleanup (navigation away or actual unmount)
+        console.log('Real cleanup - dismissing toast');
+        toast.dismiss(toastId);
+      }
+    };
   }, [environment?.pendingChanges, environment?.project?.name, environmentSlug, deploymentUrl, router]);
 };
