@@ -21,6 +21,9 @@ export default gql`
         problemsUi
         factsUi
       }
+      pendingChanges {
+        details
+      }
     }
   }
 `;

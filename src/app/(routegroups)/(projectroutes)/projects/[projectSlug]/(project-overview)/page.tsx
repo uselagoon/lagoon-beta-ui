@@ -25,6 +25,7 @@ export type ProjectEnvironment = {
   };
   problems: Problem[];
   deployments: Deployment[];
+  pendingChanges: Array<{ details: string }>;
 };
 
 type Project = {

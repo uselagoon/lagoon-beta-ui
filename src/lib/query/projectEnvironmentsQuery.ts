@@ -22,6 +22,9 @@ export default gql`
           factsUi
           name
         }
+        pendingChanges {
+          details
+        }
         openshift {
           friendlyName
           cloudRegion

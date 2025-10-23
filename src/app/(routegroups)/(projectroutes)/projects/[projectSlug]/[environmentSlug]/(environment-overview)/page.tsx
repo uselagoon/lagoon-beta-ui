@@ -42,6 +42,7 @@ export type EnvironmentData = {
     };
     title: string;
     facts: FactType[];
+    pendingChanges: Array<{ details: string }>;
   };
 };
 

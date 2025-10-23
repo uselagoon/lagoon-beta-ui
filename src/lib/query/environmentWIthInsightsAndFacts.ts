@@ -25,6 +25,9 @@ export default gql`
       facts {
         ...factFields
       }
+      pendingChanges {
+        details
+      }
     }
   }
   ${FactsFragment}
