@@ -38,10 +38,6 @@ const scopeOptions = [
     label: 'Container registry',
     value: 'container_registry',
   },
-  {
-    label: 'Internal container registry',
-    value: 'internal_container_registry',
-  },
 ];
 
 export const AddNewVariable: FC<Props> = ({ type, refetch, onClick, ...rest }) => {

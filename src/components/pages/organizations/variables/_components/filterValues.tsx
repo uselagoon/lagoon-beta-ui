@@ -19,10 +19,6 @@ export const scopeOptions = [
     label: 'Container registry',
     value: 'container_registry',
   },
-  {
-    label: 'Internal container registry',
-    value: 'internal_container_registry',
-  },
 ];
 export const sortOptions = [
   {
