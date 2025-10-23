@@ -14,6 +14,8 @@ import {Badge, DetailStat} from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import gitUrlParse from 'git-url-parse';
+import { toast } from 'sonner';
+import { useEffect } from 'react';
 
 import ActiveStandbyConfirm from '../../activestandbyconfirm/ActiveStandbyConfirm';
 import DeleteConfirm from '../../deleteConfirm/DeleteConfirm';
@@ -51,10 +53,42 @@ export default function EnvironmentPage({
   const router = useRouter();
 
   // Show pending changes notification
-  usePendingChangesNotification({
-    environment,
-    environmentSlug,
-  });
+  useEffect(() => {
+    if (environment?.pendingChanges && environment.pendingChanges.length > 0) {
+      const deploymentPageUrl = `/projects/${environment.project.name}/${environmentSlug}/deployments`;
+      
+      toast.custom(
+        (t) => (
+          <div 
+            className="flex items-center gap-3 p-4 border border-sky-500 rounded-lg shadow-lg"
+            style={{ 
+              backgroundColor: 'rgba(14, 165, 233, 0.2)',
+              color: '#000000'
+            }}
+          >
+            <div className="flex-1">
+              <p className="font-medium text-sm">
+                Changes require deployment to take effect
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                toast.dismiss(t);
+                router.push(deploymentPageUrl);
+              }}
+              className="px-3 py-1 bg-sky-500 text-white rounded text-sm font-medium hover:bg-sky-600 transition-colors"
+            >
+              Deploy now
+            </button>
+          </div>
+        ),
+        {
+          duration: Infinity, // No auto-dismiss
+          id: 'pending-changes', // Prevent duplicates
+        }
+      );
+    }
+  }, [environment?.pendingChanges, environment?.project.name, environmentSlug, router]);
 
   const {
     data: factsData,
