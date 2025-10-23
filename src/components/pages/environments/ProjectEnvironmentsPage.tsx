@@ -7,7 +7,6 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import ProjectNotFound from '@/components/errors/ProjectNotFound';
 import { NewEnvironment } from '@/components/newEnvironment/NewEnvironment';
 import { makeSafe } from '@/components/utils';
-import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
@@ -41,11 +40,6 @@ export default function ProjectEnvironmentsPage({
       defaultValue: 10,
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : 10),
     },
-  });
-
-  // Show notification for environments with pending changes
-  usePendingChangesNotification({
-    environments: project?.environments,
   });
 
   if (!project) {
