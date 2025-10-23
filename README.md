@@ -1,16 +1,207 @@
-## Lagoon UI v3
+## Lagoon UI
 
-Under development - development guide todo.
+The main user interface and dashboard for [Lagoon](https://github.com/uselagoon/lagoon).
 
-To run locally with test6:
+## Build
+
+To build and test changes locally the Lagoon UI can be built via Yarn or Docker.
+
+Testing locally, the UI can be connected to production or development Lagoon instances. Here we have included the URLs for the amazee.io cloud, but you can substitute your own.
+
+### Yarn
+
+Note: Within `docker-compose.yml` `GRAPHQL_API` & `KEYCLOAK_API` are set to localhost by default.
 
 ```sh
-yarn && GRAPHQL_API=https://api.main.lagoon-core.test6.amazee.io/graphql AUTH_SECRET=test AUTH_KEYCLOAK_ID=lagoon-ui-oidc AUTH_KEYCLOAK_SECRET=<SECRET_HERE> AUTH_KEYCLOAK_ISSUER=https://keycloak.main.lagoon-core.test6.amazee.io/auth/realms/lagoon yarn build && GRAPHQL_API=https://api.main.lagoon-core.test6.amazee.io/graphql AUTH_SECRET=test AUTH_KEYCLOAK_ID=lagoon-ui-oidc AUTH_KEYCLOAK_SECRET=<SECRET_HERE> AUTH_KEYCLOAK_ISSUER=https://keycloak.main.lagoon-core.test6.amazee.io/auth/realms/lagoon yarn dev
+yarn install
+yarn build && GRAPHQL_API=https://api.lagoon.amazeeio.cloud/graphql AUTH_SECRET=<AUTH_SECRET> AUTH_KEYCLOAK_ID=lagoon-ui-oidc AUTH_KEYCLOAK_SECRET=<SECRET_HERE> AUTH_KEYCLOAK_ISSUER=https://keycloak.amazeeio.cloud/auth/realms/lagoon yarn dev
 ```
 
-to run locally with https://github.com/uselagoon/lagoon/tree/ui-oidc-client branch:
+These values can also be updated in `docker-compose.yml`.
+
+### Docker
+
+Note: Within `docker-compose.yml` `GRAPHQL_API`, `AUTH_SECRET`, `AUTH_KEYCLOAK_ID`, `AUTH_KEYCLOAK_SECRET` & `AUTH_KEYCLOAK_ISSUER` will need to be set to
+
+```
+  GRAPHQL_API: "${GRAPHQL_API:-https://api.lagoon.amazeeio.cloud/graphql}"
+  AUTH_SECRET: "${AUTH_SECRET:-SECRET}"
+  AUTH_KEYCLOAK_ID: "${AUTH_KEYCLOAK_ID:-lagoon-ui-oidc}"
+  AUTH_KEYCLOAK_SECRET: "${AUTH_KEYCLOAK_SECRET:-SECRET}"
+  AUTH_KEYCLOAK_ISSUER: "${AUTH_KEYCLOAK_ISSUER:-https://keycloak.amazeeio.cloud/auth/realms/lagoon}"
+```
+
+```
+docker-compose build
+docker-compose up -d
+```
+
+This project is tested with BrowserStack.
+
+## Linting
+
+The linter is configured for both JS and TypeScript files, with the latter being much stricter.
+It runs during the build step but can also be ran during development by `yarn lint`
+
+Linter and TS configs are both located in the root of the project as `.eslintrc.cjs` and `tsconfig.json`
+
+## Testing
+
+Lagoon UI uses cypress for e2e tests.
+
+A couple of environment variables are required:
+
+- email - keycloak user
+- password - keycloak password
+- keycloak - Keycloak url (used for cypress sessions)
+- api - GraphQL api endpoint
+- url - running UI instance url
+- user_guest - user with guest role
+- user_reporter - user with reporter role
+- user_developer - user with developer role
+- user_maintainer - user with maintainer role
+- user_owner - user with owner role
+- user_orguser - Organization user
+- user_orgviewer - Organization viewer
+- user_orgadmin - Organization admin
+- user_orgowner - Organization owner
+- user_platformowner - Platform owner
+
+These environment variables can either be inlined or saved in `Cypress.config.ts` file:
+
+```ts
+import { defineConfig } from 'cypress'
+
+export default defineConfig({
+  env: {
+    foo: 'bar',
+    CYPRESS_CY_EMAIL: ...
+    ...
+  },
+})
+```
+
+To open cypress in a browser:
 
 ```sh
- yarn && GRAPHQL_API=http://0.0.0.0:33000/graphql AUTH_SECRET=test AUTH_KEYCLOAK_ID=lagoon-ui-oidc AUTH_KEYCLOAK_SECRET=<SECRET_HERE> AUTH_KEYCLOAK_ISSUER=http://0.0.0.0:38088/auth/realms/lagoon yarn build && GRAPHQL_API=http://0.0.0.0:33000/graphql AUTH_SECRET=test AUTH_KEYCLOAK_ID=lagoon-ui-oidc AUTH_KEYCLOAK_SECRET=<SECRET_HERE> AUTH_KEYCLOAK_ISSUER=http://0.0.0.0:38088/auth/realms/lagoon yarn dev
+npx cypress open
+```
+
+To run cypress tests in headless mode:
+
+```sh
+npx cypress run
+```
+
+## Styling
+
+Lagoon-UI uses [Lagoon ui-library](https://github.com/uselagoon/ui-library) (based on Shadcn) and tailwind.
+It is also possible to natively use css and css modules.
+
+## Plugin system
+
+The Lagoon UI supports basic plugins via a plugin registry.
+The file, in the root, "plugins.json" allows you to hook into the server side rendering to add additional CSS and Javascript files. These are simply added as "script" and "link" elements to the resulting HTML.
+We currently support adding elements to the `head` at at the end of the `body` as demonstrated below.
+
+In this example, we load two elements, a JS script and a css file into the `head`, and then we add an external library at the bottom of the `body`.
 
 ```
+{
+    "head": [
+        {"type": "script", "location":"/static/custom.js"},
+        {"type": "link",   "href":"/static/plugins/custom.css"}
+
+    ],
+    "body": [
+        {"type": "script", "location":"https://www.cornify.com/js/cornify.js"}
+    ]
+}
+```
+
+## Project structure
+
+Lagoon UI is built on Next.js app router, leveraging React Server Components, TypeScript and optimized GraphQL data fetching for seamless interactivity.
+
+Lagoon UI also uses NextAuth (now [Auth.js](https://authjs.dev/)) and Keycloak for authentication.
+
+As mentioned, the UI uses its own [UI library](https://github.com/uselagoon/ui-library) with ready to use Shadcn components.
+
+Ever since Next.js deprecated `publicRuntimeConfig`, the UI use [next-runtime-env](https://www.npmjs.com/package/next-runtime-env) to replicate the same behavior for the app router.
+
+The app router structure is as follows:
+
+```
+├── src
+│   ├── app                                  # Next.js App Router pages and routes
+│   │   ├── (routegroups)                    # Top level route group
+│   │   │   └── (orgroutes)                  # Route group for organizations
+│   │   │       └── organizations
+│   │   │           ├── [organizationSlug]
+│   │   │           │   ├── (organization-overview)
+│   │   │           │   ├── groups
+│   │   │           │   ├── manage
+│   │   │           │   ├── notifications
+│   │   │           │   ├── projects
+│   │   │           │   ├── users
+│   │   │           │   └── variables
+│   │   │           └── layout.tsx          # Org level layout
+│   │   ├── (projectroutes)                 # Route group for projects
+│   │   │   └── projects
+│   │   │       ├── (projects-page)
+│   │   │       └── [projectSlug]
+│   │   │           ├── (project-overview)
+│   │   │           ├── deploy-targets
+│   │   │           ├── project-details
+│   │   │           └── project-variables
+│   │   ├── api                 # API routes
+│   │   │   ├── auth
+│   │   │   ├── login
+│   │   │   └── logout
+│   │   ├── globals.css         # Global styles
+│   │   ├── layout.tsx          # Root layout
+│   │   └── page.tsx            # Home page
+│   ├── components              # Reusable React components
+│   ├── contexts                # React context providers (mostly used in the root layout)
+│   ├── hooks                   # Custom React hooks
+│   ├── lib                     # Utility functions and libraries
+│   ├── styles                  # Additional stylesheets
+│   ├── auth.ts                 # Authentication logic
+│   └── middleware.ts           # Next.js middleware
+├── .env.local                  # Local environment variables
+├── .eslintrc.cjs              # ESLint configuration
+└── package.json               # Dependencies and scripts
+```
+
+Each route has a `page.tsx` (a server component) and a `loading.tsx` (a client-component) file.
+
+Most of the time, these Server component pages act as query preloaders (on the server), then the data gets streamed into a client component
+
+Example:
+
+```tsx
+// server component
+export default async function Groups(props: { params: Promise<{ organizationSlug: string }> }) {
+  const params = await props.params;
+
+  const { organizationSlug } = params;
+
+  return (
+    <PreloadQuery
+      query={organizationByNameGroups}
+      variables={{
+        displayName: 'Organization',
+        name: organizationSlug,
+        limit: null,
+      }}
+    >
+      {queryRef => (
+        // client component
+        <GroupsPage organizationSlug={organizationSlug} queryRef={queryRef as QueryRef<OrganizationGroupsData>} />
+      )}
+    </PreloadQuery>
+  );
+}
+```
+
+The RootLayout is where all your providers (internal or external) get wrapped together, so the whole app shares context and setup in one place
