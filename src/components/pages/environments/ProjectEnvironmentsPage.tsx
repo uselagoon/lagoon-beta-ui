@@ -1,17 +1,16 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 import { ProjectData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/(project-overview)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import ProjectNotFound from '@/components/errors/ProjectNotFound';
 import { NewEnvironment } from '@/components/newEnvironment/NewEnvironment';
 import { makeSafe } from '@/components/utils';
+import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
-import { toast } from 'sonner';
 
 import { createLinks } from '../environment/EnvironmentPage';
 import { RoutesWrapper } from '../environment/styles';
@@ -45,40 +44,9 @@ export default function ProjectEnvironmentsPage({
   });
 
   // Show notification for environments with pending changes
-  useEffect(() => {
-    if (project?.environments) {
-      const environmentsWithPendingChanges = project.environments.filter(
-        env => env.pendingChanges && env.pendingChanges.length > 0
-      );
-      
-      if (environmentsWithPendingChanges.length > 0) {
-        toast.custom(
-          (t) => (
-            <div 
-              className="flex items-center gap-3 p-4 border border-sky-500 rounded-lg shadow-lg max-w-md"
-              style={{ 
-                backgroundColor: 'rgba(14, 165, 233, 0.2)',
-                color: '#000000'
-              }}
-            >
-              <div className="flex-1">
-                <p className="font-medium text-sm">
-                  {environmentsWithPendingChanges.length === 1 
-                    ? `Environment "${environmentsWithPendingChanges[0].name}" has changes requiring deployment`
-                    : `${environmentsWithPendingChanges.length} environments have changes requiring deployment`
-                  }
-                </p>
-              </div>
-            </div>
-          ),
-          {
-            duration: Infinity, // No auto-dismiss, no close button
-            id: 'pending-changes-project', // Prevent duplicates
-          }
-        );
-      }
-    }
-  }, [project?.environments]);
+  usePendingChangesNotification({
+    environments: project?.environments,
+  });
 
   if (!project) {
     return <ProjectNotFound projectName={projectName} />;
