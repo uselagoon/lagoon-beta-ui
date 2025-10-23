@@ -6,7 +6,11 @@ The main user interface and dashboard for [Lagoon](https://github.com/uselagoon/
 
 To build and test changes locally the Lagoon UI can be built via Yarn or Docker.
 
-Testing locally, the UI can be connected to production or development Lagoon instances. Here we have included the URLs for the amazee.io cloud, but you can substitute your own.
+Testing locally, the UI can be connected to production or development Lagoon instances.
+
+There are a few differnt ways to run the UI locally for development. Those methods are described below. In the examples, references to the API and Keycloak are set up using `localhost`, but you can replace this with values for your own Lagoon instance as required.
+
+This project is tested with BrowserStack.
 
 ### Yarn
 
@@ -14,21 +18,23 @@ Note: Within `docker-compose.yml` `GRAPHQL_API` & `KEYCLOAK_API` are set to loca
 
 ```sh
 yarn install
-yarn build && GRAPHQL_API=https://api.lagoon.amazeeio.cloud/graphql AUTH_SECRET=<AUTH_SECRET> AUTH_KEYCLOAK_ID=lagoon-ui-oidc AUTH_KEYCLOAK_SECRET=<SECRET_HERE> AUTH_KEYCLOAK_ISSUER=https://keycloak.amazeeio.cloud/auth/realms/lagoon yarn dev
+yarn build && GRAPHQL_API=http://localhost:3000/graphql AUTH_SECRET=<AUTH_SECRET> AUTH_KEYCLOAK_ID=lagoon-ui-oidc AUTH_KEYCLOAK_SECRET=<SECRET_HERE> AUTH_KEYCLOAK_ISSUER=http://localhost:8088/auth/realms/lagoon yarn dev
 ```
 
 These values can also be updated in `docker-compose.yml`.
 
-### Docker
+### Docker compose - simple
+
+With this option, the UI source code is mounted into the running container. This allows for changes to the UI to be updated immediately, rather than having to rebuild.
 
 Note: Within `docker-compose.yml` `GRAPHQL_API`, `AUTH_SECRET`, `AUTH_KEYCLOAK_ID`, `AUTH_KEYCLOAK_SECRET` & `AUTH_KEYCLOAK_ISSUER` will need to be set to
 
 ```
-  GRAPHQL_API: "${GRAPHQL_API:-https://api.lagoon.amazeeio.cloud/graphql}"
+  GRAPHQL_API: "${GRAPHQL_API:-http://localhost:3000/graphql}"
   AUTH_SECRET: "${AUTH_SECRET:-SECRET}"
   AUTH_KEYCLOAK_ID: "${AUTH_KEYCLOAK_ID:-lagoon-ui-oidc}"
   AUTH_KEYCLOAK_SECRET: "${AUTH_KEYCLOAK_SECRET:-SECRET}"
-  AUTH_KEYCLOAK_ISSUER: "${AUTH_KEYCLOAK_ISSUER:-https://keycloak.amazeeio.cloud/auth/realms/lagoon}"
+  AUTH_KEYCLOAK_ISSUER: "${AUTH_KEYCLOAK_ISSUER:-http://localhost:8088/auth/realms/lagoon}"
 ```
 
 ```
@@ -36,7 +42,37 @@ docker-compose build
 docker-compose up -d
 ```
 
-This project is tested with BrowserStack.
+### Docker compose - advanced
+
+Using one of the following options will let you develop locally against a locally running API.
+
+#### Stable API
+
+This will start a local API from the latest stable Lagoon core release.
+
+```
+make start-ui-stable-api
+```
+
+#### Development API
+
+This will start a local API by default with the latest code that is in the `main` branch in `uselagoon/lagoon`. This branch can be changed by setting `CORE_TREEISH` to a different working branch for developing new features in the API.
+
+```
+make start-ui-dev-api
+# or
+make start-ui-dev-api CORE_TREEISH=api-feature-branch
+```
+
+There are some other options that can be adjusted too, see the `Makefile`.
+
+#### Stopping the environment
+
+Once you're finished, you can stop the local API and UI by running the following. This will shut down the API and the UI and clean up anything that is no longer required.
+
+```
+make clean
+```
 
 ## Linting
 
