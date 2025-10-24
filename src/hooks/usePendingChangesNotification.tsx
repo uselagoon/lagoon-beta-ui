@@ -41,7 +41,7 @@ export const usePendingChangesNotification = (options: UsePendingChangesNotifica
           <div 
             className="flex items-center gap-3 p-4 border border-sky-500 rounded-lg shadow-lg min-w-80 max-w-md"
             style={{ 
-              backgroundColor: 'rgba(14, 165, 233, 0.2)',
+              backgroundColor: '#CFEDFB',
               color: '#000000'
             }}
           >
@@ -55,7 +55,7 @@ export const usePendingChangesNotification = (options: UsePendingChangesNotifica
                 toast.dismiss(t);
                 router.push(finalDeploymentUrl);
               }}
-              className="px-3 py-1 bg-sky-500 text-white rounded text-sm font-medium hover:bg-sky-600 transition-colors whitespace-nowrap"
+              className="px-3 py-1 bg-sky-500 text-white rounded text-sm font-medium hover:bg-sky-600 transition-colors whitespace-nowrap pending-changes-notification__deploy-button"
             >
               Deploy now
             </button>
