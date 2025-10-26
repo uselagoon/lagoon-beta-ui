@@ -61,7 +61,7 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
 
   return (
     <SectionWrapper>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">User Groups</h3>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Groups for {userByEmailAndOrganization.email}</h3>
 
       <DataTable
         columns={UserDataTableColumns(
