@@ -21,6 +21,8 @@ export default gql`
         lastUsed
         keyFingerprint
       }
+      has2faEnabled
+      isFederatedUser
     }
   }
 `;
