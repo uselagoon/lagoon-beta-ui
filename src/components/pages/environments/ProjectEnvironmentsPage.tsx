@@ -50,20 +50,20 @@ export default function ProjectEnvironmentsPage({
       const environmentsWithPendingChanges = project.environments.filter(
         env => env.pendingChanges && env.pendingChanges.length > 0
       );
-      
+
       if (environmentsWithPendingChanges.length > 0) {
         toast.custom(
           (t) => (
-            <div 
+            <div
               className="flex items-center gap-3 p-4 border border-sky-500 rounded-lg shadow-lg max-w-md"
-              style={{ 
+              style={{
                 backgroundColor: 'rgba(14, 165, 233, 0.2)',
                 color: '#000000'
               }}
             >
               <div className="flex-1">
                 <p className="font-medium text-sm">
-                  {environmentsWithPendingChanges.length === 1 
+                  {environmentsWithPendingChanges.length === 1
                     ? `Environment "${environmentsWithPendingChanges[0].name}" has changes requiring deployment`
                     : `${environmentsWithPendingChanges.length} environments have changes requiring deployment`
                   }

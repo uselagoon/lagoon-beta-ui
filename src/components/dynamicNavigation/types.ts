@@ -30,5 +30,10 @@ export type EnvWithProblemsType = {
       fixedVersion: string | null;
       links: string[] | null;
     }[];
+    pendingChanges: {
+      type: string;
+      details: string;
+      date: string;
+    }[];
   } | null;
 };

@@ -23,7 +23,9 @@ export default gql`
         featureApiRoutes
       }
       pendingChanges {
+        type
         details
+        date
       }
     }
   }

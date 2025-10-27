@@ -55,13 +55,13 @@ export default function EnvironmentPage({
   // Show pending changes notification
   useEffect(() => {
     if (environment?.pendingChanges && environment.pendingChanges.length > 0) {
-      const deploymentPageUrl = `/projects/${environment.project.name}/${environmentSlug}/deployments`;
-      
+      const deploymentPageUrl = `/projects/${environment.project.name}/${environmentSlug}/pending-changes`;
+
       toast.custom(
         (t) => (
-          <div 
+          <div
             className="flex items-center gap-3 p-4 border border-sky-500 rounded-lg shadow-lg"
-            style={{ 
+            style={{
               backgroundColor: 'rgba(14, 165, 233, 0.2)',
               color: '#000000'
             }}
@@ -78,7 +78,7 @@ export default function EnvironmentPage({
               }}
               className="px-3 py-1 bg-sky-500 text-white rounded text-sm font-medium hover:bg-sky-600 transition-colors"
             >
-              Deploy now
+              View changes
             </button>
           </div>
         ),
