@@ -23,7 +23,9 @@ export default gql`
           name
         }
         pendingChanges {
+          type
           details
+          date
         }
         openshift {
           friendlyName

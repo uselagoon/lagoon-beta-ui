@@ -26,7 +26,9 @@ export default gql`
         ...factFields
       }
       pendingChanges {
+        type
         details
+        date
       }
     }
   }

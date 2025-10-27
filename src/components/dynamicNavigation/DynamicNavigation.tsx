@@ -50,6 +50,7 @@ export const getEnvironmentNav = (
       icon: GitPullRequestDraft,
       children: [
         { title: 'Overview', url: `/projects/${projectSlug}/${environmentSlug}` },
+        ...(environmentData?.environment?.pendingChanges.length ? [{ title: 'Pending changes', url: `/projects/${projectSlug}/${environmentSlug}/pending-changes` }] : []),
         { title: 'Deployments', url: `/projects/${projectSlug}/${environmentSlug}/deployments` },
         { title: 'Backups', url: `/projects/${projectSlug}/${environmentSlug}/backups` },
         { title: 'Tasks', url: `/projects/${projectSlug}/${environmentSlug}/tasks` },

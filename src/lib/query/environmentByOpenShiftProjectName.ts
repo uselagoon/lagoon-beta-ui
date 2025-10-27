@@ -22,7 +22,9 @@ export default gql`
         factsUi
       }
       pendingChanges {
+        type
         details
+        date
       }
     }
   }

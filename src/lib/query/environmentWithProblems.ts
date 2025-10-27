@@ -16,6 +16,11 @@ export default gql`
       problems {
         ...problemFields
       }
+      pendingChanges {
+        type
+        details
+        date
+      }
     }
   }
   ${ProblemsFragment}
