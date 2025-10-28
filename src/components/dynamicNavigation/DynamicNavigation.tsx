@@ -45,7 +45,7 @@ export const getEnvironmentNav = (
 
   return [
     {
-      title: String(environmentData?.environment?.name),
+      title: String(environmentData?.environment?.name ? environmentData?.environment?.name : environmentSlug),
       url: `/projects/${projectSlug}/${environmentSlug}`,
       icon: GitPullRequestDraft,
       children: [
