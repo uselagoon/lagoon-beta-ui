@@ -11,6 +11,7 @@ export default gql`
         name
         problemsUi
         factsUi
+        featureApiRoutes
         environments {
           id
           name

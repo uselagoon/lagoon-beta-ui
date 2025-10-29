@@ -14,6 +14,7 @@ export default gql`
       productionRoutes
       standbyRoutes
       developmentEnvironmentsLimit
+      featureApiRoutes
       deployTargetConfigs {
         id
         branches
