@@ -8,6 +8,7 @@ export default gql`
         name
         problemsUi
         factsUi
+        featureApiRoutes
       }
       deployments(name: $deploymentName) {
         id

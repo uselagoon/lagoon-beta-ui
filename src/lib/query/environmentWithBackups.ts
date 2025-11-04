@@ -13,6 +13,7 @@ export default gql`
         name
         problemsUi
         factsUi
+        featureApiRoutes
       }
       backups(limit: $limit) {
         id

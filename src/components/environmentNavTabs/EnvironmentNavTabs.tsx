@@ -62,6 +62,15 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
             ),
           },
 
+          {
+            key: 'routes',
+            label: (
+              <Link data-cy="nav-routes" href={`/projects/${projectSlug}/${environmentSlug}/routes`}>
+                <LinkContentWrapper>Routes</LinkContentWrapper>
+              </Link>
+            ),
+          },
+
           ...(showProblemsTab
             ? [
                 {

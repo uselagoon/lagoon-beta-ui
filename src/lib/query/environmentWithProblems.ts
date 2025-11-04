@@ -12,6 +12,7 @@ export default gql`
         name
         problemsUi
         factsUi
+        featureApiRoutes
       }
       problems {
         ...problemFields

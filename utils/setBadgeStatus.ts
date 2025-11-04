@@ -28,3 +28,16 @@ export const getBadgeEnvVariant = (type: string) => {
 			return 'neutral' as const;
 	}
 }
+
+export const getBadgeRouteVariant = (type: string) => {
+	switch (type) {
+		case 'primary':
+			return 'secondary' as const;
+		case 'active':
+			return 'production' as const;
+		case 'standby':
+			return 'standby' as const;
+		default:
+			return 'neutral' as const;
+	}
+}

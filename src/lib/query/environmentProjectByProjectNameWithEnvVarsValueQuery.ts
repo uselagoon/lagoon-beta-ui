@@ -26,6 +26,7 @@ export default gql`
         standbyProductionEnvironment
         problemsUi
         factsUi
+        featureApiRoutes
         envVariables {
           id
           name
