@@ -7,7 +7,6 @@ interface PendingChange {
 }
 
 interface Environment {
-  name: string;
   pendingChanges: PendingChange[];
   project?: {
     name: string;

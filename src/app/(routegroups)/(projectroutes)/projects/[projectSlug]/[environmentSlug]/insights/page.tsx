@@ -34,6 +34,7 @@ type Environment = {
     problemsUi: boolean;
     factsUi: boolean;
   };
+  pendingChanges?: Array<{ details: string }>;
   facts: Fact[];
   insights: Insight[];
 };

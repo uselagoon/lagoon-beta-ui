@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
+import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
@@ -45,6 +46,12 @@ export default function TasksPage({
   const {
     data: { environment },
   } = useReadQuery(queryRef);
+
+  // Show notification for pending changes
+  usePendingChangesNotification({
+    environment,
+    environmentSlug,
+  });
 
   const pathname = usePathname();
 

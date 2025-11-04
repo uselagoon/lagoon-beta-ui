@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { DeploymentsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/deployments/(deployments-page)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
+import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, DateRangePicker, SelectWithOptions, Table } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
@@ -36,6 +37,12 @@ export default function DeploymentsPage({
   const {
     data: { environment },
   } = useReadQuery(queryRef);
+
+  // Show notification for pending changes
+  usePendingChangesNotification({
+    environment,
+    environmentSlug,
+  });
 
   // polling every 20s if status needs to be checked
   useEffect(() => {

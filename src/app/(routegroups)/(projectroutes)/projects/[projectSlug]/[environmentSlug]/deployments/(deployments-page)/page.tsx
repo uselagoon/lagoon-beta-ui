@@ -46,6 +46,7 @@ type Environment = {
     problemsUi: number;
     factsUi: number;
   };
+  pendingChanges?: Array<{ details: string }>;
   deployments: Deployment[];
 };
 

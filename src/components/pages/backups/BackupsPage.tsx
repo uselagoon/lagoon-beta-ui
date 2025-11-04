@@ -5,6 +5,7 @@ import { startTransition, useEffect } from 'react';
 import { BackupsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/backups/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
+import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, DateRangePicker, Select, SelectWithOptions, Table } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
@@ -30,6 +31,12 @@ export default function BackupsPage({
   const {
     data: { environment },
   } = useReadQuery(queryRef);
+
+  // Show notification for pending changes
+  usePendingChangesNotification({
+    environment,
+    environmentSlug,
+  });
 
   // polling every 20s if status needs to be checked
   useEffect(() => {
