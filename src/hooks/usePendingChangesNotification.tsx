@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'sonner';
 
 interface PendingChange {
@@ -7,7 +7,7 @@ interface PendingChange {
 }
 
 interface Environment {
-  pendingChanges: PendingChange[];
+  pendingChanges?: PendingChange[];
   project?: {
     name: string;
   };
@@ -24,11 +24,13 @@ interface UsePendingChangesNotificationOptions {
 
 export const usePendingChangesNotification = (options: UsePendingChangesNotificationOptions) => {
   const router = useRouter();
+  const pathname = usePathname();
   const { environment, environmentSlug, deploymentUrl } = options;
   const isFirstRender = useRef(true);
 
   useEffect(() => {
-    const toastId = 'pending-changes';
+    // Key the toast to the current page to avoid conflicts between subpages
+    const toastId = `pending-changes-${pathname}`;
     
     // Handle single environment case
     if (environment?.pendingChanges && environment.pendingChanges.length > 0) {
@@ -64,24 +66,28 @@ export const usePendingChangesNotification = (options: UsePendingChangesNotifica
           duration: Infinity,
           id: toastId,
           position: 'top-right',
+          unstyled: false,
+          className: '',
+          style: {
+            animation: 'none',
+            transition: 'none'
+          }
         }
       );
     } else {
       // Dismiss toast if no pending changes
       toast.dismiss(toastId);
     }
-
-    // Cleanup function - but only dismiss on real unmount, not Strict Mode re-renders
+    
     return () => {
+        // Cleanup function - dismiss this page's toast when component unmounts
       if (isFirstRender.current) {
         // This is likely a Strict Mode double-mount, don't dismiss
         isFirstRender.current = false;
-        console.log('Skipping cleanup - likely Strict Mode double-mount');
       } else {
         // This is a real cleanup (navigation away or actual unmount)
-        console.log('Real cleanup - dismissing toast');
         toast.dismiss(toastId);
       }
     };
-  }, [environment?.pendingChanges, environment?.project?.name, environmentSlug, deploymentUrl, router]);
+  }, [environment?.pendingChanges, environment?.project?.name, environmentSlug, deploymentUrl, router, pathname]);
 };
