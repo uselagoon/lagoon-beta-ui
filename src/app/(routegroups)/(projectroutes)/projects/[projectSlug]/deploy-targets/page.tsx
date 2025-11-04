@@ -22,6 +22,7 @@ type ProjectWithDeployTargets = {
   productionRoutes: null | string;
   standbyRoutes: null | string;
   developmentEnvironmentsLimit: number;
+  featureApiRoutes: boolean;
   deployTargetConfigs: {
     id: number;
     branches: string;

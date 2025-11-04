@@ -16,7 +16,7 @@ export const getProjectNav = (
 ): SidebarItem[] => {
   const showDeployTargets =
     projectData?.project?.deployTargetConfigs?.length && projectData?.project?.deployTargetConfigs?.length > 0;
-
+    const showRoutesTab = projectData?.project?.featureApiRoutes;
   return [
     {
       title: String(projectSlug),
@@ -29,6 +29,7 @@ export const getProjectNav = (
         },
         { title: 'Details', url: `/projects/${projectSlug}/project-details` },
         { title: 'Variables', url: `/projects/${projectSlug}/project-variables` },
+        ...(showRoutesTab ? [{ title: 'Routes', url: `/projects/${projectSlug}/routes` }] : []),
         ...(showDeployTargets ? [{ title: 'Deploy Targets', url: `/projects/${projectSlug}/deploy-targets` }] : []),
       ],
     },
@@ -42,10 +43,11 @@ export const getEnvironmentNav = (
 ): SidebarItem[] => {
   const showFactsTab = environmentData?.environment?.project?.factsUi === 1;
   const showProblemsTab = environmentData?.environment?.project?.problemsUi === 1;
+  const showRoutesTab = environmentData?.environment?.project?.featureApiRoutes;
 
   return [
     {
-      title: String(environmentSlug),
+      title: String(environmentData?.environment?.name ? environmentData?.environment?.name : environmentSlug),
       url: `/projects/${projectSlug}/${environmentSlug}`,
       icon: GitPullRequestDraft,
       children: [
@@ -53,6 +55,7 @@ export const getEnvironmentNav = (
         { title: 'Deployments', url: `/projects/${projectSlug}/${environmentSlug}/deployments` },
         { title: 'Backups', url: `/projects/${projectSlug}/${environmentSlug}/backups` },
         { title: 'Tasks', url: `/projects/${projectSlug}/${environmentSlug}/tasks` },
+        ...(showRoutesTab ? [{ title: 'Routes', url: `/projects/${projectSlug}/${environmentSlug}/routes` }] : []),
         ...(showProblemsTab
           ? [{ title: 'Problems', url: `/projects/${projectSlug}/${environmentSlug}/problems` }]
           : []),

@@ -20,6 +20,7 @@ export default gql`
         standbyProductionEnvironment
         problemsUi
         factsUi
+        featureApiRoutes
       }
       pendingChanges {
         details

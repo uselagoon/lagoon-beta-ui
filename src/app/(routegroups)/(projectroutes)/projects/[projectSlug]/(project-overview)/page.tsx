@@ -17,6 +17,7 @@ export type ProjectEnvironment = {
   updated: string | null;
   routes: null | string;
   openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   openshift: { friendlyName: null | string; cloudRegion: null | string };
   project: {
     name: string;

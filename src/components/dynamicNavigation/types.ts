@@ -8,6 +8,7 @@ export type EnvWithProblemsType = {
       name: string;
       problemsUi: number;
       factsUi: number;
+      featureApiRoutes: boolean;
     };
     problems: {
       id: string;
