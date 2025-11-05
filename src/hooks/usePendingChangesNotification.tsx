@@ -80,14 +80,7 @@ export const usePendingChangesNotification = (options: UsePendingChangesNotifica
     }
     
     return () => {
-        // Cleanup function - dismiss this page's toast when component unmounts
-      if (isFirstRender.current) {
-        // This is likely a Strict Mode double-mount, don't dismiss
-        isFirstRender.current = false;
-      } else {
-        // This is a real cleanup (navigation away or actual unmount)
         toast.dismiss(toastId);
-      }
     };
   }, [environment?.pendingChanges, environment?.project?.name, environmentSlug, deploymentUrl, router, pathname]);
 };
