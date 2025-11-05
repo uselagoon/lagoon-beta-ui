@@ -15,6 +15,7 @@ type Environment = {
 	environmentType: string;
 	apiRoutes: EnvironmentRoute[];
 	project: Project;
+	pendingChanges?: Array<{ details: string }>;
 };
 
 export type EnvironmentRoute = {
