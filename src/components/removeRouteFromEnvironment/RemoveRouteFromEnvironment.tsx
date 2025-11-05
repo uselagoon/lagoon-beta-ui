@@ -76,7 +76,7 @@ export const RemoveRouteFromEnvDialog: FC<Props> = ({ domainName, projectName, e
         onConfirm={() => handleRemoveRouteFromEnv(inputValue, projectName, environmentName)}
       >
         <Button
-          variant="destructive"
+          variant="outline"
           onClick={async () => {
             let permissionResponse = onClick ? await onClick() : {};
             if (permissionResponse?.error) {
