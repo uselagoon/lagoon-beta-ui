@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["./**/*.ts"],
+  "exclude": [],
+  "compilerOptions": {
+    "types": ["node", "@playwright/test"],
+    "lib": ["esnext", "dom"],
+    "isolatedModules": false,
+    "allowJs": true,
+    "noEmit": true
+  }
+}
+
