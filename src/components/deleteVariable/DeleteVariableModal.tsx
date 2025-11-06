@@ -4,7 +4,7 @@ import { EnvVariable } from '@/app/(routegroups)/(projectroutes)/projects/[proje
 import deleteEnvVariableByName from '@/lib/mutation/deleteEnvVariableByName';
 import { useMutation } from '@apollo/client';
 import { Button, Input, Label, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { HighlightedText } from '../cancelDeployment/styles';
@@ -31,6 +31,8 @@ type Props = {
 
 export const DeleteVariableDialog: FC<Props> = ({ currentEnv, refetch, type, onClick, ...rest }) => {
   const [inputValue, setInputValue] = useState('');
+  const [open, setOpen] = useState(false);
+  const [deleteVar, setDeleteVar] = useState(false);
 
   const [deleteVariableMutation, { loading }] = useMutation(deleteEnvVariableByName, {
     onError: err => {
@@ -69,14 +71,22 @@ export const DeleteVariableDialog: FC<Props> = ({ currentEnv, refetch, type, onC
     });
   };
 
-  const handleDeleteVariable = (variable_name: string) => {
+  const handleDeleteVariable = async (variable_name: string) => {
     if (confirmDisabled) return;
+    setDeleteVar(true);
 
-    deleteVariable(variable_name).then(() => {
+    try {
+      await deleteVariable(variable_name);
+
       startTransition(async () => {
-        await refetch();
+        setOpen(false);
+        setDeleteVar(false);
+        refetch();
       });
-    });
+    } catch (error) {
+      console.error('Failed to delete variable:', error);
+      setDeleteVar(false);
+    }
   };
 
   const confirmDisabled = inputValue !== currentEnv.name || loading;
@@ -97,9 +107,15 @@ export const DeleteVariableDialog: FC<Props> = ({ currentEnv, refetch, type, onC
           </>
         }
         cancelText="Cancel"
-        confirmText="Delete"
+        confirmText={deleteVar ? <Loader2 className="animate-spin" /> : 'Delete'}
         confirmDisabled={confirmDisabled}
         onConfirm={() => handleDeleteVariable(inputValue)}
+        onCancel={() => {
+          setOpen(false);
+          setInputValue('');
+        }}
+        open={open}
+        onOpenChange={setOpen}
       >
         <Button
           variant="outline"
@@ -107,6 +123,8 @@ export const DeleteVariableDialog: FC<Props> = ({ currentEnv, refetch, type, onC
             let permissionResponse = onClick ? await onClick() : {};
             if (permissionResponse?.error) {
               console.error(permissionResponse?.error);
+            } else {
+              setOpen(true);
             }
           }}
           disabled={loading}
