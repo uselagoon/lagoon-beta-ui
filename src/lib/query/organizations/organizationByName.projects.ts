@@ -10,6 +10,7 @@ export default gql`
         id
         name
         groupCount
+        metadata
       }
       deployTargets {
         id

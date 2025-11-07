@@ -49,6 +49,48 @@ export const ProjectsDataTableColumns = (
     },
   },
   {
+    accessorKey: 'metadata',
+    header: ({ column }) => {
+      const sortDirection = column.getIsSorted();
+      return (
+        <Button variant="ghost" onClick={() => handleSort(sortDirection, column)}>
+          Metadata
+          <div className="flex flex-col">{renderSortIcons(sortDirection)}</div>
+        </Button>
+      );
+    },
+    filterFn: (row, columnId, filterValue) => {
+      const metadata = row.original.metadata;
+
+      if (!metadata) {
+        return false;
+      }
+      return Object.keys(metadata).includes(filterValue);
+    },
+    cell: ({ row }) => {
+      const metadata = row.original.metadata;
+
+      if (!metadata) {
+        return <div className="ml-6">No metadata</div>;
+      }
+      const data = Object.entries(metadata);
+
+      if (data.length === 0) {
+        return <div className="ml-6">No metadata</div>;
+      }
+
+      return (
+        <div className="ml-6 flex flex-col gap-1">
+          {data.map(([key, value]) => (
+            <div key={key}>
+              <strong>{key}:</strong> {String(value)}
+            </div>
+          ))}
+        </div>
+      );
+    },
+  },
+  {
     id: 'actions',
     header: () => <div className="text-right mr-4">Actions</div>,
     cell: ({ row }) => {

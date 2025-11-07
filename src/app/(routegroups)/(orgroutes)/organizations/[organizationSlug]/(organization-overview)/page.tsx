@@ -24,6 +24,7 @@ export type OrgProject = {
   id: number;
   name: string;
   groupCount?: number;
+  metadata?: JSON
 };
 
 export type OrgGroup = {

@@ -67,6 +67,25 @@ export default function OrgProjectsPage({
     return { label: deploytarget.name, value: deploytarget.id };
   });
 
+  const uniqueKeys = new Set<string>();
+  const populateMetadataOptions = organization.projects.flatMap(project  => {
+    let mdArray: { label: string, value: string }[] = [];
+    if (!uniqueKeys.has('Show all')) {
+      uniqueKeys.add('Show all');
+      mdArray.push({ label: 'Show all', value: 'all' });
+    }
+    if (project.metadata) {
+      const data = Object.keys(project.metadata);
+      data.forEach(key => {
+        if (!uniqueKeys.has(key)) {
+          uniqueKeys.add(key);
+          mdArray.push({ label: key, value: key } );
+        }
+      });
+    }
+    return mdArray;
+  });
+
   return (
     <>
       <SectionWrapper>
@@ -88,6 +107,19 @@ export default function OrgProjectsPage({
           initialPageSize={results || 10}
           renderFilters={table => (
             <div className="flex items-center justify-between">
+              <SelectWithOptions
+                options={populateMetadataOptions}
+                width={100}
+                placeholder="Filter by Metadata"
+                onValueChange={newVal => {
+                  const metadataColumn = table.getColumn('metadata');
+                  if (metadataColumn && newVal != 'all') {
+                    metadataColumn.setFilterValue(newVal);
+                  } else {
+                    metadataColumn?.setFilterValue(undefined);
+                  }
+                }}
+              />
               <SelectWithOptions
                 options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}
                 width={100}
