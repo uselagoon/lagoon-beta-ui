@@ -31,7 +31,7 @@ export const usePendingChangesNotification = (options: UsePendingChangesNotifica
   useEffect(() => {
     // Key the toast to the current page to avoid conflicts between subpages
     const toastId = `pending-changes-${pathname}`;
-    
+
     // Handle single environment case
     if (environment?.pendingChanges && environment.pendingChanges.length > 0) {
       const defaultDeploymentUrl = `/projects/${environment.project?.name}/${environmentSlug}/deployments`;
@@ -78,9 +78,14 @@ export const usePendingChangesNotification = (options: UsePendingChangesNotifica
       // Dismiss toast if no pending changes
       toast.dismiss(toastId);
     }
-    
+
     return () => {
-        toast.dismiss(toastId);
+      // Handles the toast clean-up for strict mode in dev
+      if (process.env.NODE_ENV === 'development' && isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+      }
+      toast.dismiss(toastId);
     };
   }, [environment?.pendingChanges, environment?.project?.name, environmentSlug, deploymentUrl, router, pathname]);
 };
