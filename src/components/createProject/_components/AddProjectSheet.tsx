@@ -24,6 +24,7 @@ const AddProjectSheet = ({
   const handleAddProject = async (e: React.MouseEvent<HTMLButtonElement>, values: any) => {
     try {
       const { projectName, gitUrl, prodEnv, deployTarget, branches, pullRequests, addUserToProject } = values;
+      const addUserToProjectBool = Boolean(addUserToProject);
 
       await addProjectMutation({
         variables: {
@@ -34,7 +35,7 @@ const AddProjectSheet = ({
           kubernetes: parseInt(deployTarget, 10),
           ...(pullRequests ? { pullrequests: pullRequests } : {}),
           ...(branches ? { branches: branches } : {}),
-          addOrgOwner: addUserToProject,
+          addOrgOwner: addUserToProjectBool,
         },
       });
     } catch (err) {
