@@ -68,25 +68,26 @@ export default function OrgProjectsPage({
   });
 
   const uniqueKeys = new Set<string>();
+
+
   const populateMetadataOptions = organization.projects.flatMap(project  => {
     let mdArray: { label: string, value: string }[] = [];
     if (!uniqueKeys.has('Show all')) {
       uniqueKeys.add('Show all');
       mdArray.push({ label: 'Show all', value: 'all' });
     }
-
     if (project.metadata) {
-      const data = Object.values(project.metadata);
-      data.forEach(value => {
-        if (!uniqueKeys.has(value)) {
-          uniqueKeys.add(value);
-          mdArray.push({ label: value, value: value } );
-        }
-      });
+      const data = project.metadata as Record<string, any>;
+      const value = data['meta-faculty'];
+      if (value && !uniqueKeys.has(value)) {
+        uniqueKeys.add(value);
+        mdArray.push({ label: value, value: value });
+      }
     }
 
     return mdArray;
   });
+
 
   return (
     <>
