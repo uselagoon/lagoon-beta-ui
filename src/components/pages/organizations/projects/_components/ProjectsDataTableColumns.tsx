@@ -65,7 +65,7 @@ export const ProjectsDataTableColumns = (
       if (!metadata) {
         return false;
       }
-      return Object.keys(metadata).includes(filterValue);
+      return Object.values(metadata).includes(filterValue);
     },
     cell: ({ row }) => {
       const metadata = row.original.metadata;

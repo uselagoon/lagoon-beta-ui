@@ -76,11 +76,11 @@ export default function OrgProjectsPage({
     }
 
     if (project.metadata) {
-      const data = Object.keys(project.metadata);
-      data.forEach(key => {
-        if (!uniqueKeys.has(key)) {
-          uniqueKeys.add(key);
-          mdArray.push({ label: key, value: key } );
+      const data = Object.values(project.metadata);
+      data.forEach(value => {
+        if (!uniqueKeys.has(value)) {
+          uniqueKeys.add(value);
+          mdArray.push({ label: value, value: value } );
         }
       });
     }
