@@ -74,6 +74,7 @@ export default function OrgProjectsPage({
       uniqueKeys.add('Show all');
       mdArray.push({ label: 'Show all', value: 'all' });
     }
+
     if (project.metadata) {
       const data = Object.keys(project.metadata);
       data.forEach(key => {
@@ -83,6 +84,7 @@ export default function OrgProjectsPage({
         }
       });
     }
+
     return mdArray;
   });
 
