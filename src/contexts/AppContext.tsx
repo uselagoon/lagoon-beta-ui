@@ -7,7 +7,7 @@ import { useEnvContext } from 'next-runtime-env';
 import { useParams, usePathname } from 'next/navigation';
 
 import { useSidenavItems } from '@/components/dynamicNavigation/useSidenavItems';
-import { RootLayout, Toaster } from '@uselagoon/ui-library';
+import {RootLayout, ThemeSwitch, Toaster} from '@uselagoon/ui-library';
 import manualSignOut from 'utils/manualSignOut';
 
 export type SidebarItem = {
@@ -78,6 +78,9 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         currentPath={pathname}
         sidenavItems={sidenavItems}
       >
+         <div className="absolute top-2 right-2">
+           <ThemeSwitch />
+         </div>
         <section className="my-10">
           {children}
           <Toaster />
