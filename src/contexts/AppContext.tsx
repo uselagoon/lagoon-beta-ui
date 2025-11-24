@@ -78,7 +78,7 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         currentPath={pathname}
         sidenavItems={sidenavItems}
       >
-         <div className="absolute top-2 right-2">
+         <div className="absolute top-2 right-4">
            <ThemeSwitch />
          </div>
         <section className="my-10">
