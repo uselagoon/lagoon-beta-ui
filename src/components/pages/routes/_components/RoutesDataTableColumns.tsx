@@ -168,7 +168,7 @@ export const RoutesDataTableColumns = (projectName: string, environments: Projec
     },
 	{
 		id: 'actions',
-		width: '18%',
+		width: '20%',
 		header: () => <div className="text-right mr-4">Actions</div>,
 		cell: ({ row }) => {
 			return (
