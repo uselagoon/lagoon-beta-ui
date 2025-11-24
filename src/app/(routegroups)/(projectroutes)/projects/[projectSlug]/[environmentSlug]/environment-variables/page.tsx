@@ -24,6 +24,7 @@ type Environment = {
     factsUi: boolean;
     envVariables: EnvVariable[];
   };
+  pendingChanges?: Array<{ details: string }>;
   envVariables: EnvVariable[];
 };
 

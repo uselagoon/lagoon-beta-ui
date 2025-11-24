@@ -32,6 +32,7 @@ type Environment = {
     problemsUi: boolean;
     factsUi: boolean;
   };
+  pendingChanges?: Array<{ details: string }>;
   backups: Backup[];
 };
 

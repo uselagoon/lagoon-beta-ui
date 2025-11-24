@@ -62,6 +62,7 @@ export type EnvironmentWithTasks = {
       name: string;
     }[];
   };
+  pendingChanges?: Array<{ details: string }>;
   tasks: Task[];
   advancedTasks?: AdvancedTask[];
 };

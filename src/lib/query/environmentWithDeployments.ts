@@ -15,6 +15,9 @@ export default gql`
         factsUi
         featureApiRoutes
       }
+      pendingChanges {
+        details
+      }
       deployments(limit: $limit) {
         id
         name

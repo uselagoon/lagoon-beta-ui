@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { EnvironmentData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/(environment-overview)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
+import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import deleteEnvironment from '@/lib/mutation/deleteEnvironment';
 import switchActiveStandby from '@/lib/mutation/switchActiveStandby';
 import environmentByOpenShiftProjectNameWithFacts from '@/lib/query/environmentWIthInsightsAndFacts';
@@ -46,6 +47,14 @@ export default function EnvironmentPage({
     data: { environment },
   } = useReadQuery(queryRef);
 
+  const router = useRouter();
+
+  // Show pending changes notification
+  usePendingChangesNotification({
+    environment,
+    environmentSlug,
+  });
+
   const {
     data: factsData,
     loading: factsLoading,
@@ -58,8 +67,6 @@ export default function EnvironmentPage({
 
   const hasFactViewPermission = !factsError?.message?.includes('Unauthorized');
   const environmentFacts = factsData?.environment?.facts ?? [];
-
-  const router = useRouter();
 
   const [deleteEnvironmentMutation, { data, loading: deleteLoading }] = useMutation(deleteEnvironment);
 

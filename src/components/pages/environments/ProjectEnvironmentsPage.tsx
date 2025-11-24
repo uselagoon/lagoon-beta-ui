@@ -62,6 +62,7 @@ export default function ProjectEnvironmentsPage({
   ].filter(env => !!env);
 
   const envTableData = sortedEnvironments.map(environment => {
+
     const activeEnvironment =
       project.productionEnvironment &&
       project.standbyProductionEnvironment &&

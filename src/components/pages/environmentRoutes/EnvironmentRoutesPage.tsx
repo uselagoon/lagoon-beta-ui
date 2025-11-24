@@ -1,6 +1,7 @@
 'use client';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
 import {useQueryStates} from "nuqs";
@@ -46,6 +47,13 @@ export default function EnvironmentRoutesPage({queryRef,	projectName,}: {
 
 	const { refetch } = useQueryRefHandlers(queryRef);
 	const { data: { environmentRoutes }	} = useReadQuery(queryRef);
+
+	// Show notification for pending changes
+	usePendingChangesNotification({
+		environment: environmentRoutes,
+		environmentSlug: environmentRoutes.name,
+	});
+
 	return (
 		<>
 			<SectionWrapper>

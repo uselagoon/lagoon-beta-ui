@@ -22,6 +22,9 @@ export default gql`
         factsUi
         featureApiRoutes
       }
+      pendingChanges {
+        details
+      }
     }
   }
 `;

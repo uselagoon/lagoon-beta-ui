@@ -8,6 +8,7 @@ import { EnvVariablesData } from '@/app/(routegroups)/(projectroutes)/projects/[
 import { EnvVariable } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
+import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import environmentByProjectNameWithEnvVarsValueQuery from '@/lib/query/environmentByProjectNameWithEnvVarsValueQuery';
 import environmentProjectByProjectNameWithEnvVarsValueQuery from '@/lib/query/environmentProjectByProjectNameWithEnvVarsValueQuery';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
@@ -44,6 +45,12 @@ export default function EnvironmentVariablesPage({
   const {
     data: { environmentVars },
   } = useReadQuery(queryRef);
+
+  // Show notification for pending changes
+  usePendingChangesNotification({
+    environment: environmentVars,
+    environmentSlug: environmentName,
+  });
 
   const [{ results, search }, setQuery] = useQueryStates({
     results: {
