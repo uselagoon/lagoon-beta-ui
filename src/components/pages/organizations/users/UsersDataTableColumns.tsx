@@ -114,10 +114,12 @@ const UsersDataTableColumns = (
     accessorKey: 'attrs',
     header: 'Attributes',
     cell: ({ row }) => {
+      const has2faEnabled = row.original?.has2faEnabled;
+      const isFederatedUser = row.original?.isFederatedUser
       return (
         <div className="flex flex-col gap-2">
-          {row.original.has2faEnabled && (<Badge className="bg-green-500 text-white dark:bg-green-600" variant="secondary">2FA</Badge>)}
-          {row.original.isFederatedUser && (<Badge className="bg-blue-500 text-white dark:bg-blue-600" variant="secondary">SSO</Badge>)}
+          {has2faEnabled && (<Badge variant="success">2FA</Badge>)}
+          {isFederatedUser && (<Badge variant="info">SSO</Badge>)}
         </div>
       );
     },
