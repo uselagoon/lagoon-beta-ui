@@ -12,6 +12,7 @@ import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DetailStat } from '@uselagoon/ui-library';
 
 import { Description } from './_components/Description';
+import ViewDeployTargets from "@/components/pages/organizations/organization/_components/ViewDeployTargets";
 
 type Notification = 'slacks' | 'rocketchats' | 'webhook' | 'teams' | 'emails';
 export default function OrganizationPage({
@@ -98,7 +99,7 @@ export default function OrganizationPage({
                 ))}
                 {organization.deployTargets.length >= 4 && (
                   <div className="text-sm text-muted-foreground">
-                    ... and {organization.deployTargets.length - 3} more
+                    <ViewDeployTargets deployTargetsNo={organization.deployTargets.length - 3} data={organization.deployTargets} />
                   </div>
                 )}
               </div>

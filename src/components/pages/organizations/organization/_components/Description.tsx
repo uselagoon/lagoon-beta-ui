@@ -59,7 +59,7 @@ const DescriptionData: FC<DescriptionProps> = ({ orgId, name, description }) => 
       <div className="flex flex-col gap-1 mb-3.5 mt-6">
         <span>Organization Description</span>
         <section className="flex gap-4 items-center w-1/2">
-          <Textarea defaultValue={description || ' - '} onChange={e => setNewDesc(e.target.value)} />
+          <Textarea className="!text-inherit" defaultValue={description || ' - '} onChange={e => setNewDesc(e.target.value)} />
           {isChangedDesc && <EditDesc orgId={orgId} description={newDesc} />}
         </section>
       </div>
