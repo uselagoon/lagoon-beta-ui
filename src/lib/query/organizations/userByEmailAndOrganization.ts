@@ -10,6 +10,8 @@ export default gql`
         role
         groupType
       }
+      has2faEnabled
+      isFederatedUser
     }
   }
 `;

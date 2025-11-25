@@ -22,6 +22,8 @@ type User = {
     id: string;
     role: string;
   }[];
+  has2faEnabled: boolean;
+  isFederatedUser: boolean;
 };
 
 export interface OrganizationUsersData {

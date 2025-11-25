@@ -111,6 +111,20 @@ const UsersDataTableColumns = (
     },
   },
   {
+    accessorKey: 'attrs',
+    header: 'Attributes',
+    cell: ({ row }) => {
+      const has2faEnabled = row.original?.has2faEnabled;
+      const isFederatedUser = row.original?.isFederatedUser
+      return (
+        <div className="flex flex-col gap-2">
+          {has2faEnabled && (<Badge variant="success">2FA</Badge>)}
+          {isFederatedUser && (<Badge variant="info">SSO</Badge>)}
+        </div>
+      );
+    },
+  },
+  {
     id: 'actions',
     header: 'Actions',
     cell: ({ row }) => {
