@@ -49,7 +49,7 @@ export default function Loading() {
 
   return (
     <SectionWrapper>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-4">Groups</h3>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-4">Groups for</h3>
 
       <Skeleton className="h-8 w-[100px]" />
 
