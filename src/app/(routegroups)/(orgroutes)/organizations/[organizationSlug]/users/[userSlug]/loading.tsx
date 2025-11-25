@@ -37,7 +37,7 @@ export default function Loading() {
 
   return (
     <SectionWrapper>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">User Groups</h3>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Groups for</h3>
 
       <DataTable
         loading
