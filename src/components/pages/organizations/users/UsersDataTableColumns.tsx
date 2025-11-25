@@ -69,21 +69,6 @@ const UsersDataTableColumns = (
     },
   },
   {
-    accessorKey: 'groupRoles',
-    header: 'Roles',
-    cell: ({ row }) => {
-      const groupRoles = row.original.groupRoles;
-
-      return (
-        <div className="flex flex-col gap-2">
-          {[...new Set(groupRoles.map(group => group.role))].map(uniqueRole => (
-            <Badge key={uniqueRole}>{uniqueRole}</Badge>
-          ))}
-        </div>
-      );
-    },
-  },
-  {
     id: 'Groups',
     accessorFn: row => row.groupRoles?.length,
     sortingFn: (rowA, rowB, columnId) => {
