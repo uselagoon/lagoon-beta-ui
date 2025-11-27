@@ -226,7 +226,7 @@ const LogNodeRenderer: React.FC<{
       },
     ];
 
-    const accordion = <Accordion type="multiple" items={accordionItems} />;
+    const accordion = <Accordion type="multiple" items={accordionItems} defaultValue={visible ? [String(node.key)] : []} />;
 
     if (showSuccessSteps) {
       return accordion;
