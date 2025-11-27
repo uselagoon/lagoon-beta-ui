@@ -38,13 +38,6 @@ const getBaseSidenavItems = (kcUrl: string): SidebarSection[] => [
         url: '/settings/preferences',
         icon: ListChecks,
       },
-      {
-        title: 'My Account',
-        url: `${kcUrl}/account`,
-        target: 'blank',
-        onClick: () => {},
-        icon: UserRoundCog,
-      },
     ],
   },
 ];

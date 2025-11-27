@@ -1,7 +1,7 @@
 import { ParamValue } from 'next/dist/server/request/params';
 
 import { ProjectDeployTargetsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/deploy-targets/page';
-import { SidebarItem } from '@uselagoon/ui-library/dist/components/sidenav/Sidenav';
+import { SidebarItem } from '@uselagoon/ui-library/dist/components/Sidenav/Sidenav';
 import { GitPullRequestDraft } from 'lucide-react';
 
 import { EnvWithProblemsType } from './types';
