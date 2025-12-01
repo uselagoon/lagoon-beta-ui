@@ -36,10 +36,6 @@ export default function RoutesPage({queryRef,	projectName,}: {
 		},
 	});
 
-	const setResults = (val: string) => {
-		setQuery({ results: Number(val) });
-	};
-
 	const setRouteQuery = (str: string) => {
 		setQuery({ route_query: str });
 	};
@@ -71,13 +67,14 @@ export default function RoutesPage({queryRef,	projectName,}: {
 					renderFilters={table => (
 						<div className="flex items-center justify-between">
 							<SelectWithOptions
-								options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}
+								options={resultsFilterValues}
 								width={100}
-								value={String(results || 10)}
+								value={results === table.getRowCount() ? 'all' : String(results ?? 10)}
 								placeholder="Results per page"
 								onValueChange={newVal => {
-									table.setPageSize(Number(newVal));
-									setResults(newVal);
+									const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+									table.setPageSize(size);
+									setQuery({ results: size });
 								}}
 							/>
 						</div>

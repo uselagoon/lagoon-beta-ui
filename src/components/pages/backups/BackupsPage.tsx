@@ -103,11 +103,12 @@ export default function BackupsPage({
             <SelectWithOptions
               options={backupResultOptions}
               width={100}
-              value={String(results || 10)}
+              value={results === table.getRowCount() ? 'all' : String(results ?? 10)}
               placeholder="Results per page"
               onValueChange={newVal => {
-                table.setPageSize(Number(newVal));
-                setQuery({ results: Number(newVal) });
+                const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+                table.setPageSize(size);
+                setQuery({ results: size });
               }}
             />
           </div>

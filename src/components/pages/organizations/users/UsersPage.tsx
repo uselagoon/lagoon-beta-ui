@@ -43,10 +43,6 @@ export default function UsersPage({
     setQuery({ user_query: str });
   };
 
-  const setGroupsResults = (val: string) => {
-    setQuery({ results: Number(val) });
-  };
-
   const setShowDefaults = () => {
     setQuery({ showDefaults: !showDefaults });
   };
@@ -95,11 +91,12 @@ export default function UsersPage({
                 <SelectWithOptions
                   options={resultsFilterValues}
                   width={100}
-                  value={String(results || 10)}
+                  value={results === table.getRowCount() ? 'all' : String(results ?? 10)}
                   placeholder="Results per page"
                   onValueChange={newVal => {
-                    table.setPageSize(Number(newVal));
-                    setGroupsResults(newVal);
+                    const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+                    table.setPageSize(size);
+                    setQuery({ results: size });
                   }}
                 />
               </div>

@@ -17,6 +17,6 @@ export const tasksFilterOptions = [
   },
   {
     label: 'All',
-    value: -1,
+    value: 'all',
   },
 ];

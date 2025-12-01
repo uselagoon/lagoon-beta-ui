@@ -33,10 +33,6 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
     setQuery({ user_query: str });
   };
 
-  const setResults = (val: string) => {
-    setQuery({ results: Number(val) });
-  };
-
   const setShowDefaults = () => {
     setQuery({ showDefaults: !showDefaults });
   };
@@ -97,11 +93,12 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
               <SelectWithOptions
                 options={resultsFilterValues}
                 width={100}
-                value={String(results || 10)}
+                value={results === table.getRowCount() ? 'all' : String(results ?? 10)}
                 placeholder="Results per page"
                 onValueChange={newVal => {
-                  table.setPageSize(Number(newVal));
-                  setResults(newVal);
+                  const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+                  table.setPageSize(size);
+                  setQuery({ results: size });
                 }}
               />
             </div>
