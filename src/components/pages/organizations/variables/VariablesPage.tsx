@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import {
   OrgEnvVariable,
@@ -31,6 +31,7 @@ export default function OrgVariablesPage({
 
   const [envAction, setEnvAction] = useState('');
   const [orgValuesVisible, setOrgValuesVisible] = useState(false);
+  const [isPaginationDisabled, setIsPaginationDisabled] = React.useState(false);
 
   const {
     data: { organization },
@@ -150,6 +151,7 @@ export default function OrgVariablesPage({
           onSearch={searchStr => setSearch(searchStr)}
           initialSearch={search}
           initialPageSize={results || 10}
+          disablePagination={isPaginationDisabled}
           renderFilters={table => (
             <div className="flex gap-2">
               <SelectWithOptions
@@ -165,10 +167,11 @@ export default function OrgVariablesPage({
               <SelectWithOptions
                 options={resultsFilterValues}
                 width={100}
-                value={results === table.getRowCount() ? 'all' : String(results ?? 10)}
+                value={isPaginationDisabled ? 'all' : String(results ?? 10)}
                 placeholder="Results per page"
                 onValueChange={newVal => {
                   const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+                  setIsPaginationDisabled(newVal === 'all');
                   table.setPageSize(size);
                   setQuery({ results: size });
                 }}

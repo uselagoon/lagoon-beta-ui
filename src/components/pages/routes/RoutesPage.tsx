@@ -8,6 +8,7 @@ import {RoutesDataTableColumns} from "@/components/pages/routes/_components/Rout
 import {useQueryStates} from "nuqs";
 import {resultsFilterValues} from "@/components/pages/organizations/user/_components/filterValues";
 import {CreateRoute} from "@/components/createRoute/CreateRoute";
+import React from "react";
 
 
 export default function RoutesPage({queryRef,	projectName,}: {
@@ -35,7 +36,7 @@ export default function RoutesPage({queryRef,	projectName,}: {
 			parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
 		},
 	});
-
+	const [isPaginationDisabled, setIsPaginationDisabled] = React.useState(false);
 	const setRouteQuery = (str: string) => {
 		setQuery({ route_query: str });
 	};
@@ -64,15 +65,17 @@ export default function RoutesPage({queryRef,	projectName,}: {
 					onSearch={searchStr => setRouteQuery(searchStr)}
 					initialSearch={route_query}
 					initialPageSize={results || 10}
+					disablePagination={isPaginationDisabled}
 					renderFilters={table => (
 						<div className="flex items-center justify-between">
 							<SelectWithOptions
 								options={resultsFilterValues}
 								width={100}
-								value={results === table.getRowCount() ? 'all' : String(results ?? 10)}
+								value={isPaginationDisabled ? 'all' : String(results ?? 10)}
 								placeholder="Results per page"
 								onValueChange={newVal => {
 									const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+									setIsPaginationDisabled(newVal === 'all');
 									table.setPageSize(size);
 									setQuery({ results: size });
 								}}

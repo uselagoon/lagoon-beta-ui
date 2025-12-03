@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useEffect } from 'react';
+import React, { startTransition, useEffect } from 'react';
 
 import { BackupsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/backups/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
@@ -27,6 +27,7 @@ export default function BackupsPage({
     },
   });
   const { refetch } = useQueryRefHandlers(queryRef);
+  const [isPaginationDisabled, setIsPaginationDisabled] = React.useState(false);
 
   const {
     data: { environment },
@@ -68,6 +69,7 @@ export default function BackupsPage({
         columns={BackupsTableColumns(environment.id)}
         data={environment.backups}
         initialPageSize={results || 10}
+        disablePagination={isPaginationDisabled}
         searchPlaceholder="Search backup"
         searchableColumns={['source']}
         renderFilters={table => (
@@ -103,10 +105,11 @@ export default function BackupsPage({
             <SelectWithOptions
               options={backupResultOptions}
               width={100}
-              value={results === table.getRowCount() ? 'all' : String(results ?? 10)}
+              value={isPaginationDisabled ? 'all' : String(results ?? 10)}
               placeholder="Results per page"
               onValueChange={newVal => {
                 const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+                setIsPaginationDisabled(newVal === 'all');
                 table.setPageSize(size);
                 setQuery({ results: size });
               }}

@@ -9,6 +9,7 @@ import { useQueryStates } from 'nuqs';
 
 import UsersDataTableColumns from './UsersDataTableColumns';
 import { resultsFilterValues } from './_components/filterOptions';
+import React from "react";
 
 export default function UsersPage({
   orgId,
@@ -38,9 +39,14 @@ export default function UsersPage({
       serialize: (value: boolean) => String(value),
     },
   });
+  const [isPaginationDisabled, setIsPaginationDisabled] = React.useState(false);
 
   const setUserQuery = (str: string) => {
     setQuery({ user_query: str });
+  };
+
+  const setShowDefaults = () => {
+    setQuery({ showDefaults: !showDefaults });
   };
 
   const { refetch } = useQueryRefHandlers(queryRef);
@@ -74,6 +80,7 @@ export default function UsersPage({
           onSearch={searchStr => setUserQuery(searchStr)}
           initialSearch={user_query}
           initialPageSize={results || 10}
+          disablePagination={isPaginationDisabled}
           renderFilters={table => (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -81,28 +88,17 @@ export default function UsersPage({
                   id="show-defaults"
                   label={`Show default users (${defaultUsersCount})`}
                   checked={showDefaults}
-                  onCheckedChange={(checked) => {
-                    const pageSize = table.getState().pagination.pageSize;
-                    const rows = table.getRowCount();
-                    const total = checked ? users.length : users.length - defaultUsersCount;
-                    const allSelected = pageSize === rows;
-                    if (allSelected) {
-                      table.setPageSize(total);
-                    }
-                    setQuery({
-                      showDefaults: checked as boolean,
-                      ...(allSelected && { results: total })
-                    });
-                  }}
+                  onCheckedChange={setShowDefaults}
                   disabled={!hasDefaultUsers}
                 />
                 <SelectWithOptions
                   options={resultsFilterValues}
                   width={100}
-                  value={table.getState().pagination.pageSize === table.getRowCount() ? 'all' : String(results ?? 10)}
+                  value={isPaginationDisabled ? 'all' : String(results ?? 10)}
                   placeholder="Results per page"
                   onValueChange={newVal => {
                     const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+                    setIsPaginationDisabled(newVal === 'all');
                     table.setPageSize(size);
                     setQuery({ results: size });
                   }}

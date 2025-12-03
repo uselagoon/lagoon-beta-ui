@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useEffect, useState } from 'react';
+import React, { startTransition, useEffect, useState } from 'react';
 
 import { useEnvContext } from 'next-runtime-env';
 import { usePathname } from 'next/navigation';
@@ -66,6 +66,7 @@ export default function TasksPage({
   const setTasksCount = (val: string) => {
     setQuery({ tasks_count: Number(val) });
   };
+  const [isPaginationDisabled, setIsPaginationDisabled] = React.useState(false);
 
   const [selectedTask, setSelectedTask] = useState<TaskType>();
 
@@ -179,14 +180,16 @@ export default function TasksPage({
       <DataTable
         columns={getTasksTableColumns(pathname, environment.project.id, environment.id)}
         data={environment.tasks}
+        disablePagination={isPaginationDisabled}
         renderFilters={table => (
           <SelectWithOptions
             options={tasksFilterOptions}
             width={100}
-            value={tasks_count === table.getRowCount() ? 'all' : String(tasks_count ?? 10)}
+            value={isPaginationDisabled ? 'all' : String(tasks_count ?? 10)}
             placeholder="Results per page"
             onValueChange={newVal => {
               const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+              setIsPaginationDisabled(newVal === 'all');
               table.setPageSize(size);
               setQuery({ tasks_count: size });
             }}
