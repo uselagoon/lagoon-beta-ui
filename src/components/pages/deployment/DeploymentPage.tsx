@@ -19,6 +19,7 @@ import utc from 'dayjs/plugin/utc';
 import { getDeploymentDuration } from '../allDeployments/TableColumns';
 import {capitalize} from "@/components/utils";
 import {Loader2} from "lucide-react";
+import {getBadgeVariant} from "../../../../utils/setBadgeStatus";
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
@@ -98,7 +99,7 @@ export default function DeploymentPage({
   };
 
   const deploymentDataRow = {
-    status: <Badge variant="default">{capitalize(deployment.status)} {!['complete', 'cancelled', 'failed'].includes(deployment.status) &&
+    status: <Badge variant={getBadgeVariant(deployment.status, deployment.buildStep)}>{capitalize(deployment.status)} {!['complete', 'cancelled', 'failed'].includes(deployment.status) &&
       <Loader2 className="h-4 w-4 animate-spin t"/>}
     </Badge>,
     name: deployment.bulkId ? (
