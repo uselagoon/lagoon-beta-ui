@@ -43,10 +43,6 @@ export default function UsersPage({
     setQuery({ user_query: str });
   };
 
-  const setShowDefaults = () => {
-    setQuery({ showDefaults: !showDefaults });
-  };
-
   const { refetch } = useQueryRefHandlers(queryRef);
 
   const {
@@ -85,13 +81,25 @@ export default function UsersPage({
                   id="show-defaults"
                   label={`Show default users (${defaultUsersCount})`}
                   checked={showDefaults}
-                  onCheckedChange={setShowDefaults}
+                  onCheckedChange={(checked) => {
+                    const pageSize = table.getState().pagination.pageSize;
+                    const rows = table.getRowCount();
+                    const total = checked ? users.length : users.length - defaultUsersCount;
+                    const allSelected = pageSize === rows;
+                    if (allSelected) {
+                      table.setPageSize(total);
+                    }
+                    setQuery({
+                      showDefaults: checked as boolean,
+                      ...(allSelected && { results: total })
+                    });
+                  }}
                   disabled={!hasDefaultUsers}
                 />
                 <SelectWithOptions
                   options={resultsFilterValues}
                   width={100}
-                  value={results === table.getRowCount() ? 'all' : String(results ?? 10)}
+                  value={table.getState().pagination.pageSize === table.getRowCount() ? 'all' : String(results ?? 10)}
                   placeholder="Results per page"
                   onValueChange={newVal => {
                     const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
