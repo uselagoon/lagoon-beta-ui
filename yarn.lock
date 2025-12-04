@@ -4361,9 +4361,9 @@
   resolved "https://registry.yarnpkg.com/@unrs/resolver-binding-win32-x64-msvc/-/resolver-binding-win32-x64-msvc-1.11.1.tgz#538b1e103bf8d9864e7b85cc96fa8d6fb6c40777"
   integrity sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g==
 
-"@uselagoon/ui-library@github:uselagoon/ui-library#v0.1.0":
+"@uselagoon/ui-library@github:uselagoon/ui-library#v0.1.1":
   version "2.0.2"
-  resolved "https://codeload.github.com/uselagoon/ui-library/tar.gz/02f486d1e007afca90d0aa6acfdf4cd9ea562207"
+  resolved "https://codeload.github.com/uselagoon/ui-library/tar.gz/c5c2e70bf2b44b8e1535cd1b44ff49fa6b0d734a"
   dependencies:
     "@hookform/resolvers" "^5.1.1"
     "@radix-ui/react-accordion" "^1.2.11"
@@ -8759,27 +8759,6 @@ next-themes@^0.4.6:
   resolved "https://registry.yarnpkg.com/next-themes/-/next-themes-0.4.6.tgz#8d7e92d03b8fea6582892a50a928c9b23502e8b6"
   integrity sha512-pZvgD5L0IEvX5/9GWyHMf3m8BKiVQwsCMHfoFosXtXBMnaS0ZnIJ9ST4b4NqLVKDEm8QBxoNNGNaBv2JNF6XNA==
 
-next@15.5.7:
-  version "15.5.7"
-  resolved "https://registry.yarnpkg.com/next/-/next-15.5.7.tgz#4507700b2bbcaf2c9fb7a9ad25c0dac2ba4a9a75"
-  integrity sha512-+t2/0jIJ48kUpGKkdlhgkv+zPTEOoXyr60qXe68eB/pl3CMJaLeIGjzp5D6Oqt25hCBiBTt8wEeeAzfJvUKnPQ==
-  dependencies:
-    "@next/env" "15.5.7"
-    "@swc/helpers" "0.5.15"
-    caniuse-lite "^1.0.30001579"
-    postcss "8.4.31"
-    styled-jsx "5.1.6"
-  optionalDependencies:
-    "@next/swc-darwin-arm64" "15.5.7"
-    "@next/swc-darwin-x64" "15.5.7"
-    "@next/swc-linux-arm64-gnu" "15.5.7"
-    "@next/swc-linux-arm64-musl" "15.5.7"
-    "@next/swc-linux-x64-gnu" "15.5.7"
-    "@next/swc-linux-x64-musl" "15.5.7"
-    "@next/swc-win32-arm64-msvc" "15.5.7"
-    "@next/swc-win32-x64-msvc" "15.5.7"
-    sharp "^0.34.3"
-
 next@^14:
   version "14.2.33"
   resolved "https://registry.yarnpkg.com/next/-/next-14.2.33.tgz#284bc3de43d9319b7b41d4b69ec9a0ff0905a9e3"
@@ -8802,6 +8781,27 @@ next@^14:
     "@next/swc-win32-arm64-msvc" "14.2.33"
     "@next/swc-win32-ia32-msvc" "14.2.33"
     "@next/swc-win32-x64-msvc" "14.2.33"
+
+next@^15.4.4:
+  version "15.5.7"
+  resolved "https://registry.yarnpkg.com/next/-/next-15.5.7.tgz#4507700b2bbcaf2c9fb7a9ad25c0dac2ba4a9a75"
+  integrity sha512-+t2/0jIJ48kUpGKkdlhgkv+zPTEOoXyr60qXe68eB/pl3CMJaLeIGjzp5D6Oqt25hCBiBTt8wEeeAzfJvUKnPQ==
+  dependencies:
+    "@next/env" "15.5.7"
+    "@swc/helpers" "0.5.15"
+    caniuse-lite "^1.0.30001579"
+    postcss "8.4.31"
+    styled-jsx "5.1.6"
+  optionalDependencies:
+    "@next/swc-darwin-arm64" "15.5.7"
+    "@next/swc-darwin-x64" "15.5.7"
+    "@next/swc-linux-arm64-gnu" "15.5.7"
+    "@next/swc-linux-arm64-musl" "15.5.7"
+    "@next/swc-linux-x64-gnu" "15.5.7"
+    "@next/swc-linux-x64-musl" "15.5.7"
+    "@next/swc-win32-arm64-msvc" "15.5.7"
+    "@next/swc-win32-x64-msvc" "15.5.7"
+    sharp "^0.34.3"
 
 no-case@^3.0.4:
   version "3.0.4"
@@ -9611,17 +9611,17 @@ react-docgen@^7.0.0:
     resolve "^1.22.1"
     strip-indent "^4.0.0"
 
-react-dom@19.2.1:
-  version "19.2.1"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.2.1.tgz#ce3527560bda4f997e47d10dab754825b3061f59"
-  integrity sha512-ibrK8llX2a4eOskq1mXKu/TGZj9qzomO+sNfO98M6d9zIPOEhlBkMkBUBLd1vgS0gQsLDBzA+8jJBVXDnfHmJg==
-  dependencies:
-    scheduler "^0.27.0"
-
 "react-dom@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
   version "19.2.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.2.0.tgz#00ed1e959c365e9a9d48f8918377465466ec3af8"
   integrity sha512-UlbRu4cAiGaIewkPyiRGJk0imDN2T3JjieT6spoL2UeSf5od4n5LB/mQ4ejmxhCFT1tYe8IvaFulzynWovsEFQ==
+  dependencies:
+    scheduler "^0.27.0"
+
+react-dom@^19.1.0:
+  version "19.2.1"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.2.1.tgz#ce3527560bda4f997e47d10dab754825b3061f59"
+  integrity sha512-ibrK8llX2a4eOskq1mXKu/TGZj9qzomO+sNfO98M6d9zIPOEhlBkMkBUBLd1vgS0gQsLDBzA+8jJBVXDnfHmJg==
   dependencies:
     scheduler "^0.27.0"
 
@@ -9725,11 +9725,6 @@ react-transition-group@^4.4.5:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react@19.2.1:
-  version "19.2.1"
-  resolved "https://registry.yarnpkg.com/react/-/react-19.2.1.tgz#8600fa205e58e2e807f6ef431c9f6492591a2700"
-  integrity sha512-DGrYcCWK7tvYMnWh79yrPHt+vdx9tY+1gPZa7nJQtO/p8bLTDaHp4dzwEhQB7pZ4Xe3ok4XKuEPrVuc+wlpkmw==
-
 "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0":
   version "19.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-19.2.0.tgz#d33dd1721698f4376ae57a54098cb47fc75d93a5"
@@ -9741,6 +9736,11 @@ react@^18:
   integrity sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==
   dependencies:
     loose-envify "^1.1.0"
+
+react@^19.1.0:
+  version "19.2.1"
+  resolved "https://registry.yarnpkg.com/react/-/react-19.2.1.tgz#8600fa205e58e2e807f6ef431c9f6492591a2700"
+  integrity sha512-DGrYcCWK7tvYMnWh79yrPHt+vdx9tY+1gPZa7nJQtO/p8bLTDaHp4dzwEhQB7pZ4Xe3ok4XKuEPrVuc+wlpkmw==
 
 readable-stream@^2.3.8:
   version "2.3.8"

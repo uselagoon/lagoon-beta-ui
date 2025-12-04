@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useEffect, useState } from 'react';
+import React, { startTransition, useEffect, useState } from 'react';
 
 import { useEnvContext } from 'next-runtime-env';
 import { usePathname } from 'next/navigation';
@@ -23,6 +23,7 @@ import DrushSqlDump from './_components/tasks/DrushSqlDump';
 import DrushSqlSync from './_components/tasks/DrushSqlSync';
 import DrushUserLogin from './_components/tasks/DrushUserLogin';
 import InvokeRegisteredTask, { AdvancedTaskType } from './_components/tasks/InvokeRegisteredTask';
+import { tasksFilterOptions } from './_components/filterValues';
 
 type TaskType =
   | 'DrushCacheClear'
@@ -65,6 +66,7 @@ export default function TasksPage({
   const setTasksCount = (val: string) => {
     setQuery({ tasks_count: Number(val) });
   };
+  const [isPaginationDisabled, setIsPaginationDisabled] = React.useState(false);
 
   const [selectedTask, setSelectedTask] = useState<TaskType>();
 
@@ -178,28 +180,18 @@ export default function TasksPage({
       <DataTable
         columns={getTasksTableColumns(pathname, environment.project.id, environment.id)}
         data={environment.tasks}
+        disablePagination={isPaginationDisabled}
         renderFilters={table => (
           <SelectWithOptions
-            options={[
-              {
-                label: '10 results per page',
-                value: 10,
-              },
-              {
-                label: '20 results per page',
-                value: 20,
-              },
-              {
-                label: '50 results per page',
-                value: 50,
-              },
-            ]}
+            options={tasksFilterOptions}
             width={100}
-            value={String(tasks_count)}
+            value={isPaginationDisabled ? 'all' : String(tasks_count ?? 10)}
             placeholder="Results per page"
             onValueChange={newVal => {
-              table.setPageSize(Number(newVal));
-              setTasksCount(newVal);
+              const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+              setIsPaginationDisabled(newVal === 'all');
+              table.setPageSize(size);
+              setQuery({ tasks_count: size });
             }}
           />
         )}

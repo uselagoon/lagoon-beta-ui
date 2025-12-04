@@ -9,6 +9,7 @@ import {resultsFilterValues} from "@/components/pages/organizations/user/_compon
 import {CreateRoute} from "@/components/createRoute/CreateRoute";
 import { EnvironmentRoutesData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/routes/page';
 import { RoutesDataTableColumns } from './_components/RoutesDataTableColumns';
+import React from "react";
 
 
 export default function EnvironmentRoutesPage({queryRef,	projectName,}: {
@@ -36,11 +37,7 @@ export default function EnvironmentRoutesPage({queryRef,	projectName,}: {
 			parse: (value: string | undefined) => (value !== undefined ? String(value) : ''),
 		},
 	});
-
-	const setResults = (val: string) => {
-		setQuery({ results: Number(val) });
-	};
-
+	const [isPaginationDisabled, setIsPaginationDisabled] = React.useState(false);
 	const setRouteQuery = (str: string) => {
 		setQuery({ route_query: str });
 	};
@@ -76,16 +73,19 @@ export default function EnvironmentRoutesPage({queryRef,	projectName,}: {
 					onSearch={searchStr => setRouteQuery(searchStr)}
 					initialSearch={route_query}
 					initialPageSize={results || 10}
+					disablePagination={isPaginationDisabled}
 					renderFilters={table => (
 						<div className="flex items-center justify-between">
 							<SelectWithOptions
-								options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}
+								options={resultsFilterValues}
 								width={100}
-								value={String(results || 10)}
+								value={isPaginationDisabled ? 'all' : String(results ?? 10)}
 								placeholder="Results per page"
 								onValueChange={newVal => {
-									table.setPageSize(Number(newVal));
-									setResults(newVal);
+									const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+									setIsPaginationDisabled(newVal === 'all');
+									table.setPageSize(size);
+									setQuery({ results: size });
 								}}
 							/>
 						</div>
