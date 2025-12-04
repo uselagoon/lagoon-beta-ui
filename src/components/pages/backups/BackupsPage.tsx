@@ -1,10 +1,11 @@
 'use client';
 
-import { startTransition, useEffect } from 'react';
+import React, { startTransition, useEffect } from 'react';
 
 import { BackupsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/backups/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
+import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, DateRangePicker, Select, SelectWithOptions, Table } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
@@ -26,10 +27,17 @@ export default function BackupsPage({
     },
   });
   const { refetch } = useQueryRefHandlers(queryRef);
+  const [isPaginationDisabled, setIsPaginationDisabled] = React.useState(false);
 
   const {
     data: { environment },
   } = useReadQuery(queryRef);
+
+  // Show notification for pending changes
+  usePendingChangesNotification({
+    environment,
+    environmentSlug,
+  });
 
   // polling every 20s if status needs to be checked
   useEffect(() => {
@@ -61,6 +69,7 @@ export default function BackupsPage({
         columns={BackupsTableColumns(environment.id)}
         data={environment.backups}
         initialPageSize={results || 10}
+        disablePagination={isPaginationDisabled}
         searchPlaceholder="Search backup"
         searchableColumns={['source']}
         renderFilters={table => (
@@ -96,11 +105,13 @@ export default function BackupsPage({
             <SelectWithOptions
               options={backupResultOptions}
               width={100}
-              value={String(results || 10)}
+              value={isPaginationDisabled ? 'all' : String(results ?? 10)}
               placeholder="Results per page"
               onValueChange={newVal => {
-                table.setPageSize(Number(newVal));
-                setQuery({ results: Number(newVal) });
+                const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+                setIsPaginationDisabled(newVal === 'all');
+                table.setPageSize(size);
+                setQuery({ results: size });
               }}
             />
           </div>

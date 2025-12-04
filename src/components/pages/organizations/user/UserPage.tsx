@@ -10,6 +10,7 @@ import { useQueryStates } from 'nuqs';
 import { UnlinkGroup } from './_components/UnlinkGroup';
 import { UserDataTableColumns } from './_components/UserGroupsTableColumns';
 import { resultsFilterValues } from './_components/filterValues';
+import React from "react";
 
 export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<OrganizationUserData>; orgName: string }) {
   const [{ results, user_query, showDefaults }, setQuery] = useQueryStates({
@@ -28,13 +29,10 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
       serialize: (value: boolean) => String(value),
     },
   });
+  const [isPaginationDisabled, setIsPaginationDisabled] = React.useState(false);
 
   const setUserQuery = (str: string) => {
     setQuery({ user_query: str });
-  };
-
-  const setResults = (val: string) => {
-    setQuery({ results: Number(val) });
   };
 
   const setShowDefaults = () => {
@@ -61,7 +59,7 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
 
   return (
     <SectionWrapper>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">User Groups</h3>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Groups for {userByEmailAndOrganization.email}</h3>
 
       <DataTable
         columns={UserDataTableColumns(
@@ -84,6 +82,7 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
         onSearch={searchStr => setUserQuery(searchStr)}
         initialSearch={user_query}
         initialPageSize={results || 10}
+        disablePagination={isPaginationDisabled}
         renderFilters={table => (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -97,11 +96,13 @@ export default function UserPage({ queryRef, orgName }: { queryRef: QueryRef<Org
               <SelectWithOptions
                 options={resultsFilterValues}
                 width={100}
-                value={String(results || 10)}
+                value={isPaginationDisabled ? 'all' : String(results ?? 10)}
                 placeholder="Results per page"
                 onValueChange={newVal => {
-                  table.setPageSize(Number(newVal));
-                  setResults(newVal);
+                  const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+                  setIsPaginationDisabled(newVal === 'all');
+                  table.setPageSize(size);
+                  setQuery({ results: size });
                 }}
               />
             </div>

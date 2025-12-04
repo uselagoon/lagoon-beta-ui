@@ -20,6 +20,9 @@ export default gql`
           name
         }
       }
+      pendingChanges {
+        details
+      }
       services {
         name
       }

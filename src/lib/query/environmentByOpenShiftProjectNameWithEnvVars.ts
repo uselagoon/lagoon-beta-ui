@@ -16,6 +16,9 @@ export default gql`
         name
         scope
       }
+      pendingChanges {
+        details
+      }
       project {
         name
         gitUrl

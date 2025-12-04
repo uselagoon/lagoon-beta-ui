@@ -17,6 +17,6 @@ export const resultsFilterValues = [
   },
   {
     label: 'All',
-    value: -1,
+    value: 'all',
   },
 ];

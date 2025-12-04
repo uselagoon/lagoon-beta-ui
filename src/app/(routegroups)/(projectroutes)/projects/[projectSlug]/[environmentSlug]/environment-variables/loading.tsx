@@ -27,7 +27,7 @@ export default function Loading() {
       <div className="flex gap-2 items-center justify-between">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Environment variables</h3>
         <Switch
-          label="Edit values"
+          label="Edit environment values"
           id=""
           description=""
         />

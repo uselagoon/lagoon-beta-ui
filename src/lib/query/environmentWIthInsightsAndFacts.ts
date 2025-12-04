@@ -14,6 +14,9 @@ export default gql`
         factsUi
         featureApiRoutes
       }
+      pendingChanges {
+        details
+      }
       insights {
         id
         file
@@ -25,6 +28,9 @@ export default gql`
       }
       facts {
         ...factFields
+      }
+      pendingChanges {
+        details
       }
     }
   }

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useMutation } from '@apollo/client';
 import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
-import { Pencil } from 'lucide-react';
+import { Edit2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 import addOrUpdateRouteOnEnvironment from '@/lib/mutation/addOrUpdateRouteOnEnvironment';
 import { routeTypeOptions } from '@/components/shared/selectOptions';
@@ -138,7 +138,7 @@ const EditRouteSheet = ({
       <Sheet
         sheetTrigger={iconOnly ?           <Tooltip>
             <TooltipTrigger>
-              <Pencil className="h-5 w-5" />
+              <Edit2Icon className="h-5 w-5" />
             </TooltipTrigger>
             <TooltipContent>Update route on environment</TooltipContent>
           </Tooltip> : 'Update'}

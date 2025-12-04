@@ -9,6 +9,7 @@ import { useQueryStates } from 'nuqs';
 
 import UsersDataTableColumns from './UsersDataTableColumns';
 import { resultsFilterValues } from './_components/filterOptions';
+import React from "react";
 
 export default function UsersPage({
   orgId,
@@ -38,13 +39,10 @@ export default function UsersPage({
       serialize: (value: boolean) => String(value),
     },
   });
+  const [isPaginationDisabled, setIsPaginationDisabled] = React.useState(false);
 
   const setUserQuery = (str: string) => {
     setQuery({ user_query: str });
-  };
-
-  const setGroupsResults = (val: string) => {
-    setQuery({ results: Number(val) });
   };
 
   const setShowDefaults = () => {
@@ -82,6 +80,7 @@ export default function UsersPage({
           onSearch={searchStr => setUserQuery(searchStr)}
           initialSearch={user_query}
           initialPageSize={results || 10}
+          disablePagination={isPaginationDisabled}
           renderFilters={table => (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -95,11 +94,13 @@ export default function UsersPage({
                 <SelectWithOptions
                   options={resultsFilterValues}
                   width={100}
-                  value={String(results || 10)}
+                  value={isPaginationDisabled ? 'all' : String(results ?? 10)}
                   placeholder="Results per page"
                   onValueChange={newVal => {
-                    table.setPageSize(Number(newVal));
-                    setGroupsResults(newVal);
+                    const size = newVal === 'all' ? table.getRowCount() : Number(newVal);
+                    setIsPaginationDisabled(newVal === 'all');
+                    table.setPageSize(size);
+                    setQuery({ results: size });
                   }}
                 />
               </div>

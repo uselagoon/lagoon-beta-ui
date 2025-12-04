@@ -3,6 +3,7 @@
 import { InsightsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/insights/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
+import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useReadQuery } from '@apollo/client';
 import { DataTable, DateRangePicker, SelectWithOptions } from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
@@ -19,6 +20,12 @@ export default function InsightsPage({
   const {
     data: { environment },
   } = useReadQuery(queryRef);
+
+  // Show notification for pending changes
+  usePendingChangesNotification({
+    environment,
+    environmentSlug,
+  });
 
   const [{ fact_results, fact_query, insights_query, insights_results }, setQuery] = useQueryStates({
     fact_results: {

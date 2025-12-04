@@ -47,13 +47,14 @@ export default function Loading() {
   return (
     <>
       <SectionWrapper>
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organization variables</h3>
-
-        <Switch
-          label="Edit values"
-          id=""
-          description=""
-        />
+        <div className="flex items-start justify-between">
+          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organization variables</h3>
+          <Switch
+            label="Edit values"
+            id=""
+            description=""
+          />
+        </div>
 
         <DataTable
           loading

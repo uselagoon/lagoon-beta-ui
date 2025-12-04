@@ -8,6 +8,7 @@ import {
 } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/problems/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
+import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useReadQuery } from '@apollo/client';
 import { DataTable, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@uselagoon/ui-library';
 
@@ -32,6 +33,12 @@ export default function ProblemsPage({
   const {
     data: { environment },
   } = useReadQuery(queryRef);
+
+  // Show notification for pending changes
+  usePendingChangesNotification({
+    environment,
+    environmentSlug,
+  });
 
   const [selectedProblemId, setSelectedProblemId] = useState<number | null>(null);
 

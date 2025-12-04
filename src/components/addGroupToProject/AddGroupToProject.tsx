@@ -62,7 +62,7 @@ export const AddGroupToProject: FC<Props> = ({ projectName, groups, refetch }) =
           id: 'group_name',
           label: 'Group',
           required: true,
-          placeholder: 'Select a notification to link',
+          placeholder: 'Select a group to link',
           type: 'select',
           options: groupOptions,
         },

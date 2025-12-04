@@ -23,6 +23,9 @@ export default gql`
           featureApiRoutes
           name
         }
+        pendingChanges {
+          details
+        }
         openshift {
           friendlyName
           cloudRegion

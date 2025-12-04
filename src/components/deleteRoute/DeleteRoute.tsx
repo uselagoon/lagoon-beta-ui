@@ -3,7 +3,7 @@ import { FC, startTransition, useState } from 'react';
 import deleteRouteFromProject from '@/lib/mutation/deleteRouteFromProject'; 
 import { useMutation } from '@apollo/client';
 import { Button, Input, Label, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
-import { Trash2 } from 'lucide-react';
+import {Trash, Trash2} from 'lucide-react';
 import { toast } from 'sonner';
 
 import { HighlightedText } from '../cancelDeployment/styles';
@@ -71,7 +71,7 @@ export const DeleteRouteDialog: FC<Props> = ({ route, refetch, onClick, ...rest 
         onConfirm={() => handleDeleteRoute(inputValue, route.id)}
       >
         <Button
-          variant="destructive"
+          variant="outline"
           onClick={async () => {
             let permissionResponse = onClick ? await onClick() : {};
             if (permissionResponse?.error) {
@@ -82,7 +82,7 @@ export const DeleteRouteDialog: FC<Props> = ({ route, refetch, onClick, ...rest 
         >
           <Tooltip>
             <TooltipTrigger>
-              <Trash2 data-cy="delete-route" />
+              <Trash data-cy="delete-route" />
             </TooltipTrigger>
             <TooltipContent>Delete route</TooltipContent>
           </Tooltip>

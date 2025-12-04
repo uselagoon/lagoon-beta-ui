@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation';
 import { EnvironmentData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/(environment-overview)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
+import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import deleteEnvironment from '@/lib/mutation/deleteEnvironment';
 import switchActiveStandby from '@/lib/mutation/switchActiveStandby';
 import environmentByOpenShiftProjectNameWithFacts from '@/lib/query/environmentWIthInsightsAndFacts';
 import { QueryRef, useMutation, useQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DetailStat } from '@uselagoon/ui-library';
+import {Badge, DetailStat} from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import gitUrlParse from 'git-url-parse';
@@ -19,6 +20,7 @@ import DeleteConfirm from '../../deleteConfirm/DeleteConfirm';
 import KeyFacts from './_components/KeyFacts';
 import LimitedRoutes from './_components/LimitedRoutes';
 import deduplicateFacts from './_components/deduplicateFacts';
+import {makeSafe} from "@/components/utils";
 
 dayjs.extend(utc);
 
@@ -46,6 +48,14 @@ export default function EnvironmentPage({
     data: { environment },
   } = useReadQuery(queryRef);
 
+  const router = useRouter();
+
+  // Show pending changes notification
+  usePendingChangesNotification({
+    environment,
+    environmentSlug,
+  });
+
   const {
     data: factsData,
     loading: factsLoading,
@@ -58,8 +68,6 @@ export default function EnvironmentPage({
 
   const hasFactViewPermission = !factsError?.message?.includes('Unauthorized');
   const environmentFacts = factsData?.environment?.facts ?? [];
-
-  const router = useRouter();
 
   const [deleteEnvironmentMutation, { data, loading: deleteLoading }] = useMutation(deleteEnvironment);
 
@@ -87,9 +95,34 @@ export default function EnvironmentPage({
 
   const keyFacts = deduplicateFacts(environmentFacts);
 
+  const activeEnvironment =
+    environment.project.productionEnvironment &&
+    environment.project.standbyProductionEnvironment &&
+    environment.project.productionEnvironment == makeSafe(environment.name);
+  const standbyEnvironment =
+    environment.project.productionEnvironment &&
+    environment.project.standbyProductionEnvironment &&
+    environment.project.standbyProductionEnvironment == makeSafe(environment.name);
+
   const environmentDetailItems = [
     {
-      children: environment.environmentType,
+      children: (
+        <div className="flex items-center">
+          <span className="capitalize">{environment.environmentType}</span>
+            <>
+              { activeEnvironment ? (
+                <Badge variant="success" className="ml-2">
+                  Active
+                </Badge>
+              ) : null}
+              { standbyEnvironment ? (
+                <Badge variant="lagoon" className="ml-2">
+                  Standby
+                </Badge>
+              ) : null}
+            </>
+        </div>
+      ),
       key: 'env_type',
       title: 'Environment type',
       lowercaseValue: true,
@@ -180,21 +213,32 @@ export default function EnvironmentPage({
       <section className="mt-10 [&>*:not(:first-child)]:mb-2">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-5">Routes</h3>
 
-        <div className="flex justify-start gap-24">
-          {routes ? (
-            <section>
-              <h4 className="scroll-m-20 text-md font-semibold tracking-tight mb-3">Active routes</h4>
-              <LimitedRoutes routes={routes} />
-            </section>
+        <div className="flex justify-start gap-34">
+          {activeEnvironment && activeRoutes ? (
+            <>
+              <section>
+                <h4 className="scroll-m-20 text-md font-semibold tracking-tight mb-3">Active routes</h4>
+                <LimitedRoutes routes={activeRoutes} />
+              </section>
+              <br />
+            </>
           ) : null}
 
-          <br />
-          {standbyRoutes ? (
-            <section>
-              <h5 className="scroll-m-20 text-md font-semibold tracking-tight mb-3">Standby routes</h5>
-              <LimitedRoutes routes={standbyRoutes} />
-            </section>
+          {standbyEnvironment && standbyRoutes ? (
+            <>
+              <section>
+                <h4 className="scroll-m-20 text-md font-semibold tracking-tight mb-3">Standby routes</h4>
+                <LimitedRoutes routes={standbyRoutes} />
+              </section>
+              <br />
+            </>
           ) : null}
+          {routes && (
+              <section>
+                <h4 className="scroll-m-20 text-md font-semibold tracking-tight mb-3">Routes</h4>
+                <LimitedRoutes routes={routes} />
+              </section>
+          )}
         </div>
         {envHasNoRoutes && (
           <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal">

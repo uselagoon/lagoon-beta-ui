@@ -140,7 +140,7 @@ export default function OrgProjectPage({
 
   return (
     <SectionWrapper>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-4">Groups</h3>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-4">Groups for {project.name}</h3>
 
       <AddGroupToProject projectName={project.name} groups={filteredGroups} refetch={refetch} />
 
@@ -168,7 +168,7 @@ export default function OrgProjectPage({
         )}
       />
 
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-4">Notifications</h3>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-4">Notifications for {project.name}</h3>
 
       <AddNotificationToProject
         projectName={project.name}

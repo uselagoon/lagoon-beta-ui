@@ -88,7 +88,7 @@ export default function GroupPage({ queryRef }: { queryRef: QueryRef<Organizatio
 
   return (
     <SectionWrapper>
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Users</h3>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Users of {group.name}</h3>
       <div className="gap-4 my-4">
         <AddUserToGroup groupName={group.name} refetch={refetch} />
       </div>
@@ -124,7 +124,7 @@ export default function GroupPage({ queryRef }: { queryRef: QueryRef<Organizatio
         )}
       />
 
-      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Projects</h3>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Projects associated to {group.name}</h3>
 
       <div className="gap-4 my-4">
         <AddProjectToGroup projects={filteredProjects} groupName={group.name} refetch={refetch} />

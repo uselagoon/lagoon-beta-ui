@@ -69,21 +69,6 @@ const UsersDataTableColumns = (
     },
   },
   {
-    accessorKey: 'groupRoles',
-    header: 'Roles',
-    cell: ({ row }) => {
-      const groupRoles = row.original.groupRoles;
-
-      return (
-        <div className="flex flex-col gap-2">
-          {[...new Set(groupRoles.map(group => group.role))].map(uniqueRole => (
-            <Badge key={uniqueRole}>{uniqueRole}</Badge>
-          ))}
-        </div>
-      );
-    },
-  },
-  {
     id: 'Groups',
     accessorFn: row => row.groupRoles?.length,
     sortingFn: (rowA, rowB, columnId) => {
@@ -106,6 +91,20 @@ const UsersDataTableColumns = (
       return (
         <div className="ml-4">
           <Badge key={row.original.id}>{groupRoles?.length}</Badge>
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: 'attrs',
+    header: 'Attributes',
+    cell: ({ row }) => {
+      const has2faEnabled = row.original?.has2faEnabled;
+      const isFederatedUser = row.original?.isFederatedUser
+      return (
+        <div className="flex flex-col gap-2">
+          {has2faEnabled && (<Badge variant="success">2FA</Badge>)}
+          {isFederatedUser && (<Badge variant="info">SSO</Badge>)}
         </div>
       );
     },
