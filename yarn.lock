@@ -4361,9 +4361,9 @@
   resolved "https://registry.yarnpkg.com/@unrs/resolver-binding-win32-x64-msvc/-/resolver-binding-win32-x64-msvc-1.11.1.tgz#538b1e103bf8d9864e7b85cc96fa8d6fb6c40777"
   integrity sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g==
 
-"@uselagoon/ui-library@github:uselagoon/ui-library#v0.1.1":
+"@uselagoon/ui-library@github:uselagoon/ui-library#v0.1.2":
   version "2.0.2"
-  resolved "https://codeload.github.com/uselagoon/ui-library/tar.gz/c5c2e70bf2b44b8e1535cd1b44ff49fa6b0d734a"
+  resolved "https://codeload.github.com/uselagoon/ui-library/tar.gz/44318af1df1bfd70906905d82ab24e9e7cf72246"
   dependencies:
     "@hookform/resolvers" "^5.1.1"
     "@radix-ui/react-accordion" "^1.2.11"
