@@ -9,6 +9,7 @@ import { useParams, usePathname } from 'next/navigation';
 import { useSidenavItems } from '@/components/dynamicNavigation/useSidenavItems';
 import {RootLayout, ThemeSwitch, Toaster} from '@uselagoon/ui-library';
 import manualSignOut from 'utils/manualSignOut';
+import {useOverrides} from "@/contexts/OverrideContext";
 
 export type SidebarItem = {
   title: string;
@@ -37,6 +38,7 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
   // notion style dynamic sidenav items
   const sidenavItems = useSidenavItems(kcUrl, projectSlug, environmentSlug, organizationSlug);
 
+  const overrides = useOverrides();
 
   const memoizedLogo = useMemo(() => {
     const getLogo = () => {
@@ -77,6 +79,8 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         signOutFn={manualSignOut}
         currentPath={pathname}
         sidenavItems={sidenavItems}
+        // cardProps={overrides?.components?.announcementCard} // Requires https://github.com/uselagoon/ui-library/pull/24
+        documentationUrl={overrides?.global?.documentationUrl}
       >
          <div className="absolute top-2 right-4">
            <ThemeSwitch />

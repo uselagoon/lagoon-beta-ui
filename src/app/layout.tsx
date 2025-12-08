@@ -12,6 +12,16 @@ import AppProvider from '../contexts/AppContext';
 import AuthProvider from '../contexts/AuthProvider';
 import LinkProvider from '../contexts/LinkProvider';
 import './globals.css';
+import fs from 'fs';
+import {OverrideProvider} from "@/contexts/OverrideContext";
+import * as process from "node:process";
+
+function loadOverrides() {
+  if (fs.existsSync('overrides.json')) {
+    const overrideData = fs.readFileSync('overrides.json', 'utf-8');
+    return JSON.parse(overrideData);
+  }
+}
 
 export const metadata: Metadata = {
   title: 'Lagoon UI',
@@ -32,6 +42,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const overrides = loadOverrides();
   // ref for exposing custom variables at runtime: https://github.com/expatfile/next-runtime-env/blob/development/docs/EXPOSING_CUSTOM_ENV.md
   noStore();
   return (
@@ -41,6 +52,7 @@ export default async function RootLayout({
           <Plugins hook="head" />
         </head>
         <body>
+        <OverrideProvider overrides={overrides}>
           <ProgressProvider>
             <LinkProvider>
               <AuthProvider>
@@ -54,6 +66,7 @@ export default async function RootLayout({
             </LinkProvider>
             <Plugins hook="body" />
           </ProgressProvider>
+        </OverrideProvider>
         </body>
       </PublicRuntimeEnvProvider>
     </html>
