@@ -55,22 +55,24 @@ export default function ProjectEnvironmentsPage({
   };
   const { environments } = project;
   const productionEnvironment = project.productionEnvironment;
+  const standbyProductionEnvironment = project.standbyProductionEnvironment;
 
   const sortedEnvironments = [
     environments.find(env => makeSafe(env.name) === productionEnvironment),
-    ...environments.filter(env => makeSafe(env.name) !== productionEnvironment),
+    standbyProductionEnvironment && environments.find(env => makeSafe(env.name) === standbyProductionEnvironment),
+    ...environments.filter(env => makeSafe(env.name) !== productionEnvironment && makeSafe(env.name) !== standbyProductionEnvironment),
   ].filter(env => !!env);
 
   const envTableData = sortedEnvironments.map(environment => {
 
     const activeEnvironment =
-      project.productionEnvironment &&
-      project.standbyProductionEnvironment &&
-      project.productionEnvironment == makeSafe(environment.name);
+      productionEnvironment &&
+      standbyProductionEnvironment &&
+      productionEnvironment == makeSafe(environment.name);
     const standbyEnvironment =
-      project.productionEnvironment &&
-      project.standbyProductionEnvironment &&
-      project.standbyProductionEnvironment == makeSafe(environment.name);
+      productionEnvironment &&
+      standbyProductionEnvironment &&
+      standbyProductionEnvironment == makeSafe(environment.name);
 
     const envType = activeEnvironment
       ? 'active production'
