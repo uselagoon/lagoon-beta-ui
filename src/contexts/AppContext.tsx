@@ -79,7 +79,7 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         signOutFn={manualSignOut}
         currentPath={pathname}
         sidenavItems={sidenavItems}
-        // cardProps={overrides?.components?.announcementCard} // Requires https://github.com/uselagoon/ui-library/pull/24
+        cardProps={overrides?.components?.announcementCard}
         documentationUrl={overrides?.global?.documentationUrl}
       >
          <div className="absolute top-2 right-4">

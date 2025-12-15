@@ -15,12 +15,30 @@ import './globals.css';
 import fs from 'fs';
 import {OverrideProvider} from "@/contexts/OverrideContext";
 import * as process from "node:process";
+import { validateOverrides, type Overrides } from '@uselagoon/ui-library/schemas';
 
-function loadOverrides() {
-  if (fs.existsSync('overrides.json')) {
-    const overrideData = fs.readFileSync('overrides.json', 'utf-8');
-    return JSON.parse(overrideData);
-  }
+function loadOverrides() : Overrides {
+  try {
+    if (fs.existsSync('overrides.json')) {
+      const overrideData = fs.readFileSync('overrides.json', 'utf-8');
+
+      const { valid, errors } = validateOverrides(JSON.parse(overrideData))
+
+      if (errors.length > 0) {
+        console.log('Invalid overrides detected:\n');
+        errors.forEach(err => {
+          console.log(`- ${err.key}: ${err.message}`);
+        });
+      } else {
+        console.log('Overrides loaded successfully');
+      }
+
+      return valid;
+    }
+  } catch (error) {
+      console.log('Error loading overrides:', error);
+    }
+  return {};
 }
 
 export const metadata: Metadata = {

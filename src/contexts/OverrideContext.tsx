@@ -1,22 +1,14 @@
 'use client';
 
 import {createContext, useContext} from "react";
+import { type Overrides } from '@uselagoon/ui-library/schemas';
 
-export interface ComponentOverrides {
-	[componentName: string]: Record<string, any>;
-}
-
-export interface OverrideSchema {
-	global: Record<string, any>;
-	components: ComponentOverrides;
-}
-
-const OverrideContext = createContext<OverrideSchema>({
+const OverrideContext = createContext<Overrides>({
 	global: {},
 	components: {}
 });
 
-export function OverrideProvider({ children, overrides }: { children: React.ReactNode, overrides: OverrideSchema }) {
+export function OverrideProvider({ children, overrides }: { children: React.ReactNode, overrides: Overrides }) {
 	return (
 		<OverrideContext.Provider value={overrides}>
 			{children}
