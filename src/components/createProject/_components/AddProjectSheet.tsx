@@ -156,7 +156,7 @@ const AddProjectSheet = ({
             id: 'addUserToProject',
             label: 'Add my user to this project',
             type: 'checkbox',
-            inputDefault: 'true',
+            inputDefault: true,
           },
         ]}
       />
