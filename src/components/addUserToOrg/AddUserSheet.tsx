@@ -88,7 +88,7 @@ const AddUserSheet = ({
             id: 'inviteUser',
             label: 'Invite user to Lagoon',
             type: 'checkbox',
-            inputDefault: 'true',
+            inputDefault: true,
           },
         ]}
         additionalContent={
