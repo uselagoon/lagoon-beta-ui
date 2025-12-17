@@ -92,14 +92,15 @@ const DeployLatestData: React.FC<Props> = ({ environment }) => {
           <Button data-cy="deploy-button" disabled={loading} onClick={() => deployEnvironmentLatestMutation()}>
             {loading && <Loader2 className="animate-spin" />} Deploy
           </Button>
-          <label className="flex items-center gap-2 ml-4">
-            <Switch
-              checked={envVarOnly}
-              onCheckedChange={setEnvVarOnly}
-              disabled={loading}
-            />
-            <span className="text-sm">Environment variable deployment</span>
-          </label>
+          
+          <Switch
+            checked={envVarOnly}
+            onCheckedChange={setEnvVarOnly}
+            disabled={loading}
+            label='Variables only'
+            id='envonly'
+            description='Deploy environment variables only'
+          />
         </>
       )}
     </section>
