@@ -5,6 +5,7 @@ import { RefetchFunction } from '@apollo/client/react/hooks/useSuspenseQuery';
 import { Button, Skeleton } from '@uselagoon/ui-library';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useState } from 'react';
 
 interface Props {
   environment: DeploymentsData['environment'];
@@ -33,6 +34,7 @@ const DeployLatestSkeleton = () => (
 
 const DeployLatestData: React.FC<Props> = ({ environment }) => {
   const { id, deployType, deployBaseRef, deployHeadRef, deployTitle } = environment;
+  const [envVarOnly, setEnvVarOnly] = useState(false);
 
   const [deployEnvironmentLatestMutation, { loading, error }] = useMutation(deployEnvironmentLatest, {
     onError: err => {
@@ -44,9 +46,12 @@ const DeployLatestData: React.FC<Props> = ({ environment }) => {
     },
     variables: {
       environmentId: id,
+      envVarOnly: envVarOnly ? "true" : "false",
     },
     onCompleted: () => {
-      toast.success('Deployment triggered');
+      setEnvVarOnly(false);
+      const message = envVarOnly ? 'Variable-only deployment triggered' : 'Deployment triggered';
+      toast.success(message);
     },
     refetchQueries: ['getEnvironment'],
   });
@@ -87,6 +92,15 @@ const DeployLatestData: React.FC<Props> = ({ environment }) => {
           <Button data-cy="deploy-button" disabled={loading} onClick={() => deployEnvironmentLatestMutation()}>
             {loading && <Loader2 className="animate-spin" />} Deploy
           </Button>
+          <label className="flex items-center gap-2 ml-4">
+            <input
+              type="checkbox"
+              checked={envVarOnly}
+              onChange={(e) => setEnvVarOnly(e.target.checked)}
+              disabled={loading}
+            />
+            <span className="text-sm">Environment variable deployment</span>
+          </label>
         </>
       )}
     </section>
