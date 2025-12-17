@@ -2,7 +2,7 @@ import { DeploymentsData } from '@/app/(routegroups)/(projectroutes)/projects/[p
 import deployEnvironmentLatest from '@/lib/mutation/deployEnvironmentLatest';
 import { useMutation } from '@apollo/client';
 import { RefetchFunction } from '@apollo/client/react/hooks/useSuspenseQuery';
-import { Button, Skeleton } from '@uselagoon/ui-library';
+import { Button, Skeleton, Switch } from '@uselagoon/ui-library';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';
@@ -93,10 +93,9 @@ const DeployLatestData: React.FC<Props> = ({ environment }) => {
             {loading && <Loader2 className="animate-spin" />} Deploy
           </Button>
           <label className="flex items-center gap-2 ml-4">
-            <input
-              type="checkbox"
+            <Switch
               checked={envVarOnly}
-              onChange={(e) => setEnvVarOnly(e.target.checked)}
+              onCheckedChange={setEnvVarOnly}
               disabled={loading}
             />
             <span className="text-sm">Environment variable deployment</span>
