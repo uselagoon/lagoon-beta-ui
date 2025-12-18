@@ -25,54 +25,21 @@ interface PropsWithSkeleton {
 
 type DeploymentType = 'full' | 'variables';
 
-const DeployLatestSkeleton = () => (
-  <section className="flex items-center gap-[1rem] mb-6 py-1.5">
-    <div className="description flex gap-2 items-center">
-      Start a new deployment of <Skeleton className="w-[60px] h-8" />
-    </div>
-    <Button disabled>Deploy</Button>
-  </section>
-);
 
-interface DeployOptionCardProps {
-  selected: boolean;
-  onSelect: () => void;
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  disabled?: boolean;
-}
-
-const DeployOptionCard: React.FC<DeployOptionCardProps> = ({
-  selected,
-  onSelect,
-  icon,
-  title,
-  description,
-  disabled,
-}) => (
-  <button
-    type="button"
-    onClick={onSelect}
-    disabled={disabled}
-    className={`
-      flex-1 flex items-start gap-3 p-4 rounded-lg border text-left transition-all
-      ${selected 
-        ? 'border-blue-500 ring-1 ring-blue-500' 
-        : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
-      }
-      ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-    `}
-  >
-    <div className={`mt-0.5 ${selected ? 'text-blue-500' : 'text-gray-400'}`}>
-      {icon}
-    </div>
-    <div className="flex flex-col gap-1">
-      <span className="font-medium text-sm">{title}</span>
-      <span className="text-xs text-gray-500 dark:text-gray-400">{description}</span>
-    </div>
-  </button>
-);
+const deploymentOptions = [
+  {
+    type: 'full' as const,
+    icon: <GitBranch size={20} className="size-5" />,
+    title: 'Full Deployment',
+    description: 'Builds new images and applies all pending changes including variables, routes, and services.',
+  },
+  {
+    type: 'variables' as const,
+    icon: <Zap size={20} className="size-5" />,
+    title: 'Variables Only Deployment',
+    description: 'Faster deployment that updates runtime variables and restarts pods. Does not rebuild images.',
+  },
+];
 
 const DeployLatestData: React.FC<Props> = ({ environment }) => {
   const { id, deployType, deployBaseRef, deployHeadRef, deployTitle } = environment;
@@ -132,34 +99,28 @@ const DeployLatestData: React.FC<Props> = ({ environment }) => {
       </div>
 
       <div className="flex gap-4">
-        <DeployOptionCard
-          selected={selectedType === 'full'}
-          onSelect={() => setSelectedType('full')}
-          icon={<GitBranch size={20} />}
-          title="Full Deployment"
-          description="Builds new images and applies all pending changes including variables, routes, and services."
-          disabled={loading}
-        />
-        <DeployOptionCard
-          selected={selectedType === 'variables'}
-          onSelect={() => setSelectedType('variables')}
-          icon={<Zap size={20} />}
-          title="Variables Only Deployment"
-          description="Faster deployment that updates runtime variables and restarts pods. Does not rebuild images."
-          disabled={loading}
-        />
+        {deploymentOptions.map(option => (
+          <Button
+            key={option.type}
+            variant={selectedType === option.type ? 'default' : 'secondary'}
+            onClick={() => setSelectedType(option.type)}
+            disabled={loading}
+            className={`flex-1 flex h-auto items-start gap-3 p-4 rounded-lg border text-left transition-all`}
+          >
+            <div className="flex gap-3">
+              <div className={`mt-0.5 flex-shrink-0 ${selectedType === option.type ? 'text-blue-500' : 'text-gray-400'}`}>{option.icon}</div>
+              <div className="flex flex-col gap-1">
+                <span className="font-medium text-sm">{option.title}</span>
+                <span className="text-xs opacity-70 font-normal">{option.description}</span>
+              </div>
+            </div>
+          </Button>
+        ))}
       </div>
 
       {selectedType === 'variables' && (
         <div 
-          className="mt-6 p-4 rounded-lg flex gap-3"
-          style={{ 
-            backgroundColor: '#fffbeb', 
-            borderWidth: '1px', 
-            borderStyle: 'solid', 
-            borderColor: '#fde68a', 
-            color: '#78350f' 
-          }}
+          className="mt-6 p-4 rounded-lg flex gap-3 mt-6 p-4 rounded-lg flex gap-3 bg-amber-50 border border-amber-200 text-amber-900"
         >
           <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
           <div>
@@ -181,9 +142,6 @@ const DeployLatestData: React.FC<Props> = ({ environment }) => {
 };
 
 const DeployLatest = (props: Props | PropsWithSkeleton) => {
-  if ('skeleton' in props && props.skeleton) {
-    return <DeployLatestSkeleton />;
-  }
   return <DeployLatestData {...(props as Props)} />;
 };
 
