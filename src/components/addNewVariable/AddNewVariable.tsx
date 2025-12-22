@@ -120,6 +120,7 @@ export const AddNewVariable: FC<Props> = ({ type, refetch, onClick, ...rest }) =
           id: 'variable_value',
           label: 'Variable value',
           placeholder: 'Enter variable value',
+          type: 'textarea',
           required: true,
         },
       ]}
