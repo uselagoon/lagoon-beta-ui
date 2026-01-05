@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { toast } from 'sonner';
+import {X} from "lucide-react";
 
 interface PendingChange {
   details: string;
@@ -40,12 +41,7 @@ export const usePendingChangesNotification = (options: UsePendingChangesNotifica
       toast.custom(
         (t) => (
           <div 
-            className="flex items-center gap-3 p-4 border border-sky-500 rounded-lg shadow-lg min-w-80 max-w-md"
-            style={{ 
-              backgroundColor: '#CFEDFB',
-              color: '#000000'
-            }}
-          >
+            className="flex items-center gap-3 p-4 border border-sky-500 rounded-lg shadow-lg min-w-80 max-w-md bg-[#CFEDFB] text-black mt-4">
             <div className="flex-1">
               <p className="font-medium text-sm whitespace-nowrap">
                 Changes require deployment to take effect
@@ -59,6 +55,9 @@ export const usePendingChangesNotification = (options: UsePendingChangesNotifica
               className="px-3 py-1 bg-sky-500 text-white rounded text-sm font-medium hover:bg-sky-600 transition-colors whitespace-nowrap pending-changes-notification__deploy-button"
             >
               Deploy now
+            </button>
+            <button onClick={() => toast.dismiss(t)} className="text-gray-500 hover:text-gray-700 transition-colors" aria-label="Close">
+              <X size={18} />
             </button>
           </div>
         ),

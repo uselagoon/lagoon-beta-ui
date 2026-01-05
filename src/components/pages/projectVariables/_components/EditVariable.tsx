@@ -131,6 +131,7 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) 
                 id: 'variable_value',
                 label: 'Variable value',
                 placeholder: 'Enter variable value',
+                type: 'textarea',
                 inputDefault: currentEnv.value,
                 required: true,
               },
