@@ -2,8 +2,6 @@
 
 import { useEffect } from 'react';
 
-import { Wrapper } from '@storybook/blocks';
-
 const statusCodes = {
   400: 'Bad Request',
   401: 'Not Authenticated',
@@ -32,12 +30,12 @@ const ErrorPage = ({ statusCode, errorMessage, title }: Props) => {
   }, [ErorrTitle]);
 
   return (
-    <Wrapper className={`bg-white dark:bg-black`}>
+    <div className={`bg-white dark:bg-black`}>
       <section className={`fixed top-[76px] left-0 w-screen h-screen flex flex-col items-center gap-8 pt-[10%]`}>
         <h2 className="text-2xl">{ErorrTitle}</h2>
         {errorMessage && <p>{errorMessage}</p>}
       </section>
-    </Wrapper>
+    </div>
   );
 };
 export default ErrorPage;
