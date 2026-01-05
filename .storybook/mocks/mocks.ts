@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 
+import type { UserRole, MockOrganizationOwner } from '../types';
 import { MockAllProjects, Project } from './api';
 
 interface Tasks {
@@ -412,7 +413,6 @@ export const generateInsight = (val: number) => {
     type: 'image',
   };
 };
-// organizations
 export const organizationOwners = () => {
   seed();
   const numberOfOwners = faker.number.int({ min: 1, max: 5 });
@@ -563,4 +563,80 @@ export const organizationEnvironments = (environmentQuota: number) => {
   return Array.from({ length: Math.floor(environmentQuota / 2) }, () => {
     return generateEnvironments({ seed });
   });
+};
+
+export const generateOrganizationOwnersByRole = (role: UserRole): MockOrganizationOwner[] => {
+  seed(456);
+
+  const owners: MockOrganizationOwner[] = [
+    {
+      id: faker.string.uuid(),
+      firstName: 'Alice',
+      lastName: 'Owner',
+      email: 'alice.owner@example.com',
+      owner: true,
+      admin: null,
+      groupRoles: [{ id: faker.string.uuid() }],
+    },
+    {
+      id: faker.string.uuid(),
+      firstName: 'Bob',
+      lastName: 'Admin',
+      email: 'bob.admin@example.com',
+      owner: null,
+      admin: true,
+      groupRoles: [{ id: faker.string.uuid() }],
+    },
+    {
+      id: faker.string.uuid(),
+      firstName: 'Charlie',
+      lastName: 'Viewer',
+      email: 'charlie.viewer@example.com',
+      owner: null,
+      admin: null,
+      groupRoles: [{ id: faker.string.uuid() }],
+    },
+  ];
+
+  if (role === 'viewer') {
+    return owners.map(o => ({
+      ...o,
+    }));
+  }
+
+  return owners;
+};
+
+export const generateOrganizationManageByRole = (role: UserRole, orgName?: string) => {
+  seed(789);
+
+  return {
+    id: faker.number.int({ min: 1, max: 100 }),
+    name: orgName || 'test-organization',
+    owners: generateOrganizationOwnersByRole(role),
+    __typename: 'Organization',
+  };
+};
+
+export const generateMockProjectsData = (seedVal: number = 123) => {
+  seed(seedVal);
+
+  const numberOfProjects = faker.number.int({ min: 5, max: 15 });
+
+  return Array.from({ length: numberOfProjects }, () => ({
+    id: faker.number.int({ min: 1, max: 1000 }),
+    name: faker.lorem.slug({ min: 1, max: 3 }),
+    __typename: 'Project' as const,
+    environments: [
+      {
+        route: faker.internet.url(),
+        __typename: 'Environment' as const,
+        environmentType: faker.helpers.arrayElement(['production', 'development']),
+        openshift: {
+          friendlyName: faker.word.words(2),
+          cloudRegion: faker.helpers.arrayElement(['US', 'EU', 'APAC']),
+        },
+      },
+    ],
+  }));
 };
