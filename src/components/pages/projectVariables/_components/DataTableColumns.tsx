@@ -6,7 +6,7 @@ import { CopyToClipboard, DataTableColumnDef } from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
-
+import { ProjectWarning }  from '@/components/pages/environmentVariables/EnvironmentVariablesPage';
 import { EditVariable } from './EditVariable';
 
 dayjs.extend(utc);
@@ -58,7 +58,7 @@ export const ProjectEnvVarsFullColumns = (projectName: string, refetch: () => vo
 
         return (
           <div className="flex gap-2">
-            <EditVariable type="project" currentEnv={variable} projectName={projectName} refetch={refetch} />
+            <EditVariable type="project" currentEnv={variable} projectName={projectName} refetch={refetch} additionalContent={ProjectWarning("edit")} />
             <DeleteVariableDialog type="project" currentEnv={variable} projectName={projectName} refetch={refetch} />
           </div>
         );

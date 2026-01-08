@@ -12,19 +12,33 @@ import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotifica
 import environmentByProjectNameWithEnvVarsValueQuery from '@/lib/query/environmentByProjectNameWithEnvVarsValueQuery';
 import environmentProjectByProjectNameWithEnvVarsValueQuery from '@/lib/query/environmentProjectByProjectNameWithEnvVarsValueQuery';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import {Button, DataTable, SelectWithOptions, Switch} from '@uselagoon/ui-library';
-import { Loader2 } from 'lucide-react';
+import {DataTable, SelectWithOptions, Switch} from '@uselagoon/ui-library';
 import { useQueryStates } from 'nuqs';
 import { toast } from 'sonner';
 
 import { AddNewVariable } from '../../addNewVariable/AddNewVariable';
 import {
-  ProjectEnvVarsFullColumnsNoActions,
+  ProjectEnvVarsFullColumns,
   ProjectEnvVarsPartialColumns,
   getEnvVarsColumns,
 } from '../projectVariables/_components/DataTableColumns';
-import { EditVariable } from '../projectVariables/_components/EditVariable';
 import { scopeOptions, sortOptions } from './_components/filterValues';
+import {Lightbulb} from "lucide-react";
+
+export const ProjectWarning = (type: string) => {
+  return (
+    <div className="mb-4 p-4 rounded-lg bg-yellow-50 border border-yellow-200">
+      <div className="flex gap-3">
+        <Lightbulb className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+        <div className="text-yellow-900 text-sm space-y-2">
+          <p className="font-medium mb-2">Project-scoped variable</p>
+          <p>{`This will ${type} a project scoped variable, which applies to all project environments.`}</p>
+          <p>{`If you want to ${type} a variable specific to this environment, please use the "${type} environment variable" button.`}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function EnvironmentVariablesPage({
   queryRef,
@@ -162,7 +176,7 @@ export default function EnvironmentVariablesPage({
     !prjLoading && prjEnvValues?.environmentVars?.project?.envVariables && projectVarsVisible ? true : false;
 
   const projectEnvTableColumns = renderProjectTablewithValues
-    ? ProjectEnvVarsFullColumnsNoActions()
+    ? ProjectEnvVarsFullColumns(projectName, refetch)
     : ProjectEnvVarsPartialColumns();
 
   return (
@@ -228,7 +242,7 @@ export default function EnvironmentVariablesPage({
       <div className="flex gap-2 items-center justify-between">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Project variables</h3>
         <Switch
-          label="View project values"
+          label="Edit project values"
           disabled={prjLoading}
           loading={prjLoading}
           checked={projectVarsVisible}
@@ -246,7 +260,13 @@ export default function EnvironmentVariablesPage({
       />
 
       <section className="my-4 flex justify-end">
-        <Button onClick={navToProjectVars}>Edit Project Variables</Button>
+        <AddNewVariable
+          onClick={() => stableAddPermissionCheck}
+          type="project"
+          projectName={projectName}
+          refetch={refetch}
+          additionalContent={ProjectWarning("add")}
+        />
       </section>
     </SectionWrapper>
   );
