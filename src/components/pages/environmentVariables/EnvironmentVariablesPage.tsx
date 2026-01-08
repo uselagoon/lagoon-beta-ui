@@ -26,12 +26,23 @@ import { scopeOptions, sortOptions } from './_components/filterValues';
 import {Lightbulb} from "lucide-react";
 
 export const ProjectWarning = (type: string) => {
+  if (type === 'delete') {
+    return (
+      <div className="flex gap-2 text-sm">
+        <Lightbulb className="h-4 w-4 text-yellow-600 flex-shrink-0 mt-0.5" />
+        <span className="text-muted-foreground">
+          This will delete a project scoped variable, which applies to all project environments.
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className="mb-4 p-4 rounded-lg bg-yellow-50 border border-yellow-200">
       <div className="flex gap-3">
         <Lightbulb className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
         <div className="text-yellow-900 text-sm space-y-2">
-          <p className="font-medium mb-2">Project-scoped variable</p>
+          <p className="font-medium">Project-scoped variable</p>
           <p>{`This will ${type} a project scoped variable, which applies to all project environments.`}</p>
           <p>{`If you want to ${type} a variable specific to this environment, please use the "${type} environment variable" button.`}</p>
         </div>
@@ -176,7 +187,7 @@ export default function EnvironmentVariablesPage({
     !prjLoading && prjEnvValues?.environmentVars?.project?.envVariables && projectVarsVisible ? true : false;
 
   const projectEnvTableColumns = renderProjectTablewithValues
-    ? ProjectEnvVarsFullColumns(projectName, refetch)
+    ? ProjectEnvVarsFullColumns(projectName, refetch, true)
     : ProjectEnvVarsPartialColumns();
 
   return (

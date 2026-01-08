@@ -6,7 +6,7 @@ import { CopyToClipboard, DataTableColumnDef } from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
-import { ProjectWarning }  from '@/components/pages/environmentVariables/EnvironmentVariablesPage';
+import { ProjectWarning } from "@/components/pages/environmentVariables/EnvironmentVariablesPage";
 import { EditVariable } from './EditVariable';
 
 dayjs.extend(utc);
@@ -27,7 +27,7 @@ export const ProjectEnvVarsPartialColumns = (projectName?: string, refetch?: () 
     },
   ] as DataTableColumnDef<EnvVariable>[];
 
-export const ProjectEnvVarsFullColumns = (projectName: string, refetch: () => void) =>
+export const ProjectEnvVarsFullColumns = (projectName: string, refetch: () => void, showWarnings: boolean = false) =>
   [
     {
       accessorKey: 'name',
@@ -58,8 +58,8 @@ export const ProjectEnvVarsFullColumns = (projectName: string, refetch: () => vo
 
         return (
           <div className="flex gap-2">
-            <EditVariable type="project" currentEnv={variable} projectName={projectName} refetch={refetch} additionalContent={ProjectWarning("edit")} />
-            <DeleteVariableDialog type="project" currentEnv={variable} projectName={projectName} refetch={refetch} />
+            <EditVariable type="project" currentEnv={variable} projectName={projectName} refetch={refetch} additionalContent={showWarnings ? ProjectWarning("edit") : null} />
+            <DeleteVariableDialog type="project" currentEnv={variable} projectName={projectName} refetch={refetch} deleteWarning={showWarnings ? ProjectWarning("delete") : null} />
           </div>
         );
       },
