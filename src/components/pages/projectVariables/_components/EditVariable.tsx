@@ -1,4 +1,4 @@
-import { FC, startTransition } from 'react';
+import {FC, ReactNode, startTransition} from 'react';
 
 import { EnvVariable } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
 import addOrUpdateEnvVariable from '@/lib/mutation/addOrUpdateEnvVariable';
@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 type Props = {
   currentEnv: EnvVariable;
   refetch: () => void;
+  additionalContent?: ReactNode;
 } & (
   | {
       type: 'project';
@@ -45,7 +46,7 @@ const scopeOptions = [
   },
 ];
 
-export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) => {
+export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, additionalContent = null, ...rest }) => {
   let envName = '';
   let orgName = '';
   let projName = '';
@@ -102,12 +103,12 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) 
           <Sheet
             data-cy="add-variable"
             sheetTrigger={<Edit2Icon />}
-            sheetTitle="Edit a variable"
+            sheetTitle={`Edit a ${type} variable`}
             sheetFooterButton="Update"
             sheetDescription="Create a unique name for your variable. Then choose the scope of the variables availability. For more information see our documentation"
             loading={loading}
             error={false}
-            additionalContent={null}
+            additionalContent={additionalContent}
             sheetFields={[
               {
                 id: 'variable_name',

@@ -1,10 +1,10 @@
-import { FC, startTransition, useState } from 'react';
+import {FC, ReactNode, startTransition, useState} from 'react';
 
 import { EnvVariable } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
 import deleteEnvVariableByName from '@/lib/mutation/deleteEnvVariableByName';
 import { useMutation } from '@apollo/client';
 import { Button, Input, Label, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
-import { Trash2, Loader2 } from 'lucide-react';
+import {Trash2, Loader2} from 'lucide-react';
 import { toast } from 'sonner';
 
 import { HighlightedText } from '../cancelDeployment/styles';
@@ -13,6 +13,7 @@ type Props = {
   currentEnv: EnvVariable;
   refetch: () => void;
   onClick?: () => any;
+  deleteWarning?: ReactNode;
 } & (
   | {
       type: 'project';
@@ -29,7 +30,7 @@ type Props = {
     }
 );
 
-export const DeleteVariableDialog: FC<Props> = ({ currentEnv, refetch, type, onClick, ...rest }) => {
+export const DeleteVariableDialog: FC<Props> = ({ currentEnv, refetch, type, onClick, deleteWarning = null, ...rest }) => {
   const [inputValue, setInputValue] = useState('');
   const [open, setOpen] = useState(false);
   const [deleteVar, setDeleteVar] = useState(false);
@@ -103,6 +104,7 @@ export const DeleteVariableDialog: FC<Props> = ({ currentEnv, refetch, type, onC
                 Variable name
               </Label>
               <Input label="" id="variable_name" value={inputValue} onChange={e => setInputValue(e.target.value)} />
+              {deleteWarning}
             </div>
           </>
         }
