@@ -98,7 +98,7 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) 
   return (
     <>
       <Tooltip>
-        <TooltipTrigger>
+        <TooltipTrigger aria-label="edit-variable">
           <Sheet
             data-cy="add-variable"
             sheetTrigger={<Edit2Icon />}

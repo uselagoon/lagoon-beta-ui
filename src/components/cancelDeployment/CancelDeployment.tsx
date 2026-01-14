@@ -48,7 +48,7 @@ export const CancelDeploymentButton = ({
           confirmText="Yes"
           onConfirm={action}
         >
-          <Button variant="ghost" disabled={loading || success}>
+          <Button variant="ghost" disabled={loading || success} aria-label="cancel-deployment">
             <Tooltip>
               <TooltipTrigger>
                 <Ban data-cy="cancel-deployment" />
