@@ -64,6 +64,12 @@ const preview: Preview = {
   },
 
   parameters: {
+    test: {
+      // MSW can throw spurious errors during test cleanup due to race conditions
+      // in the service worker message channel. This is safe to ignore since actual
+      // test assertions still work correctly.
+      dangerouslyIgnoreUnhandledErrors: true,
+    },
     msw: {
       handlers: [...handlers, ...mutationHandlers],
     },

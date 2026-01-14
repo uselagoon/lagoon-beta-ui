@@ -173,10 +173,10 @@ export const DeleteRoute: Story = {
     await canvas.findByText('example.com', {}, { timeout: 10000 });
     await sleep(500);
 
-    const deleteButton = within(
+    const deleteButton = 
       (await canvas.findAllByRole('button', { name: 'delete-route' }))?.[0]
-    ).findByRole('button');
-    await userEvent.click(await deleteButton);
+    
+    await userEvent.click(deleteButton);
 
     const domainInput = await screen.findByLabelText(/domain name/i);
     await userEvent.type(domainInput, 'example.com');
