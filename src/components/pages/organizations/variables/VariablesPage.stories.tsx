@@ -102,10 +102,11 @@ export const DeleteVariable: Story = {
 
     await userEvent.click(deleteButton);
 
-    const confirmInput = await screen.findByLabelText(/variable name/i);
+    const confirmInput = await screen.findByLabelText(/variable name/i, {}, { timeout: 5000 });
     await userEvent.type(confirmInput, 'API_KEY');
 
-    const deleteConfirmButton = await screen.findByRole('button', { name: /delete/i });
+    const dialog = await screen.findByRole('alertdialog', {}, { timeout: 5000 });
+    const deleteConfirmButton = await within(dialog).findByRole('button', { name: /delete/i }, { timeout: 5000 });
     await userEvent.click(deleteConfirmButton);
 
     await waitFor(

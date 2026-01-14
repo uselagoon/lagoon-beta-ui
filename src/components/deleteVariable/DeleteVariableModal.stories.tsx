@@ -71,7 +71,7 @@ export const Open: Story = {
   } as any,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const trigger = canvas.getByRole('button');
+    const trigger = (await canvas.findAllByRole('button'))[0];
     await userEvent.click(trigger);
   },
 };

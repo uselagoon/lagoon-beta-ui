@@ -53,19 +53,19 @@ export const AddVariable: Story = {
     const addButton = await canvas.findByRole('button', { name: 'Add new variable' }, { timeout: 10000 });
     await userEvent.click(addButton);
 
-    const nameInput = await screen.findByLabelText(/variable name/i);
+    const nameInput = await screen.findByLabelText(/variable name/i, {}, { timeout: 5000 });
     await userEvent.type(nameInput, 'NEW_ENV_VAR');
 
-    const scopeTrigger = await screen.findByRole('combobox');
+    const scopeTrigger = await screen.findByRole('combobox', {}, { timeout: 5000 });
     await userEvent.click(scopeTrigger);
 
-    const globalOption = await screen.findByRole('option', { name: /global/i });
+    const globalOption = await screen.findByRole('option', { name: /global/i }, { timeout: 5000 });
     await userEvent.click(globalOption);
 
-    const valueInput = await screen.findByLabelText(/variable value/i);
+    const valueInput = await screen.findByLabelText(/variable value/i, {}, { timeout: 5000 });
     await userEvent.type(valueInput, 'my-env-value');
 
-    const createButton = await screen.findByRole('button', { name: /create/i });
+    const createButton = await screen.findByRole('button', { name: /create/i }, { timeout: 5000 });
     await userEvent.click(createButton);
 
     await canvas.findByText('NEW_ENV_VAR', {}, { timeout: 5000 });
@@ -87,11 +87,11 @@ export const EditVariable: Story = {
     }
     await userEvent.click(await firstEditButton);
 
-    const valueInput = await screen.findByLabelText(/variable value/i);
+    const valueInput = await screen.findByLabelText(/variable value/i, {}, { timeout: 5000 });
     await userEvent.clear(valueInput);
     await userEvent.type(valueInput, 'updated-env-value');
 
-    const updateButton = await screen.findByRole('button', { name: /update/i });
+    const updateButton = await screen.findByRole('button', { name: /update/i }, { timeout: 5000 });
     await userEvent.click(updateButton);
 
     await canvas.findByText('updated-env-value', {}, { timeout: 5000 });
@@ -111,10 +111,11 @@ export const DeleteVariable: Story = {
     }
     await userEvent.click(deleteButton);
 
-    const confirmInput = await screen.findByLabelText(/variable name/i);
+    const confirmInput = await screen.findByLabelText(/variable name/i, {}, { timeout: 5000 });
     await userEvent.type(confirmInput, 'ENV_API_KEY');
 
-    const deleteConfirmButton = await screen.findByRole('button', { name: /delete/i });
+    const dialog = await screen.findByRole('alertdialog', {}, { timeout: 5000 });
+    const deleteConfirmButton = await within(dialog).findByRole('button', { name: /delete/i }, { timeout: 5000 });
     await userEvent.click(deleteConfirmButton);
 
     await waitFor(
