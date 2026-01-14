@@ -82,5 +82,10 @@
   },
   "overrides": {
     "string-width": "4.2.3"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

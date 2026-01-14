@@ -1,6 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
-
 import { ProjectType, ProjectsData } from '@/app/(routegroups)/(projectroutes)/projects/(projects-page)/page';
+import type { Meta, StoryObj } from '@storybook/react';
 
 import ProjectsPage from './ProjectsPage';
 
@@ -47,28 +46,6 @@ export default meta;
 type Story = StoryObj<typeof ProjectsPage>;
 
 export const Default: Story = {
-  args: {
-    data: mockProjectsData,
-  },
-};
-
-export const Empty: Story = {
-  args: {
-    data: {
-      allProjects: [],
-    },
-  },
-};
-
-export const SingleProject: Story = {
-  args: {
-    data: {
-      allProjects: generateMockProjects(1),
-    },
-  },
-};
-
-export const ManyProjects: Story = {
   args: {
     data: {
       allProjects: generateMockProjects(50),

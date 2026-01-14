@@ -3,25 +3,59 @@ import { initialize, mswDecorator } from 'msw-storybook-addon';
 
 import '../src/app/globals.css';
 import withApolloMock from './decorators/withApolloMock';
+import withEnvProvider from './decorators/withEnvProvider';
+import { withStatefulMocks } from './decorators/withStatefulMocks';
 import withStorybookGlobals from './decorators/withStorybookGlobals';
+import withThemeProvider from './decorators/withThemeProvider';
+import withToaster from './decorators/withToaster';
 import { handlers } from './mocks/handlers';
+import { mutationHandlers } from './mocks/mutationHandlers';
 
 initialize({
   onUnhandledRequest: 'bypass',
+  serviceWorker: {
+    options: {
+      updateViaCache: 'none',
+    },
+  },
 });
+
+if (typeof window !== 'undefined') {
+  window.open = (url, target, features) => {
+    console.log('[Storybook] window.open intercepted:', { url, target, features });
+    return null;
+  };
+}
 
 const preview: Preview = {
   globalTypes: {
     userRole: {
       name: 'User Role',
       description: 'Simulated user role for permission testing',
-      defaultValue: 'owner',
+      defaultValue: 'OWNER',
       toolbar: {
         icon: 'user',
         items: [
-          { value: 'owner', title: 'Owner', icon: 'starhollow' },
-          { value: 'admin', title: 'Admin', icon: 'admin' },
-          { value: 'viewer', title: 'Viewer', icon: 'eye' },
+          { value: 'OWNER', title: 'Owner' },
+          { value: 'MAINTAINER', title: 'Maintainer' },
+          { value: 'DEVELOPER', title: 'Developer' },
+          { value: 'REPORTER', title: 'Reporter' },
+          { value: 'GUEST', title: 'Guest' },
+        ],
+        showName: true,
+        dynamicTitle: true,
+      },
+    },
+    theme: {
+      name: 'Theme',
+      description: 'Global theme for components',
+      defaultValue: 'dark',
+      toolbar: {
+        icon: 'paintbrush',
+        items: [
+          { value: 'light', title: 'Light', icon: 'sun' },
+          { value: 'dark', title: 'Dark', icon: 'moon' },
+          { value: 'system', title: 'System', icon: 'browser' },
         ],
         showName: true,
         dynamicTitle: true,
@@ -31,7 +65,7 @@ const preview: Preview = {
 
   parameters: {
     msw: {
-      handlers,
+      handlers: [...handlers, ...mutationHandlers],
     },
     options: {
       storySort: {
@@ -49,6 +83,6 @@ const preview: Preview = {
   },
   tags: ['!autodocs'],
 
-  decorators: [withStorybookGlobals, withApolloMock, mswDecorator],
+  decorators: [withStorybookGlobals, withStatefulMocks, mswDecorator, withEnvProvider, withThemeProvider, withApolloMock, withToaster],
 };
 export default preview;

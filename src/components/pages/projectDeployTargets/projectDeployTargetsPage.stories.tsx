@@ -77,15 +77,6 @@ export const Default: Story = {
   },
 };
 
-export const SingleTarget: Story = {
-  args: {
-    project: {
-      ...mockProject,
-      deployTargetConfigs: [mockProject.deployTargetConfigs[0]],
-    },
-  },
-};
-
 export const Empty: Story = {
   args: {
     project: {

@@ -1,10 +1,10 @@
-export type UserRole = 'owner' | 'admin' | 'viewer';
+import { OrgUserRole } from '../src/components/shared/selectOptions';
 
-export type GroupRole = 'GUEST' | 'REPORTER' | 'DEVELOPER' | 'MAINTAINER' | 'OWNER';
+export type UserRole = OrgUserRole;
 
 export interface StoryGlobals {
   userRole: UserRole;
-  theme: 'light' | 'dark';
+  theme: 'light' | 'dark' | 'system';
 }
 
 export interface MockOrganizationOwner {

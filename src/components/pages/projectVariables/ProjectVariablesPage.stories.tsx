@@ -1,30 +1,19 @@
 import React from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react';
-
 import { ProjectEnvironmentsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
 import projectVariablesQuery from '@/lib/query/projectVariablesQuery';
+import type { Meta, StoryObj } from '@storybook/react';
+import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
+import { createProjectVariablesMockState } from '../../../../.storybook/mocks/storyHelpers';
 import ProjectVariablesPage from './ProjectVariablesPage';
 
-const mockData: ProjectEnvironmentsData = {
-  project: {
-    id: 1,
-    name: 'test-project',
-    productionEnvironment: 'main',
-    standbyProductionEnvironment: null,
-    productionRoutes: 'https://example.com',
-    standbyRoutes: null,
-    envVariables: [
-      { id: 1, name: 'API_KEY', scope: 'GLOBAL' },
-      { id: 2, name: 'DATABASE_URL', scope: 'BUILD' },
-      { id: 3, name: 'CACHE_TTL', scope: 'RUNTIME' },
-      { id: 4, name: 'SECRET_TOKEN', scope: 'GLOBAL' },
-      { id: 5, name: 'DEBUG_MODE', scope: 'BUILD' },
-    ],
-  },
-};
+const initialVariables = [
+  { id: 1, name: 'API_KEY', scope: 'global', value: 'secret-api-key-123' },
+  { id: 2, name: 'DATABASE_URL', scope: 'build', value: 'postgres://localhost/db' },
+  { id: 3, name: 'CACHE_TTL', scope: 'runtime', value: '3600' },
+];
 
 const meta: Meta<typeof ProjectVariablesPage> = {
   title: 'Pages/Project/Variables',
@@ -33,12 +22,12 @@ const meta: Meta<typeof ProjectVariablesPage> = {
     nextjs: {
       appDirectory: true,
     },
+    initialMockState: createProjectVariablesMockState('test-project', initialVariables),
   },
   render: () => (
-    <MockPreloadQuery
+    <MockPreloadQuery<ProjectEnvironmentsData, { name: string }>
       query={projectVariablesQuery}
       variables={{ name: 'test-project' }}
-      mockData={mockData}
     >
       {queryRef => <ProjectVariablesPage queryRef={queryRef} projectName="test-project" />}
     </MockPreloadQuery>
@@ -48,4 +37,80 @@ const meta: Meta<typeof ProjectVariablesPage> = {
 export default meta;
 type Story = StoryObj<typeof ProjectVariablesPage>;
 
-export const Default: Story = {};
+export const List: Story = {};
+
+export const AddVariable: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const addButton = await canvas.findByRole('button', { name: 'Add new variable' }, { timeout: 10000 });
+    await userEvent.click(addButton);
+
+    const nameInput = await screen.findByLabelText(/variable name/i);
+    await userEvent.type(nameInput, 'NEW_PROJECT_VAR');
+
+    const scopeTrigger = await screen.findByRole('combobox');
+    await userEvent.click(scopeTrigger);
+
+    const globalOption = await screen.findByRole('option', { name: /global/i });
+    await userEvent.click(globalOption);
+
+    const valueInput = await screen.findByLabelText(/variable value/i);
+    await userEvent.type(valueInput, 'my-new-value');
+
+    const createButton = await screen.findByRole('button', { name: /create/i });
+    await userEvent.click(createButton);
+
+    await canvas.findByText('NEW_PROJECT_VAR', {}, { timeout: 5000 });
+  },
+};
+
+export const EditVariable: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const editValuesToggle = await canvas.findByTestId('var-visibility-toggle', {}, { timeout: 10000 });
+    await userEvent.click(editValuesToggle);
+
+    const firstEditButton = within((await canvas.findAllByRole('button', { name: 'edit-variable' }))?.[0]).findByRole('button');  
+    if (!firstEditButton) {
+      throw new Error('Edit button not found');
+    }
+    await userEvent.click(await firstEditButton);
+
+    const valueInput = await screen.findByLabelText(/variable value/i);
+    await userEvent.clear(valueInput);
+    await userEvent.type(valueInput, 'updated-project-value');
+
+    const updateButton = await screen.findByRole('button', { name: /update/i });
+    await userEvent.click(updateButton);
+
+    await canvas.findByText('updated-project-value', {}, { timeout: 5000 });
+  },
+};
+
+export const DeleteVariable: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const editValuesToggle = await canvas.findByTestId('var-visibility-toggle', {}, { timeout: 10000 });
+    await userEvent.click(editValuesToggle);
+
+    const deleteButton = (await canvas.findAllByRole('button', { name: 'delete-variable' }))?.[0];
+
+    await userEvent.click(deleteButton);
+
+    const confirmInput = await screen.findByLabelText(/variable name/i);
+    await userEvent.type(confirmInput, 'API_KEY');
+
+    const deleteConfirmButton = await screen.findByRole('button', { name: /delete/i });
+    await userEvent.click(deleteConfirmButton);
+
+    await waitFor(
+      () => {
+        expect(canvas.queryByText('API_KEY')).not.toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+  },
+};

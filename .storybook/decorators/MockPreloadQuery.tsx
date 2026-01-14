@@ -12,7 +12,7 @@ const LoadingFallback = () => (
 interface MockPreloadQueryProps<TData, TVariables extends OperationVariables> {
   query: DocumentNode | TypedDocumentNode<TData, TVariables>;
   variables?: TVariables;
-  mockData: TData;
+  mockData?: TData;
   children: (queryRef: QueryRef<TData>) => React.ReactNode;
 }
 
@@ -38,6 +38,16 @@ export function MockPreloadQuery<TData, TVariables extends OperationVariables>({
   mockData,
   children,
 }: MockPreloadQueryProps<TData, TVariables>) {
+  if (mockData === undefined) {
+    return (
+      <Suspense fallback={<LoadingFallback />}>
+        <QueryRefProvider<TData, TVariables> query={query} variables={variables}>
+          {children}
+        </QueryRefProvider>
+      </Suspense>
+    );
+  }
+
   const mocks = [
     {
       request: {

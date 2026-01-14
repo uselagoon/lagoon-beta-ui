@@ -1,8 +1,7 @@
 import React from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react';
-
 import { OrgType } from '@/app/(routegroups)/(orgroutes)/organizations/(organizations-page)/page';
+import type { Meta, StoryObj } from '@storybook/react';
 
 import OrganizationsPage from './OrganizationsPage';
 
@@ -45,11 +44,5 @@ export const Default: Story = {
 export const Empty: Story = {
   args: {
     organizations: [],
-  },
-};
-
-export const SingleOrganization: Story = {
-  args: {
-    organizations: generateMockOrganizations(1),
   },
 };

@@ -24,5 +24,14 @@ const config: StorybookConfig = {
   typescript: {
     reactDocgen: 'react-docgen-typescript',
   },
+
+  refs: {
+    'ui-library': {
+      title: 'ui-library',
+      url: 'http://localhost:6006',
+      expanded: false, 
+    },
+  },
+
 };
 export default config;

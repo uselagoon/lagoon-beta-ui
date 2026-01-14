@@ -1,8 +1,8 @@
 import React from 'react';
 
-import type { Meta, StoryObj } from '@storybook/react';
-
 import { Deployment } from '@/app/(routegroups)/alldeployments/page';
+import type { Meta, StoryObj } from '@storybook/react';
+import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
 
 import AllDeploymentsPage from './AllDeploymentsPage';
 
@@ -16,9 +16,10 @@ const generateMockDeployments = (count: number = 20): Deployment[] => {
     priority: index % 3 === 0 ? null : 5 + (index % 3),
     created: new Date(Date.now() - index * 3600000).toISOString(),
     started: new Date(Date.now() - index * 3600000 + 60000).toISOString(),
-    completed: statuses[index % statuses.length] === 'complete'
-      ? new Date(Date.now() - index * 3600000 + 300000).toISOString()
-      : null,
+    completed:
+      statuses[index % statuses.length] === 'complete'
+        ? new Date(Date.now() - index * 3600000 + 300000).toISOString()
+        : null,
     environment: {
       name: `env-${index + 1}`,
       openshiftProjectName: `project-${index + 1}-env-${index + 1}`,
@@ -56,14 +57,27 @@ export const Default: Story = {
   },
 };
 
-export const Empty: Story = {
+export const CancelDeployment: Story = {
   args: {
-    deployments: [],
+    deployments: mockData,
   },
-};
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
 
-export const FewDeployments: Story = {
-  args: {
-    deployments: generateMockDeployments(5),
+    const runningBadges = await canvas.findAllByText('Running', {}, { timeout: 10000 });
+    expect(runningBadges.length).toBeGreaterThan(0);
+
+    const cancelButtons = await canvas.findAllByRole('button', { name: /cancel-deployment/i });
+    await userEvent.click(cancelButtons[0]);
+
+    const confirmButton = await screen.findByRole('button', { name: /yes/i });
+    await userEvent.click(confirmButton);
+
+    await waitFor(
+      () => {
+        expect(canvas.getByText('Cancelled')).toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
   },
 };

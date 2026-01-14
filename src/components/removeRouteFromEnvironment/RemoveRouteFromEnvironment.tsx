@@ -83,6 +83,7 @@ export const RemoveRouteFromEnvDialog: FC<Props> = ({ domainName, projectName, e
               console.error(permissionResponse?.error);
             }
           }}
+          aria-label="remove-route"
           disabled={loading}
         >
           <Tooltip>
