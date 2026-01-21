@@ -7,7 +7,7 @@ import { OrganizationData } from '@/app/(routegroups)/(orgroutes)/organizations/
 import organizationByName from '@/lib/query/organizations/organizationByName';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
-import { createOrgOverviewMockState, OrgOverview } from '../../../../../.storybook/mocks/storyHelpers';
+import { OrgOverview } from '../../../../../.storybook/mocks/storyHelpers';
 import OrganizationPage from './OrganizationPage';
 
 const initialOrganization: OrgOverview = {
@@ -51,7 +51,11 @@ const meta: Meta<typeof OrganizationPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createOrgOverviewMockState('test-organization', initialOrganization),
+    initialMockState: {
+      orgOverview: {
+        'test-organization': initialOrganization,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<OrganizationData, { name: string }>

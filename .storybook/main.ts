@@ -28,7 +28,7 @@ const config: StorybookConfig = {
   refs: {
     'ui-library': {
       title: 'ui-library',
-      url: 'http://localhost:6006',
+      url: 'http://localhost:6007',
       expanded: false, 
     },
   },

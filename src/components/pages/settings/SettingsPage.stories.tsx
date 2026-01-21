@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
-import { createSSHKeysMockState, sleep } from '../../../../.storybook/mocks/storyHelpers';
+import { sleep } from '../../../../.storybook/mocks/storyHelpers';
 import SettingsPage from './SettingsPage';
 
 const initialKeys = [
@@ -37,7 +37,11 @@ const meta: Meta<typeof SettingsPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createSSHKeysMockState(initialKeys),
+    initialMockState: {
+      sshKeys: {
+        user: initialKeys,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<SettingsData, Record<string, never>> query={me} variables={{}}>

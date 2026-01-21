@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fireEvent, screen, userEvent, waitFor, within } from '@storybook/test';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
-import { createGroupMembersMockState, sleep } from '../../../../../.storybook/mocks/storyHelpers';
+import { sleep } from '../../../../../.storybook/mocks/storyHelpers';
 import GroupPage from './GroupPage';
 
 const initialMembers = [
@@ -33,12 +33,17 @@ const meta: Meta<typeof GroupPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createGroupMembersMockState(
-      'developers',
-      initialMembers,
-      initialGroupProjects,
-      initialOrgProjects
-    ),
+    initialMockState: {
+      groupMembers: {
+        developers: initialMembers,
+      },
+      groupProjects: {
+        developers: initialGroupProjects,
+      },
+      orgProjects: {
+        '1': initialOrgProjects,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<OrganizationGroupData, { name: string; organization: number }>

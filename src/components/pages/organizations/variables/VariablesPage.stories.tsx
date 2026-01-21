@@ -6,8 +6,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
-import { createOrgVariablesMockState } from '../../../../../.storybook/mocks/storyHelpers';
 import OrgVariablesPage from './VariablesPage';
+import { sleep } from '../../../../../.storybook/mocks/storyHelpers';
 
 const initialVariables = [
   { id: 1, name: 'API_KEY', scope: 'global', value: 'secret-api-key-123' },
@@ -22,7 +22,14 @@ const meta: Meta<typeof OrgVariablesPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createOrgVariablesMockState('test-organization', initialVariables),
+    initialMockState: {
+      orgEnvVariables: {
+        'test-organization': initialVariables.map(v => ({ id: v.id, name: v.name, scope: v.scope })),
+      },
+      orgEnvVariablesWithValues: {
+        'test-organization': initialVariables,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<OrganizationVariablesData, { name: string }>
@@ -98,9 +105,12 @@ export const DeleteVariable: Story = {
     const editValuesToggle = await canvas.findByTestId('var-visibility-toggle', {}, { timeout: 10000 });
     await userEvent.click(editValuesToggle);
 
-    const deleteButton = (await canvas.findAllByRole('button', { name: 'delete-variable' }))?.[0];
-
-    await userEvent.click(deleteButton);
+    await sleep(500);
+    const deleteButton = within((await canvas.findAllByRole('button', { name: 'delete-variable' }))?.[0]).findByRole('button');
+    if (!deleteButton) {
+      throw new Error('Delete button not found');
+    }
+    await userEvent.click(await deleteButton);
 
     const confirmInput = await screen.findByLabelText(/variable name/i, {}, { timeout: 5000 });
     await userEvent.type(confirmInput, 'API_KEY');

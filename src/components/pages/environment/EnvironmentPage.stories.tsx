@@ -7,7 +7,7 @@ import { EnvironmentData } from '@/app/(routegroups)/(projectroutes)/projects/[p
 import environmentByOpenShiftProjectName from '@/lib/query/environmentByOpenShiftProjectName';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
-import { createEnvironmentOverviewMockState, EnvironmentOverview } from '../../../../.storybook/mocks/storyHelpers';
+import { EnvironmentOverview } from '../../../../.storybook/mocks/storyHelpers';
 import EnvironmentPage from './EnvironmentPage';
 
 const initialEnvironment: EnvironmentOverview = {
@@ -65,7 +65,11 @@ const meta: Meta<typeof EnvironmentPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createEnvironmentOverviewMockState('project-main', initialEnvironment),
+    initialMockState: {
+      environmentOverview: {
+        'project-main': initialEnvironment,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<EnvironmentData, { openshiftProjectName: string }>
@@ -84,7 +88,11 @@ export const Default: Story = {};
 
 export const WithStandbyEnvironment: Story = {
   parameters: {
-    initialMockState: createEnvironmentOverviewMockState('project-standby', standbyEnvironment),
+    initialMockState: {
+      environmentOverview: {
+        'project-standby': standbyEnvironment,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<EnvironmentData, { openshiftProjectName: string }>
@@ -98,7 +106,11 @@ export const WithStandbyEnvironment: Story = {
 
 export const SwitchActiveStandby: Story = {
   parameters: {
-    initialMockState: createEnvironmentOverviewMockState('project-standby', standbyEnvironment),
+    initialMockState: {
+      environmentOverview: {
+        'project-standby': standbyEnvironment,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<EnvironmentData, { openshiftProjectName: string }>

@@ -3,7 +3,6 @@ import { OrgUserRole } from '../src/components/shared/selectOptions';
 export type UserRole = OrgUserRole;
 
 export interface StoryGlobals {
-  userRole: UserRole;
   theme: 'light' | 'dark' | 'system';
 }
 

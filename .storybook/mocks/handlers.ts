@@ -34,21 +34,27 @@ import {
   createDefaultRouteEnvMeta,
   createDefaultTaskEnvMeta,
 } from './defaultMockData';
-import { getStateArrayOrDefault, getStateOrDefault, queryIncludesAll, queryIncludesNone } from './handlerUtils';
-import { generateOrganizationManageByRole } from './mocks';
-import { canViewVariableValues, getCurrentRole } from './roleStore';
 import { stateStore } from './statefulStore';
 
 const lagoonGraphQL = graphql;
 
+function getState<T>(entityType: string, key: string): T | undefined {
+  const state = stateStore.getState(entityType, key);
+  if (state !== undefined) {
+    return (Array.isArray(state) ? state[0] : state) as T;
+  }
+  return undefined;
+}
+
+function getStateArray<T>(entityType: string, key: string, defaultValue: T[]): T[] {
+  const state = stateStore.getState(entityType, key);
+  return (state as T[]) ?? defaultValue;
+}
+
+
 export const handlers = [
   http.get(/\.hot-update\.(json|js)$/, () => passthrough()),
   http.get(/\/__webpack_hmr/, () => passthrough()),
-
-  lagoonGraphQL.operation(({ query, operationName }) => {
-    console.log('[MSW DEBUG] GraphQL operation:', { operationName, queryPreview: query.substring(0, 100) });
-    return undefined;
-  }),
 
   lagoonGraphQL.query('allProjects', () => {
     return HttpResponse.json({
@@ -57,30 +63,31 @@ export const handlers = [
   }),
 
   lagoonGraphQL.operation(({ query, variables }) => {
-    if (!query.includes('orgProjectByName')) return;
+    if (!query.includes('orgProjectByName')) return undefined;
 
     const projectName = variables.project as string;
     const orgName = variables.name as string;
 
-    const project = getStateOrDefault('orgProject', projectName, null);
-    const organization = getStateOrDefault('orgProjectOrg', orgName, null);
+    const project = getState('orgProject', projectName);
+    const organization = getState('orgProjectOrg', orgName);
 
     if (project && organization) {
-      return HttpResponse.json({ data: { project, organization } });
+      return HttpResponse.json({ data: { project, organization } } as never);
     }
+    return undefined;
   }),
 
   lagoonGraphQL.query('organizationByName', ({ variables, query }) => {
     const orgName = variables.name as string;
 
-    const orgOverview = getStateOrDefault('orgOverview', orgName, null);
+    const orgOverview = getState('orgOverview', orgName);
     if (orgOverview && typeof orgOverview === 'object') {
       return HttpResponse.json({ data: { organization: orgOverview } });
     }
 
-    if (queryIncludesAll(query, ['projects', 'deployTargets']) && !query.includes('groups')) {
+    if (query.includes('projects') && query.includes('deployTargets') && !query.includes('groups')) {
       const projects = stateStore.getState('orgProjects', orgName);
-      const projectsMeta = getStateOrDefault<Record<string, unknown>>('orgProjectsMeta', orgName, {});
+      const projectsMeta = getState<Record<string, unknown>>('orgProjectsMeta', orgName) ?? {};
 
       if (projects) {
         return HttpResponse.json({
@@ -105,12 +112,11 @@ export const handlers = [
   }),
 
   lagoonGraphQL.query('getOrganization', ({ variables, query }) => {
-    const role = getCurrentRole();
     const orgName = variables.name as string;
 
-    if (queryIncludesAll(query, ['projects', 'deployTargets']) && queryIncludesNone(query, ['groups', 'environments'])) {
+    if (query.includes('projects') && query.includes('deployTargets') && !query.includes('groups') && !query.includes('environments')) {
       const projects = stateStore.getState('orgProjects', orgName);
-      const projectsMeta = getStateOrDefault<Record<string, unknown>>('orgProjectsMeta', orgName, {});
+      const projectsMeta = getState<Record<string, unknown>>('orgProjectsMeta', orgName) ?? {};
 
       if (projects) {
         return HttpResponse.json({
@@ -128,16 +134,15 @@ export const handlers = [
       }
     }
 
-    if (queryIncludesAll(query, ['groups', 'deployTargets', 'environments'])) {
-      const orgOverview = getStateOrDefault('orgOverview', orgName, null);
+    if (query.includes('groups') && query.includes('deployTargets') && query.includes('environments')) {
+      const orgOverview = getState('orgOverview', orgName);
       if (orgOverview && typeof orgOverview === 'object') {
         return HttpResponse.json({ data: { organization: orgOverview } });
       }
     }
 
-    if (queryIncludesAll(query, ['slacks', 'rocketchats'])) {
-      const notifications = getStateOrDefault<Record<string, unknown>>('notifications', orgName, null);
-      console.log('[MSW] getOrganization notifications query for:', orgName, 'state:', notifications);
+    if (query.includes('slacks') || query.includes('rocketchats')) {
+      const notifications = getState<Record<string, unknown>>('notifications', orgName);
 
       if (notifications && typeof notifications === 'object' && !Array.isArray(notifications)) {
         return HttpResponse.json({ data: { organization: notifications } });
@@ -148,44 +153,38 @@ export const handlers = [
       });
     }
 
-    if (queryIncludesAll(query, ['owners', 'groupRoles'])) {
+    if (query.includes('owners') && query.includes('groupRoles')) {
       const owners = stateStore.getState('orgOwners', orgName) ?? stateStore.getState('orgOwners', '1') ?? defaultOrgOwners;
       return HttpResponse.json({
         data: { organization: { id: 1, name: orgName, owners } },
       });
     }
 
-    if (queryIncludesAll(query, ['groups', 'memberCount'])) {
+    if (query.includes('groups') && query.includes('memberCount')) {
       const groups = stateStore.getState('orgGroups', 'all') ?? defaultOrgGroups;
       return HttpResponse.json({
         data: { organization: { id: 1, name: orgName, friendlyName: 'Test Organization', groups } },
       });
     }
 
-    const orgData = generateOrganizationManageByRole(role, orgName);
-    return HttpResponse.json({ data: { organization: orgData } });
+    const org = getOrganization();
+    return HttpResponse.json({
+      data: { organization: { ...org, name: orgName || org.name } },
+    });
   }),
 
   lagoonGraphQL.query('getOrg', ({ variables, query }) => {
     const orgName = variables.name as string;
-    const role = getCurrentRole();
     const includesValue = query.includes('value');
 
     if (includesValue) {
-      if (!canViewVariableValues(role)) {
-        return HttpResponse.json({
-          data: { organization: null },
-          errors: [{ message: 'Unauthorized: You do not have permission to view variable values' }],
-        });
-      }
-
-      const envVariables = getStateArrayOrDefault('orgEnvVariablesWithValues', orgName, defaultOrgVariablesWithValues);
+      const envVariables = getStateArray('orgEnvVariablesWithValues', orgName, defaultOrgVariablesWithValues);
       return HttpResponse.json({
         data: { organization: { id: 1, name: orgName, envVariables } },
       });
     }
 
-    const envVariables = getStateArrayOrDefault('orgEnvVariables', orgName, defaultOrgVariables);
+    const envVariables = getStateArray('orgEnvVariables', orgName, defaultOrgVariables);
     return HttpResponse.json({
       data: { organization: { id: 1, name: orgName, envVariables } },
     });
@@ -195,9 +194,9 @@ export const handlers = [
     const groupName = variables.name as string;
     const orgId = variables.organization as number;
 
-    const members = getStateArrayOrDefault('groupMembers', groupName, defaultGroupMembers);
-    const groupProjects = getStateArrayOrDefault('groupProjects', groupName, defaultGroupProjects);
-    const orgProjects = getStateArrayOrDefault('orgProjects', String(orgId), defaultOrgProjects);
+    const members = getStateArray('groupMembers', groupName, defaultGroupMembers);
+    const groupProjects = getStateArray('groupProjects', groupName, defaultGroupProjects);
+    const orgProjects = getStateArray('orgProjects', String(orgId), defaultOrgProjects);
 
     return HttpResponse.json({
       data: {
@@ -226,17 +225,17 @@ export const handlers = [
 
   lagoonGraphQL.query('usersByOrganization', ({ variables }) => {
     const orgId = variables.id as number;
-    const users = getStateArrayOrDefault('orgUsers', String(orgId), defaultOrgUsers);
+    const users = getStateArray('orgUsers', String(orgId), defaultOrgUsers);
     return HttpResponse.json({ data: { users } });
   }),
 
   lagoonGraphQL.operation(({ query, variables }) => {
-    if (!query.includes('userByEmailAndOrganization')) return;
+    if (!query.includes('userByEmailAndOrganization')) return undefined;
 
     const { email, organization } = variables as { email: string; organization: number };
     const stateKey = `${organization}-${email}`;
 
-    const groupRoles = getStateArrayOrDefault('userGroupRoles', stateKey, defaultUserGroupRoles);
+    const groupRoles = getStateArray('userGroupRoles', stateKey, defaultUserGroupRoles);
 
     return HttpResponse.json({
       data: {
@@ -247,17 +246,15 @@ export const handlers = [
           isFederatedUser: false,
         },
       },
-    });
+    } as never);
   }),
 
   lagoonGraphQL.operation(({ query, operationName }) => {
     const isMe = operationName?.toLowerCase() === 'me' || query.includes('query me') || query.includes('query Me');
-    if (!isMe) return;
+    if (!isMe) return undefined;
 
-    const sshKeys = getStateArrayOrDefault('sshKeys', 'user', defaultSSHKeys);
-    const userPreferences = getStateOrDefault('userPreferences', 'current', defaultUserPreferences);
-
-    console.log('[MSW] me/Me query intercepted - operationName:', operationName, 'sshKeys from store:', sshKeys);
+    const sshKeys = getStateArray('sshKeys', 'user', defaultSSHKeys);
+    const userPreferences = getState('userPreferences', 'current') ?? defaultUserPreferences;
 
     return HttpResponse.json({
       data: {
@@ -273,14 +270,14 @@ export const handlers = [
           __typename: 'User',
         },
       },
-    });
+    } as never);
   }),
 
   lagoonGraphQL.query('getEnvironment', ({ variables, query }) => {
     const openshiftProjectName = variables.openshiftProjectName as string;
 
-    if (query.includes('environmentByOpenshiftProjectName') && queryIncludesNone(query, ['insights', 'apiRoutes', 'backups', 'tasks', 'deployments', 'envVariables']) && !/facts\s*\{/.test(query)) {
-      const envOverview = getStateOrDefault<Record<string, unknown>>('environmentOverview', openshiftProjectName, null);
+    if (query.includes('environmentByOpenshiftProjectName') && !query.includes('insights') && !query.includes('apiRoutes') && !query.includes('backups') && !query.includes('tasks') && !query.includes('deployments') && !query.includes('envVariables') && !/facts\s*\{/.test(query)) {
+      const envOverview = getState<Record<string, unknown>>('environmentOverview', openshiftProjectName);
       if (envOverview) {
         return HttpResponse.json({ data: { environment: envOverview } });
       }
@@ -291,21 +288,21 @@ export const handlers = [
       const environmentID = variables.environmentID as number;
 
       if (query.includes('insights') && !query.includes('facts')) {
-        const insights = getStateArrayOrDefault('insightsDownload', String(environmentID), defaultInsights);
+        const insights = getStateArray('insightsDownload', String(environmentID), defaultInsights);
         return HttpResponse.json({
           data: { environment: { id: environmentID, insights } },
         });
       }
 
-      const backups = getStateArrayOrDefault('backups', 'project-main', defaultBackups);
+      const backups = getStateArray('backups', 'project-main', defaultBackups);
       return HttpResponse.json({
         data: { environment: { backups } },
       });
     }
 
     if (query.includes('apiRoutes')) {
-      const routes = getStateArrayOrDefault('routes', openshiftProjectName, defaultRoutes);
-      const routeEnvMeta = getStateOrDefault('routeEnvironmentMeta', openshiftProjectName, createDefaultRouteEnvMeta(openshiftProjectName));
+      const routes = getStateArray('routes', openshiftProjectName, defaultRoutes);
+      const routeEnvMeta = getState('routeEnvironmentMeta', openshiftProjectName) ?? createDefaultRouteEnvMeta(openshiftProjectName);
 
       return HttpResponse.json({
         data: { environmentRoutes: { ...routeEnvMeta, apiRoutes: routes } },
@@ -313,8 +310,8 @@ export const handlers = [
     }
 
     if (query.includes('backups') && !query.includes('tasks')) {
-      const backups = getStateArrayOrDefault('backups', openshiftProjectName, defaultBackups);
-      const backupEnvMeta = getStateOrDefault('backupEnvironmentMeta', openshiftProjectName, createDefaultBackupEnvMeta(openshiftProjectName));
+      const backups = getStateArray('backups', openshiftProjectName, defaultBackups);
+      const backupEnvMeta = getState('backupEnvironmentMeta', openshiftProjectName) ?? createDefaultBackupEnvMeta(openshiftProjectName);
 
       return HttpResponse.json({
         data: { environment: { ...backupEnvMeta, backups } },
@@ -322,15 +319,13 @@ export const handlers = [
     }
 
     if (query.includes('insights') && /facts\s*\{/.test(query)) {
-      const insightsEnv = getStateOrDefault<Record<string, unknown>>('insightsEnvironment', openshiftProjectName, null);
-
-      console.log('[MSW] insights+facts handler matched:', { openshiftProjectName, hasInsightsEnv: !!insightsEnv });
+      const insightsEnv = getState<Record<string, unknown>>('insightsEnvironment', openshiftProjectName);
 
       if (insightsEnv) {
         return HttpResponse.json({ data: { environment: insightsEnv } });
       }
 
-      const envOverview = getStateOrDefault<Record<string, unknown>>('environmentOverview', openshiftProjectName, null);
+      const envOverview = getState<Record<string, unknown>>('environmentOverview', openshiftProjectName);
       if (envOverview) {
         return HttpResponse.json({
           data: {
@@ -348,17 +343,17 @@ export const handlers = [
 
     if (query.includes('tasks') && !query.includes('advancedTasks')) {
       const taskName = variables.taskName as string;
-      const taskEnv = getStateOrDefault<Record<string, unknown>>('task', taskName, null);
+      const taskEnv = getState<Record<string, unknown>>('task', taskName);
 
       if (taskEnv) {
         return HttpResponse.json({ data: { environment: taskEnv } });
       }
     }
 
-    if (queryIncludesAll(query, ['tasks', 'advancedTasks'])) {
-      const tasks = getStateArrayOrDefault('tasks', openshiftProjectName, defaultTasks);
-      const advancedTasks = getStateArrayOrDefault('advancedTasks', openshiftProjectName, defaultAdvancedTasks);
-      const taskEnvMeta = getStateOrDefault('taskEnvironmentMeta', openshiftProjectName, createDefaultTaskEnvMeta(openshiftProjectName));
+    if (query.includes('tasks') && query.includes('advancedTasks')) {
+      const tasks = getStateArray('tasks', openshiftProjectName, defaultTasks);
+      const advancedTasks = getStateArray('advancedTasks', openshiftProjectName, defaultAdvancedTasks);
+      const taskEnvMeta = getState('taskEnvironmentMeta', openshiftProjectName) ?? createDefaultTaskEnvMeta(openshiftProjectName);
 
       return HttpResponse.json({
         data: { environment: { ...taskEnvMeta, tasks, advancedTasks } },
@@ -366,17 +361,16 @@ export const handlers = [
     }
 
     if (query.includes('deployments')) {
-      const deployments = getStateArrayOrDefault('deployments', openshiftProjectName, defaultDeployments);
-      const envMeta = getStateOrDefault('environmentMeta', openshiftProjectName, createDefaultEnvMeta(openshiftProjectName));
+      const deployments = getStateArray('deployments', openshiftProjectName, defaultDeployments);
+      const envMeta = getState('environmentMeta', openshiftProjectName) ?? createDefaultEnvMeta(openshiftProjectName);
 
       return HttpResponse.json({
         data: { environment: { ...envMeta, deployments } },
       });
     }
 
-    const role = getCurrentRole();
     const includesValue = query.includes('value');
-    const includesProjectEnvVars = queryIncludesAll(query, ['project', 'envVariables']);
+    const includesProjectEnvVars = query.includes('project') && query.includes('envVariables');
 
     const defaultEnv = {
       id: 1,
@@ -392,8 +386,8 @@ export const handlers = [
 
     const getProjectBlock = (withValues: boolean) => {
       const projectVars = withValues
-        ? getStateArrayOrDefault('envProjectVariablesWithValues', openshiftProjectName, defaultProjectVariablesWithValues)
-        : getStateArrayOrDefault('envProjectVariables', openshiftProjectName, defaultProjectVariables);
+        ? getStateArray('envProjectVariablesWithValues', openshiftProjectName, defaultProjectVariablesWithValues)
+        : getStateArray('envProjectVariables', openshiftProjectName, defaultProjectVariables);
 
       return {
         name: 'test-project',
@@ -410,14 +404,16 @@ export const handlers = [
     };
 
     if (includesValue) {
-      if (!canViewVariableValues(role)) {
+      const unauthorizedViewValues = getState<boolean>('unauthorizedViewValues', openshiftProjectName) ?? false;
+      
+      if (unauthorizedViewValues) {
         return HttpResponse.json({
           data: { environmentVars: null },
           errors: [{ message: 'Unauthorized: You do not have permission to view variable values' }],
-        });
+        } as never);
       }
 
-      const envVariables = getStateArrayOrDefault('envEnvVariablesWithValues', openshiftProjectName, defaultEnvVariablesWithValues);
+      const envVariables = getStateArray('envEnvVariablesWithValues', openshiftProjectName, defaultEnvVariablesWithValues);
 
       if (includesProjectEnvVars) {
         return HttpResponse.json({
@@ -430,13 +426,7 @@ export const handlers = [
       });
     }
 
-    const envVariables = getStateArrayOrDefault('envEnvVariables', openshiftProjectName, defaultEnvVariables);
-
-    console.log('[MSW] getEnvironment query (no values):', {
-      openshiftProjectName,
-      stateResult: stateStore.getState('envEnvVariables', openshiftProjectName),
-      returning: envVariables,
-    });
+    const envVariables = getStateArray('envEnvVariables', openshiftProjectName, defaultEnvVariables);
 
     return HttpResponse.json({
       data: { environmentVars: { ...defaultEnv, envVariables, project: getProjectBlock(false) } },
@@ -445,7 +435,6 @@ export const handlers = [
 
   lagoonGraphQL.query('getProject', ({ variables, query }) => {
     const projectName = variables.name as string;
-    const role = getCurrentRole();
     const includesValue = query.includes('value');
 
     if (query.includes('publicKey') && !query.includes('environments')) {
@@ -460,8 +449,8 @@ export const handlers = [
       });
     }
 
-    if (queryIncludesAll(query, ['environments', 'openshift', 'pendingChanges'])) {
-      const projectData = getStateOrDefault<Record<string, unknown>>('projectEnvironments', projectName, null);
+    if (query.includes('environments') && query.includes('openshift') && query.includes('pendingChanges')) {
+      const projectData = getState<Record<string, unknown>>('projectEnvironments', projectName);
       if (projectData) {
         return HttpResponse.json({ data: { project: projectData } });
       }
@@ -501,8 +490,8 @@ export const handlers = [
     }
 
     if (query.includes('apiRoutes')) {
-      const routes = getStateArrayOrDefault('projectRoutes', projectName, defaultRoutes);
-      const projectMeta = getStateOrDefault('projectRouteMeta', projectName, createDefaultProjectRouteMeta(projectName));
+      const routes = getStateArray('projectRoutes', projectName, defaultRoutes);
+      const projectMeta = getState('projectRouteMeta', projectName) ?? createDefaultProjectRouteMeta(projectName);
 
       return HttpResponse.json({
         data: { projectRoutes: { ...projectMeta, apiRoutes: routes } },
@@ -512,20 +501,22 @@ export const handlers = [
     const defaultProject = createDefaultProject(projectName);
 
     if (includesValue) {
-      if (!canViewVariableValues(role)) {
+      const unauthorizedViewValues = getState<boolean>('unauthorizedViewValues', projectName) ?? false;
+      
+      if (unauthorizedViewValues) {
         return HttpResponse.json({
           data: { project: null },
           errors: [{ message: 'Unauthorized: You do not have permission to view variable values' }],
-        });
+        } as never);
       }
 
-      const envVariables = getStateArrayOrDefault('projectEnvVariablesWithValues', projectName, defaultOrgVariablesWithValues);
+      const envVariables = getStateArray('projectEnvVariablesWithValues', projectName, defaultOrgVariablesWithValues);
       return HttpResponse.json({
         data: { project: { ...defaultProject, envVariables } },
       });
     }
 
-    const envVariables = getStateArrayOrDefault('projectEnvVariables', projectName, defaultOrgVariables);
+    const envVariables = getStateArray('projectEnvVariables', projectName, defaultOrgVariables);
     return HttpResponse.json({
       data: { project: { ...defaultProject, envVariables } },
     });

@@ -7,19 +7,20 @@ import { OrganizationProjectsData } from '@/app/(routegroups)/(orgroutes)/organi
 import organizationByNameProjects from '@/lib/query/organizations/organizationByName.projects';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
-import { createOrgProjectsMockState, OrgProjectsData, sleep } from '../../../../../.storybook/mocks/storyHelpers';
+import { sleep } from '../../../../../.storybook/mocks/storyHelpers';
 import OrgProjectsPage from './ProjectsPage';
 
-const initialOrgData: OrgProjectsData = {
+const initialProjects = [
+  { id: 1, name: 'project-alpha', groupCount: 3 },
+  { id: 2, name: 'project-beta', groupCount: 2 },
+  { id: 3, name: 'project-gamma', groupCount: 5 },
+  { id: 4, name: 'project-delta', groupCount: 1 },
+];
+
+const orgProjectsMeta = {
   id: 1,
   name: 'test-organization',
   friendlyName: 'Test Organization',
-  projects: [
-    { id: 1, name: 'project-alpha', groupCount: 3 },
-    { id: 2, name: 'project-beta', groupCount: 2 },
-    { id: 3, name: 'project-gamma', groupCount: 5 },
-    { id: 4, name: 'project-delta', groupCount: 1 },
-  ],
   deployTargets: [
     { id: 1, name: 'production', friendlyName: 'Production Cluster', cloudProvider: 'aws', cloudRegion: 'us-east-1' },
     { id: 2, name: 'staging', friendlyName: 'Staging Cluster', cloudProvider: 'aws', cloudRegion: 'us-west-2' },
@@ -33,7 +34,14 @@ const meta: Meta<typeof OrgProjectsPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createOrgProjectsMockState('test-organization', initialOrgData),
+    initialMockState: {
+      orgProjects: {
+        'test-organization': initialProjects,
+      },
+      orgProjectsMeta: {
+        'test-organization': [orgProjectsMeta],
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<OrganizationProjectsData, { name: string }>

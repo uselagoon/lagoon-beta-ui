@@ -3,33 +3,14 @@ import React from 'react';
 import { OrganizationProjectData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/projects/[projectSlug]/page';
 import projectAndOrganizationByName from '@/lib/query/organizations/projectAndOrganizationByName';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, fireEvent, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
-import {
-  OrgNotifications,
-  createNotificationsMockState,
-  mergeInitialMockState,
-  sleep,
-} from '../../../../../.storybook/mocks/storyHelpers';
+import { OrgNotifications, sleep } from '../../../../../.storybook/mocks/storyHelpers';
 import OrgProjectPage from './OrgProjectPage';
 
 type ProjectData = OrganizationProjectData['project'];
 type OrganizationData = OrganizationProjectData['organization'];
-
-const createOrgProjectMockState = (
-  projectName: string,
-  orgName: string,
-  project: ProjectData,
-  organization: OrganizationData
-) => ({
-  orgProject: {
-    [projectName]: project,
-  },
-  orgProjectOrg: {
-    [orgName]: organization,
-  },
-});
 
 const initialProject: ProjectData = {
   id: 1,
@@ -104,10 +85,17 @@ const meta: Meta<typeof OrgProjectPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: mergeInitialMockState(
-      createOrgProjectMockState('project-alpha', 'test-organization', initialProject, initialOrganization),
-      createNotificationsMockState('test-organization', initialNotifications)
-    ),
+    initialMockState: {
+      orgProject: {
+        'project-alpha': initialProject,
+      },
+      orgProjectOrg: {
+        'test-organization': initialOrganization,
+      },
+      notifications: {
+        'test-organization': initialNotifications,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<OrganizationProjectData, { name: string; project: string }>

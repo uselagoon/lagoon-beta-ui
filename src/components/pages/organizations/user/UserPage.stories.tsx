@@ -7,7 +7,7 @@ import { OrganizationUserData } from '@/app/(routegroups)/(orgroutes)/organizati
 import userByEmailAndOrganization from '@/lib/query/organizations/userByEmailAndOrganization';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
-import { createUserGroupRolesMockState, sleep, UserGroupRole } from '../../../../../.storybook/mocks/storyHelpers';
+import { sleep, UserGroupRole } from '../../../../../.storybook/mocks/storyHelpers';
 import UserPage from './UserPage';
 
 const initialGroups: UserGroupRole[] = [
@@ -25,7 +25,11 @@ const meta: Meta<typeof UserPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createUserGroupRolesMockState(1, 'alice@example.com', initialGroups),
+    initialMockState: {
+      userGroupRoles: {
+        '1-alice@example.com': initialGroups,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<OrganizationUserData, { organization: number; email: string }>

@@ -29,23 +29,6 @@ if (typeof window !== 'undefined') {
 
 const preview: Preview = {
   globalTypes: {
-    userRole: {
-      name: 'User Role',
-      description: 'Simulated user role for permission testing',
-      defaultValue: 'OWNER',
-      toolbar: {
-        icon: 'user',
-        items: [
-          { value: 'OWNER', title: 'Owner' },
-          { value: 'MAINTAINER', title: 'Maintainer' },
-          { value: 'DEVELOPER', title: 'Developer' },
-          { value: 'REPORTER', title: 'Reporter' },
-          { value: 'GUEST', title: 'Guest' },
-        ],
-        showName: true,
-        dynamicTitle: true,
-      },
-    },
     theme: {
       name: 'Theme',
       description: 'Global theme for components',

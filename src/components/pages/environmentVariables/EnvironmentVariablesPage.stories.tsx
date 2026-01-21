@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
-import { createEnvVariablesMockState } from '../../../../.storybook/mocks/storyHelpers';
+import { sleep } from '../../../../.storybook/mocks/storyHelpers';
 import EnvironmentVariablesPage from './EnvironmentVariablesPage';
 
 const initialEnvVariables = [
@@ -27,7 +27,20 @@ const meta: Meta<typeof EnvironmentVariablesPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createEnvVariablesMockState('project-main', initialEnvVariables, initialProjectVariables),
+    initialMockState: {
+      envEnvVariables: {
+        'project-main': initialEnvVariables.map(v => ({ id: v.id, name: v.name, scope: v.scope })),
+      },
+      envEnvVariablesWithValues: {
+        'project-main': initialEnvVariables,
+      },
+      envProjectVariables: {
+        'project-main': initialProjectVariables.map(v => ({ id: v.id, name: v.name, scope: v.scope })),
+      },
+      envProjectVariablesWithValues: {
+        'project-main': initialProjectVariables,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<EnvVariablesData, { openshiftProjectName: string; limit: null }>
@@ -79,6 +92,8 @@ export const EditVariable: Story = {
     const editValuesToggle = await canvas.findByTestId('env-var-visibility-toggle', {}, { timeout: 10000 });
     await userEvent.click(editValuesToggle);
 
+    await sleep(500);
+
     const firstEditButton = within((await canvas.findAllByRole('button', { name: 'edit-variable' }))?.[0]).findByRole(
       'button'
     );
@@ -105,11 +120,13 @@ export const DeleteVariable: Story = {
     const editValuesToggle = await canvas.findByTestId('env-var-visibility-toggle', {}, { timeout: 10000 });
     await userEvent.click(editValuesToggle);
 
-    const deleteButton = (await canvas.findAllByRole('button', { name: 'delete-variable' }))?.[0];
+    await sleep(500);
+
+    const deleteButton = within((await canvas.findAllByRole('button', { name: 'delete-variable' }))?.[0]).findByRole('button');
     if (!deleteButton) {
       throw new Error('Delete button not found');
     }
-    await userEvent.click(deleteButton);
+    await userEvent.click(await deleteButton);
 
     const confirmInput = await screen.findByLabelText(/variable name/i, {}, { timeout: 5000 });
     await userEvent.type(confirmInput, 'ENV_API_KEY');
@@ -137,5 +154,30 @@ export const ViewProjectVariableValues: Story = {
     await userEvent.click(projectValuesToggle);
 
     await canvas.findByText('project-secret-123', {}, { timeout: 5000 });
+  },
+};
+
+export const UnauthorizedViewValues: Story = {
+  parameters: {
+    initialMockState: {
+      unauthorizedViewValues: {
+        'project-main': true,
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('ENV_API_KEY', {}, { timeout: 10000 });
+
+    const editValuesToggle = await canvas.findByTestId('env-var-visibility-toggle', {}, { timeout: 10000 });
+    await userEvent.click(editValuesToggle);
+
+    await waitFor(
+      () => {
+        expect(screen.getByText(/unauthorized/i)).toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
   },
 };

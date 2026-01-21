@@ -6,8 +6,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fireEvent, screen, userEvent, waitFor, within } from '@storybook/test';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
-import { createOrgUsersMockState } from '../../../../../.storybook/mocks/storyHelpers';
 import UsersPage from './UsersPage';
+import { sleep } from '../../../../../.storybook/mocks/storyHelpers';
 
 const initialUsers = [
   {
@@ -48,7 +48,11 @@ const meta: Meta<typeof UsersPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createOrgUsersMockState(1, initialUsers),
+    initialMockState: {
+      orgUsers: {
+        '1': initialUsers,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<OrganizationUsersData, { id: number }> query={usersByOrganization} variables={{ id: 1 }}>
@@ -156,6 +160,7 @@ export const RemoveUser: Story = {
 
     await canvas.findByText('alice@example.com', {}, { timeout: 10000 });
 
+    await sleep(500);
     const removeButton = (await canvas.findAllByRole('button', { name: 'delete' }))?.[0];
     if (!removeButton) {
       throw new Error('Remove button not found');

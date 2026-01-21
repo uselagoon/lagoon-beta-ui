@@ -6,64 +6,65 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, fireEvent, screen, userEvent, waitFor, within } from '@storybook/test';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
-import { createProjectRoutesMockState, sleep } from '../../../../.storybook/mocks/storyHelpers';
+import { sleep } from '../../../../.storybook/mocks/storyHelpers';
 import RoutesPage from './RoutesPage';
 
-const initialProject = {
+const initialRoutes = [
+  {
+    id: 1,
+    domain: 'example.com',
+    type: 'route',
+    primary: true,
+    service: 'nginx',
+    created: '2024-01-15T10:30:00Z',
+    updated: '2024-06-15T14:20:00Z',
+    source: 'API',
+    environment: {
+      id: 1,
+      name: 'main',
+      kubernetesNamespaceName: 'project-main',
+      environmentType: 'production',
+    },
+  },
+  {
+    id: 2,
+    domain: 'api.example.com',
+    type: 'route',
+    primary: false,
+    service: 'api',
+    created: '2024-02-20T08:00:00Z',
+    updated: '2024-06-10T12:00:00Z',
+    source: 'API',
+    environment: {
+      id: 1,
+      name: 'main',
+      kubernetesNamespaceName: 'project-main',
+      environmentType: 'production',
+    },
+  },
+  {
+    id: 3,
+    domain: 'dev.example.com',
+    type: 'route',
+    primary: true,
+    service: 'nginx',
+    created: '2024-03-01T10:00:00Z',
+    updated: '2024-06-01T10:00:00Z',
+    source: 'API',
+    environment: {
+      id: 2,
+      name: 'develop',
+      kubernetesNamespaceName: 'project-develop',
+      environmentType: 'development',
+    },
+  },
+];
+
+const projectRouteMeta = {
   id: 1,
   name: 'test-project',
   productionEnvironment: 'main',
   standbyProductionEnvironment: undefined,
-  apiRoutes: [
-    {
-      id: 1,
-      domain: 'example.com',
-      type: 'route',
-      primary: true,
-      service: 'nginx',
-      created: '2024-01-15T10:30:00Z',
-      updated: '2024-06-15T14:20:00Z',
-      source: 'API',
-      environment: {
-        id: 1,
-        name: 'main',
-        kubernetesNamespaceName: 'project-main',
-        environmentType: 'production',
-      },
-    },
-    {
-      id: 2,
-      domain: 'api.example.com',
-      type: 'route',
-      primary: false,
-      service: 'api',
-      created: '2024-02-20T08:00:00Z',
-      updated: '2024-06-10T12:00:00Z',
-      source: 'API',
-      environment: {
-        id: 1,
-        name: 'main',
-        kubernetesNamespaceName: 'project-main',
-        environmentType: 'production',
-      },
-    },
-    {
-      id: 3,
-      domain: 'dev.example.com',
-      type: 'route',
-      primary: true,
-      service: 'nginx',
-      created: '2024-03-01T10:00:00Z',
-      updated: '2024-06-01T10:00:00Z',
-      source: 'API',
-      environment: {
-        id: 2,
-        name: 'develop',
-        kubernetesNamespaceName: 'project-develop',
-        environmentType: 'development',
-      },
-    },
-  ],
   environments: [
     { id: 1, name: 'main', kubernetesNamespaceName: 'project-main' },
     { id: 2, name: 'develop', kubernetesNamespaceName: 'project-develop' },
@@ -77,7 +78,14 @@ const meta: Meta<typeof RoutesPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createProjectRoutesMockState('test-project', initialProject),
+    initialMockState: {
+      projectRoutes: {
+        'test-project': initialRoutes,
+      },
+      projectRouteMeta: {
+        'test-project': projectRouteMeta,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<RoutesData, { name: string }> query={projectWithRoutes} variables={{ name: 'test-project' }}>

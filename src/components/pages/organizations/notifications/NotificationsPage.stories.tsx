@@ -6,7 +6,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
-import { OrgNotifications, createNotificationsMockState, sleep } from '../../../../../.storybook/mocks/storyHelpers';
+import { OrgNotifications, sleep } from '../../../../../.storybook/mocks/storyHelpers';
 import NotificationsPage from './NotificationsPage';
 
 const initialNotifications: OrgNotifications = {
@@ -32,7 +32,11 @@ const meta: Meta<typeof NotificationsPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createNotificationsMockState('test-organization', initialNotifications),
+    initialMockState: {
+      notifications: {
+        'test-organization': initialNotifications,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<OrganizationNotificationData, { name: string }>

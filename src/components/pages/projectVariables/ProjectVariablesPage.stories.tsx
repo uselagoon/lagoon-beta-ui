@@ -6,7 +6,6 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
-import { createProjectVariablesMockState } from '../../../../.storybook/mocks/storyHelpers';
 import ProjectVariablesPage from './ProjectVariablesPage';
 
 const initialVariables = [
@@ -22,7 +21,14 @@ const meta: Meta<typeof ProjectVariablesPage> = {
     nextjs: {
       appDirectory: true,
     },
-    initialMockState: createProjectVariablesMockState('test-project', initialVariables),
+    initialMockState: {
+      projectEnvVariables: {
+        'test-project': initialVariables.map(v => ({ id: v.id, name: v.name, scope: v.scope })),
+      },
+      projectEnvVariablesWithValues: {
+        'test-project': initialVariables,
+      },
+    },
   },
   render: () => (
     <MockPreloadQuery<ProjectEnvironmentsData, { name: string }>
@@ -109,6 +115,31 @@ export const DeleteVariable: Story = {
     await waitFor(
       () => {
         expect(canvas.queryByText('API_KEY')).not.toBeInTheDocument();
+      },
+      { timeout: 5000 }
+    );
+  },
+};
+
+export const UnauthorizedViewValues: Story = {
+  parameters: {
+    initialMockState: {
+      unauthorizedViewValues: {
+        'test-project': true,
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('API_KEY', {}, { timeout: 10000 });
+
+    const editValuesToggle = await canvas.findByTestId('var-visibility-toggle', {}, { timeout: 10000 });
+    await userEvent.click(editValuesToggle);
+
+    await waitFor(
+      () => {
+        expect(screen.getByText(/unauthorized/i)).toBeInTheDocument();
       },
       { timeout: 5000 }
     );
