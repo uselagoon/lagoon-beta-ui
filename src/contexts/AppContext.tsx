@@ -7,9 +7,9 @@ import { useEnvContext } from 'next-runtime-env';
 import { useParams, usePathname } from 'next/navigation';
 
 import { useSidenavItems } from '@/components/dynamicNavigation/useSidenavItems';
-import {RootLayout, ThemeSwitch, Toaster} from '@uselagoon/ui-library';
+import { RootLayout, ThemeSwitch, Toaster } from '@uselagoon/ui-library';
 import manualSignOut from 'utils/manualSignOut';
-import {useOverrides} from "@/contexts/OverrideContext";
+import { useOverrides } from "@/contexts/OverrideContext";
 
 export type SidebarItem = {
   title: string;
@@ -82,9 +82,9 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         cardProps={overrides?.components?.announcementCard}
         documentationUrl={overrides?.global?.documentationUrl}
       >
-         <div className="absolute top-2 right-4">
-           <ThemeSwitch />
-         </div>
+        <div className="absolute top-2 right-4">
+          <ThemeSwitch />
+        </div>
         <section className="my-10">
           {children}
           <Toaster />
