@@ -8,7 +8,7 @@ import TaskNotFound from '@/components/errors/TaskNotFound';
 import { getTaskDuration } from '@/components/utils';
 import getTaskFilesDownload from '@/lib/query/getTaskFileDownload';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Badge, BasicTable, Button, Switch } from '@uselagoon/ui-library';
+import {Badge, BasicTable, Button, Switch, Tooltip, TooltipContent, TooltipTrigger} from '@uselagoon/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -152,10 +152,17 @@ export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<Ta
   if (!environment?.tasks.length) {
     return <TaskNotFound taskName={taskName} />;
   }
+
+  let createdTooltip =
+    <Tooltip>
+      <TooltipTrigger>{dayjs.utc(currentTask.created).local().fromNow()}</TooltipTrigger>
+      <TooltipContent>{dayjs.utc(currentTask.created).local().format('YYYY-MM-DD HH:mm:ss')}</TooltipContent>
+    </Tooltip>
+
   const taskDataRow = {
     name: currentTask.name,
     service: currentTask.service,
-    created: dayjs.utc(currentTask.created).local().fromNow(),
+    created: createdTooltip,
     duration: getTaskDuration(currentTask),
     status: <Badge variant="default">{currentTask.status}</Badge>,
 
