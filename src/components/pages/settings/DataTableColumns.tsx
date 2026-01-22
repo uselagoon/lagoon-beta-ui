@@ -112,7 +112,7 @@ export const renderTableColumns = (remove: {
                 });
               }}
             >
-              <Button variant="outline" disabled={remove.loading}>
+              <Button variant="outline" disabled={remove.loading} aria-label="delete-key">
                 <Trash2 data-cy="delete-key" />
               </Button>
             </Notification>

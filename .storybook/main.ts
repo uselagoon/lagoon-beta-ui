@@ -1,12 +1,15 @@
 import type { StorybookConfig } from '@storybook/nextjs';
 
 const config: StorybookConfig = {
-  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+  stories: ['../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
 
   addons: [
-    '@storybook/addon-onboarding',
-    '@storybook/addon-links',
-    '@storybook/addon-essentials',
+    {
+      name: '@storybook/addon-essentials',
+      options: {
+        docs: false,
+      },
+    },
     '@chromatic-com/storybook',
     '@storybook/addon-interactions',
   ],
@@ -21,5 +24,14 @@ const config: StorybookConfig = {
   typescript: {
     reactDocgen: 'react-docgen-typescript',
   },
+
+  refs: {
+    'ui-library': {
+      title: 'ui-library',
+      url: 'http://localhost:6007',
+      expanded: false, 
+    },
+  },
+
 };
 export default config;

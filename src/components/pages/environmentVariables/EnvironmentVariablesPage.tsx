@@ -170,6 +170,7 @@ export default function EnvironmentVariablesPage({
       <div className="flex gap-2 items-center justify-between">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Environment variables</h3>
         <Switch
+         data-testId="env-var-visibility-toggle"
           label="Edit environment values"
           disabled={envLoading}
           loading={envLoading}
@@ -228,6 +229,7 @@ export default function EnvironmentVariablesPage({
       <div className="flex gap-2 items-center justify-between">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-2">Project variables</h3>
         <Switch
+          data-testId="project-var-visibility-toggle"
           label="View project values"
           disabled={prjLoading}
           loading={prjLoading}

@@ -21,7 +21,7 @@ const AddUserSheet = ({
     onCompleted: () => {
       toast.success('User added successfully');
     },
-    refetchQueries: ['getOrganization'],
+    refetchQueries: ['getOrganization', 'usersByOrganization'],
   });
   const handleAddUser = async (e: React.MouseEvent<HTMLButtonElement>, values: any) => {
     try {

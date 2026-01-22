@@ -114,7 +114,7 @@ const AttachRouteSheet = ({
       <Sheet
         sheetTrigger={iconOnly ?           <Tooltip>
             <TooltipTrigger>
-              <Link className="h-5 w-5" />
+              <Link className="h-5 w-5" aria-label="attach-route" />
             </TooltipTrigger>
             <TooltipContent>Attach route to environment</TooltipContent>
           </Tooltip> : 'Attach'}

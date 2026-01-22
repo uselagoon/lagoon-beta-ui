@@ -72,7 +72,7 @@ export const EditUser: FC<Props> = ({ orgId, refetch, user }) => {
 
   return (
     <Tooltip>
-      <TooltipTrigger>
+      <TooltipTrigger aria-label="edit-user">
         <Sheet
           data-cy="edit-user"
           sheetTrigger={<Edit2Icon />}
