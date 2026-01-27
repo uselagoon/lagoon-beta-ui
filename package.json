@@ -31,7 +31,7 @@
     "@bprogress/next": "^3.2.12",
     "@tailwindcss/postcss": "^4.1.8",
     "@types/git-url-parse": "^9.0.3",
-    "@uselagoon/ui-library": "github:uselagoon/ui-library#v0.1.5",
+    "@uselagoon/ui-library": "github:uselagoon/ui-library#v0.1.4",
     "cryptr": "^6.3.0",
     "cypress-real-events": "^1.14.0",
     "dayjs": "^1.11.13",
