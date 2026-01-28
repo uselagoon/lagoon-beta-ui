@@ -2,5 +2,8 @@
   "global": {
   },
   "components": {
+    "announcementCard": {
+      "ctaUrl": "https://docs.lagoon.sh/releases/2.30.0/"
+    }
   }
 }
