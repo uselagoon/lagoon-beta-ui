@@ -1,6 +1,8 @@
 {
-  "global": {
-  },
+  "global": {},
   "components": {
+    "announcementCard": {
+      "disabled": true
+    }
   }
 }
