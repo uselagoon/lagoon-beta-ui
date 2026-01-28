@@ -81,6 +81,7 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         sidenavItems={sidenavItems}
         cardProps={overrides?.components?.announcementCard}
         documentationUrl={overrides?.global?.documentationUrl}
+        disableAccountLink={overrides?.components?.sidenavFooterMenu?.disableAccountLink}
       >
          <div className="absolute top-2 right-4">
            <ThemeSwitch />
