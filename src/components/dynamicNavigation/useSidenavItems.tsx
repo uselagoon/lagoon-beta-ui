@@ -4,18 +4,18 @@ import { useEnvContext } from 'next-runtime-env';
 import { ParamValue } from 'next/dist/server/request/params';
 import { usePathname } from 'next/navigation';
 
-import { SidebarSection } from '@/contexts/AppContext';
 import environmentWithProblems from '@/lib/query/environmentWithProblems';
 import projectByNameQuery from '@/lib/query/projectByNameQuery';
 import { useQuery } from '@apollo/client';
-import { BriefcaseBusiness, FolderGit2, KeyRound, ListChecks, ServerCog, UserRoundCog } from 'lucide-react';
+import { BriefcaseBusiness, FolderGit2, KeyRound, LifeBuoy, ListChecks, ServerCog, UserRoundCog } from 'lucide-react';
+import { SidebarSection, FooterItem } from '@uselagoon/ui-library';
 
 import { getOrgNav, getProjectNav } from './DynamicNavigation';
 
 const getBaseSidenavItems = (kcUrl: string): SidebarSection[] => [
   {
     section: 'Projects',
-    sectionItems: [{ title: 'Projects', url: '/projects', icon: FolderGit2 }],
+    sectionItems: [{ title: 'Projects', url: '/projects', icon: FolderGit2, collapsible: false }],
   },
   {
     section: 'Deployments',
@@ -41,17 +41,35 @@ const getBaseSidenavItems = (kcUrl: string): SidebarSection[] => [
     ],
   },
 ];
+
+const getFooterSidenavItems = (kcUrl: string): FooterItem[] => [
+  { 
+    title: 'Documentation', 
+    url: 'https://docs.lagoon.sh/', 
+    icon: LifeBuoy,
+    target: 'blank'
+  },
+  { 
+    title: 'Account Settings', 
+    url: `${kcUrl}/account`, 
+    icon: UserRoundCog,
+    target: 'blank'
+  },
+];
+
 export function useSidenavItems(
   kcUrl: string,
   projectSlug: ParamValue,
   environmentSlug: ParamValue,
   organizationSlug: ParamValue
-) {
+): [SidebarSection[], FooterItem[]] {
   const [sidenavItems, setSidenavItems] = useState(() => getBaseSidenavItems(kcUrl));
 
   const pathname = usePathname();
 
   const { LAGOON_UI_VIEW_ENV_VARIABLES } = useEnvContext();
+
+  const footerItems = getFooterSidenavItems(kcUrl);
 
   const { data: projectData, loading: projectLoading } = useQuery(projectByNameQuery, {
     variables: { name: projectSlug },
@@ -87,5 +105,5 @@ export function useSidenavItems(
     setSidenavItems(items);
   }, [kcUrl, pathname, projectSlug, environmentSlug, organizationSlug, projectData, environmentData]);
 
-  return sidenavItems;
+  return [sidenavItems, footerItems];
 }

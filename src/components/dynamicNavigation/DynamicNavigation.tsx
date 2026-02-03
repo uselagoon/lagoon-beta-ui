@@ -16,7 +16,7 @@ export const getProjectNav = (
 ): SidebarItem[] => {
   const showDeployTargets =
     projectData?.project?.deployTargetConfigs?.length && projectData?.project?.deployTargetConfigs?.length > 0;
-    const showRoutesTab = projectData?.project?.featureApiRoutes;
+  const showRoutesTab = projectData?.project?.featureApiRoutes;
   return [
     {
       title: String(projectSlug),
@@ -50,6 +50,7 @@ export const getEnvironmentNav = (
       title: String(environmentData?.environment?.name ? environmentData?.environment?.name : environmentSlug),
       url: `/projects/${projectSlug}/${environmentSlug}`,
       icon: GitPullRequestDraft,
+      collapsible: false,
       children: [
         { title: 'Overview', url: `/projects/${projectSlug}/${environmentSlug}` },
         { title: 'Deployments', url: `/projects/${projectSlug}/${environmentSlug}/deployments` },
