@@ -51,7 +51,7 @@ export const EditUserRole: FC<Props> = ({ groupName, email, currentRole, refetch
         data-cy="edit-user-role"
         sheetTrigger={
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger aria-label="edit-role">
               <Edit2Icon />
             </TooltipTrigger>
             <TooltipContent>Edit Role</TooltipContent>

@@ -1,6 +1,11 @@
 {
-  "global": {
-  },
+  "global": {},
   "components": {
+    "announcementCard": {
+      "disabled": true
+    },
+    "sidenavFooterMenu": {
+      "disableChangeFeedLink": true
+    }
   }
 }

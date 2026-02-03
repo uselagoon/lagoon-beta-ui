@@ -33,7 +33,7 @@ export const EditDesc: FC<Props> = ({ orgId, description }) => {
   return (
     <Tooltip>
       <TooltipTrigger>
-        <Button disabled={loading} variant="outline" onClick={handleUpdate}>
+        <Button disabled={loading} variant="outline" onClick={handleUpdate} aria-label="save-desc">
           {loading ? <Loader2 className="animate-spin" /> : <Check />}
         </Button>
       </TooltipTrigger>

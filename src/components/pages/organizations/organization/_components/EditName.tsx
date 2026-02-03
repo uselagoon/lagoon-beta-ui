@@ -33,7 +33,7 @@ export const EditName: FC<Props> = ({ orgId, friendlyName }) => {
   return (
     <Tooltip>
       <TooltipTrigger>
-        <Button disabled={loading} variant="outline" onClick={handleUpdate}>
+        <Button disabled={loading} variant="outline" onClick={handleUpdate} aria-label="save-name">
           {loading ? <Loader2 className="animate-spin" /> : <Check />}
         </Button>
       </TooltipTrigger>

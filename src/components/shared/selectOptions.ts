@@ -1,4 +1,4 @@
-export const orgUserRoleOptions = [
+const orgUserRoleOptionsConst = [
   {
     label: 'Guest',
     value: 'GUEST',
@@ -19,7 +19,11 @@ export const orgUserRoleOptions = [
     label: 'Owner',
     value: 'OWNER',
   },
-];
+] as const;
+
+export type OrgUserRole = (typeof orgUserRoleOptionsConst)[number]['value'];
+
+export const orgUserRoleOptions: { label: string; value: string }[] = [...orgUserRoleOptionsConst];
 
 export const routeTypeOptions = [
   {

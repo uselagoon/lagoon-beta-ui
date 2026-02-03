@@ -1,11 +1,11 @@
-import { FC, startTransition } from 'react';
+import {FC, ReactNode, startTransition} from 'react';
 
 import addOrUpdateEnvVariable from '@/lib/mutation/addOrUpdateEnvVariable';
 import { useMutation } from '@apollo/client';
 import { Sheet } from '@uselagoon/ui-library';
 import { toast } from 'sonner';
 
-type Props = { onClick?: () => any; refetch: () => void } & (
+type Props = { onClick?: () => any; refetch: () => void; additionalContent?: ReactNode } & (
   | {
       type: 'project';
       projectName: string;
@@ -40,7 +40,7 @@ const scopeOptions = [
   },
 ];
 
-export const AddNewVariable: FC<Props> = ({ type, refetch, onClick, ...rest }) => {
+export const AddNewVariable: FC<Props> = ({ type, refetch, onClick, additionalContent = null, ...rest }) => {
   let envName = '';
   let orgName = '';
   let projName = '';
@@ -93,13 +93,13 @@ export const AddNewVariable: FC<Props> = ({ type, refetch, onClick, ...rest }) =
   return (
     <Sheet
       data-cy="add-variable"
-      sheetTrigger="Add new variable"
-      sheetTitle="Create a variable"
+      sheetTrigger={`Add ${type} variable`}
+      sheetTitle={`Create a ${type} variable`}
       sheetFooterButton="Create"
       sheetDescription="Create a unique name for your variable. Then choose the scope of the variables availability. For more information see our documentation"
       loading={loading}
       error={false}
-      additionalContent={null}
+      additionalContent={additionalContent}
       sheetFields={[
         {
           id: 'variable_name',

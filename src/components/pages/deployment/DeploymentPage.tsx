@@ -17,9 +17,10 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 
 import { getDeploymentDuration } from '../allDeployments/TableColumns';
-import {capitalize} from "@/components/utils";
-import {Loader2} from "lucide-react";
-import {getBadgeVariant} from "../../../../utils/setBadgeStatus";
+import { capitalize } from "@/components/utils";
+import { Loader2 } from "lucide-react";
+import { getBadgeVariant } from "../../../../utils/setBadgeStatus";
+import { Link as LinkIcon } from 'lucide-react';
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
@@ -51,7 +52,7 @@ export const deploymentColumns = [
   {
     title: 'Actions',
     key: 'actions',
-    dataIndex: 'actons',
+    dataIndex: 'actions',
   },
 ];
 export default function DeploymentPage({
@@ -100,16 +101,17 @@ export default function DeploymentPage({
 
   const deploymentDataRow = {
     status: <Badge variant={getBadgeVariant(deployment.status, deployment.buildStep)}>{capitalize(deployment.status)} {!['complete', 'cancelled', 'failed'].includes(deployment.status) &&
-      <Loader2 className="h-4 w-4 animate-spin t"/>}
+      <Loader2 className="h-4 w-4 animate-spin t" />}
     </Badge>,
     name: deployment.bulkId ? (
-      <section className="flex items-center ">
+      <section className="flex items-center gap-4">
         <p>{deployment.name}</p>
-        <div className="bulk-link bg-blue-400 hover:bg-blue-600 py-1 px-2 translate-x-4/5 mr-3 rounded-sm transition-colors">
-          <Link className="text-white" href={`/bulkdeployment/${deployment.bulkId}`}>
+        <Link className="py-1 px-2" href={`/bulkdeployment/${deployment.bulkId}`}>
+          <Badge variant="info" className="py-1 px-2 rounded-sm">
             BULK
-          </Link>
-        </div>
+            <LinkIcon className="h-4 w-4" />
+          </Badge>
+        </Link>
       </section>
     ) : (
       deployment.name

@@ -71,7 +71,9 @@ export default function EnvironmentPage({
 
   const [deleteEnvironmentMutation, { data, loading: deleteLoading }] = useMutation(deleteEnvironment);
 
-  const [switchActiveStandbyMutation, { loading: switchLoading }] = useMutation(switchActiveStandby);
+  const [switchActiveStandbyMutation, { loading: switchLoading }] = useMutation(switchActiveStandby, {
+    refetchQueries: ['getEnvironment'],
+  });
 
   if (!environment) {
     return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;

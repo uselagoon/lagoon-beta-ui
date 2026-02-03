@@ -1,6 +1,6 @@
 'use client';
 
-import {createContext, useContext} from "react";
+import { createContext, useContext } from "react";
 import { type Overrides } from '@uselagoon/ui-library/schemas';
 
 const OverrideContext = createContext<Overrides>({

@@ -137,8 +137,8 @@ const EditRouteSheet = ({
     <div className="space-y-4">
       <Sheet
         sheetTrigger={iconOnly ?           <Tooltip>
-            <TooltipTrigger>
-              <Pencil className="h-5 w-5" />
+            <TooltipTrigger >
+              <Pencil className="h-5 w-5" aria-label="edit-route"  />
             </TooltipTrigger>
             <TooltipContent>Update route on environment</TooltipContent>
           </Tooltip> : 'Update'}

@@ -81,7 +81,8 @@ export const DeleteRouteDialog: FC<Props> = ({ route, refetch, onClick, ...rest 
           disabled={loading}
         >
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger aria-label="delete-route"
+            >
               <Trash data-cy="delete-route" />
             </TooltipTrigger>
             <TooltipContent>Delete route</TooltipContent>

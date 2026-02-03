@@ -78,7 +78,7 @@ export const OrgProjectGroupColumns = (
       return (
         <div className="flex items-center gap-2">
           <Tooltip>
-            <TooltipTrigger>{unlink(row.original)}</TooltipTrigger>
+            <TooltipTrigger aria-label="unlink-group">{unlink(row.original)}</TooltipTrigger>
             <TooltipContent>Unlink group </TooltipContent>
           </Tooltip>
         </div>

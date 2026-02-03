@@ -117,7 +117,7 @@ export const EditNotification: React.FC<EditNotificationProps> = ({ notification
 
   return (
     <Tooltip>
-      <TooltipTrigger>
+      <TooltipTrigger aria-label="edit-notification">
         <Sheet
           data-cy="edit-notification"
           sheetTrigger={<Edit2Icon />}

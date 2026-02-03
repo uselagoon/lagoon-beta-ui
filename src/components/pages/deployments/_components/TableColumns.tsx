@@ -14,6 +14,7 @@ import utc from 'dayjs/plugin/utc';
 import { dateRangeFilter } from 'utils/tableDateRangeFilter';
 import { Check, Loader2, X } from 'lucide-react';
 import { getBadgeVariant } from 'utils/setBadgeStatus';
+import { Link as LinkIcon } from 'lucide-react';
 
 dayjs.extend(isBetween);
 dayjs.extend(duration);
@@ -57,7 +58,7 @@ const getDeploymentTableColumns = (basePath: string) =>
               {(status == "failed" || status == "cancelled") && <X color="red" size="16" />}
               <Badge variant={getBadgeVariant(status, buildStep)}>
                 {capitalize(status)}
-                {!['complete', 'cancelled', 'failed'].includes(status) && <Loader2 className="h-4 w-4 animate-spin t"/>}
+                {!['complete', 'cancelled', 'failed'].includes(status) && <Loader2 className="h-4 w-4 animate-spin t" />}
               </Badge>
             </div>
 
@@ -93,16 +94,17 @@ const getDeploymentTableColumns = (basePath: string) =>
       cell: ({ row }) => {
         const { bulkId, name } = row.original;
         return (
-          <section className="flex justify-between">
+          <section className={`flex items-center gap-4`}>
             <Link className="hover:text-blue-800 transition-colors" href={`${basePath}/${name}`}>
               {name}
             </Link>
             {bulkId ? (
-              <div className="bulk-link bg-blue-400 hover:bg-blue-600 py-1 px-2 mr-10 rounded-sm transition-colors">
-                <Link className="text-white" href={`/bulkdeployment/${bulkId}`}>
+              <Link className="py-1 px-2" href={`/bulkdeployment/${bulkId}`}>
+                <Badge variant="info" className="py-1 px-2 rounded-sm">
                   BULK
-                </Link>
-              </div>
+                  <LinkIcon className="h-4 w-4" />
+                </Badge>
+              </Link>
             ) : null}
           </section>
         );
