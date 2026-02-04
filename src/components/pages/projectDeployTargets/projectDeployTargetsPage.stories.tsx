@@ -52,8 +52,8 @@ const mockProject: ProjectDeployTargetsData['project'] = {
     },
   ],
   environments: [
-    { environmentType: 'production' },
-    { environmentType: 'development' },
+    { environmentType: 'production', name: 'main' },
+    { environmentType: 'development', name: 'develop' },
   ],
 };
 

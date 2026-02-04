@@ -9,8 +9,10 @@ import projectByNameQuery from '@/lib/query/projectByNameQuery';
 import { useQuery } from '@apollo/client';
 import { BriefcaseBusiness, FolderGit2, KeyRound, LifeBuoy, ListChecks, ServerCog, UserRoundCog } from 'lucide-react';
 import { SidebarSection, FooterItem } from '@uselagoon/ui-library';
-
+import { useOverrides } from "@/contexts/OverrideContext";
 import { getOrgNav, getProjectNav } from './DynamicNavigation';
+
+const disableAccountLink = Boolean(process.env.LAGOON_UI_YOUR_ACCOUNT_DISABLED);
 
 const getBaseSidenavItems = (kcUrl: string): SidebarSection[] => [
   {
@@ -42,20 +44,24 @@ const getBaseSidenavItems = (kcUrl: string): SidebarSection[] => [
   },
 ];
 
-const getFooterSidenavItems = (kcUrl: string): FooterItem[] => [
-  { 
-    title: 'Documentation', 
-    url: 'https://docs.lagoon.sh/', 
-    icon: LifeBuoy,
-    target: 'blank'
-  },
-  { 
-    title: 'Account Settings', 
-    url: `${kcUrl}/account`, 
-    icon: UserRoundCog,
-    target: 'blank'
-  },
-];
+const GetFooterSidenavItems = (kcUrl: string, disableAccountLink: boolean): FooterItem[] => {
+  const overrides = useOverrides();
+
+  return [
+    { 
+      title: 'Documentation', 
+      url: overrides?.global?.documentationUrl || 'https://docs.lagoon.sh', 
+      icon: LifeBuoy,
+      target: 'blank'
+    },
+    ...(!disableAccountLink ? [{ 
+      title: 'My Account', 
+      url: `${kcUrl}/account`, 
+      icon: UserRoundCog,
+      target: 'blank'
+    }] : []),
+  ];
+}
 
 export function useSidenavItems(
   kcUrl: string,
@@ -69,7 +75,7 @@ export function useSidenavItems(
 
   const { LAGOON_UI_VIEW_ENV_VARIABLES } = useEnvContext();
 
-  const footerItems = getFooterSidenavItems(kcUrl);
+  const footerItems = GetFooterSidenavItems(kcUrl, disableAccountLink);
 
   const { data: projectData, loading: projectLoading } = useQuery(projectByNameQuery, {
     variables: { name: projectSlug },

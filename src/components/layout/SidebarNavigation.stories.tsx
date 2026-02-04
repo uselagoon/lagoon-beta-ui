@@ -4,8 +4,7 @@ import { action } from '@storybook/addon-actions';
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { getOrgNav, getProjectNav } from '@/components/dynamicNavigation/DynamicNavigation';
-import { SidebarSection } from '@/contexts/AppContext';
-import { NextLinkProvider, RootLayout } from '@uselagoon/ui-library';
+import { NextLinkProvider, RootLayout, SidebarSection } from '@uselagoon/ui-library';
 import { BriefcaseBusiness, FolderGit2, KeyRound, ListChecks, ServerCog } from 'lucide-react';
 
 const onNavigate = action('navigate');
@@ -104,7 +103,7 @@ function generateSidenavItems(level: NavigationLevel): SidebarSection[] {
       developmentEnvironmentsLimit: 5,
       featureApiRoutes: true,
       deployTargetConfigs: [{ id: 1, branches: 'main', pullrequests: 'true', deployTarget: { id: 1, name: 'prod', friendlyName: 'Production' } }],
-      environments: [{ environmentType: 'production' as const }],
+      environments: [{ environmentType: 'production' as const, name: 'main' }],
     },
   };
 

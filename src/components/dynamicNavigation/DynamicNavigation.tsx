@@ -5,6 +5,7 @@ import { SidebarItem } from '@uselagoon/ui-library/dist/components/Sidenav/Siden
 import { GitPullRequestDraft } from 'lucide-react';
 
 import { EnvWithProblemsType } from './types';
+import { makeSafe } from '../utils';
 
 export const getProjectNav = (
   projectSlug: ParamValue,
@@ -17,6 +18,7 @@ export const getProjectNav = (
   const showDeployTargets =
     projectData?.project?.deployTargetConfigs?.length && projectData?.project?.deployTargetConfigs?.length > 0;
   const showRoutesTab = projectData?.project?.featureApiRoutes;
+  const environments = projectData?.project?.environments.map((env) => env.name) || [];
   return [
     {
       title: String(projectSlug),
@@ -25,7 +27,7 @@ export const getProjectNav = (
         {
           title: 'Environments',
           url: `/projects/${projectSlug}`,
-          children: envSlug ? getEnvironmentNav(projectSlug, envSlug, environmentData) : undefined,
+          children: envSlug ? getEnvironmentNav(projectSlug, environments, environmentData) : undefined,
         },
         { title: 'Details', url: `/projects/${projectSlug}/project-details` },
         { title: 'Variables', url: `/projects/${projectSlug}/project-variables` },
@@ -38,34 +40,33 @@ export const getProjectNav = (
 
 export const getEnvironmentNav = (
   projectSlug: ParamValue,
-  environmentSlug: ParamValue,
-  environmentData?: EnvWithProblemsType
+  environments: string[],
+  environmentData?: EnvWithProblemsType,
 ): SidebarItem[] => {
   const showFactsTab = environmentData?.environment?.project?.factsUi === 1;
   const showProblemsTab = environmentData?.environment?.project?.problemsUi === 1;
   const showRoutesTab = environmentData?.environment?.project?.featureApiRoutes;
 
-  return [
-    {
-      title: String(environmentData?.environment?.name ? environmentData?.environment?.name : environmentSlug),
-      url: `/projects/${projectSlug}/${environmentSlug}`,
+  return environments.map((env) => {
+    const slug = `${projectSlug}-${makeSafe(String(env))}`;
+    return {
+      title: String(env),
+      url: `/projects/${projectSlug}/${slug}`,
       icon: GitPullRequestDraft,
       collapsible: false,
       children: [
-        { title: 'Overview', url: `/projects/${projectSlug}/${environmentSlug}` },
-        { title: 'Deployments', url: `/projects/${projectSlug}/${environmentSlug}/deployments` },
-        { title: 'Backups', url: `/projects/${projectSlug}/${environmentSlug}/backups` },
-        { title: 'Tasks', url: `/projects/${projectSlug}/${environmentSlug}/tasks` },
-        ...(showRoutesTab ? [{ title: 'Routes', url: `/projects/${projectSlug}/${environmentSlug}/routes` }] : []),
-        ...(showProblemsTab
-          ? [{ title: 'Problems', url: `/projects/${projectSlug}/${environmentSlug}/problems` }]
-          : []),
-        ...(showFactsTab ? [{ title: 'Insights', url: `/projects/${projectSlug}/${environmentSlug}/insights` }] : []),
-        { title: 'Variables', url: `/projects/${projectSlug}/${environmentSlug}/environment-variables` },
+        { title: 'Overview', url: `/projects/${projectSlug}/${slug}` },
+        { title: 'Deployments', url: `/projects/${projectSlug}/${slug}/deployments` },
+        { title: 'Backups', url: `/projects/${projectSlug}/${slug}/backups` },
+        { title: 'Tasks', url: `/projects/${projectSlug}/${slug}/tasks` },
+        ...(showRoutesTab ? [{ title: 'Routes', url: `/projects/${projectSlug}/${slug}/routes` }] : []),
+        ...(showProblemsTab ? [{ title: 'Problems', url: `/projects/${projectSlug}/${slug}/problems` }] : []),
+        ...(showFactsTab ? [{ title: 'Insights', url: `/projects/${projectSlug}/${slug}/insights` }] : []),
+        { title: 'Variables', url: `/projects/${projectSlug}/${slug}/environment-variables` },
       ],
-    },
-  ];
-};
+    } as SidebarItem;
+  });
+}
 
 export const getOrgNav = (organizationSlug: ParamValue, showVariables?: boolean): SidebarItem[] => {
   return [

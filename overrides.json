@@ -3,9 +3,6 @@
   "components": {
     "announcementCard": {
       "disabled": true
-    },
-    "sidenavFooterMenu": {
-      "disableChangeFeedLink": true
     }
   }
 }
