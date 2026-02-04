@@ -63,6 +63,7 @@ jobs:
       -
         name: Build and push
         uses: docker/build-push-action@v5
+        id: build-and-push
         with:
           context: .
           platforms: linux/amd64,linux/arm64
@@ -74,3 +75,12 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          sbom: true
+      -
+        name: Attest ghcr image
+        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3.2.0
+        if: github.ref_type == 'tag'
+        with:
+          subject-digest: ${{steps.build-and-push.outputs.digest}}
+          subject-name: ghcr.io/${{ env.IMAGE_NAME }}
+          push-to-registry: true
