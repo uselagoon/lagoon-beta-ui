@@ -7,7 +7,8 @@ import { useParams, usePathname } from 'next/navigation';
 
 import projectByNameQuery from '@/lib/query/projectByNameQuery';
 import { useQuery } from '@apollo/client';
-import { TabNavigation, Tabs } from '@/ui-library';
+import { TabNavigation } from '@uselagoon/ui-library';
+import { useExtensions } from '@/contexts/ExtensionContext';
 
 import { LinkContentWrapper } from '../shared/styles';
 
@@ -21,6 +22,9 @@ export const ProjectNavTabs = ({ children }: { children: ReactNode }) => {
   });
 
   const showDeployTargets = data?.project?.deployTargetConfigs?.length > 0;
+
+  const { getNavItemsForTarget } = useExtensions();
+  const extensionTabs = getNavItemsForTarget('project-tabs');
 
   // Do not nest multiple navTabs (project -> environment)
   if (environmentSlug) {
@@ -75,6 +79,14 @@ export const ProjectNavTabs = ({ children }: { children: ReactNode }) => {
                 },
               ]
             : []),
+          ...extensionTabs.map(ext => ({
+            key: ext.id,
+            label: (
+              <Link data-cy={`nav-ext-${ext.id}`} href={ext.href.replace('[projectSlug]', projectSlug)}>
+                <LinkContentWrapper>{ext.label}</LinkContentWrapper>
+              </Link>
+            ),
+          })),
         ]}
       />
 

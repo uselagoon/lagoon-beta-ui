@@ -15,7 +15,9 @@ import './globals.css';
 import fs from 'fs';
 import {OverrideProvider} from "@/contexts/OverrideContext";
 import * as process from "node:process";
-import { validateOverrides, type Overrides } from '@/ui-library/schemas';
+import { validateOverrides, type Overrides } from '@uselagoon/ui-library/schemas';
+import { ExtensionProvider } from '@/contexts/ExtensionContext';
+import { loadExtensions } from '@/lib/extensions/loader';
 
 function loadOverrides() : Overrides {
   try {
@@ -62,6 +64,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const overrides = loadOverrides();
+  const extensions = loadExtensions();
   // ref for exposing custom variables at runtime: https://github.com/expatfile/next-runtime-env/blob/development/docs/EXPOSING_CUSTOM_ENV.md
   noStore();
   return (
@@ -75,12 +79,14 @@ export default async function RootLayout({
           <ProgressProvider>
             <LinkProvider>
               <AuthProvider>
-                <RefreshTokenHandler />
-                <ClientSessionWrapper>
-                  <ApolloClientComponentWrapper>
-                    <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER!}>{children}</AppProvider>
-                  </ApolloClientComponentWrapper>
-                </ClientSessionWrapper>
+                <ExtensionProvider extensions={extensions}>
+                  <RefreshTokenHandler />
+                  <ClientSessionWrapper>
+                    <ApolloClientComponentWrapper>
+                      <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER!}>{children}</AppProvider>
+                    </ApolloClientComponentWrapper>
+                  </ClientSessionWrapper>
+                </ExtensionProvider>
               </AuthProvider>
             </LinkProvider>
             <Plugins hook="body" />
