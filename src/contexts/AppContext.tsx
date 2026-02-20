@@ -7,7 +7,7 @@ import { useEnvContext } from 'next-runtime-env';
 import { useParams, usePathname } from 'next/navigation';
 
 import { useSidenavItems } from '@/components/dynamicNavigation/useSidenavItems';
-import { RootLayout, ThemeSwitch, Toaster } from '@uselagoon/ui-library';
+import { MaintenanceBanner, RootLayout, ThemeSwitch, Toaster } from '@uselagoon/ui-library';
 import manualSignOut from 'utils/manualSignOut';
 import { useOverrides } from "@/contexts/OverrideContext";
 
@@ -86,8 +86,11 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         disableAccountLink={disableAccountLink}
         disableChangeFeedLink={overrides?.components?.sidenavFooterMenu?.disableChangeFeedLink}
       >
-        <div className="absolute top-2 right-4">
+        <div className="absolute top-2 right-4 z-20">
           <ThemeSwitch />
+        </div>
+        <div className="absolute top-0 left-[10%] mx-auto w-full z-10">
+          <MaintenanceBanner />
         </div>
         <section className="my-10">
           {children}
