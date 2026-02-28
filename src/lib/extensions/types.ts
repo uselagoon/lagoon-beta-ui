@@ -2,11 +2,7 @@ export type ExtensionNavTarget =
   | 'sidebar-projects'
   | 'sidebar-deployments'
   | 'sidebar-organizations'
-  | 'sidebar-settings'
-  | 'project-tabs'
-  | 'environment-tabs'
-  | 'organization-tabs'
-  | 'settings-tabs';
+  | 'sidebar-settings';
 
 export type ExtensionSlotLocation =
   | 'project-header'

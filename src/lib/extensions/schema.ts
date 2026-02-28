@@ -5,7 +5,6 @@ type ValidationResult<T> = { valid: T | null; errors: ValidationError[] };
 
 const validNavTargets = [
   'sidebar-projects', 'sidebar-deployments', 'sidebar-organizations', 'sidebar-settings',
-  'project-tabs', 'environment-tabs', 'organization-tabs', 'settings-tabs',
 ] as const;
 
 const validSlotLocations = [

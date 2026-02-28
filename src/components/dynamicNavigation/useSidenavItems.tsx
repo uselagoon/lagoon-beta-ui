@@ -118,7 +118,14 @@ export function useSidenavItems(
       const extItems = getNavItemsForTarget(target as any);
       if (extItems.length > 0 && items[idx]) {
         for (const extItem of extItems) {
-          const navItem = { title: extItem.label, url: extItem.href, icon: resolveIcon(extItem.icon) };
+          let href = extItem.href;
+          if (projectSlug) {
+            href = href.replace('[projectSlug]', projectSlug as string);
+          }
+          if (environmentSlug) {
+            href = href.replace('[environmentSlug]', environmentSlug as string);
+          }
+          const navItem = { title: extItem.label, url: href, icon: resolveIcon(extItem.icon) };
           if (extItem.position === 'start') {
             items[idx].sectionItems.unshift(navItem);
           } else {

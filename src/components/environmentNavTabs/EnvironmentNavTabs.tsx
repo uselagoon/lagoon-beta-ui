@@ -8,7 +8,6 @@ import { useParams, usePathname } from 'next/navigation';
 import environmentWithProblems from '@/lib/query/environmentWithProblems';
 import { useQuery } from '@apollo/client';
 import { Badge, Skeleton, TabNavigation } from '@uselagoon/ui-library';
-import { useExtensions } from '@/contexts/ExtensionContext';
 
 import { LinkContentWrapper } from '../shared/styles';
 
@@ -23,9 +22,6 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
 
   const showFactsTab = data?.environment?.project?.factsUi === 1;
   const showProblemsTab = data?.environment?.project?.problemsUi === 1;
-
-  const { getNavItemsForTarget } = useExtensions();
-  const extensionTabs = getNavItemsForTarget('environment-tabs');
 
   return (
     <section className="flex flex-col gap-4">
@@ -121,17 +117,6 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
               </Link>
             ),
           },
-          ...extensionTabs.map(ext => ({
-            key: ext.id,
-            label: (
-              <Link
-                data-cy={`nav-ext-${ext.id}`}
-                href={ext.href.replace('[projectSlug]', projectSlug).replace('[environmentSlug]', environmentSlug)}
-              >
-                <LinkContentWrapper>{ext.label}</LinkContentWrapper>
-              </Link>
-            ),
-          })),
         ]}
       />
       {children}
