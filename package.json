@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "yarn uilib:update && next dev --turbopack -p 3003",
-    "build": "yarn uilib:update && next build",
+    "build:extensions": "npx tsx scripts/build-extensions.ts",
+    "build": "yarn build:extensions && yarn uilib:update && next build",
     "start": "next start -p 3000",
     "start:cypress": "next start -H 0.0.0.0 -p 3000",
     "lint": "tsc && eslint --config .eslintrc.cjs 'src/**/*.{jsx,tsx}'",
