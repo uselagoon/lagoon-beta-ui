@@ -24,7 +24,7 @@ export default () => (
 Run Storybook locally from the project root:
 
 ```bash
-yarn storybook
+pnpm storybook
 ```
 
 Open your browser and visit [http://localhost:6006](http://localhost:6006).
@@ -35,8 +35,8 @@ The UI library is located at `src/ui-library/` in the lagoon-beta-ui monorepo.
 
 ```bash
 cd lagoon-beta-ui
-yarn install
-yarn storybook
+pnpm install
+pnpm storybook
 ```
 
 It is recommended to build components in isolation with the help of Storybook.
@@ -64,9 +64,9 @@ Modify and customize anything with Tailwind and/or custom CSS files if needed.
 Then run the lint and format scripts:
 
 ```bash
-yarn typecheck    # TypeScript check
-yarn lint         # ESLint
-yarn format       # Prettier formatting
+pnpm typecheck    # TypeScript check
+pnpm lint         # ESLint
+pnpm format       # Prettier formatting
 ```
 
 ### Adding Shadcn Components

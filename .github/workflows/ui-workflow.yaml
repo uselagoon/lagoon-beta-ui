@@ -14,16 +14,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install dependencies
-      run: yarn
-
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+
     - name: Formatting check
       run: |
-        yarn add prettier@3.1.1 @trivago/prettier-plugin-sort-imports
-        yarn format-check
+        pnpm add prettier@3.1.1 @trivago/prettier-plugin-sort-imports
+        pnpm format-check
 
   lint:
     runs-on: ubuntu-latest
@@ -32,10 +34,15 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+
     - name: Linting
       run: |
-        yarn add typescript@5.6.2
-        yarn lint
+        pnpm add typescript@5.6.2
+        pnpm lint
 
   cypress-tests:
     runs-on: ubuntu-latest
@@ -61,6 +68,11 @@ jobs:
       with:
         node-version: '20'
 
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+
     - name: Build and start Lagoon-minimal
       run: |
         make development-api LAGOON_CORE_IMAGE_REPO=${{matrix.lagoon_image_repo}} LAGOON_CORE_IMAGE_TAG=${{matrix.lagoon_image_tag}}
@@ -71,9 +83,9 @@ jobs:
         KEYCLOAK_API: http://localhost:8088/auth
         NODE_PORT: 3003
       run: |
-        yarn install
-        yarn build
-        yarn start &
+        pnpm install
+        pnpm build
+        pnpm start &
 
     - name: Run RBAC Cypress Tests
       uses: cypress-io/github-action@v6
@@ -81,7 +93,7 @@ jobs:
         config-file: ./cypress/cypress.config.ts
         auto-cancel-after-failures: 1
         wait-on: 'http://localhost:3003'
-        command: yarn cypress:runRbac
+        command: pnpm cypress:runRbac
       env:
         cypress_api: http://localhost:3000/graphql
         cypress_keycloak: http://localhost:8088/auth
@@ -93,7 +105,7 @@ jobs:
         config-file: ./cypress/cypress.config.ts
         auto-cancel-after-failures: 1
         wait-on: 'http://localhost:3003'
-        command: yarn cypress:runOrganizations
+        command: pnpm cypress:runOrganizations
       env:
         cypress_api: http://localhost:3000/graphql
         cypress_keycloak: http://localhost:8088/auth
@@ -105,7 +117,7 @@ jobs:
         config-file: ./cypress/cypress.config.ts
         auto-cancel-after-failures: 1
         wait-on: 'http://localhost:3003'
-        command: yarn cypress:runGeneral
+        command: pnpm cypress:runGeneral
       env:
         cypress_api: http://localhost:3000/graphql
         cypress_keycloak: http://localhost:8088/auth

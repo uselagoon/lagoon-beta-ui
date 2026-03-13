@@ -25,7 +25,7 @@ services:
       dockerfile: Dockerfile
     labels:
       lagoon.type: node
-    command: yarn run dev
+    command: pnpm run dev
     volumes:
       - ./src:/app/src
       - ./utils:/app/utils
@@ -37,11 +37,11 @@ services:
       - ./next-env.d.ts:/app/next-env.d.ts
       - ./next.config.mjs:/app/next.config.mjs
       - ./postcss.config.mjs:/app/postcss.config.mjs
-      - ./cache:/usr/local/share/.cache/yarn # to speed up restarts
+      - ./cache:/home/node/.local/share/pnpm/store # pnpm store cache
       - ./.env.defaults:/app/.env.defaults
       - ./.env.schema:/app/.env.schema
       - ./package.json:/app/package.json
-      - ./yarn.lock:/app/yarn.lock
+      - ./pnpm-lock.yaml:/app/pnpm-lock.yaml
     ports:
       - '3003:3003'
     networks:
