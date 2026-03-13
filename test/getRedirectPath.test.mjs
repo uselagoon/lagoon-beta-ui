@@ -20,5 +20,8 @@ test('converts an absolute callback URL into an in-app path', () => {
 test('falls back to the app root for invalid or unsafe callback URLs', () => {
   assert.equal(getRedirectPath(null), '/');
   assert.equal(getRedirectPath('//external.example/path'), '/');
+  assert.equal(getRedirectPath(' //external.example/path'), '/');
+  assert.equal(getRedirectPath('\\\\external.example\\path'), '/');
   assert.equal(getRedirectPath('not a valid url'), '/');
+  assert.equal(getRedirectPath('javascript:alert(1)'), '/');
 });
