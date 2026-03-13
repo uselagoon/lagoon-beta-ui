@@ -4,7 +4,7 @@ The main user interface and dashboard for [Lagoon](https://github.com/uselagoon/
 
 ## Build
 
-To build and test changes locally the Lagoon UI can be built via Yarn or Docker.
+To build and test changes locally the Lagoon UI can be built via pnpm or Docker.
 
 Testing locally, the UI can be connected to production or development Lagoon instances.
 
@@ -12,13 +12,13 @@ There are a few differnt ways to run the UI locally for development. Those metho
 
 This project is tested with BrowserStack.
 
-### Yarn
+### pnpm
 
 Note: Within `docker-compose.yml` `GRAPHQL_API` & `KEYCLOAK_API` are set to localhost by default.
 
 ```sh
-yarn install
-yarn build && GRAPHQL_API=http://localhost:3000/graphql AUTH_SECRET=<AUTH_SECRET> AUTH_KEYCLOAK_ID=lagoon-ui-oidc AUTH_KEYCLOAK_SECRET=<SECRET_HERE> AUTH_KEYCLOAK_ISSUER=http://localhost:8088/auth/realms/lagoon yarn dev
+pnpm install
+pnpm build && GRAPHQL_API=http://localhost:3000/graphql AUTH_SECRET=<AUTH_SECRET> AUTH_KEYCLOAK_ID=lagoon-ui-oidc AUTH_KEYCLOAK_SECRET=<SECRET_HERE> AUTH_KEYCLOAK_ISSUER=http://localhost:8088/auth/realms/lagoon pnpm dev
 ```
 
 These values can also be updated in `docker-compose.yml`.
@@ -77,7 +77,7 @@ make clean
 ## Linting
 
 The linter is configured for both JS and TypeScript files, with the latter being much stricter.
-It runs during the build step but can also be ran during development by `yarn lint`
+It runs during the build step but can also be ran during development by `pnpm lint`
 
 Linter and TS configs are both located in the root of the project as `.eslintrc.cjs` and `tsconfig.json`
 

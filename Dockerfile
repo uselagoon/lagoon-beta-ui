@@ -2,11 +2,11 @@
 FROM uselagoon/node-22-builder:latest AS builder
 
 WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --network-timeout 300000
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
 
 COPY . /app/
-RUN yarn run build
+RUN pnpm run build
 
 # Production image
 FROM uselagoon/node-22:latest
@@ -18,7 +18,7 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/yarn.lock ./yarn.lock
+COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
 COPY --from=builder /app/overrides.json ./overrides.json
 
 COPY auth-entrypoint.sh /lagoon/entrypoints/99-auth-entrypoint.sh
@@ -42,4 +42,4 @@ ARG AUTH_KEYCLOAK_ISSUER
 ENV AUTH_KEYCLOAK_ISSUER=$AUTH_KEYCLOAK_ISSUER
 
 EXPOSE 3000
-CMD ["yarn", "start"]
+CMD ["pnpm", "start"]
