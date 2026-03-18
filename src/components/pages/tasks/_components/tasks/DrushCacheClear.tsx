@@ -22,7 +22,6 @@ const DrushCacheClear: FC<Props> = ({ environment, refetch }) => {
     variables: {
       environment: environment.id,
     },
-    refetchQueries: ['getEnvironment'],
   });
 
   const handleTask = async () => {
