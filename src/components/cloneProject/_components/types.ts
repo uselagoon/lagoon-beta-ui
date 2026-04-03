@@ -30,7 +30,7 @@ export const CLONE_OPTIONS_CONFIG = [
   {
     key: 'copyData' as const,
     label: 'Copy Data',
-    description: 'Copy database content and uploaded files',
+    description: 'Copy database content',
   },
   {
     key: 'metadata' as const,

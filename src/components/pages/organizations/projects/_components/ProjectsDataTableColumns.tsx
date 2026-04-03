@@ -3,13 +3,28 @@
 import Link from 'next/link';
 
 import { OrgProject } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page';
+import { CloneProject } from '@/components/cloneProject/CloneProject';
 import { handleSort, renderSortIcons } from '@/components/utils';
-import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@/ui-library';
+import { useCloneStatus } from '@/hooks/useCloneStatus';
+import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@/ui-library';
 import { FolderCog } from 'lucide-react';
+
+const ProjectNameCell = ({ name, orgName }: { name: string; orgName: string }) => {
+  const { isCloning } = useCloneStatus(name);
+  return (
+    <div className="flex items-center gap-2">
+      <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${orgName}/projects/${name}`}>
+        {name}
+      </Link>
+      {isCloning && <Badge variant="info">Cloning</Badge>}
+    </div>
+  );
+};
 
 export const ProjectsDataTableColumns = (
   deleteProjectModal: (project: OrgProject) => React.ReactNode,
-  orgName: string
+  orgName: string,
+  refetch?: () => void
 ): DataTableColumnDef<OrgProject>[] => [
   {
     accessorKey: 'name',
@@ -22,15 +37,7 @@ export const ProjectsDataTableColumns = (
         </Button>
       );
     },
-    cell: ({ row }) => {
-      const { name } = row.original;
-
-      return (
-        <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${orgName}/projects/${name}`}>
-          {name}
-        </Link>
-      );
-    },
+    cell: ({ row }) => <ProjectNameCell name={row.original.name} orgName={orgName} />,
   },
   {
     accessorKey: 'groupCount',
@@ -54,6 +61,12 @@ export const ProjectsDataTableColumns = (
     cell: ({ row }) => {
       return (
         <div className="flex gap-4 justify-end items-center">
+          <Tooltip>
+            <TooltipTrigger>
+              <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} />
+            </TooltipTrigger>
+            <TooltipContent>Clone this Project</TooltipContent>
+          </Tooltip>
           <Button>
             <Link target="_blank" href={`/projects/${row.original.name}`}>
               <Tooltip>

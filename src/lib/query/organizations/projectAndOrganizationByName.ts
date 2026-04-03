@@ -20,6 +20,10 @@ export default gql`
         name
         type
       }
+      clone {
+        id
+        status
+      }
     }
 
     organization: organizationByName(name: $name) {

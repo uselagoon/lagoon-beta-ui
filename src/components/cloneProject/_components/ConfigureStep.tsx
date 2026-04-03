@@ -12,10 +12,13 @@ import {
   DialogTitle,
   Label,
   SelectWithOptions,
+  TooltipContent,
+  TooltipTrigger,
 } from '@/ui-library';
 import { Info, Loader2 } from 'lucide-react';
 
 import { CloneOptions, CLONE_OPTIONS_CONFIG, validateName } from './types';
+import { Tooltip } from '@radix-ui/react-tooltip';
 
 interface EnvironmentOption {
   label: string;
@@ -125,6 +128,18 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
               value={selectedEnvironment}
               onValueChange={setSelectedEnvironment}
             />
+          )}
+          {!envLoading && !environmentsEmpty && (
+            <Tooltip>
+              <TooltipTrigger>
+                <p className="text-sm text-muted-foreground">
+                  Select an environment to be cloned. &#9432;
+                </p>
+              </TooltipTrigger>
+              <TooltipContent>
+                Only Branch environments are available for cloning, and they must have been deployed successfully at least once.
+              </TooltipContent>
+            </Tooltip>
           )}
           {environmentsEmpty && !envLoading && (
             <p className="text-sm text-muted-foreground">No environments available</p>

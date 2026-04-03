@@ -39,6 +39,10 @@ export interface OrganizationProjectData {
     name: string;
     groups: OrgGroup[];
     notifications: { name: string; type: string }[];
+    clone: {
+      id: number;
+      status: string;
+    } | null;
   };
 }
 

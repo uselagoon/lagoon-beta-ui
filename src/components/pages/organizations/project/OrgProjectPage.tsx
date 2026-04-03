@@ -4,8 +4,8 @@ import { OrganizationProjectData } from '@/app/(routegroups)/(orgroutes)/organiz
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { AddGroupToProject } from '@/components/addGroupToProject/AddGroupToProject';
 import OrgProjectNotFound from '@/components/errors/OrgProjectNotFound';
-import { QueryRef, useQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Badge, Checkbox, DataTable, Select, SelectWithOptions } from '@/ui-library';
+import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
+import { Checkbox, DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import { Notification } from '../notifications/_components/EditNotification';
@@ -17,7 +17,6 @@ import { UnlinkGroup } from './_components/UnlinkGroup';
 import { UnlinkNotification } from './_components/UnlinkNotification';
 import { transformNotifications } from './_components/transformNotifications';
 import { CloneProject } from '@/components/cloneProject/CloneProject';
-import projectCloneStatus from '@/lib/query/organizations/projectCloneStatus';
 
 export default function OrgProjectPage({
   queryRef,
@@ -64,14 +63,6 @@ export default function OrgProjectPage({
   const {
     data: { organization, project },
   } = useReadQuery(queryRef);
-
-  const { data: cloneStatusData, stopPolling: stopClonePolling } = useQuery(projectCloneStatus, {
-    variables: { name: projectSlug },
-    pollInterval: 15000,
-    fetchPolicy: 'network-only',
-  });
-  const currentCloneStatus: string | undefined = cloneStatusData?.project?.clone?.status;
-  if (currentCloneStatus === 'COMPLETE') stopClonePolling();
 
   if (!project) {
     return <OrgProjectNotFound projectName={projectSlug} />;
@@ -151,10 +142,7 @@ export default function OrgProjectPage({
   return (
     <SectionWrapper>
       <div className="mb-6 flex items-center gap-4 float-right">
-        {currentCloneStatus && (
-          <Badge variant={currentCloneStatus === 'COMPLETE' ? 'success' : 'info'}>Clone: {currentCloneStatus}</Badge>
-        )}
-        <CloneProject projectName={project.name} refetch={refetch} />
+        <CloneProject projectName={project.name} organizationSlug={organization.name} refetch={refetch} toggleText />
       </div>
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-4">Groups for {project.name}</h3>
 

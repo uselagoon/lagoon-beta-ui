@@ -51,21 +51,9 @@ export const SuccessStep: FC<SuccessStepProps> = ({ projectName, clonedProjectNa
             : 'Your new project has been created — a deployment is being triggered'}
         </DialogDescription>
       </DialogHeader>
-
-      <div className="flex flex-col items-center gap-4 py-4">
-        <CheckCircle2 className="h-16 w-16 text-green-600 dark:text-green-400" />
-
-        <div className="text-center space-y-1">
-          <h3 className="text-lg font-semibold">Project Created</h3>
-          <p className="text-sm text-muted-foreground">
-            Successfully created &quot;{clonedProjectName}&quot; from &quot;{projectName}&quot;
-          </p>
-        </div>
-      </div>
-
       {selectedOptionsLabels.length > 0 && (
         <Alert className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
-          <AlertTitle>What was cloned:</AlertTitle>
+          <AlertTitle>What will be cloned:</AlertTitle>
           <AlertDescription>
             <ul className="mt-1 space-y-1">
               {selectedOptionsLabels.map(label => (

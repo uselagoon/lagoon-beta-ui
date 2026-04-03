@@ -1,13 +1,15 @@
 'use client';
 
 import { FC, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 import cloneProjectMutation from '@/lib/mutation/organizations/cloneProject';
-import projectCloneStatus from '@/lib/query/organizations/projectCloneStatus';
 import projectEnvironmentsForClone from '@/lib/query/organizations/projectEnvironmentsForClone';
-import { useLazyQuery, useMutation, useQuery } from '@apollo/client';
+import { useCloneStatus, useRegisterClone } from '@/hooks/useCloneStatus';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { Button, Dialog, DialogContent, DialogTrigger } from '@/ui-library';
-import { CopyPlus } from 'lucide-react';
+import { Copy, X } from 'lucide-react';
 
 import { ConfigureStep } from './_components/ConfigureStep';
 import { ErrorStep, ProgressStep, SuccessStep } from './_components/ResultSteps';
@@ -17,10 +19,15 @@ export type { CloneOptions } from './_components/types';
 
 interface CloneProjectProps {
   projectName: string;
+  organizationSlug?: string;
   refetch?: () => void;
+  onCloned?: (newProjectName: string) => void;
+  toggleText?: boolean;
+  disabled?: boolean;
 }
 
-export const CloneProject: FC<CloneProjectProps> = ({ projectName, refetch }) => {
+export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationSlug, refetch, onCloned, toggleText = false, disabled = false }) => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<DialogStep>('configure');
   const [newProjectName, setNewProjectName] = useState(`${projectName}-copy`);
@@ -43,26 +50,58 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, refetch }) =>
     fetchPolicy: 'network-only',
   });
 
+  const registerClone = useRegisterClone();
+  const { status: cloneStatus } = useCloneStatus(clonedProjectName);
+
   const [cloneProject] = useMutation(cloneProjectMutation, {
     onCompleted: data => {
-      setClonedProjectName(data.cloneProject.name);
+      const name = data.cloneProject.name;
+      setClonedProjectName(name);
       setStep('success');
+      registerClone(name);
       refetch?.();
+      onCloned?.(name);
+
+      // toast with link to project - may remove as it just displays the clone progress component
+      if (organizationSlug) {
+        const projectUrl = `/organizations/${organizationSlug}/projects/${name}`;
+        toast.custom(
+          t => (
+            <div className="flex items-center gap-3 p-4 border border-sky-500 rounded-lg shadow-lg min-w-80 max-w-md bg-popover text-popover-foreground pointer-events-auto">
+              <div className="flex-1">
+                <p className="font-medium text-sm">Cloning in progress</p>
+                <p className="text-xs text-muted-foreground mt-1">{name}</p>
+              </div>
+              <button
+                onClick={() => {
+                  toast.dismiss(t);
+                  router.push(projectUrl);
+                }}
+                className="px-3 py-1 bg-sky-500 text-white rounded text-sm font-medium hover:bg-sky-600 transition-colors whitespace-nowrap"
+              >
+                View Project
+              </button>
+              <button
+                onClick={() => toast.dismiss(t)}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          ),
+          {
+            duration: 15000,
+            position: 'bottom-right',
+          }
+        );
+      }
     },
     onError: err => {
       setErrorMessage(err.message);
       setStep('error');
     },
   });
-
-  const cloneStatusQuery = useQuery(projectCloneStatus, {
-    variables: { name: clonedProjectName },
-    skip: step !== 'success' || !clonedProjectName,
-    pollInterval: step === 'success' ? 15000 : 0,
-    fetchPolicy: 'network-only',
-  });
-
-  const cloneStatus: string | undefined = cloneStatusQuery.data?.project?.clone?.status;
 
   const environments: Environment[] = useMemo(
     () => envData?.project?.environments ?? [],
@@ -144,9 +183,9 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, refetch }) =>
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" aria-label="clone-project">
-          <CopyPlus className="h-4 w-4 mr-2" />
-          Clone Project
+        <Button variant="outline" aria-label="clone-project" disabled={disabled}>
+          <Copy className="h-4 w-4" />
+          {toggleText && <span className='ml-2'>Clone Project</span>}
         </Button>
       </DialogTrigger>
 

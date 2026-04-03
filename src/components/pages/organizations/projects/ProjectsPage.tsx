@@ -79,7 +79,8 @@ export default function OrgProjectsPage({
             project => (
               <RemoveProject project={project} refetch={refetchData} />
             ),
-            organization.name
+            organization.name,
+            refetchData
           )}
           data={organization.projects}
           searchableColumns={['name']}
