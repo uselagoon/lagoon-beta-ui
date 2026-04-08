@@ -139,6 +139,7 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, additionalC
             ]}
             buttonAction={(_, { variable_name, variable_scope, variable_value }) => {
               handleUpdateVariable(variable_name, variable_scope, variable_value);
+              return false;
             }}
           />
         </TooltipTrigger>
