@@ -10,6 +10,9 @@ export default gql`
         id
         name
         groupCount
+        clone {
+          status
+        }
       }
       deployTargets {
         id

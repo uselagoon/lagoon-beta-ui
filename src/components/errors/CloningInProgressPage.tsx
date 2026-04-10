@@ -37,6 +37,8 @@ const CloningInProgressPage = ({ projectName, cloneStatus: serverCloneStatus }: 
 
   const displayStatus = status ?? serverCloneStatus;
 
+  const formattedStatus = displayStatus ? displayStatus.replace(/_/g, ' ').toLowerCase() : null;
+
   return (
     <SectionWrapper>
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-6">
@@ -45,9 +47,9 @@ const CloningInProgressPage = ({ projectName, cloneStatus: serverCloneStatus }: 
         <p className="text-gray-600 dark:text-gray-400 text-center max-w-md">
           The project <strong>{projectName}</strong> is currently being cloned and is not yet accessible.
         </p>
-        {displayStatus && (
+        {formattedStatus && (
           <Badge variant="info" className="text-sm">
-            Status: {displayStatus}
+            Status: {formattedStatus}
           </Badge>
         )}
         <p className="text-sm text-gray-500 dark:text-gray-500 text-center max-w-md">

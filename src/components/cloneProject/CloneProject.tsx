@@ -2,14 +2,13 @@
 
 import { FC, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 
 import cloneProjectMutation from '@/lib/mutation/organizations/cloneProject';
 import projectEnvironmentsForClone from '@/lib/query/organizations/projectEnvironmentsForClone';
 import { useCloneStatus, useRegisterClone } from '@/hooks/useCloneStatus';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import { Button, Dialog, DialogContent, DialogTrigger } from '@/ui-library';
-import { Copy, X } from 'lucide-react';
+import { Copy } from 'lucide-react';
 
 import { ConfigureStep } from './_components/ConfigureStep';
 import { ErrorStep, ProgressStep, SuccessStep } from './_components/ResultSteps';
@@ -61,41 +60,6 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationS
       registerClone(name);
       refetch?.();
       onCloned?.(name);
-
-      // toast with link to project - may remove as it just displays the clone progress component
-      if (organizationSlug) {
-        const projectUrl = `/organizations/${organizationSlug}/projects/${name}`;
-        toast.custom(
-          t => (
-            <div className="flex items-center gap-3 p-4 border border-sky-500 rounded-lg shadow-lg min-w-80 max-w-md bg-popover text-popover-foreground pointer-events-auto">
-              <div className="flex-1">
-                <p className="font-medium text-sm">Cloning in progress</p>
-                <p className="text-xs text-muted-foreground mt-1">{name}</p>
-              </div>
-              <button
-                onClick={() => {
-                  toast.dismiss(t);
-                  router.push(projectUrl);
-                }}
-                className="px-3 py-1 bg-sky-500 text-white rounded text-sm font-medium hover:bg-sky-600 transition-colors whitespace-nowrap"
-              >
-                View Project
-              </button>
-              <button
-                onClick={() => toast.dismiss(t)}
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Close"
-              >
-                <X size={18} />
-              </button>
-            </div>
-          ),
-          {
-            duration: 15000,
-            position: 'bottom-right',
-          }
-        );
-      }
     },
     onError: err => {
       setErrorMessage(err.message);
@@ -109,7 +73,16 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationS
   );
 
   const environmentOptions = useMemo(() => {
-    return environments.map(env => ({
+    const branchEnvs = environments.filter(env => env.deployType === 'branch');
+    const prodEnv = branchEnvs.find(env => env.environmentType === 'production');
+    
+    const devEnvs = branchEnvs
+      .filter(env => env.environmentType !== 'production')
+      .sort((a, b) => a.environmentType.localeCompare(b.environmentType));
+
+    const sortedEnvs = prodEnv ? [prodEnv, ...devEnvs] : devEnvs;
+
+    return sortedEnvs.map(env => ({
       label: `${env.name} (${env.environmentType})`,
       value: env.name,
     }));

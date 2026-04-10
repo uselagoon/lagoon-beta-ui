@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import { useApolloClient } from '@apollo/client';
 import projectCloneStatus from '@/lib/query/organizations/projectCloneStatus';
 
-const POLL_INTERVAL = 20000;
+const POLL_INTERVAL = 60000;
 const LOCAL_STORAGE_KEY = 'lagoon-active-clones';
 export const STATUSES = ['COMPLETE', 'FAILED', 'CANCELLED'];
 
@@ -30,7 +30,8 @@ function loadFromStorage(): Map<string, CloneEntry> {
     const raw = window.localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!raw) return new Map();
     const entries: CloneEntry[] = JSON.parse(raw);
-    return new Map(entries.map(e => [e.projectName, e]));
+    const active = entries.filter(e => !STATUSES.includes(e.status));
+    return new Map(active.map(e => [e.projectName, e]));
   } catch {
     return new Map();
   }
@@ -48,6 +49,10 @@ export function CloneStatusProvider({ children }: { children: React.ReactNode })
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   // using a ref to track current reqs to stop duplicate fetches
   const inflightRef = useRef<Set<string>>(new Set());
+  // uses ref to mirror clones so we don't reset the interval on status updates
+  const clonesRef = useRef(clones);
+  clonesRef.current = clones;
+  const pollFuncRef = useRef<() => void>(() => {});
 
   const updateClone = useCallback((projectName: string, status: string) => {
     setClones(prev => {
@@ -114,61 +119,63 @@ export function CloneStatusProvider({ children }: { children: React.ReactNode })
     [isCloning]
   );
 
-  useEffect(() => {
-    const poll = async () => {
-      const activeClones = Array.from(clones.values()).filter(
-        entry => !STATUSES.includes(entry.status)
-      );
-
-      for (const entry of activeClones) {
-        if (inflightRef.current.has(entry.projectName)) continue;
-        inflightRef.current.add(entry.projectName);
-
-        // need to use this directly instead of the hook so we can dynamically poll
-        apolloClient
-          .query({
-            query: projectCloneStatus,
-            variables: { name: entry.projectName },
-            fetchPolicy: 'network-only',
-          })
-          .then(({ data }) => {
-            const status: string | undefined = data?.project?.clone?.status;
-            if (status) {
-              updateClone(entry.projectName, status);
-              if (STATUSES.includes(status)) {
-                setClones(prev => {
-                  const next = new Map(prev);
-                  const existing = next.get(entry.projectName);
-                  if (existing) {
-                    next.set(entry.projectName, { ...existing, status });
-                    const forStorage = new Map(next);
-                    forStorage.delete(entry.projectName);
-                    saveToStorage(forStorage);
-                  }
-                  return next;
-                });
-              }
-            }
-          })
-          .catch(() => {
-            console.error(`clone status fetch failed for project ${entry.projectName}`);
-          })
-          .finally(() => {
-            inflightRef.current.delete(entry.projectName);
-          });
-      }
-    };
-
-    if (pollingRef.current) {
-      clearInterval(pollingRef.current);
-    }
-
-    const hasActiveClones = Array.from(clones.values()).some(
+  const poll = async () => {
+    const activeClones = Array.from(clonesRef.current.values()).filter(
       entry => !STATUSES.includes(entry.status)
     );
 
+    for (const entry of activeClones) {
+      if (inflightRef.current.has(entry.projectName)) continue;
+      inflightRef.current.add(entry.projectName);
+
+      // need to use this directly instead of the hook so we can dynamically poll
+      apolloClient
+        .query({
+          query: projectCloneStatus,
+          variables: { name: entry.projectName },
+          fetchPolicy: 'network-only',
+        })
+        .then(({ data }) => {
+          const status: string | undefined = data?.project?.clone?.status;
+          if (status) {
+            updateClone(entry.projectName, status);
+            if (STATUSES.includes(status)) {
+              setClones(prev => {
+                const next = new Map(prev);
+                const existing = next.get(entry.projectName);
+                if (existing) {
+                  next.set(entry.projectName, { ...existing, status });
+                  const forStorage = new Map(next);
+                  forStorage.delete(entry.projectName);
+                  saveToStorage(forStorage);
+                }
+                return next;
+              });
+            }
+          }
+        })
+        .catch(() => {
+          console.error(`clone status fetch failed for project ${entry.projectName}`);
+        })
+        .finally(() => {
+          inflightRef.current.delete(entry.projectName);
+        });
+    }
+  };
+  pollFuncRef.current = poll;
+
+  const hasActiveClones = Array.from(clones.values()).some(
+    entry => !STATUSES.includes(entry.status)
+  );
+
+  useEffect(() => {
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
+    }
+
     if (hasActiveClones) {
-      pollingRef.current = setInterval(poll, POLL_INTERVAL);
+      pollingRef.current = setInterval(() => pollFuncRef.current(), POLL_INTERVAL);
     }
 
     return () => {
@@ -177,7 +184,7 @@ export function CloneStatusProvider({ children }: { children: React.ReactNode })
         pollingRef.current = null;
       }
     };
-  }, [clones, apolloClient, updateClone]);
+  }, [hasActiveClones]);
 
   useEffect(() => {
     const persisted = Array.from(clones.values());

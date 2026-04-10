@@ -82,7 +82,11 @@ export default function OrgProjectsPage({
             organization.name,
             refetchData
           )}
-          data={organization.projects}
+          data={[...organization.projects].sort((a, b) => {
+            const cloningA = a.clone && a.clone.status !== 'COMPLETE' ? 1 : 0;
+            const cloningB = b.clone && b.clone.status !== 'COMPLETE' ? 1 : 0;
+            return cloningB - cloningA;
+          })}
           searchableColumns={['name']}
           onSearch={searchStr => setProjectQuery(searchStr)}
           initialSearch={project_query}
