@@ -109,28 +109,34 @@ interface ErrorStepProps {
   onClose: () => void;
 }
 
-export const ErrorStep: FC<ErrorStepProps> = ({ errorMessage, onRetry, onClose }) => (
-  <>
-    <DialogHeader>
-      <DialogTitle>Cloning Failed</DialogTitle>
-      <DialogDescription>Something went wrong while creating your project</DialogDescription>
-    </DialogHeader>
+export const ErrorStep: FC<ErrorStepProps> = ({ errorMessage, onRetry, onClose }) => {
+  if (errorMessage?.includes("Unauthorized: You don't have permission to")) {
+    errorMessage = "You don't have permission to clone this project. Please contact your Organization administrator.";
+  }
+  
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle>Cloning Failed</DialogTitle>
+        <DialogDescription>Something went wrong while creating your project</DialogDescription>
+      </DialogHeader>
 
-    <div className="flex flex-col items-center gap-4 py-4">
-      <XCircle className="h-16 w-16 text-red-600 dark:text-red-400" />
+      <div className="flex flex-col items-center gap-4 py-4">
+        <XCircle className="h-16 w-16 text-red-600 dark:text-red-400" />
 
-      {errorMessage && (
-        <Alert variant="destructive" className="w-full">
-          <AlertDescription>{errorMessage}</AlertDescription>
-        </Alert>
-      )}
-    </div>
+        {errorMessage && (
+          <Alert variant="destructive" className="w-full">
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        )}
+      </div>
 
-    <DialogFooter>
-      <Button variant="outline" onClick={onClose}>
-        Close
-      </Button>
-      <Button onClick={onRetry}>Try Again</Button>
-    </DialogFooter>
-  </>
-);
+      <DialogFooter>
+        <Button variant="outline" onClick={onClose}>
+          Close
+        </Button>
+        <Button onClick={onRetry}>Try Again</Button>
+      </DialogFooter>
+    </>
+  )
+};
