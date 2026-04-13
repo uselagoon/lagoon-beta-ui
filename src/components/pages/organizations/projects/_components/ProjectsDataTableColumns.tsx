@@ -8,6 +8,16 @@ import { handleSort, renderSortIcons } from '@/components/utils';
 import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@/ui-library';
 import { FolderCog } from 'lucide-react';
 
+const setCloneBadge = (status?: string) => {
+  if (!status) return null;
+  if (status === 'FAILED' || status === 'CANCELLED') {
+    return <Badge variant="destructive">Clone Failed</Badge>;
+  } else if (status != "COMPLETE") {
+    return <Badge variant="info">Cloning</Badge>;
+  } else {
+    return <Badge variant="success">Clone Complete</Badge>;
+  }
+}
 
 export const ProjectsDataTableColumns = (
   deleteProjectModal: (project: OrgProject) => React.ReactNode,
@@ -33,7 +43,7 @@ export const ProjectsDataTableColumns = (
           <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${orgName}/projects/${name}`}>
             {name}
           </Link>
-          {clone && clone?.status != "COMPLETE" && <Badge variant="info">Cloning</Badge>}
+          {setCloneBadge(clone?.status)}
         </div>
       );
     },
