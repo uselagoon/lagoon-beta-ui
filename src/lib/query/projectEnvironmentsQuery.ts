@@ -15,7 +15,9 @@ export default gql`
         deployType
         environmentType
         routes
-        updated
+        latestDeployment {
+          created
+        }
         openshiftProjectName
         project {
           problemsUi
