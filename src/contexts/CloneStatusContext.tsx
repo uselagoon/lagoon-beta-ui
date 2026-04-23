@@ -3,8 +3,8 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useApolloClient } from '@apollo/client';
 import projectCloneStatus from '@/lib/query/organizations/projectCloneStatus';
+import projectCloneChangedSubscription from '@/lib/subscription/organizations/projectCloneChanged';
 
-const POLL_INTERVAL = 60000;
 const LOCAL_STORAGE_KEY = 'lagoon-active-clones';
 export const STATUSES = ['COMPLETE', 'FAILED', 'CANCELLED'];
 
@@ -39,20 +39,16 @@ function loadFromStorage(): Map<string, CloneEntry> {
 
 function saveToStorage(clones: Map<string, CloneEntry>) {
   if (typeof window === 'undefined') return;
-    const entries = Array.from(clones.values());
-    window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(entries));
+  const entries = Array.from(clones.values());
+  window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(entries));
 }
 
 export function CloneStatusProvider({ children }: { children: React.ReactNode }) {
   const [clones, setClones] = useState<Map<string, CloneEntry>>(() => loadFromStorage());
   const apolloClient = useApolloClient();
-  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  // using a ref to track current reqs to stop duplicate fetches
-  const inflightRef = useRef<Set<string>>(new Set());
-  // uses ref to mirror clones so we don't reset the interval on status updates
+  const subscriptionsRef = useRef<Map<string, { unsubscribe: () => void }>>(new Map());
   const clonesRef = useRef(clones);
   clonesRef.current = clones;
-  const pollFuncRef = useRef<() => void>(() => {});
 
   const updateClone = useCallback((projectName: string, status: string) => {
     setClones(prev => {
@@ -70,8 +66,61 @@ export function CloneStatusProvider({ children }: { children: React.ReactNode })
       saveToStorage(next);
       return next;
     });
-    inflightRef.current.delete(projectName);
   }, []);
+
+  const unsubscribe = useCallback((projectName: string) => {
+    const sub = subscriptionsRef.current.get(projectName);
+    if (sub) {
+      sub.unsubscribe();
+      subscriptionsRef.current.delete(projectName);
+    }
+  }, []);
+
+  const handleStatusChange = useCallback((projectName: string, status: string) => {
+      setClones(prev => {
+        const next = new Map(prev);
+        const existing = next.get(projectName);
+        if (existing) {
+          next.set(projectName, { ...existing, status });
+          const storage = new Map(next);
+          storage.delete(projectName);
+          saveToStorage(storage);
+        }
+        return next;
+      });
+      unsubscribe(projectName);
+    },
+    [unsubscribe]
+  );
+
+  const startSubscription = useCallback((projectName: string) => {
+      if (subscriptionsRef.current.has(projectName)) return;
+
+      const observable = apolloClient.subscribe({
+        query: projectCloneChangedSubscription,
+        variables: { project: projectName },
+      });
+
+      const sub = observable.subscribe({
+        next: ({ data }) => {
+          const status: string | undefined = data?.projectCloneChanged?.status;
+          if (status) {
+            if (STATUSES.includes(status)) {
+              handleStatusChange(projectName, status);
+            } else {
+              updateClone(projectName, status);
+            }
+          }
+        },
+        error: err => {
+          console.error(`Clone subscription error for project ${projectName}:`, err);
+        },
+      });
+
+      subscriptionsRef.current.set(projectName, sub);
+    },
+    [apolloClient, handleStatusChange, updateClone]
+  );
 
   const registerClone = useCallback(
     (projectName: string, initialStatus?: string) => {
@@ -86,15 +135,20 @@ export function CloneStatusProvider({ children }: { children: React.ReactNode })
         saveToStorage(next);
         return next;
       });
+      const existingStatus = initialStatus ?? 'PENDING';
+      if (!STATUSES.includes(existingStatus)) {
+        startSubscription(projectName);
+      }
     },
-    []
+    [startSubscription]
   );
 
   const unregisterClone = useCallback(
     (projectName: string) => {
+      unsubscribe(projectName);
       removeClone(projectName);
     },
-    [removeClone]
+    [unsubscribe, removeClone]
   );
 
   const getCloneStatus = useCallback(
@@ -119,77 +173,8 @@ export function CloneStatusProvider({ children }: { children: React.ReactNode })
     [isCloning]
   );
 
-  const poll = async () => {
-    const activeClones = Array.from(clonesRef.current.values()).filter(
-      entry => !STATUSES.includes(entry.status)
-    );
-
-    for (const entry of activeClones) {
-      if (inflightRef.current.has(entry.projectName)) continue;
-      inflightRef.current.add(entry.projectName);
-
-      // need to use this directly instead of the hook so we can dynamically poll
-      apolloClient
-        .query({
-          query: projectCloneStatus,
-          variables: { name: entry.projectName },
-          fetchPolicy: 'network-only',
-        })
-        .then(({ data }) => {
-          const status: string | undefined = data?.project?.clone?.status;
-          if (status) {
-            updateClone(entry.projectName, status);
-            if (STATUSES.includes(status)) {
-              setClones(prev => {
-                const next = new Map(prev);
-                const existing = next.get(entry.projectName);
-                if (existing) {
-                  next.set(entry.projectName, { ...existing, status });
-                  const forStorage = new Map(next);
-                  forStorage.delete(entry.projectName);
-                  saveToStorage(forStorage);
-                }
-                return next;
-              });
-            }
-          }
-        })
-        .catch(() => {
-          console.error(`clone status fetch failed for project ${entry.projectName}`);
-        })
-        .finally(() => {
-          inflightRef.current.delete(entry.projectName);
-        });
-    }
-  };
-  pollFuncRef.current = poll;
-
-  const hasActiveClones = Array.from(clones.values()).some(
-    entry => !STATUSES.includes(entry.status)
-  );
-
-  useEffect(() => {
-    if (pollingRef.current) {
-      clearInterval(pollingRef.current);
-      pollingRef.current = null;
-    }
-
-    if (hasActiveClones) {
-      pollingRef.current = setInterval(() => pollFuncRef.current(), POLL_INTERVAL);
-    }
-
-    return () => {
-      if (pollingRef.current) {
-        clearInterval(pollingRef.current);
-        pollingRef.current = null;
-      }
-    };
-  }, [hasActiveClones]);
-
   useEffect(() => {
     const persisted = Array.from(clones.values());
-    if (persisted.length === 0) return;
-
     const nonTerminal = persisted.filter(e => !STATUSES.includes(e.status));
     if (nonTerminal.length === 0) return;
 
@@ -204,27 +189,26 @@ export function CloneStatusProvider({ children }: { children: React.ReactNode })
           const status: string | undefined = data?.project?.clone?.status;
           if (!status) {
             removeClone(entry.projectName);
-          } else if (status !== entry.status) {
-            updateClone(entry.projectName, status);
-            if (STATUSES.includes(status)) {
-              setClones(prev => {
-                const next = new Map(prev);
-                const existing = next.get(entry.projectName);
-                if (existing) {
-                  next.set(entry.projectName, { ...existing, status });
-                  const forStorage = new Map(next);
-                  forStorage.delete(entry.projectName);
-                  saveToStorage(forStorage);
-                }
-                return next;
-              });
+          } else if (STATUSES.includes(status)) {
+            handleStatusChange(entry.projectName, status);
+          } else {
+            if (status !== entry.status) {
+              updateClone(entry.projectName, status);
             }
+            startSubscription(entry.projectName);
           }
         })
         .catch(() => {
           console.error(`clone status fetch failed for project ${entry.projectName}`);
         });
     });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      subscriptionsRef.current.forEach(sub => sub.unsubscribe());
+      subscriptionsRef.current.clear();
+    };
   }, []);
 
   return (

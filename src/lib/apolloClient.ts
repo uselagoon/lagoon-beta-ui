@@ -1,12 +1,13 @@
 import { env } from 'next-runtime-env';
 
-import { ApolloClient, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client';
+import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, FetchResult, Observable, Operation } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { registerApolloClient } from '@apollo/experimental-nextjs-app-support';
+import { print } from 'graphql';
 // subscsriptions
-import { createClient } from 'graphql-ws';
+import { createClient } from 'graphql-sse';
 
 import { auth } from '../auth';
 
@@ -15,6 +16,7 @@ export const { getClient, PreloadQuery, query } = registerApolloClient(async () 
 
   const GRAPHQL_API = env('GRAPHQL_API');
   const WEBSOCKET_URI = env('GRAPHQL_API')!.replace(/https/, 'wss').replace(/http/, 'ws');
+  const SSE_URI = GRAPHQL_API!.replace(/\/?$/, '/stream');
 
   const disableSubscriptions = env('DISABLE_SUBSCRIPTIONS')?.toLowerCase() === 'true';
 
@@ -25,29 +27,45 @@ export const { getClient, PreloadQuery, query } = registerApolloClient(async () 
     },
   });
 
-  const HttpWebsocketLink = () => {
+  const HttpSseLink = () => {
     if (disableSubscriptions) {
       return httpLink;
     }
 
-    const wsLink = new GraphQLWsLink(
-      createClient({
-        url: WEBSOCKET_URI,
-        connectionParams: () => {
-          if (!session) return {};
-          return { Authorization: `Bearer ${session?.access_token}` };
-        },
-        lazy: true,
-        shouldRetry: () => true,
-      })
-    );
+    class SSELink extends ApolloLink {
+      private sseClient;
+
+      constructor() {
+        super();
+        this.sseClient = createClient({
+          url: SSE_URI,
+          headers: () => {
+            if (!session) return {} as Record<string, string>;
+            return { Authorization: `Bearer ${session?.access_token}` };
+          },
+        });
+      }
+
+      public request(operation: Operation): Observable<FetchResult> {
+        return new Observable((sink) => {
+          return this.sseClient.subscribe<Record<string, any>>(
+            { ...operation, query: print(operation.query) },
+            {
+              next: sink.next.bind(sink) as any,
+              complete: sink.complete.bind(sink),
+              error: sink.error.bind(sink),
+            }
+          );
+        });
+      }
+    }
 
     return ApolloLink.split(
       ({ query }) => {
         let definition = getMainDefinition(query);
         return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
       },
-      wsLink,
+      new SSELink(),
       httpLink
     );
   };
@@ -70,7 +88,7 @@ export const { getClient, PreloadQuery, query } = registerApolloClient(async () 
     link: ApolloLink.from([
       errorLink,
       // Disable websockets when rendering server side.
-      typeof window === 'undefined' ? httpLink : HttpWebsocketLink(),
+      typeof window === 'undefined' ? httpLink : HttpSseLink(),
     ]),
   });
 });

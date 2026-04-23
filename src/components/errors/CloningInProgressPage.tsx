@@ -7,7 +7,10 @@ import { useRouter } from 'next/navigation';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { useCloneStatus, useRegisterClone } from '@/hooks/useCloneStatus';
 import { Badge } from '@/ui-library';
+import { useSubscription } from '@apollo/client';
 import { Loader2, X } from 'lucide-react';
+import projectCloneChangedSubscription from '@/lib/subscription/organizations/projectCloneChanged';
+import { STATUSES } from '@/contexts/CloneStatusContext';
 
 interface CloningInProgressPageProps {
   projectName: string;
@@ -24,6 +27,20 @@ const CloningInProgressPage = ({ projectName, cloneStatus: serverCloneStatus }: 
       registerClone(projectName, serverCloneStatus);
     }
   }, [projectName, serverCloneStatus, registerClone]);
+
+  useSubscription(projectCloneChangedSubscription, {
+    variables: { project: projectName },
+    skip: !projectName,
+    onData: ({ data }) => {
+      const status: string | undefined = data.data?.projectCloneChanged?.status;
+      if (status && !STATUSES.includes(status)) {
+        return;
+      }
+      if (status === 'COMPLETE') {
+        router.refresh();
+      }
+    },
+  });
 
   useEffect(() => {
     if (status === 'COMPLETE') {

@@ -30,6 +30,7 @@ type Organization = {
   teams: OrgTeams[];
   webhook: OrgWebhook[];
   emails: OrgEmail[];
+  featureProjectClone: boolean;
 };
 
 export interface OrganizationProjectData {

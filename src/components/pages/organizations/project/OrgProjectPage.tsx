@@ -139,11 +139,15 @@ export default function OrgProjectPage({
     })) ?? []),
   ];
 
+  let projectCloneEnabled = organization?.featureProjectClone ?? false;
+
   return (
     <SectionWrapper>
-      <div className="mb-6 flex items-center gap-4 float-right">
-        <CloneProject projectName={project.name} organizationSlug={organization.name} refetch={refetch} toggleText />
-      </div>
+      {projectCloneEnabled && (
+        <div className="mb-6 flex items-center gap-4 float-right">
+            <CloneProject projectName={project.name} organizationSlug={organization.name} refetch={refetch} toggleText />
+        </div>
+      )}
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-4">Groups for {project.name}</h3>
 
       <AddGroupToProject projectName={project.name} groups={filteredGroups} refetch={refetch} />

@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 
 import cloneProjectMutation from '@/lib/mutation/organizations/cloneProject';
 import projectEnvironmentsForClone from '@/lib/query/organizations/projectEnvironmentsForClone';
-import { useCloneStatus, useRegisterClone } from '@/hooks/useCloneStatus';
-import { useLazyQuery, useMutation } from '@apollo/client';
+import projectCloneChangedSubscription from '@/lib/subscription/organizations/projectCloneChanged';
+import { useRegisterClone } from '@/hooks/useCloneStatus';
+import { useLazyQuery, useMutation, useSubscription } from '@apollo/client';
 import { Button, Dialog, DialogContent, DialogTrigger } from '@/ui-library';
 import { Copy } from 'lucide-react';
 
@@ -26,7 +27,7 @@ interface CloneProjectProps {
 }
 
 export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationSlug, refetch, onCloned, toggleText = false, disabled = false }) => {
-  const router = useRouter();
+  // TODO: find a better way to manage all this state
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<DialogStep>('configure');
   const [newProjectName, setNewProjectName] = useState(`${projectName}-copy`);
@@ -50,7 +51,18 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationS
   });
 
   const registerClone = useRegisterClone();
-  const { status: cloneStatus } = useCloneStatus(clonedProjectName);
+  const [cloneStatus, setCloneStatus] = useState<string | undefined>(undefined);
+
+  useSubscription(projectCloneChangedSubscription, {
+    variables: { project: clonedProjectName },
+    skip: !clonedProjectName || step !== 'success',
+    onData: ({ data }) => {
+      const status: string | undefined = data.data?.projectCloneChanged?.status;
+      if (status) {
+        setCloneStatus(status);
+      }
+    },
+  });
 
   const [cloneProject] = useMutation(cloneProjectMutation, {
     onCompleted: data => {
@@ -95,6 +107,7 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationS
     setNameValidationActive(false);
     setErrorMessage('');
     setClonedProjectName('');
+    setCloneStatus(undefined);
     setOptions({
       copyData: true,
       metadata: true,

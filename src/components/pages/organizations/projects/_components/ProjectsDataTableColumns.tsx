@@ -22,6 +22,7 @@ const setCloneBadge = (status?: string) => {
 export const ProjectsDataTableColumns = (
   deleteProjectModal: (project: OrgProject) => React.ReactNode,
   orgName: string,
+  projectCloneEnabled: boolean,
   refetch?: () => void
 ): DataTableColumnDef<OrgProject>[] => [
   {
@@ -70,12 +71,14 @@ export const ProjectsDataTableColumns = (
     cell: ({ row }) => {
       return (
         <div className="flex gap-4 justify-end items-center">
-          <Tooltip>
-            <TooltipTrigger>
-              <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} />
-            </TooltipTrigger>
-            <TooltipContent>Clone this Project</TooltipContent>
-          </Tooltip>
+          {projectCloneEnabled && (
+            <Tooltip>
+              <TooltipTrigger>
+                <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} />
+              </TooltipTrigger>
+              <TooltipContent>Clone this Project</TooltipContent>
+            </Tooltip>
+          )}
           <Button>
             <Link target="_blank" href={`/projects/${row.original.name}`}>
               <Tooltip>

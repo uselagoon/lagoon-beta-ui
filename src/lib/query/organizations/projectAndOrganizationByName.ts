@@ -37,6 +37,7 @@ export default gql`
         type
         name
       }
+      featureProjectClone
       slacks: notifications(type: SLACK) {
         __typename
         ...Slack

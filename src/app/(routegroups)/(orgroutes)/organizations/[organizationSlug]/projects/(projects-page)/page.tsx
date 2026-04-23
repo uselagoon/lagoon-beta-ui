@@ -16,6 +16,7 @@ export type OrganizationProjectsData = {
     friendlyName: string;
     projects: OrgProject[];
     deployTargets: DeployTarget[];
+    featureProjectClone: boolean;
   };
 };
 
