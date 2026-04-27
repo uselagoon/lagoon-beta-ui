@@ -100,7 +100,7 @@ export default function OrgProjectsPage({
       const next = new Map(prev);
       let changed = false;
 
-      for (const project of organization.projects) {
+      for (const project of organization?.projects ?? []) {
         if (!next.has(project.id)) continue;
         const serverStatus = project.clone?.status;
         if (!serverStatus || STATUSES.includes(serverStatus)) {
@@ -166,8 +166,8 @@ export default function OrgProjectsPage({
             refetchData
           )}
           data={projectsWithOverrides.sort((a, b) => {
-            const cloningA = a.clone && a.clone.status !== 'COMPLETE' ? 1 : 0;
-            const cloningB = b.clone && b.clone.status !== 'COMPLETE' ? 1 : 0;
+            const cloningA = a.clone?.status && !STATUSES.includes(a.clone.status) ? 1 : 0;
+            const cloningB = b.clone?.status && !STATUSES.includes(b.clone.status) ? 1 : 0;
             return cloningB - cloningA;
           })}
           searchableColumns={['name']}

@@ -73,7 +73,7 @@ export const ProjectsDataTableColumns = (
         <div className="flex gap-4 justify-end items-center">
           {projectCloneEnabled && (
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} />
               </TooltipTrigger>
               <TooltipContent>Clone this Project</TooltipContent>

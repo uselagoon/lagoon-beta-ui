@@ -123,8 +123,8 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationS
     setIsOpen(open);
     if (open) {
       fetchEnvironments();
-      resetForm();
     }
+    resetForm();
   };
 
   const handleClone = async () => {

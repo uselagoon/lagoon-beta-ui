@@ -12,13 +12,13 @@ import {
   DialogTitle,
   Label,
   SelectWithOptions,
+  Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/ui-library';
 import { Info, Loader2 } from 'lucide-react';
 
 import { CloneOptions, CLONE_OPTIONS_CONFIG, validateName } from './types';
-import { Tooltip } from '@radix-ui/react-tooltip';
 
 interface EnvironmentOption {
   label: string;
@@ -131,7 +131,7 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
           )}
           {!envLoading && !environmentsEmpty && (
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <p className="text-sm text-muted-foreground">
                   Select an environment to be cloned. &#9432;
                 </p>
