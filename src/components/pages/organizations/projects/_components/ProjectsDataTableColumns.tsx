@@ -15,7 +15,7 @@ const setCloneBadge = (status?: string) => {
   } else if (status != "COMPLETE") {
     return <Badge variant="info">Cloning</Badge>;
   } else {
-    return <Badge variant="success">Clone Complete</Badge>;
+    return <Badge variant="success">Clone</Badge>;
   }
 }
 
