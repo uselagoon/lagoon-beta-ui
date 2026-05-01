@@ -188,6 +188,7 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
             creation.
           </AlertDescription>
         </Alert>
+        {/* temporary measure to highlight cloning limitation for private repos */}
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Limitation</AlertTitle>
