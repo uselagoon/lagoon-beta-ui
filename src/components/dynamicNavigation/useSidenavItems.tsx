@@ -4,20 +4,35 @@ import { useEnvContext } from '@/contexts/EnvContext';
 import { ParamValue } from 'next/dist/server/request/params';
 import { usePathname } from 'next/navigation';
 
-import { SidebarSection } from '@/contexts/AppContext';
+// import { SidebarItem } from '@/contexts/AppContext';
 import environmentWithProblems from '@/lib/query/environmentWithProblems';
 import projectByNameQuery from '@/lib/query/projectByNameQuery';
 import { useQuery } from '@apollo/client';
-import { BriefcaseBusiness, FolderGit2, KeyRound, ListChecks, ServerCog } from 'lucide-react';
+import { BriefcaseBusiness, FolderGit2, KeyRound, LifeBuoy, ListChecks, ServerCog, UserRoundCog } from 'lucide-react';
+import { SidebarSection, FooterItem, SidebarItem } from '@/ui-library';
+import { useOverrides } from "@/contexts/OverrideContext";
 
 import { getOrgNav, getProjectNav } from './DynamicNavigation';
 import { useExtensions } from '@/contexts/ExtensionContext';
 import { resolveIcon } from '@/lib/extensions/icons';
 
+const disableAccountLink = Boolean(process.env.LAGOON_UI_YOUR_ACCOUNT_DISABLED);
+
+function getSection(items: SidebarItem[], url: string): SidebarItem | null {
+  for (const item of items) {
+    if (item.url === url) return item;
+    if (item.children?.length) {
+      const found = getSection(item.children, url);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 const getBaseSidenavItems = (kcUrl: string): SidebarSection[] => [
   {
     section: 'Projects',
-    sectionItems: [{ title: 'Projects', url: '/projects', icon: FolderGit2 }],
+    sectionItems: [{ title: 'Projects', url: '/projects', icon: FolderGit2, collapsible: false }],
   },
   {
     section: 'Deployments',
@@ -43,17 +58,38 @@ const getBaseSidenavItems = (kcUrl: string): SidebarSection[] => [
     ],
   },
 ];
+
+const GetFooterSidenavItems = (kcUrl: string, disableAccountLink: boolean): FooterItem[] => {
+  const overrides = useOverrides();
+
+  return [
+    { 
+      title: 'Documentation', 
+      url: overrides?.global?.documentationUrl || 'https://docs.lagoon.sh', 
+      icon: LifeBuoy,
+      target: 'blank'
+    },
+    ...(!disableAccountLink ? [{ 
+      title: 'My Account', 
+      url: `${kcUrl}/account`, 
+      icon: UserRoundCog,
+      target: 'blank'
+    }] : []),
+  ];
+}
+
 export function useSidenavItems(
   kcUrl: string,
   projectSlug: ParamValue,
   environmentSlug: ParamValue,
   organizationSlug: ParamValue
-) {
+): [SidebarSection[], FooterItem[]] {
   const [sidenavItems, setSidenavItems] = useState(() => getBaseSidenavItems(kcUrl));
 
   const pathname = usePathname();
 
   const { LAGOON_UI_VIEW_ENV_VARIABLES } = useEnvContext();
+  const footerItems = GetFooterSidenavItems(kcUrl, disableAccountLink);
   const { getNavItemsForTarget, getSidebarSections } = useExtensions();
 
   const { data: projectData, loading: projectLoading } = useQuery(projectByNameQuery, {
@@ -68,7 +104,6 @@ export function useSidenavItems(
 
   useEffect(() => {
     const items = getBaseSidenavItems(kcUrl);
-
     if (projectSlug) {
       const projectChildren = getProjectNav(
         projectSlug,
@@ -110,6 +145,7 @@ export function useSidenavItems(
     // Add extension items to existing sections
     const targetToIndex: Record<string, number> = {
       'sidebar-projects': 0,
+      'sidebar-environments': 0,
       'sidebar-deployments': 1,
       'sidebar-organizations': 2,
       'sidebar-settings': 3,
@@ -125,11 +161,27 @@ export function useSidenavItems(
           if (environmentSlug) {
             href = href.replace('[environmentSlug]', environmentSlug as string);
           }
+          if (/\[.+\]/.test(href)) continue;
           const navItem = { title: extItem.label, url: href, icon: resolveIcon(extItem.icon) };
-          if (extItem.position === 'start') {
-            items[idx].sectionItems.unshift(navItem);
-          } else {
-            items[idx].sectionItems.push(navItem);
+          if (target === 'sidebar-projects' || target === 'sidebar-environments') {
+            // match the parent section to the extension href so we can set the nav item at the proper level
+            const parentUrl = href.split('/').slice(0, -1).join('/') || '/';
+            const parentSection = getSection(items[idx].sectionItems, parentUrl);
+            if (parentSection) {
+              parentSection.children ??= [];
+              if (extItem.position === 'start') {
+                parentSection.children.unshift(navItem);
+              } else {
+                parentSection.children.push(navItem);
+              }
+            }
+          }
+           else {
+            if (extItem.position === 'start') {
+              items[idx].sectionItems.unshift(navItem);
+            } else {
+              items[idx].sectionItems.push(navItem);
+            }
           }
         }
       }
@@ -138,5 +190,5 @@ export function useSidenavItems(
     setSidenavItems(items);
   }, [kcUrl, pathname, projectSlug, environmentSlug, organizationSlug, projectData, environmentData, getNavItemsForTarget, getSidebarSections, LAGOON_UI_VIEW_ENV_VARIABLES]);
 
-  return sidenavItems;
+  return [sidenavItems, footerItems];
 }

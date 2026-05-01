@@ -57,6 +57,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           expires_at: account.expires_at as number,
           refresh_token: account.refresh_token,
           id_token: account.id_token as string,
+          realm_access: {
+            roles: JSON.parse(
+              Buffer.from((account.access_token as string).split('.')[1], 'base64url').toString()
+            ).realm_access?.roles
+          },
         };
       } else if (Date.now() < token.expires_at * 1000 - 30000) {
         // access token still valid
@@ -77,7 +82,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       // send properties to the client
-
       session.access_token = token.access_token;
       session.id_token = token.id_token;
       session.roles = token?.realm_access?.roles;

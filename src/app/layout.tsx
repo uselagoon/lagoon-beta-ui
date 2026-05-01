@@ -15,9 +15,11 @@ import './globals.css';
 import fs from 'fs';
 import {OverrideProvider} from "@/contexts/OverrideContext";
 import * as process from "node:process";
-import { validateOverrides, type Overrides } from '@uselagoon/ui-library/schemas';
+import { validateOverrides, type Overrides } from '@/ui-library/schemas';
+import { buildThemeStyle } from '@/ui-library/lib/theme';
 import { ExtensionProvider } from '@/contexts/ExtensionContext';
 import { loadExtensions } from '@/lib/extensions/loader';
+import { ExtensionZoneRenderer } from '@/components/extensions/ExtensionZoneRenderer';
 
 function loadOverrides() : Overrides {
   try {
@@ -58,13 +60,13 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 const overrides = loadOverrides();
+const themeStyle = overrides.theme ? buildThemeStyle(overrides.theme) : null;
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const overrides = loadOverrides();
   const extensions = loadExtensions();
   // ref for exposing custom variables at runtime: https://github.com/expatfile/next-runtime-env/blob/development/docs/EXPOSING_CUSTOM_ENV.md
   noStore();
@@ -72,6 +74,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <PublicRuntimeEnvProvider>
         <head>
+          {themeStyle && <style dangerouslySetInnerHTML={{ __html: themeStyle }} />}
           <Plugins hook="head" />
         </head>
         <body>
@@ -80,12 +83,14 @@ export default async function RootLayout({
             <LinkProvider>
               <AuthProvider>
                 <ExtensionProvider extensions={extensions}>
+                  <ExtensionZoneRenderer zone="global-header" />
                   <RefreshTokenHandler />
                   <ClientSessionWrapper>
                     <ApolloClientComponentWrapper>
                       <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER!}>{children}</AppProvider>
                     </ApolloClientComponentWrapper>
                   </ClientSessionWrapper>
+                  <ExtensionZoneRenderer zone="global-footer" />
                 </ExtensionProvider>
               </AuthProvider>
             </LinkProvider>

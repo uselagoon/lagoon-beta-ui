@@ -310,7 +310,7 @@ export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@ui-li
 // custom components
 export { default as RootLayout } from '@ui-lib/components/RootLayout';
 
-export { default as Sidenav } from '@ui-lib/components/Sidenav';
+export { default as Sidenav, type SidebarSection, type SidebarItem, type FooterItem } from '@ui-lib/components/Sidenav';
 
 export { default as Checkbox } from '@ui-lib/components/Checkbox';
 
@@ -354,7 +354,9 @@ export { default as DateRangePicker } from '@ui-lib/components/DateRangePicker';
 
 export { default as ThemeSwitch } from '@ui-lib/components/ThemeSwitch';
 
-export { OverridesSchema, type Overrides } from '@ui-lib/schemas';
+export { OverridesSchema, ThemeSchema, ThemeTokensSchema, type Overrides, type Theme, type ThemeTokens } from '@ui-lib/schemas';
+
+export { buildThemeStyle } from '@ui-lib/lib/theme';
 
 export { default as ChangeFeedContainer } from '@ui-lib/components/ChangeFeed';
 

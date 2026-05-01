@@ -4,11 +4,11 @@ import { ChevronsUpDown, LifeBuoy, LogOut, ScrollText, UserRoundCog } from 'luci
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../ui/dropdown-menu';
 import { SidebarMenuButton } from '../ui/sidebar';
 import { useLinkComponent } from '@ui-lib/providers/NextLinkProvider';
-import { AppInfo } from './Sidenav';
+import { AppInfo, FooterItem } from './Sidenav';
 
-type DropdownProps = AppInfo & { signOutFn: () => Promise<void>; avatar: ReactNode, userDisplayName: ReactNode, email: string, documentationUrl?: string; disableAccountLink?: boolean, disableChangeFeedLink?: boolean };
+type SidenavFooterMenuProps = AppInfo & { footerItems: FooterItem[]; signOutFn: () => Promise<void>; avatar: ReactNode, userDisplayName: ReactNode, email: string, documentationUrl?: string; disableAccountLink?: boolean, disableChangeFeedLink?: boolean };
 
-export default function SidenavFooterMenu({ email, kcUrl, signOutFn, avatar, userDisplayName, documentationUrl = 'https://docs.lagoon.sh/', disableAccountLink = false, disableChangeFeedLink = false }: DropdownProps) {
+export default function SidenavFooterMenu({ email, kcUrl, signOutFn, avatar, userDisplayName, footerItems, documentationUrl = 'https://docs.lagoon.sh/', disableAccountLink = false, disableChangeFeedLink = false }: SidenavFooterMenuProps) {
 
 	const Link = useLinkComponent();
 
@@ -38,34 +38,22 @@ export default function SidenavFooterMenu({ email, kcUrl, signOutFn, avatar, use
 				</DropdownMenuTrigger>
 			</section>
 			<DropdownMenuContent className="w-56" align="start" side="top" sideOffset={4}>
-				<DropdownMenuItem asChild>
-					<Link href={documentationUrl} target="_blank" className="cursor-pointer">
-						<LifeBuoy className="mr-2 h-4 w-4" />
-						Documentation
-					</Link>
-				</DropdownMenuItem>
-				{!disableChangeFeedLink && (
-					<DropdownMenuItem asChild>
-						<Link href="/changefeed" className="cursor-pointer">
-							<ScrollText className="mr-2 h-4 w-4" />
-							Change Feed
-						</Link>
-					</DropdownMenuItem>
-				)}
-				{!disableAccountLink && (
-					<DropdownMenuItem asChild>
-						<Link href={`${kcUrl}/account`} target="_blank" className="cursor-pointer">
-							<UserRoundCog className="mr-2 h-4 w-4" />
-							My Account
-						</Link>
-					</DropdownMenuItem>
-				)}
-				<DropdownMenuItem asChild onClick={() => signOutFn()}>
-					<div onClick={() => signOutFn()} className="flex items-center w-full cursor-pointer">
-						<LogOut className="mr-2 h-4 w-4" />
-						Sign Out
-					</div>
-				</DropdownMenuItem>
+				{footerItems.map((item, index) => {
+					const newTab = item.target === 'blank';
+
+					return (
+						<DropdownMenuItem asChild key={index}>
+							<Link
+								href={item.url}
+								target={newTab ? '_blank' : '_self'}
+								className="cursor-pointer"
+							>
+								{item.icon && <item.icon className="mr-2 h-4 w-4" />}
+								{item.title}
+							</Link>
+						</DropdownMenuItem>
+					);
+				})}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

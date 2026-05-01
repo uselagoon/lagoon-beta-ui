@@ -7,22 +7,10 @@ import { useEnvContext } from '@/contexts/EnvContext';
 import { useParams, usePathname } from 'next/navigation';
 
 import { useSidenavItems } from '@/components/dynamicNavigation/useSidenavItems';
-import { RootLayout, ThemeSwitch, Toaster } from '@/ui-library';
+import { RootLayout, ThemeSwitch, Toaster, SidebarItem, SidebarSection } from '@/ui-library';
 import manualSignOut from 'utils/manualSignOut';
 import { useOverrides } from "@/contexts/OverrideContext";
 
-export type SidebarItem = {
-  title: string;
-  url: string;
-  icon?: React.ComponentType<any>;
-  target?: string;
-  onClick?: () => void;
-  children?: SidebarItem[];
-};
-export type SidebarSection = {
-  section: string;
-  sectionItems: SidebarItem[];
-};
 
 const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: string; logo?: ReactNode }) => {
   const { status, data } = useSession();
@@ -31,15 +19,12 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
 
   const userData = status === 'authenticated' ? data.user : { name: '', email: '', image: '' };
 
-  const { LAGOON_UI_ICON, LAGOON_VERSION, LAGOON_UI_YOUR_ACCOUNT_DISABLED } = useEnvContext();
-
-  const disableAccountLink = Boolean(LAGOON_UI_YOUR_ACCOUNT_DISABLED);
+  const { LAGOON_UI_ICON, LAGOON_VERSION } = useEnvContext();
 
   const pathname = usePathname();
 
   // notion style dynamic sidenav items
-  const sidenavItems = useSidenavItems(kcUrl, projectSlug, environmentSlug, organizationSlug);
-
+  const [sidenavItems, footerItems] = useSidenavItems(kcUrl, projectSlug, environmentSlug, organizationSlug);
   const overrides = useOverrides();
 
   const memoizedLogo = useMemo(() => {
@@ -83,7 +68,7 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         sidenavItems={sidenavItems}
         cardProps={overrides?.components?.announcementCard}
         documentationUrl={overrides?.global?.documentationUrl}
-        disableAccountLink={disableAccountLink}
+        footerItems={footerItems}
         disableChangeFeedLink={overrides?.components?.sidenavFooterMenu?.disableChangeFeedLink}
       >
         <div className="absolute top-2 right-4">

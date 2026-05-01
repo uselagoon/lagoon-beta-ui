@@ -5,7 +5,7 @@ import { useSession } from 'next-auth/react';
 import {
   ExtensionsConfig,
   ExtensionNavItem,
-  ExtensionSlot,
+  ExtensionZone,
   ExtensionSidebarSection,
   ExtensionPage,
 } from '@/lib/extensions/types';
@@ -14,7 +14,7 @@ import { hasAccess } from '@/lib/extensions/rbac';
 type ExtensionContextValue = {
   getNavItemsForTarget: (target: ExtensionNavItem['target']) => ExtensionNavItem[];
   getSidebarSections: () => ExtensionSidebarSection[];
-  getSlotsForLocation: (location: ExtensionSlot['slot']) => ExtensionSlot[];
+  getZonesForLocation: (location: ExtensionZone['zone']) => ExtensionZone[];
   hasFeature: (flag: string) => boolean;
   getPageConfig: (route: string) => ExtensionPage | undefined;
   canAccessRoute: (route: string) => boolean;
@@ -23,7 +23,7 @@ type ExtensionContextValue = {
 const ExtensionContext = createContext<ExtensionContextValue>({
   getNavItemsForTarget: () => [],
   getSidebarSections: () => [],
-  getSlotsForLocation: () => [],
+  getZonesForLocation: () => [],
   hasFeature: () => false,
   getPageConfig: () => undefined,
   canAccessRoute: () => true,
@@ -76,16 +76,16 @@ export function ExtensionProvider({
       return sortByPosition(sections);
     };
 
-    const getSlotsForLocation = (location: ExtensionSlot['slot']): ExtensionSlot[] => {
-      const slots: ExtensionSlot[] = [];
+    const getZonesForLocation = (location: ExtensionZone['zone']): ExtensionZone[] => {
+      const zones: ExtensionZone[] = [];
       for (const ext of extensions.extensions) {
-        ext.slots?.forEach(slot => {
-          if (slot.slot === location && hasAccess(userRoles, slot.requiredRoles)) {
-            slots.push(slot);
+        ext.zones?.forEach(zone => {
+          if (zone.zone === location && hasAccess(userRoles, zone.requiredRoles)) {
+            zones.push(zone);
           }
         });
       }
-      return slots;
+      return zones;
     };
 
     const hasFeature = (flag: string): boolean =>
@@ -105,7 +105,7 @@ export function ExtensionProvider({
       return hasAccess(userRoles, pageConfig.requiredRoles, pageConfig.excludeRoles);
     };
 
-    return { getNavItemsForTarget, getSidebarSections, getSlotsForLocation, hasFeature, getPageConfig, canAccessRoute };
+    return { getNavItemsForTarget, getSidebarSections, getZonesForLocation, hasFeature, getPageConfig, canAccessRoute };
   }, [extensions, userRoles]);
 
   return <ExtensionContext.Provider value={value}>{children}</ExtensionContext.Provider>;

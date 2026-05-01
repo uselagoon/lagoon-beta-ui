@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -7,6 +7,7 @@ import {
 	SidebarGroupContent,
 	SidebarGroupLabel,
 	SidebarMenu,
+	SidebarMenuAction,
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarMenuSub,
@@ -22,13 +23,14 @@ import { useLinkComponent } from '@ui-lib/providers/NextLinkProvider';
 import { NextLinkType } from '@ui-lib/typings/nextLink';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
 
-import { ChevronUp, Menu, X } from 'lucide-react';
+import { ChevronRight, Menu, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { cn } from '@ui-lib/lib/utils';
 import useActivePaths from './useActivePaths';
 import SidenavLogo from '@ui-lib/components/Sidenav/SidenavLogo';
 import AnnouncementCard from '@ui-lib/components/AnnouncementCard';
 import { AnnouncementCardProps } from '@ui-lib/components/AnnouncementCard/AnnouncementCard';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '../ui/sheet';
 
 type SidebarProps = React.ComponentProps<typeof Sidebar>;
 
@@ -52,6 +54,7 @@ export type SidenavProps = SidebarProps & {
 	currentPath: string;
 	documentationUrl?: string;
 	cardProps?: AnnouncementCardProps;
+	footerItems?: FooterItem[];
 	disableAccountLink?: boolean;
 	disableChangeFeedLink?: boolean;
 };
@@ -63,6 +66,15 @@ export type SidebarItem = {
 	target?: string;
 	onClick?: () => void;
 	children?: SidebarItem[];
+	collapsible?: boolean;
+};
+
+export type FooterItem = {
+	title: string;
+	url: string;
+	icon?: React.ComponentType<any>;
+	target?: string;
+	onClick?: () => void;
 };
 
 export type SidebarSection = {
@@ -70,40 +82,237 @@ export type SidebarSection = {
 	sectionItems: SidebarItem[];
 };
 
-const renderSidenavChildren = (
-	Link: NextLinkType,
-	sectionItem: SidebarItem,
-	activePaths: Set<string>,
-): React.JSX.Element | null => {
-	if (!sectionItem.children?.length) return null;
+const SidenavItem = ({
+	item,
+	activePaths,
+	currentPath,
+}: {
+	item: SidebarItem;
+	activePaths: Set<string>;
+	currentPath: string;
+}) => {
+	const Link = useLinkComponent();
+	const hasChildren = item.children && item.children.length > 0;
+	const isActive = currentPath === item.url;
+	const isOpen = activePaths.has(item.url) || activePaths.has(`${item.url}:parent`);
 
-	return (
-		<ul className="ml-4 mt-2 space-y-1">
-			{sectionItem.children.map((child: any) => {
-				const hasChildren = child.children && child.children.length > 0;
-				const isActive = hasChildren
-					? activePaths.has(child.url) || activePaths.has(`${child.url}:parent`)
-					: activePaths.has(child.url);
+	const [internalOpen, setInternalOpen] = useState(isOpen);
+	useEffect(() => {
+		setInternalOpen(isOpen);
+	}, [isOpen]);
 
-				return (
-					<SidebarMenuItem key={child.title}>
-						<SidebarMenuButton asChild isActive={isActive}>
-							<Link href={child.url} className={`${!child.icon ? 'ml-4' : ''}`}>
-								<div className="flex items-center gap-2">
-									{child.icon && <child.icon />}
-									<span>{child.title}</span>
-								</div>
+	const newTab = item.target === 'blank';
+	const action = item.onClick;
+
+	if (hasChildren) {
+		if (item.title === 'Environments') {
+			return (
+				<EnvironmentsNavItem
+					item={item}
+					activePaths={activePaths}
+					currentPath={currentPath}
+				/>
+			);
+		}
+
+		const isCollapsible = item.collapsible !== false;
+		if (isCollapsible) {
+			return (
+				<Collapsible open={internalOpen} onOpenChange={setInternalOpen} className="group/collapsible">
+					<SidebarMenuItem>
+						<SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+							<Link
+								href={item.url}
+								data-cy={`nav-${item.url.slice(1)}`}
+								onClick={async (e: React.MouseEvent) => {
+									if (action) await action();
+								}}
+								target={newTab ? '_blank' : '_self'}
+								className="flex w-full items-center gap-2"
+							>
+								{item.icon && <item.icon className="!size-6" />}
+								<span>{item.title}</span>
 							</Link>
 						</SidebarMenuButton>
-						{renderSidenavChildren(Link, child, activePaths)}
+						<CollapsibleTrigger asChild>
+							<SidebarMenuAction className="data-[state=open]:rotate-90 transition-transform duration-200">
+								<ChevronRight />
+								<span className="sr-only">Toggle</span>
+							</SidebarMenuAction>
+						</CollapsibleTrigger>
+						<CollapsibleContent>
+							<SidebarMenuSub>
+								{item.children!.map((child) => (
+									<SidenavItem
+										key={child.title}
+										item={child}
+										activePaths={activePaths}
+										currentPath={currentPath}
+									/>
+								))}
+							</SidebarMenuSub>
+						</CollapsibleContent>
 					</SidebarMenuItem>
-				);
-			})}
-		</ul>
+				</Collapsible>
+			);
+		}
+
+		return (
+			<SidebarMenuItem>
+				<SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+					<Link
+						href={item.url}
+						data-cy={`nav-${item.url.slice(1)}`}
+						onClick={async () => {
+							action && (await action());
+						}}
+						target={newTab ? '_blank' : '_self'}
+						className="flex w-full items-center gap-2"
+					>
+						{item.icon && <item.icon className="!size-6" />}
+						<span>{item.title}</span>
+					</Link>
+				</SidebarMenuButton>
+				<SidebarMenuSub>
+					{item.children!.map((child) => (
+						<SidenavItem
+							key={child.title}
+							item={child}
+							activePaths={activePaths}
+							currentPath={currentPath}
+						/>
+					))}
+				</SidebarMenuSub>
+			</SidebarMenuItem>
+		);
+	}
+
+	return (
+		<SidebarMenuItem>
+			<SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+				<Link
+					href={item.url}
+					data-cy={`nav-${item.url.slice(1)}`}
+					onClick={async () => {
+						action && (await action());
+					}}
+					target={newTab ? '_blank' : '_self'}
+				>
+					{item.icon && <item.icon className="!size-6" />}
+					<span>{item.title}</span>
+				</Link>
+			</SidebarMenuButton>
+		</SidebarMenuItem>
 	);
 };
 
-export default function Sidenav({ userInfo, appInfo, currentPath, sidenavItems, signOutFn, documentationUrl, cardProps, disableAccountLink, disableChangeFeedLink, ...props }: SidenavProps) {
+const BrowseEnvironmentsSheet = ({overflowEnvs,}: { overflowEnvs: SidebarItem[];}) => {
+	const Link = useLinkComponent();
+	const [open, setOpen] = useState(false);
+
+	return (
+		<Sheet open={open} onOpenChange={setOpen}>
+			<SidebarMenuItem>
+				<SidebarMenuButton
+					onClick={() => setOpen(true)}
+					className="text-muted-foreground text-xs italic"
+					tooltip="Browse all environments"
+				>
+					<span>Browse Environments</span>
+				</SidebarMenuButton>
+			</SidebarMenuItem>
+			<SheetContent side="right">
+				<SheetHeader>
+					<SheetTitle>Environments</SheetTitle>
+				</SheetHeader>
+				<nav className="flex flex-col gap-1 p-4">
+					{overflowEnvs.map((env) => (
+						<Link
+							key={env.url}
+							href={env.url}
+							onClick={() => setOpen(false)}
+							className="rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+						>
+							{env.title}
+						</Link>
+					))}
+				</nav>
+			</SheetContent>
+		</Sheet>
+	);
+};
+
+const EnvironmentsNavItem = ({item, activePaths, currentPath, }: { item: SidebarItem; activePaths: Set<string>; currentPath: string; }) => {
+	const Link = useLinkComponent();
+	const children = item.children ?? [];
+	const active = children.findIndex(
+		env => activePaths.has(env.url) || activePaths.has(`${env.url}:parent`)
+	);
+	let orderedEnvs: SidebarItem[];
+	if (active > 0) {
+		const activeEnv = children[active];
+		const rest = children.filter((_, i) => i !== active);
+		orderedEnvs = [activeEnv, ...rest];
+	} else {
+		orderedEnvs = children;
+	}
+	const visibleEnvs = orderedEnvs.slice(0, 3);
+	const overflowEnvs = orderedEnvs.slice(3);
+
+	return (
+		<SidebarMenuItem>
+			<SidebarMenuButton asChild isActive={currentPath === item.url} tooltip={item.title}>
+				<Link href={item.url} data-cy={`nav-${item.url.slice(1)}`}>
+					{item.icon && <item.icon className="!size-6" />}
+					<span>{item.title}</span>
+				</Link>
+			</SidebarMenuButton>
+			<SidebarMenuSub>
+			{visibleEnvs.map((env) => {
+				const isActiveEnv = activePaths.has(env.url) || activePaths.has(`${env.url}:parent`);
+					if (isActiveEnv && env.children && env.children.length > 0) {
+						return (
+							<SidebarMenuItem key={env.url}>
+								<SidebarMenuButton asChild isActive={currentPath === env.url} tooltip={env.title}>
+									<Link href={env.url} data-cy={`nav-${env.url.slice(1)}`}>
+										{env.icon && <env.icon className="!size-6" />}
+										<span>{env.title}</span>
+									</Link>
+								</SidebarMenuButton>
+								<SidebarMenuSub>
+									{env.children.map((child) => (
+										<SidenavItem
+											key={child.url}
+											item={child}
+											activePaths={activePaths}
+											currentPath={currentPath}
+										/>
+									))}
+								</SidebarMenuSub>
+							</SidebarMenuItem>
+						);
+					}
+
+					return (
+						<SidebarMenuItem key={env.url}>
+							<SidebarMenuButton asChild isActive={currentPath === env.url} tooltip={env.title}>
+								<Link href={env.url} data-cy={`nav-${env.url.slice(1)}`}>
+									{env.icon && <env.icon className="!size-6" />}
+									<span>{env.title}</span>
+								</Link>
+							</SidebarMenuButton>
+						</SidebarMenuItem>
+					);
+				})}
+				{overflowEnvs.length > 0 && (
+					<BrowseEnvironmentsSheet overflowEnvs={overflowEnvs} />
+				)}
+			</SidebarMenuSub>
+		</SidebarMenuItem>
+	);
+};
+
+export default function Sidenav({ userInfo, appInfo, currentPath, sidenavItems, signOutFn, documentationUrl, cardProps, footerItems, disableAccountLink, disableChangeFeedLink, ...props }: SidenavProps) {
 	const Link = useLinkComponent();
 
 	const { name, image, email } = userInfo;
@@ -123,10 +332,6 @@ export default function Sidenav({ userInfo, appInfo, currentPath, sidenavItems, 
 	const avatarInitials = firstLastProvided
 		? firstName.charAt(0).toUpperCase() + lastName.charAt(0).toUpperCase()
 		: email.charAt(0).toUpperCase();
-
-	// show img + firstname lastnamea
-	// or avatarbg + firstname lastname
-	// or genericImage + user email
 
 	const avatarToUse = userImageExists ? (
 		<Avatar>
@@ -155,6 +360,7 @@ export default function Sidenav({ userInfo, appInfo, currentPath, sidenavItems, 
 		avatar: avatarToUse,
 		userDisplayName,
 		email,
+		footerItems: footerItems || [],
 		documentationUrl: documentationUrl,
 		disableAccountLink,
 		disableChangeFeedLink,
@@ -197,73 +403,14 @@ export default function Sidenav({ userInfo, appInfo, currentPath, sidenavItems, 
 							<SidebarGroup key={navItem.section}>
 								<SidebarGroupLabel>{navItem.section}</SidebarGroupLabel>
 								<SidebarGroupContent className="list-none">
-									{navItem.sectionItems.map((sectionItem) => {
-										const newTab = sectionItem.target === 'blank';
-										const action = sectionItem?.onClick;
-
-										const collapsibleOpen = Array.from(activePaths).some((p) => p.startsWith(sectionItem.url));
-										const collapsibleSections = ['Projects', 'Organizations'];
-										const renderCollapseIcon = collapsibleSections.includes(sectionItem.title);
-
-										return (
-											<Fragment key={sectionItem.title}>
-												<Collapsible open={collapsibleOpen}>
-													<SidebarMenuItem>
-														<CollapsibleTrigger asChild>
-															<SidebarMenuButton
-																asChild
-																isActive={
-																	activePaths.has(sectionItem.url) || activePaths.has(`${sectionItem.url}:parent`)
-																}
-															>
-																<Link
-																	data-cy={`nav-${sectionItem.url.slice(1)}`}
-																	onClick={async () => {
-																		action && (await action());
-																	}}
-																	href={sectionItem.url}
-																	target={newTab ? '_blank' : '_self'}
-																	className="flex w-full gap-2"
-																>
-																	<div className="flex items-center gap-2">
-																		{sectionItem.icon && <sectionItem.icon />}
-																		<span>{sectionItem.title}</span>
-																	</div>
-
-																	{renderCollapseIcon ? (
-																		<ChevronUp
-																			className={`ml-auto h-4 w-4 transition-transform ${collapsibleOpen ? 'rotate-180' : 'rotate-90'}`}
-																		/>
-																	) : null}
-																</Link>
-															</SidebarMenuButton>
-														</CollapsibleTrigger>
-													</SidebarMenuItem>
-
-													<CollapsibleContent>
-														<SidebarMenuSub>
-															{sectionItem.children?.map((child) => (
-																<SidebarMenuItem key={child.title}>
-																	<SidebarMenuButton
-																		asChild
-																		isActive={activePaths.has(child.url) || activePaths.has(`${child.url}:parent`)}
-																	>
-																		<Link href={child.url} className="mt-2">
-																			<div className="flex items-center gap-2">
-																				{child.icon && <child.icon />}
-																				<span>{child.title}</span>
-																			</div>
-																		</Link>
-																	</SidebarMenuButton>
-																	{renderSidenavChildren(Link, child, activePaths)}
-																</SidebarMenuItem>
-															))}
-														</SidebarMenuSub>
-													</CollapsibleContent>
-												</Collapsible>
-											</Fragment>
-										);
-									})}
+									{navItem.sectionItems.map((sectionItem) => (
+										<SidenavItem
+											key={sectionItem.title}
+											item={sectionItem}
+											activePaths={activePaths}
+											currentPath={currentPath}
+										/>
+									))}
 								</SidebarGroupContent>
 							</SidebarGroup>
 						);

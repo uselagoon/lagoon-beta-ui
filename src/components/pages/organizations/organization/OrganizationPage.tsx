@@ -13,6 +13,7 @@ import { DetailStat } from '@/ui-library';
 
 import { Description } from './_components/Description';
 import ViewDeployTargets from "@/components/pages/organizations/organization/_components/ViewDeployTargets";
+import { ExtensionZoneRenderer } from '@/components/extensions/ExtensionZoneRenderer';
 
 type Notification = 'slacks' | 'rocketchats' | 'webhook' | 'teams' | 'emails';
 export default function OrganizationPage({
@@ -122,6 +123,7 @@ export default function OrganizationPage({
   return (
     <>
       <SectionWrapper>
+        <ExtensionZoneRenderer zone="organization-header" />
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>
 
         <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
@@ -150,6 +152,7 @@ export default function OrganizationPage({
             />
           ))}
         </div>
+        <ExtensionZoneRenderer zone="organization-footer" />
       </SectionWrapper>
     </>
   );

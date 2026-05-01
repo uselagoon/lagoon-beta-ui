@@ -1,10 +1,11 @@
 export type ExtensionNavTarget =
   | 'sidebar-projects'
+  | 'sidebar-environments'
   | 'sidebar-deployments'
   | 'sidebar-organizations'
   | 'sidebar-settings';
 
-export type ExtensionSlotLocation =
+export type ExtensionZoneLocation =
   | 'project-header'
   | 'project-footer'
   | 'environment-header'
@@ -39,10 +40,10 @@ export type ExtensionPage = {
   accessDeniedRedirect?: string;
 };
 
-export type ExtensionSlot = {
+export type ExtensionZone = {
   id: string;
   component: string;
-  slot: ExtensionSlotLocation;
+  zone: ExtensionZoneLocation;
   props?: Record<string, unknown>;
   requiredRoles?: string[];
 };
@@ -58,7 +59,7 @@ export type ExtensionManifest = {
     sections?: ExtensionSidebarSection[];
   };
   pages?: ExtensionPage[];
-  slots?: ExtensionSlot[];
+  zones?: ExtensionZone[];
   features?: Record<string, boolean>;
 };
 

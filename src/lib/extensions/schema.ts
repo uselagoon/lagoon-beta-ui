@@ -4,10 +4,10 @@ type ValidationError = { path: string; message: string };
 type ValidationResult<T> = { valid: T | null; errors: ValidationError[] };
 
 const validNavTargets = [
-  'sidebar-projects', 'sidebar-deployments', 'sidebar-organizations', 'sidebar-settings',
+  'sidebar-projects', 'sidebar-environments', 'sidebar-deployments', 'sidebar-organizations', 'sidebar-settings',
 ] as const;
 
-const validSlotLocations = [
+const validZoneLocations = [
   'project-header', 'project-footer', 'environment-header', 'environment-footer',
   'organization-header', 'organization-footer', 'global-header', 'global-footer',
 ] as const;
@@ -70,13 +70,13 @@ function validateExtension(ext: unknown, path: string): ValidationError[] {
     });
   }
 
-  if (Array.isArray(extension.slots)) {
-    extension.slots.forEach((slot, i) => {
-      const s = slot as Record<string, unknown>;
-      if (typeof s.id !== 'string') errors.push({ path: `${path}.slots[${i}].id`, message: 'required string' });
-      if (typeof s.component !== 'string') errors.push({ path: `${path}.slots[${i}].component`, message: 'required string' });
-      if (!validSlotLocations.includes(s.slot as typeof validSlotLocations[number])) {
-        errors.push({ path: `${path}.slots[${i}].slot`, message: `must be one of: ${validSlotLocations.join(', ')}` });
+  if (Array.isArray(extension.zones)) {
+    extension.zones.forEach((zone, i) => {
+      const z = zone as Record<string, unknown>;
+      if (typeof z.id !== 'string') errors.push({ path: `${path}.zones[${i}].id`, message: 'required string' });
+      if (typeof z.component !== 'string') errors.push({ path: `${path}.zones[${i}].component`, message: 'required string' });
+      if (!validZoneLocations.includes(z.zone as typeof validZoneLocations[number])) {
+        errors.push({ path: `${path}.zones[${i}].zone`, message: `must be one of: ${validZoneLocations.join(', ')}` });
       }
     });
   }

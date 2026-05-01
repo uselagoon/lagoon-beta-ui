@@ -5,6 +5,7 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import dayjs from '@/lib/dayjs';
 import { CopyToClipboard, DetailStat } from '@/ui-library';
 import giturlparse from 'git-url-parse';
+import { ExtensionZoneRenderer } from '@/components/extensions/ExtensionZoneRenderer';
 
 interface ProjectDetailsProps {
   project: ProjectDetailsData['project'];
@@ -118,6 +119,7 @@ export default function ProjectDetailsPage(props: ProjectDetailsProps) {
   ));
   return (
     <SectionWrapper>
+      <ExtensionZoneRenderer zone="project-header" />
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Details</h3>
       <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
         Key information about your project
@@ -126,6 +128,7 @@ export default function ProjectDetailsPage(props: ProjectDetailsProps) {
       <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(370px,1fr))] [&>div[data-slot=card]]:w-full [&>div[data-slot=card]]:max-w-full [&>div[data-slot=card]]:min-w-[370px]">
         {DetailedStats}
       </div>
+      <ExtensionZoneRenderer zone="project-footer" />
     </SectionWrapper>
   );
 }
