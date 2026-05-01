@@ -87,9 +87,9 @@ export const ProjectsDataTableColumns = (
           {projectCloneEnabled && (
             <Tooltip>
               <TooltipTrigger>
-                <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} disabled={!validateCloneRepo(row.original.gitUrl)} />
+                <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} disabled={!validateCloneRepo(row.original.gitUrl || '')} />
               </TooltipTrigger>
-              <TooltipContent>{!validateCloneRepo(row.original.gitUrl) ? 'Ineligible for cloning' : 'Clone this Project'}</TooltipContent>
+              <TooltipContent>{!validateCloneRepo(row.original.gitUrl || '') ? 'Ineligible for cloning' : 'Clone this Project'}</TooltipContent>
             </Tooltip>
           )}
           <Button>
