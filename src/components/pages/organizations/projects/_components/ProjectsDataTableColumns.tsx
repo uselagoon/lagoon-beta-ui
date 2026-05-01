@@ -19,6 +19,19 @@ const setCloneBadge = (status?: string) => {
   }
 }
 
+const validateCloneRepo = (gitUrl: string) => {
+  if (gitUrl.startsWith('git@') || gitUrl.startsWith('ssh://')) {
+    return false;
+  }
+
+  try {
+    const url = new URL(gitUrl);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch (err) {
+    return false;
+  }
+}
+
 export const ProjectsDataTableColumns = (
   deleteProjectModal: (project: OrgProject) => React.ReactNode,
   orgName: string,
@@ -73,10 +86,10 @@ export const ProjectsDataTableColumns = (
         <div className="flex gap-4 justify-end items-center">
           {projectCloneEnabled && (
             <Tooltip>
-              <TooltipTrigger asChild>
-                <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} />
+              <TooltipTrigger>
+                <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} disabled={!validateCloneRepo(row.original.gitUrl)} />
               </TooltipTrigger>
-              <TooltipContent>Clone this Project</TooltipContent>
+              <TooltipContent>{!validateCloneRepo(row.original.gitUrl) ? 'Ineligible for cloning' : 'Clone this Project'}</TooltipContent>
             </Tooltip>
           )}
           <Button>

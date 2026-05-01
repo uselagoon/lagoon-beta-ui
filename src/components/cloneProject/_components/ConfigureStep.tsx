@@ -16,7 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/ui-library';
-import { Info, Loader2 } from 'lucide-react';
+import { AlertCircle, Info, Loader2 } from 'lucide-react';
 
 import { CloneOptions, CLONE_OPTIONS_CONFIG, validateName } from './types';
 
@@ -179,14 +179,23 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
           </div>
         </div>
 
-      <Alert>
-        <Info className="h-4 w-4" />
-        <AlertTitle>Note</AlertTitle>
-        <AlertDescription>
-          The new project will be created with the same configuration as {projectName}. You can modify it after
-          creation.
-        </AlertDescription>
-      </Alert>
+      <div className="space-y-3">
+        <Alert>
+          <Info className="h-4 w-4" />
+          <AlertTitle>Note</AlertTitle>
+          <AlertDescription>
+            The new project will be created with the same configuration as {projectName}. You can modify it after
+            creation.
+          </AlertDescription>
+        </Alert>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Limitation</AlertTitle>
+          <AlertDescription>
+            Private repositories are currently not supported for cloning and will result in a failure.
+          </AlertDescription>
+        </Alert>
+      </div>
     </div>
 
     <DialogFooter>
