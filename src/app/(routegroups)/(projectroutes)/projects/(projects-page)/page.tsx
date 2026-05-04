@@ -24,7 +24,7 @@ export type ProjectType = {
       name: string;
       route: string;
       updated: string;
-      latestDeployment?: Deployment;
+      deployments?: Deployment[];
       kubernetes: {
         id: number;
         name: string;

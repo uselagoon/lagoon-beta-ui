@@ -13,7 +13,7 @@ export default gql`
       environments(type: PRODUCTION) {
         name
         route
-        latestDeployment {
+        deployments(limit: 1) {
           created
         }
         kubernetes {

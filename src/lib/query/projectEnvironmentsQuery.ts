@@ -15,7 +15,7 @@ export default gql`
         deployType
         environmentType
         routes
-        latestDeployment {
+        deployments(limit: 1) {
           created
         }
         openshiftProjectName

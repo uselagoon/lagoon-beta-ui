@@ -93,7 +93,7 @@ export default function ProjectEnvironmentsPage({
       deployType: environment.deployType,
       activeRoutes: <RoutesWrapper>{createLinks(routesToUse)}</RoutesWrapper>,
       envType: envType as any,
-      last_deployment: environment.latestDeployment?.created ?? '',
+      last_deployment: environment.deployments?.[0]?.created ?? '',
       region: environment.openshift?.cloudRegion ?? '',
       project: environment.project,
     };
