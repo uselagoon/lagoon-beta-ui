@@ -18,11 +18,11 @@ export default function Loading() {
         </div>
         <DataTable
           loading
-          columns={ProjectsDataTableColumns((_: OrgProject) => null, '', false)}
+          columns={ProjectsDataTableColumns((_: OrgProject) => null, '', false, [])}
           data={[]}
           searchableColumns={['name']}
           initialPageSize={10}
-          renderFilters={table => (
+          renderFilters={() => (
             <div className="flex items-center justify-between">
               <SelectWithOptions
                 options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}

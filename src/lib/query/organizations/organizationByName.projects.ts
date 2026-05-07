@@ -10,7 +10,6 @@ export default gql`
         id
         name
         groupCount
-        gitUrl
         clone {
           status
         }
@@ -20,6 +19,13 @@ export default gql`
         name
       }
       featureProjectClone
+      keys {
+        id
+        name
+        projects {
+          name
+        }
+      }
     }
   }
 `;

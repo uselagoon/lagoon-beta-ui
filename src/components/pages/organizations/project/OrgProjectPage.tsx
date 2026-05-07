@@ -145,7 +145,7 @@ export default function OrgProjectPage({
     <SectionWrapper>
       {projectCloneEnabled && (
         <div className="mb-6 flex items-center gap-4 float-right">
-            <CloneProject projectName={project.name} organizationSlug={organization.name} refetch={refetch} toggleText />
+            <CloneProject projectName={project.name} organizationSlug={organization.name} refetch={refetch} toggleText keys={[]} />
         </div>
       )}
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-4">Groups for {project.name}</h3>

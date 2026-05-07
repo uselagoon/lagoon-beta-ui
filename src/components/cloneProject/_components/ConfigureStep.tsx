@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 import {
   Alert,
@@ -16,9 +16,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/ui-library';
-import { AlertCircle, Info, Loader2 } from 'lucide-react';
+import { AlertTriangle, Info, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { useMutation } from '@apollo/client';
 
+import addOrganizationKeyToProject from '@/lib/mutation/organizations/addOrganizationKeyToProject';
 import { CloneOptions, CLONE_OPTIONS_CONFIG, validateName } from './types';
+import { OrganizationKey } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/keys/page';
 
 interface EnvironmentOption {
   label: string;
@@ -43,6 +47,11 @@ interface ConfigureStepProps {
   isFormValid: boolean;
   onClone: () => void;
   onClose: () => void;
+  organizationSlug?: string;
+  keys: OrganizationKey[];
+  selectedKey: string;
+  setSelectedKey: (value: string) => void;
+  onKeyAdded?: () => void;
 }
 
 export const ConfigureStep: FC<ConfigureStepProps> = ({
@@ -63,14 +72,47 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
   isFormValid,
   onClone,
   onClose,
+  organizationSlug,
+  keys,
+  selectedKey,
+  setSelectedKey,
+  onKeyAdded,
 }) => {
   const allChecked = CLONE_OPTIONS_CONFIG.every(({ key }) => options[key]);
   const someChecked = CLONE_OPTIONS_CONFIG.some(({ key }) => options[key]);
+
+  const [keyStatus, setkeyStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [keyError, setkeyError] = useState<string>('');
+
+  const [addKeyToProjectMutation, { loading: keyLoading }] = useMutation(addOrganizationKeyToProject);
 
   const handleToggleAll = () => {
     const next = !allChecked;
     setOptions(prev => Object.fromEntries(Object.keys(prev).map(k => [k, next])) as unknown as typeof prev);
   };
+
+  const handleAddKey = async () => {
+    if (!selectedKey) return;
+    setkeyStatus('idle');
+    setkeyError('');
+    try {
+      await addKeyToProjectMutation({
+        variables: {
+          id: Number(selectedKey),
+          project: projectName,
+        },
+      });
+      setkeyStatus('success');
+      onKeyAdded?.();
+    } catch (err) {
+      const message = (err as { message?: string })?.message ?? 'Unknown error';
+      setkeyStatus('error');
+      setkeyError(message);
+    }
+  };
+
+  const selectedKeyName = keys.find(key => String(key.id) === selectedKey)?.name ?? '';
+  const sourceProjectHasKey = keys.some(key => key.projects?.some(proj => proj.name === projectName));
 
   return (
     <>
@@ -146,6 +188,82 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
           )}
         </div>
 
+        <div className="space-y-2">
+          <p className="text-sm font-medium">
+            Add your Organization key (private repositories only)
+          </p>
+          <div className="flex items-center gap-2">
+            <div className="flex-1">
+              <SelectWithOptions
+                placeholder={keys.length > 0 ? 'Select an organization key' : 'No keys available'}
+                options={keys.map(key => ({ label: key.name, value: key.id }))}
+                value={selectedKey}
+                disabled={sourceProjectHasKey}
+                onValueChange={value => {
+                  setSelectedKey(value);
+                  setkeyStatus('idle');
+                  setkeyError('');
+                }}
+              />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={!selectedKey || keyLoading || sourceProjectHasKey}
+              onClick={handleAddKey}
+            >
+              {keyLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Adding...
+                </>
+              ) : (
+                'Add Key'
+              )}
+            </Button>
+            {selectedKey && keyStatus !== 'success' && !sourceProjectHasKey && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <AlertTriangle className="h-5 w-5 text-yellow-500 cursor-help flex-shrink-0" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  You have selected a key but haven&apos;t added it to the project yet. Click &ldquo;Add Key&rdquo; before cloning.
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </div>
+          {sourceProjectHasKey && (
+            <p className="text-sm text-muted-foreground">
+              This project already has an organization key assigned.
+            </p>
+          )}
+          {keyStatus === 'success' && (
+            <p className="text-sm text-green-600">
+              Key &ldquo;{selectedKeyName}&rdquo; added to {projectName}.
+            </p>
+          )}
+          {keyStatus === 'error' && (
+            <p className="text-sm text-destructive">
+              Error: {keyError}
+            </p>
+          )}
+          <div className="text-sm text-muted-foreground">
+            {!sourceProjectHasKey && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <p>Select a key to link your cloned project to your organization. &#9432;</p>
+                </TooltipTrigger>
+                <TooltipContent>
+                  Organization keys are required for cloning private repositories. Add this project's Deploy Key to your Git service.
+                </TooltipContent>
+              </Tooltip>
+            )}
+            <Link href={`/organizations/${organizationSlug}/keys`} className="underline">
+              Don&apos;t have an organization key? Create a key here.
+            </Link>
+          </div>
+        </div>
+
         <div className="space-y-3">
           <p className="text-sm font-medium">What to clone</p>
           <div className="border rounded-lg p-4 space-y-3">
@@ -179,7 +297,6 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
           </div>
         </div>
 
-      <div className="space-y-3">
         <Alert>
           <Info className="h-4 w-4" />
           <AlertTitle>Note</AlertTitle>
@@ -188,25 +305,16 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
             creation.
           </AlertDescription>
         </Alert>
-        {/* temporary measure to highlight cloning limitation for private repos */}
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Limitation</AlertTitle>
-          <AlertDescription>
-            Private repositories are currently not supported for cloning and will result in a failure.
-          </AlertDescription>
-        </Alert>
       </div>
-    </div>
 
-    <DialogFooter>
-      <Button variant="outline" onClick={onClose}>
-        Cancel
-      </Button>
-      <Button disabled={!isFormValid || envLoading} onClick={onClone}>
-        Clone Project
-      </Button>
-    </DialogFooter>
-  </>
+      <DialogFooter>
+        <Button variant="outline" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button disabled={!isFormValid || envLoading} onClick={onClone}>
+          Clone Project
+        </Button>
+      </DialogFooter>
+    </>
   );
 };

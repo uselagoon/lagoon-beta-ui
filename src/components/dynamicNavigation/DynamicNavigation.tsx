@@ -78,6 +78,7 @@ export const getOrgNav = (organizationSlug: ParamValue, showVariables?: boolean)
         { title: 'Projects', url: `/organizations/${organizationSlug}/projects` },
         ...(showVariables ? [{ title: 'Variables', url: `/organizations/${organizationSlug}/variables` }] : []),
         { title: 'Notifications', url: `/organizations/${organizationSlug}/notifications` },
+        { title: 'Keys', url: `/organizations/${organizationSlug}/keys` },
         { title: 'Administration', url: `/organizations/${organizationSlug}/manage` },
       ],
     },
