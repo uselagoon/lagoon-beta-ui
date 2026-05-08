@@ -161,9 +161,12 @@ export function useSidenavItems(
           if (environmentSlug) {
             href = href.replace('[environmentSlug]', environmentSlug as string);
           }
+          if (organizationSlug) {
+            href = href.replace('[organizationSlug]', organizationSlug as string);
+          }
           if (/\[.+\]/.test(href)) continue;
           const navItem = { title: extItem.label, url: href, icon: resolveIcon(extItem.icon) };
-          if (target === 'sidebar-projects' || target === 'sidebar-environments') {
+          if (target === 'sidebar-projects' || target === 'sidebar-environments' || target === 'sidebar-organizations') {
             // match the parent section to the extension href so we can set the nav item at the proper level
             const parentUrl = href.split('/').slice(0, -1).join('/') || '/';
             const parentSection = getSection(items[idx].sectionItems, parentUrl);
@@ -175,8 +178,7 @@ export function useSidenavItems(
                 parentSection.children.push(navItem);
               }
             }
-          }
-           else {
+          } else {
             if (extItem.position === 'start') {
               items[idx].sectionItems.unshift(navItem);
             } else {
