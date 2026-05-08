@@ -59,7 +59,7 @@ const getBaseSidenavItems = (kcUrl: string): SidebarSection[] => [
   },
 ];
 
-const GetFooterSidenavItems = (kcUrl: string, disableAccountLink: boolean): FooterItem[] => {
+const useFooterSidenavItems = (kcUrl: string, disableAccountLink: boolean): FooterItem[] => {
   const overrides = useOverrides();
 
   return [
@@ -89,7 +89,7 @@ export function useSidenavItems(
   const pathname = usePathname();
 
   const { LAGOON_UI_VIEW_ENV_VARIABLES } = useEnvContext();
-  const footerItems = GetFooterSidenavItems(kcUrl, disableAccountLink);
+  const footerItems = useFooterSidenavItems(kcUrl, disableAccountLink);
   const { getNavItemsForTarget, getSidebarSections } = useExtensions();
 
   const { data: projectData, loading: projectLoading } = useQuery(projectByNameQuery, {

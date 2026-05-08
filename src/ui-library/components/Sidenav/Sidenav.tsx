@@ -20,10 +20,9 @@ import { Avatar, AvatarImage } from '../ui/avatar';
 import { AvatarFallback } from '@radix-ui/react-avatar';
 import AvatarBubble from '../AvatarBubble/AvatarBubble';
 import { useLinkComponent } from '@ui-lib/providers/NextLinkProvider';
-import { NextLinkType } from '@ui-lib/typings/nextLink';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
 
-import { ChevronRight, Menu, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, GitBranch, Menu, Search, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { cn } from '@ui-lib/lib/utils';
 import useActivePaths from './useActivePaths';
@@ -31,6 +30,7 @@ import SidenavLogo from '@ui-lib/components/Sidenav/SidenavLogo';
 import AnnouncementCard from '@ui-lib/components/AnnouncementCard';
 import { AnnouncementCardProps } from '@ui-lib/components/AnnouncementCard/AnnouncementCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '../ui/sheet';
+import Input from '../Input';
 
 type SidebarProps = React.ComponentProps<typeof Sidebar>;
 
@@ -67,6 +67,7 @@ export type SidebarItem = {
 	onClick?: () => void;
 	children?: SidebarItem[];
 	collapsible?: boolean;
+	environmentType?: 'production' | 'development';
 };
 
 export type FooterItem = {
@@ -130,7 +131,7 @@ const SidenavItem = ({
 								target={newTab ? '_blank' : '_self'}
 								className="flex w-full items-center gap-2"
 							>
-								{item.icon && <item.icon className="!size-6" />}
+								{item.icon && <item.icon className="!size-5" />}
 								<span>{item.title}</span>
 							</Link>
 						</SidebarMenuButton>
@@ -169,7 +170,7 @@ const SidenavItem = ({
 						target={newTab ? '_blank' : '_self'}
 						className="flex w-full items-center gap-2"
 					>
-						{item.icon && <item.icon className="!size-6" />}
+						{item.icon && <item.icon className="!size-5" />}
 						<span>{item.title}</span>
 					</Link>
 				</SidebarMenuButton>
@@ -198,7 +199,7 @@ const SidenavItem = ({
 					}}
 					target={newTab ? '_blank' : '_self'}
 				>
-					{item.icon && <item.icon className="!size-6" />}
+					{item.icon && <item.icon className="!size-5" />}
 					<span>{item.title}</span>
 				</Link>
 			</SidebarMenuButton>
@@ -206,37 +207,70 @@ const SidenavItem = ({
 	);
 };
 
-const BrowseEnvironmentsSheet = ({overflowEnvs,}: { overflowEnvs: SidebarItem[];}) => {
+const BrowseEnvironmentsSheet = ({allEnvs,}: { allEnvs: SidebarItem[];}) => {
 	const Link = useLinkComponent();
 	const [open, setOpen] = useState(false);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [filteredEnvironments, setFilteredEnvironments] = useState(allEnvs);
+
+	useEffect(() => {
+    let results = allEnvs;
+    if (searchQuery) {
+      results = results.filter((env) =>
+        env.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+    setFilteredEnvironments(results);
+  }, [searchQuery, allEnvs])
 
 	return (
 		<Sheet open={open} onOpenChange={setOpen}>
 			<SidebarMenuItem>
 				<SidebarMenuButton
 					onClick={() => setOpen(true)}
-					className="text-muted-foreground text-xs italic"
-					tooltip="Browse all environments"
+					className="text-muted-foreground text-xs flex items-center gap-1"
 				>
-					<span>Browse Environments</span>
+					<Search />
+					<span>Browse Environments </span>
 				</SidebarMenuButton>
 			</SidebarMenuItem>
 			<SheetContent side="right">
-				<SheetHeader>
-					<SheetTitle>Environments</SheetTitle>
+				<SheetHeader className="border-b flex justify-between">
+					<SheetTitle className="flex items-center">
+							<ChevronLeft className="h-5 w-5 mr-2 cursor-pointer" onClick={() => setOpen(false)} />
+							<h2 className="text-lg font-semibold">Environments</h2>
+					</SheetTitle>
 				</SheetHeader>
-				<nav className="flex flex-col gap-1 p-4">
-					{overflowEnvs.map((env) => (
-						<Link
-							key={env.url}
-							href={env.url}
-							onClick={() => setOpen(false)}
-							className="rounded-md px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors"
-						>
-							{env.title}
-						</Link>
-					))}
-				</nav>
+			<div className="p-4 border-b">
+				<div className='text-sm text-muted-foreground mb-2'>
+					<Input
+						type="text"
+						placeholder={`Search environments...`} 
+						className="pr-4 w-full"
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+					/>
+				</div>
+			</div>
+			<div className="flex-1 overflow-y-auto p-2">
+				<div className="space-y-1">
+					{filteredEnvironments.length > 0 ? (
+					filteredEnvironments.map((env, index) => (
+						<div key={index} className="rounded-md hover:bg-accent p-2 group">
+							<Link key={env.url} href={env.url} onClick={() => setOpen(false)} className="flex items-center gap-2">
+								<GitBranch className="h-4 w-4" />
+								<span className="text-sm">{env.title}</span>
+								<span className={`ml-auto text-xs ${env.environmentType === 'development' ? 'text-[var(--env-development-bg)]' : 'text-[var(--env-production-bg)]'}`}>{env.environmentType}</span>
+							</Link>
+						</div>
+					))
+					) : (
+					<div className="text-center py-8 text-muted-foreground">
+						<p>No environments found</p>
+					</div>
+					)}
+				</div>
+			</div>
 			</SheetContent>
 		</Sheet>
 	);
@@ -257,13 +291,11 @@ const EnvironmentsNavItem = ({item, activePaths, currentPath, }: { item: Sidebar
 		orderedEnvs = children;
 	}
 	const visibleEnvs = orderedEnvs.slice(0, 3);
-	const overflowEnvs = orderedEnvs.slice(3);
-
 	return (
 		<SidebarMenuItem>
 			<SidebarMenuButton asChild isActive={currentPath === item.url} tooltip={item.title}>
 				<Link href={item.url} data-cy={`nav-${item.url.slice(1)}`}>
-					{item.icon && <item.icon className="!size-6" />}
+					{item.icon && <item.icon className="!size-5" />}
 					<span>{item.title}</span>
 				</Link>
 			</SidebarMenuButton>
@@ -275,7 +307,7 @@ const EnvironmentsNavItem = ({item, activePaths, currentPath, }: { item: Sidebar
 							<SidebarMenuItem key={env.url}>
 								<SidebarMenuButton asChild isActive={currentPath === env.url} tooltip={env.title}>
 									<Link href={env.url} data-cy={`nav-${env.url.slice(1)}`}>
-										{env.icon && <env.icon className="!size-6" />}
+										{env.icon && <env.icon className="!size-5" />}
 										<span>{env.title}</span>
 									</Link>
 								</SidebarMenuButton>
@@ -297,16 +329,14 @@ const EnvironmentsNavItem = ({item, activePaths, currentPath, }: { item: Sidebar
 						<SidebarMenuItem key={env.url}>
 							<SidebarMenuButton asChild isActive={currentPath === env.url} tooltip={env.title}>
 								<Link href={env.url} data-cy={`nav-${env.url.slice(1)}`}>
-									{env.icon && <env.icon className="!size-6" />}
+									{env.icon && <env.icon className="!size-5" />}
 									<span>{env.title}</span>
 								</Link>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
 					);
 				})}
-				{overflowEnvs.length > 0 && (
-					<BrowseEnvironmentsSheet overflowEnvs={overflowEnvs} />
-				)}
+				<BrowseEnvironmentsSheet allEnvs={orderedEnvs} />
 			</SidebarMenuSub>
 		</SidebarMenuItem>
 	);

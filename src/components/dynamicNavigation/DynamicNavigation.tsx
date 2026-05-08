@@ -7,6 +7,11 @@ import { GitPullRequestDraft } from 'lucide-react';
 import { EnvWithProblemsType } from './types';
 import { makeSafe } from '../utils';
 
+type EnvironmentSummary = {
+  name: string;
+  environmentType: 'production' | 'development';
+};
+
 export const getProjectNav = (
   projectSlug: ParamValue,
   envSlug: ParamValue,
@@ -18,7 +23,7 @@ export const getProjectNav = (
   const showDeployTargets =
     projectData?.project?.deployTargetConfigs?.length && projectData?.project?.deployTargetConfigs?.length > 0;
   const showRoutesTab = projectData?.project?.featureApiRoutes;
-  const environments = projectData?.project?.environments.map((env) => env.name) || [];
+  const environments: EnvironmentSummary[] = projectData?.project?.environments ?? [];
   return [
     {
       title: String(projectSlug),
@@ -40,7 +45,7 @@ export const getProjectNav = (
 
 export const getEnvironmentNav = (
   projectSlug: ParamValue,
-  environments: string[],
+  environments: EnvironmentSummary[],
   environmentData?: EnvWithProblemsType
 ): SidebarItem[] => {
   const showFactsTab = environmentData?.environment?.project?.factsUi === 1;
@@ -48,12 +53,13 @@ export const getEnvironmentNav = (
   const showRoutesTab = environmentData?.environment?.project?.featureApiRoutes;
 
   return environments.map((env) => {
-    const slug = `${projectSlug}-${makeSafe(String(env))}`;
+    const slug = `${projectSlug}-${makeSafe(env.name)}`;
     return {
-      title: String(env),
+      title: env.name,
       url: `/projects/${projectSlug}/${slug}`,
       icon: GitPullRequestDraft,
       collapsible: false,
+      environmentType: env.environmentType,
       children: [
         { title: 'Overview', url: `/projects/${projectSlug}/${slug}` },
         { title: 'Deployments', url: `/projects/${projectSlug}/${slug}/deployments` },

@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect } from 'react';
 import type { Meta, StoryObj, Decorator } from '@storybook/react';
-import { Building2, FolderOpen, Home, Settings, HelpCircle, Info, XCircle } from 'lucide-react';
+import { Building2, FolderOpen, Home, Settings, HelpCircle, Info, XCircle, ExternalLink } from 'lucide-react';
 
 import RootLayout from '../components/RootLayout';
 import { LinkProvider as NextLinkProvider } from '../providers/NextLinkProvider';
@@ -42,22 +42,99 @@ function argsToTheme(args: ThemeArgs): Theme {
   return theme;
 }
 
-type EnvironmentRow = { name: string; type: string; status: string; updated: string };
+function getBadgeEnvVariant(type: string) {
+  switch (type) {
+    case 'production':
+    case 'active production':
+      return 'production' as const;
+    case 'development':
+      return 'development' as const;
+    case 'standby production':
+      return 'standby' as const;
+    default:
+      return 'neutral' as const;
+  }
+}
+
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+type EnvironmentRow = {
+  envType: string;
+  name: string;
+  region: string;
+  deployType: string;
+  lastDeploy: string;
+  routes: string;
+};
 
 const environmentData: EnvironmentRow[] = [
-  { name: 'main',        type: 'production',  status: 'active',   updated: '2 hours ago' },
-  { name: 'staging',     type: 'staging',     status: 'active',   updated: '1 day ago' },
-  { name: 'dev',         type: 'development', status: 'active',   updated: '3 hours ago' },
-  { name: 'feature-x',  type: 'development', status: 'inactive', updated: '5 days ago' },
-  { name: 'hotfix-123', type: 'development', status: 'active',   updated: '30 mins ago' },
-  { name: 'sandbox',    type: 'sandbox',     status: 'inactive', updated: '2 weeks ago' },
+  { envType: 'active production', name: 'main',        region: 'us-east-1',   deployType: 'branch',       lastDeploy: '2 hours ago',   routes: 'https://main.example.com' },
+  { envType: 'standby production', name: 'main-standby', region: 'eu-west-1', deployType: 'branch',       lastDeploy: '2 hours ago',   routes: 'https://standby.example.com' },
+  { envType: 'development',       name: 'staging',     region: 'us-east-1',   deployType: 'branch',       lastDeploy: '1 day ago',     routes: 'https://staging.example.com' },
+  { envType: 'development',       name: 'dev',         region: 'ap-southeast-2', deployType: 'branch',    lastDeploy: '3 hours ago',   routes: 'https://dev.example.com' },
+  { envType: 'development',       name: 'feature-x',   region: 'eu-west-1',   deployType: 'pullrequest',  lastDeploy: '5 days ago',    routes: 'https://feature-x.example.com' },
+  { envType: 'development',       name: 'hotfix-123',  region: 'us-east-1',   deployType: 'pullrequest',  lastDeploy: '30 mins ago',   routes: 'https://hotfix.example.com' },
 ];
 
 const environmentColumns: DataTableColumnDef<EnvironmentRow>[] = [
-  { accessorKey: 'name',    header: 'Name',         width: '30%' },
-  { accessorKey: 'type',    header: 'Type',         width: '25%' },
-  { accessorKey: 'status',  header: 'Status',       width: '20%' },
-  { accessorKey: 'updated', header: 'Last updated', width: '25%' },
+  {
+    id: 'envType',
+    accessorKey: 'envType',
+    header: 'Usage',
+    width: '14%',
+    cell: ({ row }) => {
+      const envType = row.original.envType;
+      return <Badge variant={getBadgeEnvVariant(envType)}>{capitalize(envType)}</Badge>;
+    },
+  },
+  {
+    accessorKey: 'name',
+    header: 'Environment',
+    width: '16%',
+  },
+  {
+    accessorKey: 'region',
+    header: 'Region',
+    width: '14%',
+  },
+  {
+    accessorKey: 'deployType',
+    header: 'Type',
+    width: '12%',
+  },
+  {
+    accessorKey: 'lastDeploy',
+    header: 'Last Deploy',
+    width: '14%',
+  },
+  {
+    accessorKey: 'routes',
+    header: 'Routes',
+    width: '20%',
+    cell: ({ row }) => (
+      <a
+        href={row.original.routes}
+        className="flex items-center gap-1 text-sm text-primary hover:underline truncate max-w-[180px]"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <ExternalLink className="h-3 w-3 shrink-0" />
+        <span className="truncate">{row.original.routes.replace('https://', '')}</span>
+      </a>
+    ),
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
+    width: '10%',
+    cell: () => (
+      <Button variant="outline" size="sm">
+        Deploy
+      </Button>
+    ),
+  },
 ];
 
 function ComponentShowcase() {
@@ -94,6 +171,13 @@ function ComponentShowcase() {
           <Badge variant="secondary">Secondary</Badge>
           <Badge variant="outline">Outline</Badge>
           <Badge variant="destructive">Destructive</Badge>
+          <Badge variant="production">Production</Badge>
+          <Badge variant="development">Development</Badge>
+          <Badge variant="standby">Standby</Badge>
+          <Badge variant="success">Success</Badge>
+          <Badge variant="warning">Warning</Badge>
+          <Badge variant="danger">Danger</Badge>
+          <Badge variant="neutral">Neutral</Badge>
         </div>
       </section>
 
@@ -152,7 +236,7 @@ function ComponentShowcase() {
         <DataTable
           columns={environmentColumns}
           data={environmentData}
-          searchableColumns={['name', 'type']}
+          searchableColumns={['name', 'region', 'deployType']}
           searchPlaceholder="Search environments..."
         />
       </section>
@@ -232,6 +316,8 @@ const withArgsAsTheme: Decorator<ThemeArgs> = (Story, context) => {
 const lightDefaults: ThemeArgs = {
   'light.background': '#f2f2f2',
   'light.foreground': '#0c0c0c',
+  'light.card': 'oklch(1 0 0)',
+  'light.card-foreground': 'oklch(0.145 0 0)',
   'light.primary': 'oklch(0.205 0 0)',
   'light.primary-foreground': 'oklch(0.985 0 0)',
   'light.secondary': 'oklch(0.97 0 0)',
@@ -250,6 +336,8 @@ const lightDefaults: ThemeArgs = {
 const darkDefaults: ThemeArgs = {
   'dark.background': 'oklch(0.145 0 0)',
   'dark.foreground': 'oklch(0.985 0 0)',
+  'dark.card': 'oklch(0.205 0 0)',
+  'dark.card-foreground': 'oklch(0.985 0 0)',
   'dark.primary': 'oklch(0.922 0 0)',
   'dark.primary-foreground': 'oklch(0.205 0 0)',
   'dark.secondary': 'oklch(0.269 0 0)',
@@ -281,6 +369,8 @@ function buildArgTypes(mode: 'light' | 'dark', tokens: string[]): Meta['argTypes
 const tokenList = [
   'background',
   'foreground',
+  'card',
+  'card-foreground',
   'primary',
   'primary-foreground',
   'secondary',
@@ -354,9 +444,17 @@ export const ExampleBlue: Story = {
     'light.primary-foreground': '#ffffff',
     'light.ring': '#3a8cff',
     'light.sidebar': '#eef4ff',
+    'light.card': '#eef4ff',
+    'light.card-foreground': '#0a1628',
+    'light.accent': '#dbeafe',
+    'light.accent-foreground': '#1e3a5f',
     'dark.primary': '#5ba3ff',
     'dark.primary-foreground': '#0c0c0c',
     'dark.ring': '#5ba3ff',
+    'dark.card': '#141c2e',
+    'dark.card-foreground': '#e8f0fe',
+    'dark.accent': '#1e2d4a',
+    'dark.accent-foreground': '#93c5fd',
   },
 };
 
@@ -369,9 +467,17 @@ export const ExampleGreen: Story = {
     'light.primary-foreground': '#ffffff',
     'light.ring': '#15803d',
     'light.sidebar': '#f0fdf4',
+    'light.card': '#f0fdf4',
+    'light.card-foreground': '#052e16',
+    'light.accent': '#dcfce7',
+    'light.accent-foreground': '#14532d',
     'dark.primary': '#34d399',
     'dark.primary-foreground': '#0c0c0c',
     'dark.ring': '#34d399',
+    'dark.card': '#111e17',
+    'dark.card-foreground': '#d1fae5',
+    'dark.accent': '#1a3326',
+    'dark.accent-foreground': '#6ee7b7',
   },
 };
 
@@ -384,8 +490,16 @@ export const ExamplePurple: Story = {
     'light.primary-foreground': '#ffffff',
     'light.ring': '#7e22ce',
     'light.sidebar': '#faf5ff',
+    'light.card': '#faf5ff',
+    'light.card-foreground': '#2e1065',
+    'light.accent': '#f3e8ff',
+    'light.accent-foreground': '#4c1d95',
     'dark.primary': '#c084fc',
     'dark.primary-foreground': '#0c0c0c',
     'dark.ring': '#c084fc',
+    'dark.card': '#1a1124',
+    'dark.card-foreground': '#f3e8ff',
+    'dark.accent': '#2d1b45',
+    'dark.accent-foreground': '#d8b4fe',
   },
 };

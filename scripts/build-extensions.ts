@@ -75,7 +75,6 @@ function copyLib(extName: string): void {
   copyRecursive(libDir, destDir);
 }
 
-// Collect all .tsx/.ts component files for an extension (excluding index files)
 function collectComponentNames(extName: string): string[] {
   const destDir = path.join(COMPONENTS_DIR, extName);
   if (!fs.existsSync(destDir)) return [];

@@ -8,10 +8,6 @@ import { redirect } from 'next/navigation';
  */
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  const errorType = url.searchParams.get('error');
-
-  if (errorType === 'Configuration') {
-    redirect('/');
-  }
+  const errorType = url.searchParams.get('error') ?? 'Unknown';
   redirect(`/autherror?error=${errorType}`);
 }

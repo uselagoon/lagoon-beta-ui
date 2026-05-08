@@ -22,7 +22,7 @@ export default function ClientSessionWrapper({ children }: { children: ReactNode
     }
   }, [status, session, initiateSignIn]);
 
-  if (status === 'unauthenticated' || session?.error) {
+  if (status === 'unauthenticated') {
     return null;
   }
   return <>{children}</>;
