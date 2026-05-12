@@ -12,17 +12,13 @@ import { signIn, useSession } from 'next-auth/react';
 export default function ClientSessionWrapper({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
 
-  const initiateSignIn = async () => {
-    signIn('keycloak'); // force sign in on the client
-  };
-
   useEffect(() => {
     if (status !== 'loading' && !session) {
-      initiateSignIn();
+      signIn('keycloak'); // force sign in on the client
     }
-  }, [status, session, initiateSignIn]);
+  }, [status, session]);
 
-  if (status === 'unauthenticated') {
+  if (status !== 'authenticated') {
     return null;
   }
   return <>{children}</>;

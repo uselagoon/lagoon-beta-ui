@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent, Button, Badge } from '@/ui-library';
 import { Info, ChevronDown, X, CloudCog, AlertCircle } from 'lucide-react';
 
@@ -114,7 +113,6 @@ function BannerCard({ item }: { item: BannerItem }) {
 
 // simplified wip maintenance banner example - https://github.com/uselagoon/ui-library/pull/26
 export default function MaintenanceBannerPage() {
-  const { organizationSlug } = useParams<{ organizationSlug: string }>();
   const [visible, setVisible] = useState(true);
 
   if (!visible) return null;
@@ -122,7 +120,7 @@ export default function MaintenanceBannerPage() {
   return (
     <div className="p-6">
       <p className="text-sm text-[var(--muted-foreground)] mb-4">
-        Maintenance status for <strong>{organizationSlug}</strong>
+        Maintenance status
       </p>
       <Collapsible className="w-full max-w-xl border-x border-b rounded-lg bg-[var(--background)]">
         <div className="pt-1.5 pb-2 px-3">

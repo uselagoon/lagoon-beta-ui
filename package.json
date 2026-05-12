@@ -9,7 +9,9 @@
     "dev": "next dev --turbopack -p 3003",
     "build": "yarn build:extensions && yarn typecheck && next build",
     "build:extensions": "npx tsx scripts/build-extensions.ts",
-    "build": "yarn build:extensions && yarn uilib:update && next build",
+    "remove:extension": "npx tsx scripts/remove-extension.ts",
+    "remove:extensions": "npx tsx scripts/remove-all-extensions.ts",
+    "typecheck": "tsc --noEmit",
     "start": "next start -p 3000",
     "start:cypress": "next start -H 0.0.0.0 -p 3000",
     "lint": "tsc && eslint --config .eslintrc.cjs 'src/**/*.{jsx,tsx}'",
@@ -126,10 +128,12 @@
   "resolutions": {
     "string-width": "4.2.3",
     "@types/react": "19.1.6",
-    "@types/react-dom": "19.1.5"
+    "@types/react-dom": "19.1.5",
+    "axios": "^1.13.6"
   },
   "overrides": {
-    "string-width": "4.2.3"
+    "string-width": "4.2.3",
+    "axios": "^1.13.6"
   },
   "msw": {
     "workerDirectory": [

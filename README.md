@@ -251,10 +251,7 @@ Run `yarn build:extensions` (or `yarn build`) after adding or changing an extens
       "component": "MyComponent",
       "zone": "environment-footer"
     }
-  ],
-  "features": {
-    "my-feature": true
-  }
+  ]
 }
 ```
 
@@ -270,26 +267,37 @@ Nav items can be injected into any sidebar section via `target`:
 | `sidebar-organizations` | Organizations section |
 | `sidebar-settings` | Settings section |
 
-URL tokens `[projectSlug]` and `[environmentSlug]` are resolved automatically at runtime. Nav items with unresolved tokens (e.g. no active project) are hidden until the context is available.
+URL vars `[projectSlug]` and `[environmentSlug]` are resolved automatically at runtime. Nav items with unresolved vars (e.g. no active project) are hidden until the context is available.
 
-`position` can be `"start"`, `"end"`, or a numeric index. Sidebar sections also accept `position`.
+`position` can be `"start"`, `"end"`, or a numbered index. Sidebar sections also accept `position`.
 
-#### Zone locations
+#### Zone locations/components
 
 Zone components are rendered at fixed injection points in existing pages:
 
-| Value | Where it renders |
-|---|---|
-| `environment-header` | Top of the environment overview page |
-| `environment-footer` | Bottom of the environment overview page |
-| `project-header` | Top of the project overview page |
-| `project-footer` | Bottom of the project overview page |
-| `organization-header` | Top of the organization overview page |
-| `organization-footer` | Bottom of the organization overview page |
-| `global-header` | Above all page content (every page) |
-| `global-footer` | Below all page content (every page) |
+| Value | Where it renders | `data` props available |
+|---|---|---|
+| `environment-header` | Top of the environment overview page | `environmentName`, `environmentType`, `deployType`, `created`, `updated` |
+| `environment-footer` | Bottom of the environment overview page | none |
+| `project-header` | Top of the project details page | none |
+| `project-footer` | Bottom of the project details page | none |
+| `organization-header` | Top of the organization overview page | none |
+| `organization-footer` | Bottom of the organization overview page | none |
+| `global-header` | Above all page content (every page) | none |
+| `global-footer` | Below all page content (every page) | none |
 
 Zone components receive a `data` prop containing context from the host page (environment name, type, deploy info, etc).
+
+Zone components must be exported as **named exports** from their file and placed under `extensions/<name>/components/`. The filename (without extension) is what you reference in `extension.json` as `component`.
+
+```tsx
+// extensions/my-extension/components/ExampleComponent.tsx
+'use client';
+
+export function ExampleComponent({ data }: { data?: Record<string, unknown> }) {
+  return <div>Example</div>;
+}
+```
 
 #### Icons
 
@@ -297,29 +305,85 @@ The `icon` field accepts any [Lucide](https://lucide.dev/icons/) icon name as a 
 
 #### Role-based access
 
-Any nav item, sidebar section, page, or zone can be gated by Keycloak roles:
+Access to Nav items, sidebar sections, pages, zones etc can be controlled by the Keycloak roles using `requiredRoles` and `excludeRoles`.
+
+| Field | Description |
+|---|---|
+| `requiredRoles` | User must have **at least one** of the listed roles to access this item |
+| `excludeRoles` | User must have **none** of the listed roles — takes precedence over `requiredRoles` |
+
+If neither are set the extension is accessible to all authenticated users.
+
+Pages support `accessDeniedRedirect` to control the redirecxt location if access is denied (defaults to `/projects`).
 
 ```json
-{ "requiredRoles": ["platform-owner"], "excludeRoles": ["guest"] }
+{
+  "navigation": {
+    "items": [
+      {
+        "id": "my-nav-item",
+        "label": "Example",
+        "href": "/organizations/[organizationSlug]/example",
+        "icon": "Star",
+        "target": "sidebar-organizations",
+        "requiredRoles": ["platform-owner"],
+        "excludeRoles": ["reporter"]
+      }
+    ],
+    "sections": [
+      {
+        "section": "Example",
+        "requiredRoles": ["platform-owner"],
+        "items": [
+          {
+            "id": "example-item",
+            "label": "Example Dashboard",
+            "href": "/example",
+            "requiredRoles": ["platform-owner"],
+            "excludeRoles": ["reporter"]
+          }
+        ]
+      }
+    ]
+  },
+  "pages": [
+    {
+      "route": "organizations/[organizationSlug]/example",
+      "requiredRoles": ["platform-owner"],
+      "excludeRoles": ["guest"],
+      "accessDeniedRedirect": "/projects"
+    }
+  ],
+  "zones": [
+    {
+      "id": "example-zone",
+      "component": "ExampleZoneComponent",
+      "zone": "organization-footer",
+      "requiredRoles": ["platform-owner"]
+    }
+  ]
+}
 ```
+
+> **Note:** `requiredRoles` on a page controls the nav link visibility and triggers a redirect if the user navigates directly to the URL. To enforce access on the page itself, wrap the page content in `ExtensionRouteGuard`:
+>
+> ```tsx
+> import { ExtensionRouteGuard } from '@/components/extensions/ExtensionRouteGuard';
+>
+> export default function MyPage() {
+>   return (
+>     <ExtensionRouteGuard route="organizations/[organizationSlug]/my-page">
+>       {/* page content */}
+>     </ExtensionRouteGuard>
+>   );
+> }
+> ```
 
 #### Pages
 
 Page files follow the [Next.js App Router](https://nextjs.org/docs/app) convention and are placed under `pages/` using the same folder structure as the app router. For example, `pages/analytics/page.tsx` maps to `/analytics` | `/pages/(projectroutes)/projects/[projectSlug]/analytics/page.tsx` maps to `/projects/example-project/analytics`
 
 Route group directories (e.g. `(projectroutes)`) are supported. Use the same route group names as the core app.
-
-#### Zone components
-
-Components must be exported as named exports from their file:
-
-```tsx
-// extensions/my-extension/components/MyComponent.tsx
-'use client';
-export function MyComponent({ data }: { data?: Record<string, unknown> }) {
-  return <div>Hello from my extension</div>;
-}
-```
 
 ## Plugin system
 

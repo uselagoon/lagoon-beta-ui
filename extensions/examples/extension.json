@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "name": "example-extension",
+    "version": "1.0.0",
+    "description": "Example extension"
+  },
+  "navigation": {
+    "items": [
+      {
+        "id": "example-extension-nested",
+        "label": "Example-Extension",
+        "href": "/organizations/[organizationSlug]/example",
+        "icon": "ChartLine",
+        "target": "sidebar-organizations",
+        "position": "end",
+        "requiredRoles": ["owner"]      }
+    ],
+    "sections": [
+      {
+        "section": "Example Section",
+        "position": "end",
+        "items": [
+          {
+            "id": "example-extension-root",
+            "label": "Example-Extension",
+            "href": "/example",
+            "icon": "Wrench",
+            "requiredRoles": ["developer"]
+          }
+        ]
+      }
+    ]
+  },
+  "pages": [
+    {
+      "route": "example",
+      "requiredRoles": ["developer"],
+      "accessDeniedRedirect": "/projects"
+    },
+    {
+      "route": "organizations/[organizationSlug]/example",
+      "requiredRoles": ["owner"],
+      "accessDeniedRedirect": "/projects"
+    }
+  ],
+  "zones": [
+    {
+      "id": "example-zone-metrics",
+      "component": "EnvironmentMetrics",
+      "zone": "environment-header",
+      "requiredRoles": ["maintainer"]
+    }
+  ]
+}

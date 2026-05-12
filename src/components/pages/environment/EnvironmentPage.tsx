@@ -207,7 +207,15 @@ export default function EnvironmentPage({
 
   return (
     <SectionWrapper>
-      <ExtensionZoneRenderer zone="environment-header" />
+      <ExtensionZoneRenderer zone="environment-header"
+        data={{
+          environmentName: environment.name,
+          environmentType: environment.environmentType,
+          deployType: environment.deployType,
+          created: environment.created,
+          updated: environment.updated,
+        }} 
+      />
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>
       <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
         Key information about your environment
@@ -298,16 +306,7 @@ export default function EnvironmentPage({
           />
         </section>
       </div>
-      <ExtensionZoneRenderer
-        zone="environment-footer"
-        data={{
-          environmentName: environment.name,
-          environmentType: environment.environmentType,
-          deployType: environment.deployType,
-          created: environment.created,
-          updated: environment.updated,
-        }}
-      />
+      <ExtensionZoneRenderer zone="environment-footer"/>
     </SectionWrapper>
   );
 }
