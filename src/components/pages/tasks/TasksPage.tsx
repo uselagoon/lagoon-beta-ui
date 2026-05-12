@@ -2,7 +2,7 @@
 
 import React, { startTransition, useEffect, useState } from 'react';
 
-import { useEnvContext } from 'next-runtime-env';
+import { useEnvContext } from '@/contexts/EnvContext';
 import { usePathname } from 'next/navigation';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
