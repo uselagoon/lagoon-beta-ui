@@ -22,10 +22,13 @@ allow-licenses:
 - 'Zlib'
 # Google's patent licence for Go
 - 'LicenseRef-scancode-google-patent-license-golang'
+# lightningcss pulled in by @tailwindcss
 - 'MPL-2.0'
 
 allow-dependencies-licenses:
+# CC-BY-4.0: Build dependency pulled in by Next & browserslist
 - 'pkg:npm/caniuse-lite'
+# LGPL/MPL: Image optimization for Next
 - 'pkg:npm/%40img%2Fsharp-libvips-darwin-arm64'
 - 'pkg:npm/%40img%2Fsharp-libvips-darwin-x64'
 - 'pkg:npm/%40img%2Fsharp-libvips-linux-arm'
@@ -39,4 +42,5 @@ allow-dependencies-licenses:
 - 'pkg:npm/%40img%2Fsharp-win32-arm64'
 - 'pkg:npm/%40img%2Fsharp-win32-ia32'
 - 'pkg:npm/%40img%2Fsharp-win32-x64'
+# CC0-1.0: Pulled in by storybook
 - 'pkg:npm/type-fest'
