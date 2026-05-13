@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 
-import { useEnvContext } from 'next-runtime-env';
+import { useEnvContext } from '@/contexts/EnvContext';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 

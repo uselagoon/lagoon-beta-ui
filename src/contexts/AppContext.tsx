@@ -3,7 +3,7 @@
 import React, { ReactNode, useMemo } from 'react';
 
 import { useSession } from 'next-auth/react';
-import { useEnvContext } from 'next-runtime-env';
+import { useEnvContext } from '@/contexts/EnvContext';
 import { useParams, usePathname } from 'next/navigation';
 
 import { useSidenavItems } from '@/components/dynamicNavigation/useSidenavItems';

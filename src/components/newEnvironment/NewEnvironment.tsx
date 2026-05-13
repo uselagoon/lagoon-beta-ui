@@ -1,6 +1,6 @@
 import { FC, startTransition, useReducer } from 'react';
 
-import { useEnvContext } from 'next-runtime-env';
+import { useEnvContext } from '@/contexts/EnvContext';
 
 import deployEnvironmentBranch from '@/lib/mutation/deployEnvironmentBranch';
 import projectByNameWithDeployKeyQuery from '@/lib/query/projectByNameWithDeployKeyQuery';
