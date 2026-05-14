@@ -7,7 +7,7 @@ import { useParams, usePathname } from 'next/navigation';
 
 import projectByNameQuery from '@/lib/query/projectByNameQuery';
 import { useQuery } from '@apollo/client';
-import { TabNavigation, Tabs } from '@uselagoon/ui-library';
+import { TabNavigation, Tabs } from '@/ui-library';
 
 import { LinkContentWrapper } from '../shared/styles';
 

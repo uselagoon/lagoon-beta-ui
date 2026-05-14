@@ -7,7 +7,7 @@ import { useParams, usePathname } from 'next/navigation';
 
 import environmentWithProblems from '@/lib/query/environmentWithProblems';
 import { useQuery } from '@apollo/client';
-import { Badge, Skeleton, TabNavigation } from '@uselagoon/ui-library';
+import { Badge, Skeleton, TabNavigation } from '@/ui-library';
 
 import { LinkContentWrapper } from '../shared/styles';
 
