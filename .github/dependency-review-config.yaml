@@ -44,5 +44,9 @@ allow-dependencies-licenses:
 - 'pkg:npm/%40img/sharp-win32-x64'
 # CC0-1.0: Pulled in by storybook
 - 'pkg:npm/type-fest'
+# CC0-1.0 AND MIT: Pulled in by typescript-eslint
+- 'pkg:npm/lodash'
+# BlueOak-1.0.0: Pulled in by storybook
+- 'pkg:npm/minimatch'
 # Missing license: Build dependency
 - 'pkg:npm/baseline-browser-mapping'
