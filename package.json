@@ -122,8 +122,7 @@
     "msw-storybook-addon": "^2.0.3",
     "sass-embedded": "^1.97.1",
     "storybook": "8.6.14",
-    "typescript": "^5",
-    "webpack": "5.106.2"
+    "typescript": "^5"
   },
   "resolutions": {
     "string-width": "4.2.3",
@@ -132,7 +131,7 @@
     "axios": "^1.13.6",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "webpack": "5.106.2"
+    "webpack": "5.101.2"
   },
   "overrides": {
     "string-width": "4.2.3",

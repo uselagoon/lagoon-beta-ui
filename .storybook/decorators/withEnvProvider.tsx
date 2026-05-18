@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { EnvProvider } from 'next-runtime-env';
+import { EnvProvider } from '../../src/contexts/EnvContext';
 
 import type { Decorator } from '@storybook/react';
 
