@@ -4,6 +4,7 @@ import { Building2, FolderOpen, Home, Settings, HelpCircle, Info, XCircle, Exter
 
 import RootLayout from '../components/RootLayout';
 import { LinkProvider as NextLinkProvider } from '../providers/NextLinkProvider';
+import { NextLinkType } from '../../ui-library/typings/nextLink';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
@@ -405,7 +406,7 @@ const meta: Meta<ThemeArgs> = {
   decorators: [
     withArgsAsTheme,
     (Story) => (
-      <NextLinkProvider linkComponent={MockLink}>
+    <NextLinkProvider linkComponent={MockLink as NextLinkType}>
         <Story />
       </NextLinkProvider>
     ),

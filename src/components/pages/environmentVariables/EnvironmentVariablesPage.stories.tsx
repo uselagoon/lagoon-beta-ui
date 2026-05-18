@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { EnvVariablesData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/environment-variables/page';
-import environmentByOpenShiftProjectNameWithEnvVars from '@/lib/query/environmentByOpenShiftProjectNameWithEnvVars';
+import { EnvVariablesData } from '../../../app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/environment-variables/page';
+import environmentByOpenShiftProjectNameWithEnvVars from '../../../lib/query/environmentByOpenShiftProjectNameWithEnvVars';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
 import { sleep } from '../../../../.storybook/mocks/storyHelpers';

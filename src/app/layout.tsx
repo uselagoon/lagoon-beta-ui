@@ -68,7 +68,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const extensions = loadExtensions();
-  // ref for exposing custom variables at runtime: https://github.com/expatfile/next-runtime-env/blob/development/docs/EXPOSING_CUSTOM_ENV.md
   noStore();
   return (
     <html lang="en" suppressHydrationWarning>
