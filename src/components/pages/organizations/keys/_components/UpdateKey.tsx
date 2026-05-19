@@ -23,7 +23,6 @@ export const UpdateKey: React.FC<UpdateKeyProps> = ({ orgKey, refetch }) => {
   
   const handleUpdateKey = async (e: React.MouseEvent<HTMLButtonElement>, values: any) => {
     const { comment } = values;
-    console.log('Updating key with values:', { id, comment });
     updateKeyMutation({
       variables: {
         id,
@@ -59,7 +58,7 @@ export const UpdateKey: React.FC<UpdateKeyProps> = ({ orgKey, refetch }) => {
             label: 'Comment',
             type: 'text',
             placeholder: 'Update comment',
-            required: true,
+            inputDefault: orgKey.comment || '',
           },
         ]}
       />
