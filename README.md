@@ -305,7 +305,7 @@ The `icon` field accepts any [Lucide](https://lucide.dev/icons/) icon name as a 
 
 #### Role-based access
 
-Access to Nav items, sidebar sections, pages, zones etc can be controlled by the Keycloak roles using `requiredRoles` and `excludeRoles`.
+Access to Nav items, sidebar sections, pages, zones etc can be controlled by the Platform level Keycloak roles using `requiredRoles` and `excludeRoles`.
 
 | Field | Description |
 |---|---|
@@ -327,7 +327,7 @@ Pages support `accessDeniedRedirect` to control the redirecxt location if access
         "icon": "Star",
         "target": "sidebar-organizations",
         "requiredRoles": ["platform-owner"],
-        "excludeRoles": ["reporter"]
+        "excludeRoles": ["platform-viewer"]
       }
     ],
     "sections": [
@@ -340,7 +340,7 @@ Pages support `accessDeniedRedirect` to control the redirecxt location if access
             "label": "Example Dashboard",
             "href": "/example",
             "requiredRoles": ["platform-owner"],
-            "excludeRoles": ["reporter"]
+            "excludeRoles": ["platform-viewer"]
           }
         ]
       }
@@ -349,8 +349,8 @@ Pages support `accessDeniedRedirect` to control the redirecxt location if access
   "pages": [
     {
       "route": "organizations/[organizationSlug]/example",
-      "requiredRoles": ["platform-owner"],
-      "excludeRoles": ["guest"],
+      "requiredRoles": ["platform-organization-owner"],
+      "excludeRoles": ["platform-viewer"],
       "accessDeniedRedirect": "/projects"
     }
   ],
