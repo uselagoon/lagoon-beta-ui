@@ -78,6 +78,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
+      attestations: write
     env:
       IMAGE_NAME: ${{ github.repository_owner }}/beta-ui
     steps:
@@ -126,6 +128,7 @@ jobs:
             type=ref,event=branch,suffix=-${{ matrix.arch }}
 
       - name: Build arch image
+        id: build
         uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # v7.1.0
         with:
           context: .
@@ -135,8 +138,17 @@ jobs:
             BUILD=${{ needs.prepare.outputs.build }}
           push: ${{ needs.prepare.outputs.publish == 'true' }}
           tags: ${{ steps.meta.outputs.tags }}
+          sbom: true
           cache-from: type=gha,scope=${{ matrix.arch }}
           cache-to: type=gha,mode=max,scope=${{ matrix.arch }}
+
+      - name: Attest ghcr image
+        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3.2.0
+        if: needs.prepare.outputs.publish == 'true' && github.ref_type == 'tag'
+        with:
+          subject-digest: ${{ steps.build.outputs.digest }}
+          subject-name: ghcr.io/${{ env.IMAGE_NAME }}
+          push-to-registry: true
 
   publish-manifest:
     if: needs.prepare.outputs.publish == 'true'
@@ -147,6 +159,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
+      attestations: write
     env:
       IMAGE_NAME: ${{ github.repository_owner }}/beta-ui
     steps:
@@ -191,3 +205,26 @@ jobs:
               "${tag}-amd64" \
               "${tag}-arm64"
           done <<< "$TAGS"
+
+      - name: Get GHCR manifest digest
+        if: github.ref_type == 'tag'
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          while IFS= read -r tag; do
+            [[ -z "$tag" ]] && continue
+            if [[ "$tag" == ghcr.io/* ]]; then
+              digest=$(docker buildx imagetools inspect "$tag" --format '{{.Manifest.Digest}}')
+              echo "GHCR_DIGEST=$digest" >> "$GITHUB_ENV"
+              echo "GHCR_IMAGE=${tag%%:*}" >> "$GITHUB_ENV"
+              break
+            fi
+          done <<< "$TAGS"
+
+      - name: Attest ghcr manifest
+        uses: actions/attest-build-provenance@96278af6caaf10aea03fd8d33a09a777ca52d62f # v3.2.0
+        if: github.ref_type == 'tag'
+        with:
+          subject-digest: ${{ env.GHCR_DIGEST }}
+          subject-name: ${{ env.GHCR_IMAGE }}
+          push-to-registry: true
