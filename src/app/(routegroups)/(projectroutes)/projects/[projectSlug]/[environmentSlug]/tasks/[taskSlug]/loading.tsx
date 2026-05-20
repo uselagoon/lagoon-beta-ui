@@ -3,7 +3,7 @@
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import BackButton from '@/components/backButton/BackButton';
 import { taskColumns } from '@/components/pages/task/TaskPage';
-import { BasicTable, Skeleton } from '@/ui-library';
+import { BasicTable, DataTable, Skeleton } from '@/ui-library';
 
 export default function Loading() {
   const skeletonCount = 10;
@@ -21,7 +21,7 @@ export default function Loading() {
   return (
     <SectionWrapper>
       <BackButton />
-      <BasicTable className="border rounded-md mb-4" columns={taskColumns} data={skeletons} />
+      <DataTable columns={taskColumns} data={[]} disableExtra />
     </SectionWrapper>
   );
 }
