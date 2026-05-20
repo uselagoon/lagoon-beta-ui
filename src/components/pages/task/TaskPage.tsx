@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useEffect, useState } from 'react';
+import { JSX, startTransition, useEffect, useState } from 'react';
 
 import { TaskData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/[taskSlug]/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
@@ -8,7 +8,7 @@ import TaskNotFound from '@/components/errors/TaskNotFound';
 import { getTaskDuration } from '@/components/utils';
 import getTaskFilesDownload from '@/lib/query/getTaskFileDownload';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import {Badge, BasicTable, Button, Switch, Tooltip, TooltipContent, TooltipTrigger} from '@/ui-library';
+import {Badge, Button, DataTable, DataTableColumnDef, Switch, Tooltip, TooltipContent, TooltipTrigger} from '@/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -34,37 +34,44 @@ type GetTaskFilesDownloadData = {
   };
 };
 
-export const taskColumns = [
-  {
-    title: 'Task name ',
-    dataIndex: 'taskName',
-    key: 'taskName',
-  },
-  {
-    title: 'Service ',
-    dataIndex: 'service',
-    key: 'service',
-  },
-  {
-    title: 'Created ',
-    dataIndex: 'created',
-    key: 'created',
-  },
-  {
-    title: 'Duration ',
-    dataIndex: 'duration',
-    key: 'duration',
-  },
-  {
-    title: 'Status',
-    dataIndex: 'status',
-    key: 'status',
-  },
+type TaskColumnsType = {
+  name: string;
+  service: string;
+  created: JSX.Element;
+  duration: string;
+  status: JSX.Element;
+  actions: JSX.Element | false;
+  key: string;
+}
 
+export const taskColumns: DataTableColumnDef<TaskColumnsType>[] = [
   {
-    title: 'Actions',
-    key: 'actions',
-    dataIndex: 'actons',
+    header: 'Task name ',
+    accessorKey: 'name',
+    width: '25%',
+  },
+  {
+    header: 'Service ',
+    accessorKey: 'service',
+  },
+  {
+    header: 'Created ',
+    accessorKey: 'created',
+    cell: ({ row }) => row.original.created,
+  },
+  {
+    header: 'Duration ',
+    accessorKey: 'duration',
+  },
+  {
+    header: 'Status',
+    accessorKey: 'status',
+    cell: ({ row }) => row.original.status,
+  },
+  {
+    id: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => row.original.actions || null,
   },
 ];
 
@@ -159,12 +166,16 @@ export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<Ta
       <TooltipContent>{dayjs.utc(currentTask.created).local().format('YYYY-MM-DD HH:mm:ss')}</TooltipContent>
     </Tooltip>
 
+  const getStatusBadge = (status: string) => {
+    return <Badge variant="default">{status}</Badge>;
+  }
+
   const taskDataRow = {
     name: currentTask.name,
     service: currentTask.service,
     created: createdTooltip,
     duration: getTaskDuration(currentTask),
-    status: <Badge variant="default">{currentTask.status}</Badge>,
+    status: getStatusBadge(currentTask.status),
 
     actions: ['new', 'pending', 'queued', 'running'].includes(currentTask.status) && (
       <CancelTask task={currentTask} projectId={environment.project.id} environmentId={environment.id} />
@@ -188,7 +199,7 @@ export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<Ta
           />
         </div>
       </section>
-      <BasicTable className="border rounded-md mb-4" columns={taskColumns} data={[taskDataRow]} />
+      <DataTable columns={taskColumns} data={[taskDataRow]} disableExtra />
       <LogViewer
         logs={currentTask.logs || null}
         status={currentTask.status}
