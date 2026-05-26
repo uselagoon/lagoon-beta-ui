@@ -15,3 +15,12 @@ cache
 Makefile
 docker-compose.yml
 lagoon-core.*
+
+# Test/dev tooling - not needed in the build context
+cypress/
+test/
+.git/
+.github/
+*.stories.*
+.storybook/
+coverage/

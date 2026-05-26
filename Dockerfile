@@ -6,7 +6,9 @@ COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --network-timeout 300000
 
 COPY . /app/
-RUN yarn run build
+# Run next build directly to skip the uilib:update upgrade step (yarn build)
+# which makes an extra network call and bypasses the frozen lockfile
+RUN yarn next build
 
 # Production image
 FROM uselagoon/node-22:latest
@@ -33,5 +35,13 @@ COPY --from=builder /app/postcss.config.mjs ./postcss.config.mjs
 
 COPY auth-entrypoint.sh /lagoon/entrypoints/99-auth-entrypoint.sh
 
+LABEL org.opencontainers.image.title="lagoon-beta-ui" \
+      org.opencontainers.image.description="The Lagoon UI - a Next.js interface for managing Lagoon projects and environments" \
+      org.opencontainers.image.source="https://github.com/uselagoon/lagoon-beta-ui" \
+      org.opencontainers.image.url="https://github.com/uselagoon/lagoon-beta-ui" \
+      org.opencontainers.image.licenses="MIT" \
+      repository="https://github.com/uselagoon/lagoon-beta-ui"
+
+ENV PORT=3000
 EXPOSE 3000
 CMD ["node", "server.js"]
