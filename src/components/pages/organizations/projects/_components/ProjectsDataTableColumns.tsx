@@ -75,6 +75,7 @@ export const ProjectsDataTableColumns = (
     cell: ({ row }) => {
       const cloneID = row.original?.clone?.id;
       const cloneStatus = row.original?.clone?.status;
+      const removeCloneStatus = new Set(['INCOMPATIBLE_REQUIREMENTS', 'FAILED', 'CANCELLED']);
       return (
         <div className="flex gap-4 justify-end items-center">
           {projectCloneEnabled && (
@@ -82,9 +83,9 @@ export const ProjectsDataTableColumns = (
               {cloneStatus != undefined && cloneStatus != 'COMPLETE' ? (
                 <Tooltip>
                   <TooltipTrigger>
-                    {cloneID && <CancelClone cloneID={cloneID} orgID={orgId} destProject={row.original.name} onCancel={refetch} />}
+                    {cloneID && <CancelClone cloneID={cloneID} orgID={orgId} cloneStatus={cloneStatus} destProject={row.original.name} onCancel={refetch} />}
                   </TooltipTrigger>
-                  <TooltipContent>Cancel this Clone</TooltipContent>
+                  <TooltipContent>{removeCloneStatus.has(cloneStatus) ? 'Remove Clone' : 'Cancel this Clone'}</TooltipContent>
                 </Tooltip>
               ) : (
                 <Tooltip>
