@@ -10,10 +10,21 @@ export default gql`
         id
         name
         groupCount
+        clone {
+          status
+        }
       }
       deployTargets {
         id
         name
+      }
+      featureProjectClone
+      keys {
+        id
+        name
+        projects {
+          name
+        }
       }
     }
   }

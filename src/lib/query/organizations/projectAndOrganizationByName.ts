@@ -20,6 +20,10 @@ export default gql`
         name
         type
       }
+      clone {
+        id
+        status
+      }
     }
 
     organization: organizationByName(name: $name) {
@@ -33,6 +37,7 @@ export default gql`
         type
         name
       }
+      featureProjectClone
       slacks: notifications(type: SLACK) {
         __typename
         ...Slack

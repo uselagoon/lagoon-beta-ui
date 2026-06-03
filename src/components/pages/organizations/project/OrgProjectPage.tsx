@@ -5,7 +5,7 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { AddGroupToProject } from '@/components/addGroupToProject/AddGroupToProject';
 import OrgProjectNotFound from '@/components/errors/OrgProjectNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Checkbox, DataTable, Select, SelectWithOptions } from '@/ui-library';
+import { Checkbox, DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import { Notification } from '../notifications/_components/EditNotification';
@@ -16,6 +16,7 @@ import { AddNotificationToProject } from './_components/AddNotificationToProject
 import { UnlinkGroup } from './_components/UnlinkGroup';
 import { UnlinkNotification } from './_components/UnlinkNotification';
 import { transformNotifications } from './_components/transformNotifications';
+import { CloneProject } from '@/components/cloneProject/CloneProject';
 
 export default function OrgProjectPage({
   queryRef,
@@ -138,8 +139,15 @@ export default function OrgProjectPage({
     })) ?? []),
   ];
 
+  let projectCloneEnabled = organization?.featureProjectClone ?? false;
+
   return (
     <SectionWrapper>
+      {projectCloneEnabled && (
+        <div className="mb-6 flex items-center gap-4 float-right">
+            <CloneProject projectName={project.name} organizationSlug={organization.name} refetch={refetch} toggleText keys={[]} />
+        </div>
+      )}
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-4">Groups for {project.name}</h3>
 
       <AddGroupToProject projectName={project.name} groups={filteredGroups} refetch={refetch} />

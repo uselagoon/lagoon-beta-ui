@@ -14,7 +14,7 @@ type ProjectRestrictionsData = {
   } | null;
 };
 
-export default async function ProjectLayout({
+export default async function OrgProjectLayout({
   children,
   params,
 }: Readonly<{
