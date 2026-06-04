@@ -7,6 +7,7 @@ import { CloneProject } from '@/components/cloneProject/CloneProject';
 import { handleSort, renderSortIcons } from '@/components/utils';
 import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@/ui-library';
 import { FolderCog } from 'lucide-react';
+import { OrganizationKey } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/keys/page';
 
 const setCloneBadge = (status?: string) => {
   if (!status) return null;
@@ -19,24 +20,11 @@ const setCloneBadge = (status?: string) => {
   }
 }
 
-// temporary measure to block cloning for private repos
-const validateCloneRepo = (gitUrl: string) => {
-  if (gitUrl.startsWith('git@') || gitUrl.startsWith('ssh://')) {
-    return false;
-  }
-
-  try {
-    const url = new URL(gitUrl);
-    return url.protocol === 'http:' || url.protocol === 'https:';
-  } catch (err) {
-    return false;
-  }
-}
-
 export const ProjectsDataTableColumns = (
   deleteProjectModal: (project: OrgProject) => React.ReactNode,
   orgName: string,
   projectCloneEnabled: boolean,
+  orgKeys: OrganizationKey[],
   refetch?: () => void
 ): DataTableColumnDef<OrgProject>[] => [
   {
@@ -88,10 +76,9 @@ export const ProjectsDataTableColumns = (
           {projectCloneEnabled && (
             <Tooltip>
               <TooltipTrigger>
-                {/* disabled for private repos via validateCloneRepo */}
-                <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} disabled={!validateCloneRepo(row.original.gitUrl || '')} />
+                <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} keys={orgKeys} />
               </TooltipTrigger>
-              <TooltipContent>{!validateCloneRepo(row.original.gitUrl || '') ? 'Private repository: not eligible for cloning' : 'Clone this Project'}</TooltipContent>
+              <TooltipContent>Clone this Project</TooltipContent>
             </Tooltip>
           )}
           <Button>

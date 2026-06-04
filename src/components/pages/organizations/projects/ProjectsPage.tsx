@@ -149,6 +149,8 @@ export default function OrgProjectsPage({
     return { ...project, clone: { ...(project.clone ?? {}), status: overrideStatus } };
   });
 
+  const orgKeys = organization?.keys || [];
+
   return (
     <>
       <SectionWrapper>
@@ -163,6 +165,7 @@ export default function OrgProjectsPage({
             ),
             organization.name,
             projectCloneEnabled,
+            orgKeys,
             refetchData
           )}
           data={projectsWithOverrides.sort((a, b) => {

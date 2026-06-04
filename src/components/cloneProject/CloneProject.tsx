@@ -14,7 +14,7 @@ import { Copy } from 'lucide-react';
 import { ConfigureStep } from './_components/ConfigureStep';
 import { ErrorStep, ProgressStep, SuccessStep } from './_components/ResultSteps';
 import { CloneOptions, CLONE_OPTIONS_CONFIG, DialogStep, Environment, NAME_PATTERN, validateName } from './_components/types';
-
+import { OrganizationKey } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/keys/page';
 export type { CloneOptions } from './_components/types';
 
 interface CloneProjectProps {
@@ -24,9 +24,10 @@ interface CloneProjectProps {
   onCloned?: (newProjectName: string) => void;
   toggleText?: boolean;
   disabled?: boolean;
+  keys: OrganizationKey[];
 }
 
-export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationSlug, refetch, onCloned, toggleText = false, disabled = false }) => {
+export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationSlug, refetch, onCloned, toggleText = false, disabled = false, keys = [] }) => {
   // TODO: find a better way to manage all this state
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<DialogStep>('configure');
@@ -36,6 +37,8 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationS
   const [selectedEnvironment, setSelectedEnvironment] = useState('');
   const [clonedProjectName, setClonedProjectName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [selectedKey, setSelectedKey] = useState<string>('');
+  const [keyAdded, setKeyAdded] = useState(false);
   const [options, setOptions] = useState<CloneOptions>({
     copyData: true,
     metadata: true,
@@ -117,12 +120,16 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationS
       environmentVariables: true,
     });
     setStep('configure');
+    setSelectedKey('');
+    setKeyAdded(false);
   };
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (open) {
       fetchEnvironments();
+    } else if (keyAdded) {
+      refetch?.();
     }
     resetForm();
   };
@@ -158,7 +165,7 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationS
   };
 
   const handleClose = () => {
-    setIsOpen(false);
+    handleOpenChange(false);
   };
 
   const isNameValid = newProjectName.trim().length > 0 && NAME_PATTERN.test(newProjectName.trim());
@@ -195,6 +202,11 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationS
             isFormValid={isFormValid}
             onClone={handleClone}
             onClose={handleClose}
+            organizationSlug={organizationSlug}
+            keys={keys}
+            selectedKey={selectedKey}
+            setSelectedKey={setSelectedKey}
+            onKeyAdded={() => setKeyAdded(true)}
           />
         )}
 
