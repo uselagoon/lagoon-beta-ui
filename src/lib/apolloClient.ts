@@ -1,5 +1,3 @@
-import { env } from 'next-runtime-env';
-
 import { ApolloClient, ApolloLink, HttpLink, InMemoryCache, FetchResult, Observable, Operation } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
@@ -14,11 +12,11 @@ import { auth } from '../auth';
 export const { getClient, PreloadQuery, query } = registerApolloClient(async () => {
   const session = await auth();
 
-  const GRAPHQL_API = env('GRAPHQL_API');
-  const WEBSOCKET_URI = env('GRAPHQL_API')!.replace(/https/, 'wss').replace(/http/, 'ws');
+  const GRAPHQL_API = process.env.GRAPHQL_API;
+  const WEBSOCKET_URI = process.env.GRAPHQL_API!.replace(/https/, 'wss').replace(/http/, 'ws');
   const SSE_URI = GRAPHQL_API!.replace(/\/?$/, '/stream');
 
-  const disableSubscriptions = env('DISABLE_SUBSCRIPTIONS')?.toLowerCase() === 'true';
+  const disableSubscriptions = process.env.DISABLE_SUBSCRIPTIONS?.toLowerCase() === 'true';
 
   const httpLink = new HttpLink({
     uri: GRAPHQL_API,

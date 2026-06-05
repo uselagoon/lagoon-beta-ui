@@ -39,6 +39,7 @@ const nextConfig = {
       },
     ];
   },
+  output: 'standalone',
   experimental: {
     // Available only with canary version of next
     // ppr: true,

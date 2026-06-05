@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession } from 'next-auth/react';
-import { useEnvContext } from 'next-runtime-env';
+import { useEnvContext } from '@/contexts/EnvContext';
 
 import { ApolloLink, HttpLink, ServerError, FetchResult, Observable, Operation } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
