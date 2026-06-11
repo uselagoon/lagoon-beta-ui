@@ -10,6 +10,7 @@ export default gql`
     project: orgProjectByName(name: $project) {
       id
       name
+      gitUrl
       groups {
         type
         id

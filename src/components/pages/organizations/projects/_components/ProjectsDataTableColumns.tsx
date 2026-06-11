@@ -71,12 +71,13 @@ export const ProjectsDataTableColumns = (
     id: 'actions',
     header: () => <div className="text-right mr-4">Actions</div>,
     cell: ({ row }) => {
+      const publicGitUrl = row.original.gitUrl?.startsWith('http://') ?? false;
       return (
         <div className="flex gap-4 justify-end items-center">
           {projectCloneEnabled && (
             <Tooltip>
               <TooltipTrigger>
-                <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} keys={orgKeys} />
+                <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} publicGitUrl={publicGitUrl} keys={orgKeys} />
               </TooltipTrigger>
               <TooltipContent>Clone this Project</TooltipContent>
             </Tooltip>

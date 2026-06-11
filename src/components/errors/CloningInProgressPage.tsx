@@ -36,14 +36,14 @@ const CloningInProgressPage = ({ projectName, cloneStatus: serverCloneStatus }: 
       if (status && !STATUSES.includes(status)) {
         return;
       }
-      if (status === 'COMPLETE') {
+      if (status === 'COMPLETE' || status === 'FAILED' || status === 'CANCELLED') {
         router.refresh();
       }
     },
   });
 
   useEffect(() => {
-    if (status === 'COMPLETE') {
+    if (status === 'COMPLETE' || status === 'FAILED' || status === 'CANCELLED') {
       router.refresh();
     }
   }, [status, router]);

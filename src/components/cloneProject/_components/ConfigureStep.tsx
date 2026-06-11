@@ -52,6 +52,7 @@ interface ConfigureStepProps {
   selectedKey: string;
   setSelectedKey: (value: string) => void;
   onKeyAdded?: () => void;
+  publicGitUrl: boolean;
 }
 
 export const ConfigureStep: FC<ConfigureStepProps> = ({
@@ -77,6 +78,7 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
   selectedKey,
   setSelectedKey,
   onKeyAdded,
+  publicGitUrl,
 }) => {
   const allChecked = CLONE_OPTIONS_CONFIG.every(({ key }) => options[key]);
   const someChecked = CLONE_OPTIONS_CONFIG.some(({ key }) => options[key]);
@@ -188,82 +190,83 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
           )}
         </div>
 
-        <div className="space-y-2">
-          <p className="text-sm font-medium">
-            Add your Organization key (private repositories only)
-          </p>
-          <div className="flex items-center gap-2">
-            <div className="flex-1">
-              <SelectWithOptions
-                placeholder={keys.length > 0 ? 'Select an organization key' : 'No keys available'}
-                options={keys.map(key => ({ label: key.name, value: key.id }))}
-                value={selectedKey}
-                disabled={sourceProjectHasKey}
-                onValueChange={value => {
-                  setSelectedKey(value);
-                  setkeyStatus('idle');
-                  setkeyError('');
-                }}
-              />
-            </div>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={!selectedKey || keyLoading || sourceProjectHasKey}
-              onClick={handleAddKey}
-            >
-              {keyLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Adding...
-                </>
-              ) : (
-                'Add Key'
+        {!publicGitUrl && (
+          <div className="space-y-2">
+            <p className="text-sm font-medium">
+              Add your Organization key (private repositories only)
+            </p>
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <SelectWithOptions
+                  placeholder={keys.length > 0 ? 'Select an organization key' : 'No keys available'}
+                  options={keys.map(key => ({ label: key.name, value: key.id }))}
+                  value={selectedKey}
+                  disabled={sourceProjectHasKey}
+                  onValueChange={value => {
+                    setSelectedKey(value);
+                    setkeyStatus('idle');
+                    setkeyError('');
+                  }}
+                />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={!selectedKey || keyLoading || sourceProjectHasKey}
+                onClick={handleAddKey}
+              >
+                {keyLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    Adding...
+                  </>
+                ) : (
+                  'Add Key'
+                )}
+              </Button>
+              {selectedKey && keyStatus !== 'success' && !sourceProjectHasKey && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <AlertTriangle className="h-5 w-5 text-yellow-500 cursor-help flex-shrink-0" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    You have selected a key but haven&apos;t added it to the project yet. Click &ldquo;Add Key&rdquo; before cloning.
+                  </TooltipContent>
+                </Tooltip>
               )}
-            </Button>
-            {selectedKey && keyStatus !== 'success' && !sourceProjectHasKey && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <AlertTriangle className="h-5 w-5 text-yellow-500 cursor-help flex-shrink-0" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  You have selected a key but haven&apos;t added it to the project yet. Click &ldquo;Add Key&rdquo; before cloning.
-                </TooltipContent>
-              </Tooltip>
+            </div>
+            {sourceProjectHasKey && (
+              <p className="text-sm text-muted-foreground">
+                This project already has an organization key assigned.
+              </p>
             )}
-          </div>
-          {sourceProjectHasKey && (
-            <p className="text-sm text-muted-foreground">
-              This project already has an organization key assigned.
-            </p>
-          )}
-          {keyStatus === 'success' && (
-            <p className="text-sm text-green-600">
-              Key &ldquo;{selectedKeyName}&rdquo; added to {projectName}.
-            </p>
-          )}
-          {keyStatus === 'error' && (
-            <p className="text-sm text-destructive">
-              Error: {keyError}
-            </p>
-          )}
-          <div className="text-sm text-muted-foreground">
-            {!sourceProjectHasKey && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <p>Select a key to link your cloned project to your organization. &#9432;</p>
-                </TooltipTrigger>
-                <TooltipContent>
-                  Organization keys are required for cloning private repositories. Add this project's Deploy Key to your Git service.
-                </TooltipContent>
-              </Tooltip>
+            {keyStatus === 'success' && (
+              <p className="text-sm text-green-600">
+                Key &ldquo;{selectedKeyName}&rdquo; added to {projectName}.
+              </p>
             )}
-            <Link href={`/organizations/${organizationSlug}/keys`} className="underline">
-              Don&apos;t have an organization key? Create a key here.
-            </Link>
+            {keyStatus === 'error' && (
+              <p className="text-sm text-destructive">
+                Error: {keyError}
+              </p>
+            )}
+            <div className="text-sm text-muted-foreground">
+              {!sourceProjectHasKey && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <p>Select a key to link your cloned project to your organization. &#9432;</p>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Organization keys are required for cloning private repositories. Add this project's Deploy Key to your Git service.
+                  </TooltipContent>
+                </Tooltip>
+              )}
+              <Link href={`/organizations/${organizationSlug}/keys`} className="underline">
+                Don&apos;t have an organization key? Create a key here.
+              </Link>
+            </div>
           </div>
-        </div>
-
+        )}
         <div className="space-y-3">
           <p className="text-sm font-medium">What to clone</p>
           <div className="border rounded-lg p-4 space-y-3">
