@@ -69,9 +69,7 @@ function makeClient(
         this.sseClient = createClient({
           url: SSE_URI,
           // todo: fetch a new token on reconnect
-          retry: async (err) => {
-            if (err === 4401) throw err;
-          },
+          retryAttempts: 3,
           headers: async () => {
             const response = await fetch('/api/auth/session');
             const data = response.ok ? await response.json() : null;

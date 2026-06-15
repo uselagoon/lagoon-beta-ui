@@ -30,7 +30,7 @@ const CloningInProgressPage = ({ projectName, cloneStatus: serverCloneStatus }: 
 
   useSubscription(projectCloneChangedSubscription, {
     variables: { project: projectName },
-    skip: !projectName,
+    skip: !projectName || !!serverCloneStatus,
     onData: ({ data }) => {
       const status: string | undefined = data.data?.projectCloneChanged?.status;
       if (status && !STATUSES.includes(status)) {
