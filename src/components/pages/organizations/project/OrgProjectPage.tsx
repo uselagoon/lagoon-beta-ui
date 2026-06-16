@@ -5,8 +5,9 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { AddGroupToProject } from '@/components/addGroupToProject/AddGroupToProject';
 import OrgProjectNotFound from '@/components/errors/OrgProjectNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Checkbox, DataTable, Select, SelectWithOptions } from '@/ui-library';
+import { Checkbox, DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
+import CloneFailedBanner from '@/components/errors/CloneFailedBanner';
 
 import { Notification } from '../notifications/_components/EditNotification';
 import { notificationTypeOptions } from '../notifications/_components/filterOptions';
@@ -16,6 +17,7 @@ import { AddNotificationToProject } from './_components/AddNotificationToProject
 import { UnlinkGroup } from './_components/UnlinkGroup';
 import { UnlinkNotification } from './_components/UnlinkNotification';
 import { transformNotifications } from './_components/transformNotifications';
+import { CloneProject } from '@/components/cloneProject/CloneProject';
 
 export default function OrgProjectPage({
   queryRef,
@@ -138,16 +140,28 @@ export default function OrgProjectPage({
     })) ?? []),
   ];
 
+  let projectCloneEnabled = organization?.featureProjectClone ?? false;
+  const publicGitUrl = project.gitUrl?.startsWith('http://') ?? false;
+
+  const cloneStatus = project.clone?.status;
+  const cloneFailed = cloneStatus === 'FAILED' || cloneStatus === 'CANCELLED';
+
   return (
     <SectionWrapper>
+      {cloneFailed && <div className="mb-6"><CloneFailedBanner status={cloneStatus as 'FAILED' | 'CANCELLED'} /></div>}
+      {projectCloneEnabled && (
+        <div className="mb-6 flex items-center gap-4 float-right">
+            <CloneProject projectName={project.name} organizationSlug={organization.name} refetch={refetch} publicGitUrl={publicGitUrl} toggleText keys={[]} disabled={cloneFailed} />
+        </div>
+      )}
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-4">Groups for {project.name}</h3>
 
-      <AddGroupToProject projectName={project.name} groups={filteredGroups} refetch={refetch} />
+      <AddGroupToProject projectName={project.name} groups={filteredGroups} refetch={refetch} disabled={cloneFailed} />
 
       <DataTable
         columns={OrgProjectGroupColumns(
           group => (
-            <UnlinkGroup projectName={project.name} group={group} refetch={refetch} />
+            <UnlinkGroup projectName={project.name} group={group} refetch={refetch} disabled={cloneFailed} />
           ),
           organization.name,
           refetch
@@ -174,6 +188,7 @@ export default function OrgProjectPage({
         projectName={project.name}
         allNotifications={allNotifications}
         linkedNotifications={linkedNotifications}
+        disabled={cloneFailed}
       />
 
       <DataTable
@@ -182,6 +197,7 @@ export default function OrgProjectPage({
             notification={notification as Notification}
             projectName={project.name}
             refetch={refetch}
+            disabled={cloneFailed}
           />
         ))}
         data={notifications as Notification[]}
