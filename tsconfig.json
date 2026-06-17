@@ -46,6 +46,7 @@
   "exclude": [
     "node_modules",
     "**/cypress/**",
+    "**/playwright/**",
     "**/*.stories.*",
     "**/*.stories.d.ts",
     // temp - until ui lib is ready
