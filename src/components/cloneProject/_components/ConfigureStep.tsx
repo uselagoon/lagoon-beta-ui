@@ -52,6 +52,7 @@ interface ConfigureStepProps {
   selectedKey: string;
   setSelectedKey: (value: string) => void;
   onKeyAdded?: () => void;
+  keyAdded?: boolean;
   publicGitUrl: boolean;
 }
 
@@ -78,6 +79,7 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
   selectedKey,
   setSelectedKey,
   onKeyAdded,
+  keyAdded,
   publicGitUrl,
 }) => {
   const allChecked = CLONE_OPTIONS_CONFIG.every(({ key }) => options[key]);
@@ -224,13 +226,13 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
                   'Add Key'
                 )}
               </Button>
-              {selectedKey && keyStatus !== 'success' && !sourceProjectHasKey && (
+              {selectedKey && keyStatus !== 'success' && !keyAdded && !sourceProjectHasKey && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <AlertTriangle className="h-5 w-5 text-yellow-500 cursor-help flex-shrink-0" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    You have selected a key but haven&apos;t added it to the project yet. Click &ldquo;Add Key&rdquo; before cloning.
+                    You have selected a key but haven't added it to the project yet. Click "Add Key" before cloning.
                   </TooltipContent>
                 </Tooltip>
               )}
@@ -240,9 +242,9 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
                 This project already has an organization key assigned.
               </p>
             )}
-            {keyStatus === 'success' && (
+            {(keyStatus === 'success' || keyAdded) && (
               <p className="text-sm text-green-600">
-                Key &ldquo;{selectedKeyName}&rdquo; added to {projectName}.
+                Key "{selectedKeyName}" added to {projectName}.
               </p>
             )}
             {keyStatus === 'error' && (
@@ -262,7 +264,7 @@ export const ConfigureStep: FC<ConfigureStepProps> = ({
                 </Tooltip>
               )}
               <Link href={`/organizations/${organizationSlug}/keys`} className="underline">
-                Don&apos;t have an organization key? Create a key here.
+                Don't have an organization key? Create a key here.
               </Link>
             </div>
           </div>

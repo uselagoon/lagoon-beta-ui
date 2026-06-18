@@ -26,7 +26,7 @@ const CloneFailedBanner = ({ status, projectPath = false }: CloneFailedBannerPro
     <div className="flex items-center gap-2 rounded-md border border-destructive/50 px-4 py-2 text-sm text-destructive dark:border-destructive dark:text-red-400">
       <AlertTriangle className="h-4 w-4 shrink-0" />
       <span>
-        <strong>Project cloning {statusText} |</strong>: functionality may be limited
+        <strong>Project cloning {statusText} |</strong> functionality may be limited
       </span>
     </div>
   );

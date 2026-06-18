@@ -208,6 +208,7 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationS
             selectedKey={selectedKey}
             setSelectedKey={setSelectedKey}
             onKeyAdded={() => setKeyAdded(true)}
+            keyAdded={keyAdded}
             publicGitUrl={publicGitUrl}
           />
         )}
