@@ -24,10 +24,11 @@ interface CloneProjectProps {
   onCloned?: (newProjectName: string) => void;
   toggleText?: boolean;
   disabled?: boolean;
+  publicGitUrl: boolean;
   keys: OrganizationKey[];
 }
 
-export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationSlug, refetch, onCloned, toggleText = false, disabled = false, keys = [] }) => {
+export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationSlug, refetch, onCloned, toggleText = false, disabled = false, keys = [], publicGitUrl }) => {
   // TODO: find a better way to manage all this state
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<DialogStep>('configure');
@@ -207,6 +208,8 @@ export const CloneProject: FC<CloneProjectProps> = ({ projectName, organizationS
             selectedKey={selectedKey}
             setSelectedKey={setSelectedKey}
             onKeyAdded={() => setKeyAdded(true)}
+            keyAdded={keyAdded}
+            publicGitUrl={publicGitUrl}
           />
         )}
 

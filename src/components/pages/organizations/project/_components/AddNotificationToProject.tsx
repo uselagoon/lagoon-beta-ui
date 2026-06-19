@@ -26,6 +26,7 @@ type Props = {
   };
 
   refetch?: () => void;
+  disabled?: boolean;
 };
 
 /**
@@ -37,6 +38,7 @@ export const AddNotificationToProject: FC<Props> = ({
   linkedNotifications,
   allNotifications,
   refetch,
+  disabled,
 }) => {
   const [addNotification, { error, loading }] = useMutation(addNotificationToproject, {
     refetchQueries: ['getOrganization'],
@@ -91,6 +93,7 @@ export const AddNotificationToProject: FC<Props> = ({
         sheetFooterButton="Link"
         loading={loading}
         error={!!error}
+        disabled={disabled}
         additionalContent={null}
         sheetFields={[
           {

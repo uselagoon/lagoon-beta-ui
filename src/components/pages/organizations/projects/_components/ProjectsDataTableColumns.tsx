@@ -75,22 +75,23 @@ export const ProjectsDataTableColumns = (
     cell: ({ row }) => {
       const cloneID = row.original?.clone?.id;
       const cloneStatus = row.original?.clone?.status;
-      const removeCloneStatus = new Set(['INCOMPATIBLE_REQUIREMENTS', 'FAILED', 'CANCELLED']);
+      const inactiveCloneStatus = new Set(['INCOMPATIBLE_REQUIREMENTS', 'FAILED', 'CANCELLED', 'COMPLETE']);
+      const publicGitUrl = row.original.gitUrl?.startsWith('http://') ?? false;
       return (
         <div className="flex gap-4 justify-end items-center">
           {projectCloneEnabled && (
             <>
-              {cloneStatus != undefined && cloneStatus != 'COMPLETE' ? (
+              {cloneStatus != undefined && !inactiveCloneStatus.has(cloneStatus) ? (
                 <Tooltip>
                   <TooltipTrigger>
                     {cloneID && <CancelClone cloneID={cloneID} orgID={orgId} cloneStatus={cloneStatus} destProject={row.original.name} onCancel={refetch} />}
                   </TooltipTrigger>
-                  <TooltipContent>{removeCloneStatus.has(cloneStatus) ? 'Remove Clone' : 'Cancel this Clone'}</TooltipContent>
+                  <TooltipContent>Cancel this Clone</TooltipContent>
                 </Tooltip>
               ) : (
                 <Tooltip>
                   <TooltipTrigger>
-                    <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} keys={orgKeys} />
+                    <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} publicGitUrl={publicGitUrl} keys={orgKeys} />
                   </TooltipTrigger>
                   <TooltipContent>Clone this Project</TooltipContent>
                 </Tooltip>

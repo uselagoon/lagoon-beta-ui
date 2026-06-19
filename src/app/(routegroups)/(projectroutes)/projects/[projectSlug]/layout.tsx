@@ -1,4 +1,5 @@
 import CloningInProgressPage from '@/components/errors/CloningInProgressPage';
+import CloneFailedBanner from '@/components/errors/CloneFailedBanner';
 import { getClient } from '@/lib/apolloClient';
 import projectRestrictionsQuery from '@/lib/query/projectRestrictionsQuery';
 
@@ -31,11 +32,18 @@ export default async function ProjectLayout({
 
   const restrictions = data?.project?.restrictions;
   const cloneStatus = data?.project?.clone?.status;
-  const isRestricted = restrictions && restrictions.length > 0;
+  const isRestricted = restrictions && restrictions.length > 0 && !['FAILED', 'CANCELLED', 'COMPLETE'].includes(cloneStatus ?? '');
 
   if (isRestricted) {
     return <CloningInProgressPage projectName={projectSlug} cloneStatus={cloneStatus} />;
   }
 
-  return <>{children}</>;
+  const cloneFailed = cloneStatus === 'FAILED' || cloneStatus === 'CANCELLED';
+
+  return (
+    <>
+      {cloneFailed && <CloneFailedBanner status={cloneStatus as 'FAILED' | 'CANCELLED'} projectPath />}
+      {children}
+    </>
+  );
 }

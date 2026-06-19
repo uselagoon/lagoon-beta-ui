@@ -31,7 +31,7 @@ export default async function OrgProjectLayout({
 
   const restrictions = data?.project?.restrictions;
   const cloneStatus = data?.project?.clone?.status;
-  const isRestricted = restrictions && restrictions.length > 0;
+  const isRestricted = restrictions && restrictions.length > 0 && !['FAILED', 'CANCELLED', 'COMPLETE'].includes(cloneStatus ?? '');
 
   if (isRestricted) {
     return <CloningInProgressPage projectName={projectSlug} cloneStatus={cloneStatus} />;

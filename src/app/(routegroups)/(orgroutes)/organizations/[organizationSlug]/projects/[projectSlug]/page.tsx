@@ -44,6 +44,7 @@ export interface OrganizationProjectData {
       id: number;
       status: string;
     } | null;
+    gitUrl: string;
   };
 }
 

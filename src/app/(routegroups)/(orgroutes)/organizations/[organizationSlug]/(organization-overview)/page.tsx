@@ -29,6 +29,7 @@ export type OrgProject = {
     status: string;
   };
   organizationKey?: number;
+  gitUrl: string;
 };
 
 export type OrgGroup = {
