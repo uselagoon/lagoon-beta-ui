@@ -15,15 +15,14 @@ interface CancelCloneProps {
 
 export const CancelClone = (props: CancelCloneProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const removeCloneStatus = new Set(['INCOMPATIBLE_REQUIREMENTS', 'FAILED', 'CANCELLED']);
 
     const [cancelProjectClone, { data, loading }] = useMutation(cancelProjectCloneMutation, {
       onCompleted: () => {
-        toast.success(removeCloneStatus.has(props.cloneStatus) ? 'Clone removed successfully' : 'Clone cancelled successfully');
+        toast.success('Clone cancelled successfully');
       },
       onError: (error) => {
         console.error('Error cancelling clone:', error);
-        toast.error(removeCloneStatus.has(props.cloneStatus) ? 'Failed to remove clone' : 'Failed to cancel clone');
+        toast.error('Failed to cancel clone');
       },
     });
     const handleCancel = async () => {
@@ -48,14 +47,14 @@ export const CancelClone = (props: CancelCloneProps) => {
       
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{removeCloneStatus.has(props.cloneStatus) ? 'Remove Clone' : 'Cancel Clone'}</DialogTitle>
+          <DialogTitle>Cancel Clone</DialogTitle>
           <DialogDescription>
-              Are you sure you want to {removeCloneStatus.has(props.cloneStatus) ? 'remove' : 'cancel'} the clone process for {props.destProject}? This action cannot be undone.
+              Are you sure you want to cancel the clone process for {props.destProject}? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button variant="destructive" onClick={handleCancel} disabled={loading}>
-            {removeCloneStatus.has(props.cloneStatus) ? 'Remove Clone' : 'Cancel Clone'}
+            Cancel Clone
           </Button>
         </DialogFooter>
       </DialogContent>
