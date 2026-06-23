@@ -1,8 +1,7 @@
 import type { Page, Locator } from '@playwright/test';
 
 export const getBySel = (page: Page, selector: string): Locator =>
-  page.locator(`[data-testid="${selector}"]`);
-
+  page.getByTestId(selector);
 
 export const nav = {
   toProjects:      (page: Page) => page.goto('/projects'),
@@ -18,8 +17,10 @@ export const nav = {
     page.goto(`/projects/${project}/${env}/tasks`),
   toBackups:       (page: Page, project: string, env: string) =>
     page.goto(`/projects/${project}/${env}/backups`),
+  toEnvVariables:  (page: Page, project: string, env: string) =>
+    page.goto(`/projects/${project}/${env}/environment-variables`),
   toVariables:     (page: Page, project: string, env: string) =>
-    page.goto(`/projects/${project}/${env}/variables`),
+    page.goto(`/projects/${project}/${env}/environment-variables`),
 };
 
 export async function validateSession(page: Page): Promise<Record<string, unknown>> {
@@ -43,12 +44,12 @@ export const waitForToast = (page: Page, text?: string | RegExp) => {
 };
 
 export const confirmModal = (page: Page) =>
-  getBySel(page, 'modal-confirm').click();
+  page.getByTestId('modal-confirm').click();
 
 export const cancelModal = (page: Page) =>
-  getBySel(page, 'modal-cancel').click();
+  page.getByTestId('modal-cancel').click();
 
 export async function confirmDelete(page: Page, confirmText: string) {
-  await getBySel(page, 'delete-confirm').fill(confirmText);
+  await page.getByTestId('delete-confirm').fill(confirmText);
   await confirmModal(page);
 }
