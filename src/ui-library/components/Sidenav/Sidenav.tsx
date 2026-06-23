@@ -217,12 +217,12 @@ export default function Sidenav({ userInfo, appInfo, currentPath, sidenavItems, 
 																}
 															>
 																<Link
+																	data-testid={`nav-${sectionItem.url.slice(1)}`}
 																	onClick={async () => {
 																		action && (await action());
 																	}}
 																	href={sectionItem.url}
 																	target={newTab ? '_blank' : '_self'}
-																	data-testid={`nav-${sectionItem.url.slice(1)}`}
 																	className="flex w-full gap-2"
 																>
 																	<div className="flex items-center gap-2">

@@ -3,13 +3,13 @@ import Link from 'next/link';
 import { SignOutBtn } from './auth/SignOut';
 
 export const navLinks = [
-  <Link key="projects" data-cy="nav-projects" href="/projects">
+  <Link key="projects" data-testid="nav-projects" href="/projects">
     Projects
   </Link>,
-  <Link key="organizations" data-cy="nav-organizations" href="/organizations">
+  <Link key="organizations" data-testid="nav-organizations" href="/organizations">
     Organizations
   </Link>,
-  <Link key="alldeployments" data-cy="nav-deployments" href="/alldeployments">
+  <Link key="alldeployments" data-testid="nav-deployments" href="/alldeployments">
     All Deployments
   </Link>,
 ];
@@ -18,7 +18,7 @@ export const getUserMenuItems = (kcUrl: string) => {
   return [
     {
       label: (
-        <Link data-cy="nav-settings" href="/settings">
+        <Link data-testid="nav-settings" href="/settings">
           Settings
         </Link>
       ),
@@ -26,7 +26,7 @@ export const getUserMenuItems = (kcUrl: string) => {
     },
     {
       label: (
-        <Link data-cy="nav-account" target="_blank" href={`${kcUrl}/account`} key="account">
+        <Link data-testid="nav-account" target="_blank" href={`${kcUrl}/account`} key="account">
           Your account
         </Link>
       ),

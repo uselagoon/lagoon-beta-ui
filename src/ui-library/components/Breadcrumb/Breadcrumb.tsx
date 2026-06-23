@@ -45,7 +45,7 @@ const UIBreadcrumb: FC<UIBreadcrumbProps> = ({ activeKey, items, type, currentSl
 	}
 
 	return (
-		<Breadcrumb className="mb-8 text-sm" data-cy="page-title">
+		<Breadcrumb className="mb-8 text-sm" data-testid="page-title">
 			<BreadcrumbList>
 				{items.map((item, idx) => {
 					const key = 'key' in item ? item.key : idx;
