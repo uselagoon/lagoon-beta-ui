@@ -30,6 +30,7 @@ type Organization = {
   teams: OrgTeams[];
   webhook: OrgWebhook[];
   emails: OrgEmail[];
+  featureProjectClone: boolean;
 };
 
 export interface OrganizationProjectData {
@@ -39,6 +40,11 @@ export interface OrganizationProjectData {
     name: string;
     groups: OrgGroup[];
     notifications: { name: string; type: string }[];
+    clone: {
+      id: number;
+      status: string;
+    } | null;
+    gitUrl: string;
   };
 }
 

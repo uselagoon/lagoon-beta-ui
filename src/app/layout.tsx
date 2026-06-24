@@ -10,6 +10,7 @@ import { ApolloClientComponentWrapper } from '@/lib/apollo-client-components';
 import ClientSessionWrapper from '../components/auth/ClientSessionWrapper';
 import AppProvider from '../contexts/AppContext';
 import AuthProvider from '../contexts/AuthProvider';
+import { CloneStatusProvider } from '../contexts/CloneStatusContext';
 import LinkProvider from '../contexts/LinkProvider';
 import './globals.css';
 import fs from 'fs';
@@ -86,7 +87,9 @@ export default async function RootLayout({
                   <RefreshTokenHandler />
                   <ClientSessionWrapper>
                     <ApolloClientComponentWrapper>
-                      <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER!}>{children}</AppProvider>
+                      <CloneStatusProvider>
+                        <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER!}>{children}</AppProvider>
+                      </CloneStatusProvider>
                     </ApolloClientComponentWrapper>
                   </ClientSessionWrapper>
                   <ExtensionZoneRenderer zone="global-footer" />

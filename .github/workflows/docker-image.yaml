@@ -56,7 +56,7 @@ jobs:
       - name: Set publish mode
         id: publish
         run: |
-          if [[ "${{ github.event_name }}" == "push" ]]; then
+          if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "pull_request" ]]; then
             echo "publish=true" >> "$GITHUB_OUTPUT"
           else
             echo "publish=false" >> "$GITHUB_OUTPUT"
@@ -125,6 +125,7 @@ jobs:
             type=edge,suffix=-${{ matrix.arch }},enable={{is_default_branch}}
             type=raw,value=${{ needs.prepare.outputs.docker_tag }},suffix=-${{ matrix.arch }},enable={{is_default_branch}}
             type=ref,event=tag,suffix=-${{ matrix.arch }}
+            type=ref,event=pr,suffix=-${{ matrix.arch }}
             type=ref,event=branch,suffix=-${{ matrix.arch }}
 
       - name: Build arch image
@@ -191,6 +192,7 @@ jobs:
             type=edge,enable={{is_default_branch}}
             type=raw,value=${{ needs.prepare.outputs.docker_tag }},enable={{is_default_branch}}
             type=ref,event=tag
+            type=ref,event=pr
             type=ref,event=branch
 
       - name: Create and push multi-arch manifests

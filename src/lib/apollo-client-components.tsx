@@ -3,13 +3,14 @@
 import { useSession } from 'next-auth/react';
 import { useEnvContext } from '@/contexts/EnvContext';
 
-import { ApolloLink, HttpLink, ServerError } from '@apollo/client';
+import { ApolloLink, HttpLink, ServerError, FetchResult, Observable, Operation } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { ApolloClient, ApolloNextAppProvider, InMemoryCache } from '@apollo/experimental-nextjs-app-support';
-import { createClient } from 'graphql-ws';
+import { createClient } from 'graphql-sse';
+import { print } from 'graphql';
 import manualSignOut from 'utils/manualSignOut';
 
 /*
@@ -21,7 +22,7 @@ import manualSignOut from 'utils/manualSignOut';
 */
 function makeClient(
   GRAPHQL_API: string,
-  WEBSOCKET_URI: string,
+  SSE_URI: string,
   disableSubscriptions: boolean,
   getAccessToken: () => string | null
 ) {
@@ -55,37 +56,49 @@ function makeClient(
     }
   });
 
-  const HttpWebsocketLink = () => {
+  const HttpSseLink = () => {
     if (disableSubscriptions) {
       return httpLink;
     }
-    const wsLink = new GraphQLWsLink(
-      createClient({
-        url: WEBSOCKET_URI,
-        lazy: disableSubscriptions,
-        shouldRetry: () => true,
-        retryAttempts: 3,
-        connectionParams: async () => {
-          const token = getAccessToken();
 
-          if (!token) {
-            return {};
-          }
-          return {
-            headers: {
-              authorization: `Bearer ${token}`,
-            },
-          };
-        },
-      })
-    );
+    class SSELink extends ApolloLink {
+      private sseClient;
+
+      constructor() {
+        super();
+        this.sseClient = createClient({
+          url: SSE_URI,
+          // todo: fetch a new token on reconnect
+          retryAttempts: 3,
+          headers: async () => {
+            const response = await fetch('/api/auth/session');
+            const data = response.ok ? await response.json() : null;
+            if (!data?.access_token) return {} as Record<string, string>;
+            return { authorization: `Bearer ${data.access_token}` };
+          },
+        });
+      }
+
+      public request(operation: Operation): Observable<FetchResult> {
+        return new Observable((sink) => {
+          return this.sseClient.subscribe<Record<string, any>>(
+            { ...operation, query: print(operation.query) },
+            {
+              next: sink.next.bind(sink) as any,
+              complete: sink.complete.bind(sink),
+              error: sink.error.bind(sink),
+            }
+          );
+        });
+      }
+    }
 
     return ApolloLink.split(
       ({ query }) => {
         let definition = getMainDefinition(query);
         return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
       },
-      wsLink,
+      new SSELink(),
       httpLink
     );
   };
@@ -133,7 +146,7 @@ function makeClient(
       ApolloLink.from([
         errorLink,
         // disable websockets when rendering server side.
-        typeof window === 'undefined' ? httpLink : HttpWebsocketLink(),
+        typeof window === 'undefined' ? httpLink : HttpSseLink(),
       ])
     ),
   });
@@ -146,14 +159,14 @@ export function ApolloClientComponentWrapper({ children }: React.PropsWithChildr
 
   const { GRAPHQL_API, DISABLE_SUBSCRIPTIONS } = useEnvContext();
 
-  const ws_uri = GRAPHQL_API!.replace(/https/, 'wss').replace(/http/, 'ws');
+  const sse_uri = GRAPHQL_API!.replace(/\/?$/, '/stream');
   const disableSubs = DISABLE_SUBSCRIPTIONS?.toLowerCase() === 'true';
 
   if (status === 'loading' || !session) {
     return null;
   }
 
-  const client = makeClient(GRAPHQL_API!, ws_uri, disableSubs, () => session?.access_token ?? null);
+  const client = makeClient(GRAPHQL_API!, sse_uri, disableSubs, () => session?.access_token ?? null);
 
   // dynamically updating access_token: https://github.com/apollographql/apollo-client-nextjs/issues/103#issuecomment-1790941212
   client.defaultContext.token = session?.access_token;
