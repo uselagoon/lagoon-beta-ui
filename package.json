@@ -129,14 +129,16 @@
     "postcss": "^8.5.10",
     "qs": "^6.15.0",
     "ws": ">=8.21.0",
-    "js-yaml": ">=4.2.0"
+    "js-yaml": ">=4.2.0",
+    "@babel/core": ">=7.29.6 <8"
   },
   "overrides": {
     "string-width": "4.2.3",
     "axios": "^1.13.6",
     "qs": "^6.15.0",
     "ws": ">=8.21.0",
-    "js-yaml": ">=4.2.0"
+    "js-yaml": ">=4.2.0",
+    "@babel/core": ">=7.29.6 <8"
   },
   "msw": {
     "workerDirectory": [
