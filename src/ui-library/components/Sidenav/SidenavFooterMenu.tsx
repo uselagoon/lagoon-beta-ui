@@ -30,7 +30,7 @@ export default function SidenavFooterMenu({ email, kcUrl, signOutFn, avatar, use
 	return (
 		<DropdownMenu modal={false}>
 			<section className="flex items-center gap-1 pl-1">
-				<DropdownMenuTrigger className="w-full">
+				<DropdownMenuTrigger data-testid="user-menu-trigger" className="w-full">
 					<SidebarMenuButton size="lg" className="w-full">
 						{renderAvatar()}
 						<ChevronsUpDown className="ml-auto h-4 w-4" />
@@ -61,7 +61,7 @@ export default function SidenavFooterMenu({ email, kcUrl, signOutFn, avatar, use
 					</DropdownMenuItem>
 				)}
 				<DropdownMenuItem asChild onClick={() => signOutFn()}>
-					<div onClick={() => signOutFn()} className="flex items-center w-full cursor-pointer">
+					<div data-testid="sign-out" onClick={() => signOutFn()} className="flex items-center w-full cursor-pointer">
 						<LogOut className="mr-2 h-4 w-4" />
 						Sign Out
 					</div>

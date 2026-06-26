@@ -29,7 +29,7 @@ export const createLinks = (routes: string | null) => {
   if (!routes || routes === 'undefined') return;
 
   return routes.split(',').map(route => (
-    <a href={route} target="_blank" key={route}>
+    <a href={route} target="_blank" key={route} data-testid="route-link">
       {route}
     </a>
   ));
@@ -151,12 +151,11 @@ export default function EnvironmentPage({
       ? [
           {
             children: (
-              <a
-                className="break-words text-inherit lowercase underline"
-                data-cy="source"
-                target="_blank"
-                href={`https://${gitBranchLink}`}
-              >
+                <a
+                  className="break-words text-inherit lowercase underline"
+                  target="_blank"
+                  href={`https://${gitBranchLink}`}
+                >
                 {gitBranchLink}
               </a>
             ),

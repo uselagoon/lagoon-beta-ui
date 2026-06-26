@@ -94,11 +94,11 @@ const CopyToClipboard: React.FC<ClipboardProps> = ({
 			<div className="flex items-center gap-3">
 				{!copied ? (
 					<>
-						<Copy
-							className="w-4 h-4 text-muted-foreground dark:hover:text-gray-100 hover:text-black transition-colors active:text-gray-300 cursor-pointer"
-							data-cy="copy-button"
-							onClick={handleCopy}
-						/>
+					<Copy
+						className="w-4 h-4 text-muted-foreground dark:hover:text-gray-100 hover:text-black transition-colors active:text-gray-300 cursor-pointer"
+					data-testid="copy-button"
+						onClick={handleCopy}
+					/>
 						{type === 'hiddenWithIcon' &&
 							(manualUnblur ? (
 								<EyeOff

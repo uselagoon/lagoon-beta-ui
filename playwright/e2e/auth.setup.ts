@@ -1,10 +1,20 @@
 import { test as setup } from '@playwright/test';
+import { existsSync, statSync } from 'fs';
 import path from 'path';
 import { env } from '../support/test-helpers';
 
 const authDir = path.join(__dirname, '../.auth');
 
+const MAX_AGE_MS = 8 * 60 * 60 * 1000;
+
+function authFileValid(filePath: string): boolean {
+  if (!existsSync(filePath)) return false;
+  return Date.now() - statSync(filePath).mtimeMs < MAX_AGE_MS;
+}
+
 async function authenticate(page: import('@playwright/test').Page, username: string, authFile: string): Promise<void> {
+  if (authFileValid(authFile)) return;
+
   const password = username;
   await page.goto(env.url);
 

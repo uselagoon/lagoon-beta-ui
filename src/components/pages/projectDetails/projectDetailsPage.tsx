@@ -36,7 +36,7 @@ export default function ProjectDetailsPage(props: ProjectDetailsProps) {
       children: (
         <a
           className="break-words text-lg lowercase hover:underline"
-          data-cy="gitLink"
+          data-testid="git-link"
           target="_blank"
           href={`https://${gitLink}`}
         >
