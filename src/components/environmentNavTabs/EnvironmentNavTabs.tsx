@@ -31,7 +31,7 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
           {
             key: 'overview',
             label: (
-              <Link data-testid="nav-env-overview" href={`/projects/${projectSlug}/${environmentSlug}`}>
+              <Link href={`/projects/${projectSlug}/${environmentSlug}`}>
                 <LinkContentWrapper>Overview</LinkContentWrapper>
               </Link>
             ),
@@ -39,7 +39,7 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
           {
             key: 'deployments',
             label: (
-              <Link data-testid="nav-env-deployments" href={`/projects/${projectSlug}/${environmentSlug}/deployments`}>
+              <Link href={`/projects/${projectSlug}/${environmentSlug}/deployments`}>
                 <LinkContentWrapper>Deployments</LinkContentWrapper>
               </Link>
             ),
@@ -47,7 +47,7 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
           {
             key: 'backups',
             label: (
-              <Link data-testid="nav-backups" href={`/projects/${projectSlug}/${environmentSlug}/backups`}>
+              <Link href={`/projects/${projectSlug}/${environmentSlug}/backups`}>
                 <LinkContentWrapper>Backups</LinkContentWrapper>
               </Link>
             ),
@@ -56,7 +56,7 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
           {
             key: 'tasks',
             label: (
-              <Link data-testid="nav-tasks" href={`/projects/${projectSlug}/${environmentSlug}/tasks`}>
+              <Link href={`/projects/${projectSlug}/${environmentSlug}/tasks`}>
                 <LinkContentWrapper>Tasks</LinkContentWrapper>
               </Link>
             ),
@@ -65,7 +65,7 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
           {
             key: 'routes',
             label: (
-              <Link data-testid="nav-routes" href={`/projects/${projectSlug}/${environmentSlug}/routes`}>
+              <Link href={`/projects/${projectSlug}/${environmentSlug}/routes`}>
                 <LinkContentWrapper>Routes</LinkContentWrapper>
               </Link>
             ),
@@ -76,7 +76,7 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
                 {
                   key: 'problems',
                   label: (
-                    <Link data-testid="nav-problems" href={`/projects/${projectSlug}/${environmentSlug}/problems`}>
+                    <Link href={`/projects/${projectSlug}/${environmentSlug}/problems`}>
                       <div className="inline-flex gap-1">
                         Problems
                         {loading ? (
@@ -98,7 +98,7 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
                 {
                   key: 'insights',
                   label: (
-                    <Link data-testid="nav-insights" href={`/projects/${projectSlug}/${environmentSlug}/insights`}>
+                    <Link href={`/projects/${projectSlug}/${environmentSlug}/insights`}>
                       <LinkContentWrapper>Insights</LinkContentWrapper>
                     </Link>
                   ),
@@ -110,7 +110,6 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
             key: 'environment-variables',
             label: (
               <Link
-                data-testid="nav-env-variables"
                 href={`/projects/${projectSlug}/${environmentSlug}/environment-variables`}
               >
                 <LinkContentWrapper>Variables</LinkContentWrapper>

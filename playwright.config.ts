@@ -8,13 +8,10 @@ const authDir = path.resolve('playwright/.auth');
 export default defineConfig({
   testDir: './playwright/e2e',
 
-  // Fail the build on CI if any test.only is left in source
   forbidOnly: !!process.env.CI,
 
-  // Retry once on CI to reduce flakiness from async state
   retries: process.env.CI ? 1 : 0,
 
-  // Run specs in parallel; auth setup must be serial (handled via dependsOn)
   workers: process.env.CI ? 2 : undefined,
 
   reporter: [['html', { open: 'never' }], ['list']],
@@ -25,23 +22,19 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     video: 'on-first-retry',
 
-    // Match Cypress timeouts
     actionTimeout: 8_000,
     navigationTimeout: 15_000,
 
-    // Allow cross-origin requests (mirrors chromeWebSecurity: false in Cypress)
     ignoreHTTPSErrors: true,
   },
 
   projects: [
-    // ─── Auth setup ──────────────────────────────────────────────────────────
     {
       name: 'setup',
       testMatch: '**/auth.setup.ts',
       use: { ...devices['Desktop Chrome'] },
     },
 
-    // ─── General tests (authenticated as owner) ───────────────────────────────
     {
       name: 'general',
       testMatch: 'playwright/e2e/general/**/*.spec.ts',
@@ -52,7 +45,6 @@ export default defineConfig({
       },
     },
 
-    // ─── Organizations tests (authenticated as platformowner) ─────────────────
     {
       name: 'organizations',
       testMatch: 'playwright/e2e/organizations/**/*.spec.ts',
@@ -63,7 +55,6 @@ export default defineConfig({
       },
     },
 
-    // ─── RBAC: general roles ──────────────────────────────────────────────────
     {
       name: 'rbac-guest',
       testMatch: 'playwright/e2e/rbac/guest.spec.ts',
@@ -101,7 +92,6 @@ export default defineConfig({
       },
     },
 
-    // ─── RBAC: organization roles ─────────────────────────────────────────────
     {
       name: 'rbac-orgadmin',
       testMatch: 'playwright/e2e/rbac/organizations/orgAdmin.spec.ts',
@@ -121,7 +111,6 @@ export default defineConfig({
       },
     },
 
-    // ─── RBAC: multi-user org owner journey (no shared storageState) ──────────
     {
       name: 'rbac-org-owners',
       testMatch: 'playwright/e2e/rbac/organizations/platformAndOrgOwnerJourney.spec.ts',
