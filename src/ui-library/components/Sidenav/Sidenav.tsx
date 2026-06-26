@@ -88,7 +88,7 @@ const renderSidenavChildren = (
 				return (
 					<SidebarMenuItem key={child.title}>
 						<SidebarMenuButton asChild isActive={isActive}>
-							<Link href={child.url} className={`${!child.icon ? 'ml-4' : ''}`}>
+							<Link data-testid={`nav-${child.title.toLowerCase().replace(/\s+/g, '-')}`} href={child.url} className={`${!child.icon ? 'ml-4' : ''}`}>
 								<div className="flex items-center gap-2">
 									{child.icon && <child.icon />}
 									<span>{child.title}</span>

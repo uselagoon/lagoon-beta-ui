@@ -30,7 +30,8 @@
     "playwright:runGeneral": "playwright test --project=general",
     "playwright:runOrganizations": "playwright test --project=organizations",
     "playwright:runRbac": "playwright test --project=rbac-guest --project=rbac-reporter --project=rbac-developer --project=rbac-maintainer --project=rbac-orgadmin --project=rbac-orgviewer --project=rbac-org-owners",
-    "playwright:report": "playwright show-report"
+    "playwright:report": "playwright show-report",
+    "playwright:auth": "rimraf playwright/.auth && playwright test --project=setup"
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",

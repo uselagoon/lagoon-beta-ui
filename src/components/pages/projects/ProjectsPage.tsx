@@ -68,6 +68,7 @@ export default function ProjectsPage({ data }: { data: ProjectsData }) {
               width={100}
               value={String(results)}
               placeholder="Results per page"
+              data-testid="results-per-page"
               onValueChange={newVal => {
                 table.setPageSize(Number(newVal));
                 setResults(newVal);

@@ -194,20 +194,21 @@ export default function DataTable<TData, TValue>({
 
 			{disableExtra ? null : (
 				<div className="flex items-end justify-between py-4">
-					<DebouncedInput
-						ref={searchInputRef}
-						debounce={timerLengthPercentage}
-						label=""
-						placeholder={searchPlaceholder ?? 'Start typing to search'}
-						value={globalFilter ?? ''}
-						onChange={(value) => {
-							onSearch && onSearch(value);
-							// don't trigger filtering with empty data
-							if (loading) return;
-							setGlobalFilter(value);
-						}}
-						className="max-w-sm"
-					/>
+				<DebouncedInput
+					ref={searchInputRef}
+					data-testid="search-input"
+					debounce={timerLengthPercentage}
+					label=""
+					placeholder={searchPlaceholder ?? 'Start typing to search'}
+					value={globalFilter ?? ''}
+					onChange={(value) => {
+						onSearch && onSearch(value);
+						// don't trigger filtering with empty data
+						if (loading) return;
+						setGlobalFilter(value);
+					}}
+					className="max-w-sm"
+				/>
 					{/** render out custom filters */}
 					{renderFilters && renderFilters(table)}
 				</div>
@@ -247,12 +248,13 @@ export default function DataTable<TData, TValue>({
 						{table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => {
 								return (
-									<TableRow
-										onClick={(e) => handleRowClick(e, row)}
-										className="py-6"
-										key={row.id}
-										data-state={row.getIsSelected() && 'selected'}
-									>
+								<TableRow
+									onClick={(e) => handleRowClick(e, row)}
+									className="py-6"
+									key={row.id}
+									data-state={row.getIsSelected() && 'selected'}
+									data-testid="table-row"
+								>
 										{row.getVisibleCells().map((visibleCell) => {
 											const isSorted = visibleCell.column.id === sortedColumnId;
 											const tdInitialWidth = visibleCell.column.getSize();
@@ -278,11 +280,11 @@ export default function DataTable<TData, TValue>({
 								);
 							})
 						) : (
-							<TableRow>
-								<TableCell colSpan={columns.length} className="h-48 text-center">
-									No entries
-								</TableCell>
-							</TableRow>
+						<TableRow>
+							<TableCell colSpan={columns.length} className="h-48 text-center" data-testid="empty-state">
+								No entries
+							</TableCell>
+						</TableRow>
 						)}
 					</TableBody>
 				</Table>
