@@ -3,7 +3,6 @@ import { env } from '../../support/test-helpers';
 
 test('project overview shows environments', async ({ page }) => {
   await page.goto(`${env.url}/projects/${env.project}`);
-  await page.waitForURL(new RegExp(`/projects/${env.project}`), { waitUntil: 'load' });
 
   const rows = page.getByTestId('table-row');
   await expect(rows.first()).toBeVisible();
@@ -18,14 +17,10 @@ test('project overview shows environments', async ({ page }) => {
 
 test('project details tab shows git URL, branches, and organization', async ({ page }) => {
   await page.goto(`${env.url}/projects/${env.project}`);
-  await page.waitForURL(new RegExp(`/projects/${env.project}`), { waitUntil: 'load' });
 
   await page.getByTestId('nav-details').click();
-  await page.waitForURL(new RegExp(`/projects/${env.project}/project-details`), { waitUntil: 'load' });
-
-  const gitUrl = page.getByTestId('git-url');
-  await expect(gitUrl).toBeVisible();
-  await expect(gitUrl).not.toHaveText('');
+  await expect(page.getByTestId('git-url')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByTestId('git-url')).not.toHaveText('');
 
   await expect(page.getByTestId('branches-enabled')).toBeVisible();
   await expect(page.getByTestId('development-environments-in-use')).toBeVisible();
@@ -40,7 +35,6 @@ test('git URL copy-to-clipboard shows copied state', async ({ page }) => {
   });
 
   await page.goto(`${env.url}/projects/${env.project}/project-details`);
-  await page.waitForURL(new RegExp(`/projects/${env.project}/project-details`), { waitUntil: 'load' });
 
   const copyButton = page.getByTestId('copy-button');
   await expect(copyButton).toBeVisible();

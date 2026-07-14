@@ -24,7 +24,6 @@ export const SEED = {
     staging:    'lagoon-demo-staging',
   },
   deploymentSlug: 'lagoon-build-7g8h9i',
-  taskSlug:       'lagoon-task-u4wuzm',
 } as const;
 
 export const variables = {
