@@ -89,7 +89,7 @@ export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<Ta
 
   const [getFilesDownload, { loading, error }] = useLazyQuery<GetTaskFilesDownloadData>(getTaskFilesDownload, {
     variables: {
-      taskName: currentTask.taskName,
+      taskName: currentTask?.taskName,
     },
     fetchPolicy: 'network-only',
     onCompleted: data => {
@@ -191,7 +191,7 @@ export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<Ta
         <div className="flex gap-4">
           <Switch
             label="View parsed"
-            data-cy="logviewer-toggle"
+            data-testid="logviewer-toggle"
             checked={showParsed}
             onCheckedChange={checked => handleShowParsed(checked)}
             id=""
