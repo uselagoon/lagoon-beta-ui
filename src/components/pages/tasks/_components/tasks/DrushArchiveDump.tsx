@@ -50,7 +50,7 @@ const DrushArchiveDump: FC<Props> = ({ environment, refetch }) => {
           ]}
         />
 
-        <Button className="max-w-max" data-cy="task-btn" disabled={loading} onClick={handleTask}>
+        <Button className="max-w-max" data-testid="task-btn" disabled={loading} onClick={handleTask}>
           {loading && <Loader2 className="animate-spin" />}
           Run task
         </Button>

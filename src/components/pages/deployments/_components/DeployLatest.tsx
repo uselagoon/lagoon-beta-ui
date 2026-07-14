@@ -72,7 +72,7 @@ const DeployLatestData: React.FC<Props> = ({ environment }) => {
           <div className="description text-sm leading-[1.375rem]">
             Manual deployments are not available for this environment.
           </div>
-          <Button data-cy="deploy-button" disabled>
+          <Button data-testid="deploy-button" disabled>
             Deploy
           </Button>
         </>
@@ -84,7 +84,7 @@ const DeployLatestData: React.FC<Props> = ({ environment }) => {
             {deployType === 'promote' &&
               `Start a new deployment from environment ${environment.project.name}-${deployBaseRef}.`}
           </div>
-          <Button data-cy="deploy-button" disabled={loading} onClick={() => deployEnvironmentLatestMutation()}>
+          <Button data-testid="deploy-button" disabled={loading} onClick={() => deployEnvironmentLatestMutation()}>
             {loading && <Loader2 className="animate-spin" />} Deploy
           </Button>
         </>

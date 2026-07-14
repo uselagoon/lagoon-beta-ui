@@ -27,6 +27,7 @@ import SelectWithOptions from '../Select';
 
 type LibColumnDef<TData, TValue = unknown> = ColumnDef<TData, TValue> & {
 	width?: string;
+	testId?: string;
 };
 export interface DataTableProps<TData, TValue> {
 	columns: LibColumnDef<TData, TValue>[];
@@ -224,10 +225,12 @@ export default function DataTable<TData, TValue>({
 										const isSorted = header.column.id === sortedColumnId;
 										const thInitialWidth = header.column.getSize();
 										const thWidth = (header.column.columnDef as LibColumnDef<TData, TValue>)?.width || thInitialWidth;
-
+										const testId = (header.column.columnDef as LibColumnDef<TData, TValue>)?.testId ?? header.column.id;
+										
 										return (
 											<TableHead
 												key={header.id}
+												data-testid={`table-header-${testId}`}
 												className={cn('transition-colors py-1', isSorted && 'bg-gray-100 dark:bg-gray-700')}
 												style={{ width: thWidth }}
 											>

@@ -2,7 +2,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
 
-const BASE_URL = process.env.PW_BASE_URL ?? 'http://0.0.0.0:3003';
+const BASE_URL = process.env.PW_BASE_URL ?? 'http://172.17.0.1:3003';
 const authDir = path.resolve('playwright/.auth');
 
 export default defineConfig({
@@ -20,7 +20,7 @@ export default defineConfig({
     baseURL: BASE_URL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'on-first-retry',
+    video: 'retain-on-failure',
 
     actionTimeout: 8_000,
     navigationTimeout: 15_000,
