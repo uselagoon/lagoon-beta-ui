@@ -45,8 +45,20 @@ test.describe('Authenticated user UI', () => {
     await page.getByTestId('theme-toggle').click();
     await expect.poll(() => page.evaluate(() => localStorage.getItem('theme'))).toBe(before ?? 'light');
   });
+});
 
-  test('user can log out; session invalidated; /projects redirects to login', async ({ page }) => {
+test.describe('Logout flow', () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test('logged-out user is redirected to Keycloak when accessing /projects', async ({ page }) => {
+    await page.goto(env.url);
+    await page.fill('#username', env.user_owner);
+    await page.click('#kc-login', { timeout: 60000 });
+    await page.waitForSelector('#password', { state: 'visible' });
+    await page.fill('#password', env.user_owner);
+    await page.click('#kc-login', { timeout: 60000 });
+    await page.waitForURL(/\/projects/, { waitUntil: 'load' });
+
     await page.getByTestId('user-menu-trigger').click();
     const signOut = page.getByTestId('sign-out');
     await expect(signOut).toBeVisible();

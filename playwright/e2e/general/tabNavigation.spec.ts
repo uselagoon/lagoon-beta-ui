@@ -8,28 +8,38 @@ test.describe('Environment sub-tab navigation', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto(`${env.url}${base}`);
-    await page.waitForURL(new RegExp(base), { waitUntil: 'load' });
+    await expect(page.getByTestId('route-link').first()).toBeVisible();
   });
 
   test('each environment tab navigates to the correct URL and renders content', async ({ page }) => {
-    await page.getByTestId('nav-deployments').click();
-    await page.waitForURL(new RegExp(`${base}/deployments`), { waitUntil: 'load' });
-    await expect(page).toHaveURL(new RegExp(`${base}/deployments`));
+    await expect(async () => {
+      await page.getByTestId('nav-deployments').click();
+      await expect(page).toHaveURL(`${env.url}${base}/deployments`);
+    }).toPass({ timeout: 30_000 });
+    await expect(page.getByTestId('deploy-button')).toBeVisible();
 
-    await page.getByTestId('nav-backups').click();
-    await page.waitForURL(new RegExp(`${base}/backups`), { waitUntil: 'load' });
-    await expect(page).toHaveURL(new RegExp(`${base}/backups`));
+    await expect(async () => {
+      await page.getByTestId('nav-backups').click();
+      await expect(page).toHaveURL(`${env.url}${base}/backups`);
+    }).toPass({ timeout: 30_000 });
+    await expect(page.getByTestId('table-row').first()).toBeVisible();
 
-    await page.getByTestId('nav-tasks').click();
-    await page.waitForURL(new RegExp(`${base}/tasks`), { waitUntil: 'load' });
-    await expect(page).toHaveURL(new RegExp(`${base}/tasks`));
+    await expect(async () => {
+      await page.getByTestId('nav-tasks').click();
+      await expect(page).toHaveURL(`${env.url}${base}/tasks`);
+    }).toPass({ timeout: 30_000 });
+    await expect(page.getByTestId('task-select')).toBeVisible();
 
-    await page.getByTestId('nav-variables').and(page.locator('[href*="environment-variables"]')).click();
-    await page.waitForURL(new RegExp(`${base}/environment-variables`), { waitUntil: 'load' });
-    await expect(page).toHaveURL(new RegExp(`${base}/environment-variables`));
+    await expect(async () => {
+      await page.getByTestId('nav-variables').and(page.locator('[href*="environment-variables"]')).click();
+      await expect(page).toHaveURL(`${env.url}${base}/environment-variables`);
+    }).toPass({ timeout: 30_000 });
+    await expect(page.getByRole('heading', { name: 'Environment variables' })).toBeVisible();
 
-    await page.getByTestId('nav-overview').click();
-    await page.waitForURL(new RegExp(`${base}$`), { waitUntil: 'load' });
-    await expect(page).toHaveURL(new RegExp(`${base}$`));
+    await expect(async () => {
+      await page.getByTestId('nav-overview').click();
+      await expect(page).toHaveURL(`${env.url}${base}`);
+    }).toPass({ timeout: 30_000 });
+    await expect(page.getByTestId('route-link').first()).toBeVisible();
   });
 });

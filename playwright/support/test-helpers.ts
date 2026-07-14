@@ -1,5 +1,5 @@
 export const env = {
-  url:      process.env.PW_BASE_URL      ?? 'http://0.0.0.0:3003',
+  url:      process.env.PW_BASE_URL      ?? 'http://172.17.0.1:3003',
   api:      process.env.PW_GRAPHQL_API   ?? 'http://0.0.0.0:3000/graphql',
   keycloak: process.env.PW_KEYCLOAK_URL  ?? 'http://172.17.0.1:8088',
 

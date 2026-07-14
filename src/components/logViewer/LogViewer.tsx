@@ -119,7 +119,7 @@ const logPreprocessor = (
     // if there are any errors parsing and transforming, we just return the logs as is.
     console.log('Error processing logs for display: ' + e);
     return (
-      <div className="processed-logs" data-cy="processed-logs">
+      <div className="processed-logs" data-testid="processed-logs">
         <div
           key="logerror"
           className="log-text text-[14px] leading-[18px] font-normal m-0 break-words whitespace-pre-wrap will-change-auto break-all"
@@ -253,7 +253,7 @@ const logPreprocessorProcessASTToReact = (
   }
   let lastElement = ast.nodes.length - 1;
   return (
-    <div className="processed-logs" data-cy="processed-logs">
+    <div className="processed-logs" data-cy="processed-logs" data-testid="processed-logs">
       {ast.nodes.map((element, i) => (
         <Fragment key={`logNode-${element.key}`}>
           {logPreprocessorRenderLogNode(

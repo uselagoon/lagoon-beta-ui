@@ -1,5 +1,5 @@
 
-export const BASE_URL = process.env.PW_BASE_URL ?? 'http://0.0.0.0:3003';
+export const BASE_URL = process.env.PW_BASE_URL ?? 'http://172.17.0.1:3003';
 export const KEYCLOAK_URL = process.env.PW_KEYCLOAK_URL ?? 'http://172.17.0.1:8088';
 export const GRAPHQL_API = process.env.PW_GRAPHQL_API ?? 'http://0.0.0.0:3000/graphql';
 
@@ -23,6 +23,8 @@ export const SEED = {
     production: 'lagoon-demo-main',
     staging:    'lagoon-demo-staging',
   },
+  deploymentSlug: 'lagoon-build-7g8h9i',
+  taskSlug:       'lagoon-task-u4wuzm',
 } as const;
 
 export const variables = {

@@ -6,19 +6,26 @@ test.describe('Top-level sidebar navigation', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto(`${env.url}/projects`);
+    await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
   });
 
   test('navigates Projects → Organizations → Settings via sidebar', async ({ page }) => {
-    await page.getByTestId('nav-organizations').click();
-    await page.waitForURL(/\/organizations/, { waitUntil: 'load' });
-    await expect(page).toHaveURL(/\/organizations/);
+    await expect(async () => {
+      await page.getByTestId('nav-organizations').click();
+      await expect(page).toHaveURL(/\/organizations/);
+    }).toPass({ timeout: 30_000 });
+    await expect(page.getByRole('heading', { name: 'Organizations' })).toBeVisible();
 
-    await page.getByTestId('nav-settings').click();
-    await page.waitForURL(/\/settings/, { waitUntil: 'load' });
-    await expect(page).toHaveURL(/\/settings/);
+    await expect(async () => {
+      await page.getByTestId('nav-settings').click();
+      await expect(page).toHaveURL(/\/settings/);
+    }).toPass({ timeout: 30_000 });
+    await expect(page.getByRole('heading', { name: /SSH Keys|Settings/i })).toBeVisible();
 
-    await page.getByTestId('nav-projects').first().click();
-    await page.waitForURL(/\/projects/, { waitUntil: 'load' });
-    await expect(page).toHaveURL(/\/projects/);
+    await expect(async () => {
+      await page.getByTestId('nav-projects').first().click();
+      await expect(page).toHaveURL(/\/projects/);
+    }).toPass({ timeout: 30_000 });
+    await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
   });
 });
