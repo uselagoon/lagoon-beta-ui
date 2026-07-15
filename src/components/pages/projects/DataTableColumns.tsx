@@ -14,7 +14,7 @@ dayjs.extend(relativeTime);
 
 const getLatestDate = (environments: ProjectType['environments']) => {
   return environments
-    .map(env => env.updated)
+    .map(env => env.deployments?.[0]?.created)
     .filter(date => date != null)
     .sort()
     .pop();
