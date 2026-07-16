@@ -140,9 +140,9 @@ export default function Sidenav({ userInfo, appInfo, currentPath, sidenavItems, 
 	);
 
 	const userDisplayName = firstLastProvided ? (
-		<span className="user-name">{`${firstName} ${lastName}`}</span>
+		<span className="user-name" data-testid="user-name">{`${firstName} ${lastName}`}</span>
 	) : (
-		<span className="user-name">{email}</span>
+		<span className="user-name" data-testid="user-email">{email}</span>
 	);
 
 	const activePaths = useActivePaths(sidenavItems, currentPath);
@@ -217,12 +217,12 @@ export default function Sidenav({ userInfo, appInfo, currentPath, sidenavItems, 
 																}
 															>
 																<Link
-																	data-cy={`nav-${sectionItem.url.slice(1)}`}
 																	onClick={async () => {
 																		action && (await action());
 																	}}
 																	href={sectionItem.url}
 																	target={newTab ? '_blank' : '_self'}
+																	data-testid={`nav-${sectionItem.url.slice(1)}`}
 																	className="flex w-full gap-2"
 																>
 																	<div className="flex items-center gap-2">

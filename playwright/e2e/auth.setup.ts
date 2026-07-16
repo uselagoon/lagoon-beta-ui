@@ -9,12 +9,12 @@ async function authenticate(page: import('@playwright/test').Page, username: str
   await page.goto(env.url);
 
   await page.fill('#username', username);
-  await page.click('#kc-login');
+  await page.click('#kc-login', { timeout: 60000 });
 
   await page.waitForSelector('#password');
   await page.fill('#password', password);
-  await page.click('#kc-login');
-  await page.waitForURL(/\/projects/, { waitUntil: 'load' });
+  await page.click('#kc-login', { timeout: 60000 });
+  await page.waitForURL(/\/projects/, { waitUntil: 'load', timeout: 60000 });
 
   const sessionResponse = await page.request.get(`${env.url}/api/auth/session`);
   const sessionBody = await sessionResponse.json();
