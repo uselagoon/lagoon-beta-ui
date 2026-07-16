@@ -15,6 +15,39 @@ export type ExtensionZoneLocation =
   | 'global-header'
   | 'global-footer';
 
+export type EnvironmentZoneData = {
+  environmentName: string;
+  environmentType: string;
+  deployType: string;
+  created: string;
+  updated: string;
+};
+
+export type ProjectZoneData = {
+  projectName: string;
+  gitUrl: string;
+  created: string;
+};
+
+export type OrganizationZoneData = {
+  organizationId: number;
+  organizationName: string;
+  friendlyName: string;
+};
+
+export type GlobalZoneData = Record<string, never>;
+
+export type ZoneDataMap = {
+  'environment-header': EnvironmentZoneData;
+  'environment-footer': EnvironmentZoneData;
+  'project-header': ProjectZoneData;
+  'project-footer': ProjectZoneData;
+  'organization-header': OrganizationZoneData;
+  'organization-footer': OrganizationZoneData;
+  'global-header': GlobalZoneData;
+  'global-footer': GlobalZoneData;
+};
+
 export type ExtensionNavItem = {
   id: string;
   label: string;

@@ -278,15 +278,22 @@ Zone components are rendered at fixed injection points in existing pages:
 | Value | Where it renders | `data` props available |
 |---|---|---|
 | `environment-header` | Top of the environment overview page | `environmentName`, `environmentType`, `deployType`, `created`, `updated` |
-| `environment-footer` | Bottom of the environment overview page | none |
-| `project-header` | Top of the project details page | none |
-| `project-footer` | Bottom of the project details page | none |
-| `organization-header` | Top of the organization overview page | none |
-| `organization-footer` | Bottom of the organization overview page | none |
+| `environment-footer` | Bottom of the environment overview page | `environmentName`, `environmentType`, `deployType`, `created`, `updated` |
+| `project-header` | Top of the project details page | `projectName`, `gitUrl`, `created` |
+| `project-footer` | Bottom of the project details page | `projectName`, `gitUrl`, `created` |
+| `organization-header` | Top of the organization overview page | `organizationId`, `organizationName`, `friendlyName` |
+| `organization-footer` | Bottom of the organization overview page | `organizationId`, `organizationName`, `friendlyName` |
 | `global-header` | Above all page content (every page) | none |
 | `global-footer` | Below all page content (every page) | none |
 
-Zone components receive a `data` prop containing context from the host page (environment name, type, deploy info, etc).
+Zone components receive a typed `data` prop containing context from the host page. Each zone location has a corresponding exported Type.
+
+| Zone | Type |
+|---|---|
+| `environment-header`, `environment-footer` | `EnvironmentZoneData` |
+| `project-header`, `project-footer` | `ProjectZoneData` |
+| `organization-header`, `organization-footer` | `OrganizationZoneData` |
+| `global-header`, `global-footer` | `GlobalZoneData` (no data) |
 
 Zone components must be exported as **named exports** from their file and placed under `extensions/<name>/components/`. The filename (without extension) is what you reference in `extension.json` as `component`.
 
@@ -294,8 +301,10 @@ Zone components must be exported as **named exports** from their file and placed
 // extensions/my-extension/components/ExampleComponent.tsx
 'use client';
 
-export function ExampleComponent({ data }: { data?: Record<string, unknown> }) {
-  return <div>Example</div>;
+import type { EnvironmentZoneData } from '@lagoon/ui/extensions';
+
+export function ExampleComponent({ data }: { data: EnvironmentZoneData }) {
+  return <div>Environment: {data.environmentName}</div>;
 }
 ```
 

@@ -306,7 +306,13 @@ export default function EnvironmentPage({
           />
         </section>
       </div>
-      <ExtensionZoneRenderer zone="environment-footer"/>
+      <ExtensionZoneRenderer zone="environment-footer" data={{
+        environmentName: environment.name,
+        environmentType: environment.environmentType,
+        deployType: environment.deployType,
+        created: environment.created,
+        updated: environment.updated,
+      }} />
     </SectionWrapper>
   );
 }

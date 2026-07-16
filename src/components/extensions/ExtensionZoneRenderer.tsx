@@ -2,12 +2,12 @@
 
 import React, { Suspense, lazy, ComponentType, useMemo, useRef } from 'react';
 import { useExtensions } from '@/contexts/ExtensionContext';
-import { ExtensionZoneLocation } from '@/lib/extensions/types';
+import { ExtensionZoneLocation, ZoneDataMap } from '@/lib/extensions/types';
 import { extensionComponentRegistry } from './registry';
 
-type Props = {
-  zone: ExtensionZoneLocation;
-  data?: Record<string, unknown>;
+type Props<Zone extends ExtensionZoneLocation> = {
+  zone: Zone;
+  data?: ZoneDataMap[Zone];
 };
 
 type RegistryModule = typeof extensionComponentRegistry;
@@ -39,22 +39,22 @@ function getLazyComponent(registryKey: string, componentName: string, registry: 
   return lazyComponentCache.get(registryKey)!;
 }
 
-export function ExtensionZoneRenderer({ zone, data }: Props) {
+export function ExtensionZoneRenderer<Zone extends ExtensionZoneLocation>({ zone, data }: Props<Zone>) {
   const { getZonesForLocation } = useExtensions();
   const zoneEntries = getZonesForLocation(zone);
 
   // stops the component remounting when the data is passed
   const dataRef = useRef(data);
   const currentData = useMemo(() => {
-    const prev = dataRef.current;
-    const next = data;
+    const prev = dataRef.current as Record<string, unknown> | undefined;
+    const next = data as Record<string, unknown> | undefined;
     // basic check to see if the data has actually changed
     if (prev === next) return prev ?? {};
     if (prev && next && Object.keys(prev).length === Object.keys(next).length) {
       const changed = Object.keys(next).some(k => next[k] !== prev[k]);
       if (!changed) return prev;
     }
-    dataRef.current = next;
+    dataRef.current = data;
     return next ?? {};
   }, [data]);
 

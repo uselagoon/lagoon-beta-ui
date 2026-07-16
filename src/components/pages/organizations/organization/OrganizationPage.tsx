@@ -123,7 +123,11 @@ export default function OrganizationPage({
   return (
     <>
       <SectionWrapper>
-        <ExtensionZoneRenderer zone="organization-header" />
+        <ExtensionZoneRenderer zone="organization-header" data={{
+          organizationId: organization.id,
+          organizationName: organization.name,
+          friendlyName: organization.friendlyName || organization.name,
+        }} />
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>
 
         <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
@@ -152,7 +156,11 @@ export default function OrganizationPage({
             />
           ))}
         </div>
-        <ExtensionZoneRenderer zone="organization-footer" />
+        <ExtensionZoneRenderer zone="organization-footer" data={{
+          organizationId: organization.id,
+          organizationName: organization.name,
+          friendlyName: organization.friendlyName || organization.name,
+        }} />
       </SectionWrapper>
     </>
   );
