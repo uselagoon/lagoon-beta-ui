@@ -25,7 +25,7 @@ export const CancelTaskButton = ({ action, success, loading, error, beforeText, 
         <Tooltip>
           <TooltipContent>Cancel Task</TooltipContent>
           <TooltipTrigger disabled={loading || success} onClick={action} aria-label="cancel-task">
-            <Ban data-cy="cancel-task" />
+            <Ban data-testid="cancel-task" />
           </TooltipTrigger>
         </Tooltip>
       )}

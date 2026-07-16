@@ -86,7 +86,7 @@ const DrushSqlSync: FC<Props> = ({ environment, refetch, allButCurrentEnvironmen
           ]}
         />
 
-        <Button className="max-w-max" data-cy="task-btn" onClick={handleTask} disabled={!selectedSourceEnv || loading}>
+        <Button className="max-w-max" data-testid="task-btn" onClick={handleTask} disabled={!selectedSourceEnv || loading}>
           {loading && <Loader2 className="animate-spin" />} Run task
         </Button>
       </div>

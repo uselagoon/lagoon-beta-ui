@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "isolatedModules": false,
+    "types": ["node"],
+    "paths": {
+      "@/*": ["../src/*"],
+      "@/lib/*": ["../src/lib/*"],
+      "@/components/*": ["../src/components/*"],
+      "@ui-lib/*": ["../src/ui-library/*"]
+    }
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["../node_modules"]
+}

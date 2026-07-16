@@ -77,7 +77,7 @@ export const DeleteConfirm: FC<DeleteProps> = ({
             </Label>
             <Input
               label=""
-              data-cy="delete-confirm-input"
+              data-testid="delete-confirm-input"
               id="variable_name"
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
@@ -90,7 +90,7 @@ export const DeleteConfirm: FC<DeleteProps> = ({
       confirmDisabled={confirmDisabled}
       onConfirm={confirmAction}
     >
-      <Button variant="outline" disabled={loading} aria-label="delete">
+      <Button variant="outline" disabled={loading} aria-label="delete" data-testid="delete-trigger">
         <Tooltip>
           <TooltipTrigger>
             {icon ? icon : buttonText ? buttonText : <Trash data-cy="delete-variable" />}

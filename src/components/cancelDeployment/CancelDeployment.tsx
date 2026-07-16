@@ -51,7 +51,7 @@ export const CancelDeploymentButton = ({
           <Button variant="ghost" disabled={loading || success} aria-label="cancel-deployment">
             <Tooltip>
               <TooltipTrigger>
-                <Ban data-cy="cancel-deployment" />
+                <Ban data-testid="cancel-deployment" />
               </TooltipTrigger>
               <TooltipContent>Cancel Deployment</TooltipContent>
             </Tooltip>

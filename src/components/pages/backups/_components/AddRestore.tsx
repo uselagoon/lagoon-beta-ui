@@ -39,7 +39,7 @@ const Prepare = ({ backupId }: { backupId: string }) => {
   return (
     <Tooltip>
       <TooltipTrigger>
-        <Button data-cy="retrieve" onClick={() => addRestoreMutation()}>
+        <Button data-testid="retrieve" onClick={() => addRestoreMutation()}>
           <CloudDownload />
         </Button>
       </TooltipTrigger>

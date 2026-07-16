@@ -88,7 +88,7 @@ const renderSidenavChildren = (
 				return (
 					<SidebarMenuItem key={child.title}>
 						<SidebarMenuButton asChild isActive={isActive}>
-							<Link href={child.url} className={`${!child.icon ? 'ml-4' : ''}`}>
+							<Link data-testid={`nav-${child.title.toLowerCase().replace(/\s+/g, '-')}`} href={child.url} className={`${!child.icon ? 'ml-4' : ''}`}>
 								<div className="flex items-center gap-2">
 									{child.icon && <child.icon />}
 									<span>{child.title}</span>
@@ -140,9 +140,9 @@ export default function Sidenav({ userInfo, appInfo, currentPath, sidenavItems, 
 	);
 
 	const userDisplayName = firstLastProvided ? (
-		<span className="user-name">{`${firstName} ${lastName}`}</span>
+		<span className="user-name" data-testid="user-name">{`${firstName} ${lastName}`}</span>
 	) : (
-		<span className="user-name">{email}</span>
+		<span className="user-name" data-testid="user-name">{email}</span>
 	);
 
 	const activePaths = useActivePaths(sidenavItems, currentPath);
@@ -217,7 +217,7 @@ export default function Sidenav({ userInfo, appInfo, currentPath, sidenavItems, 
 																}
 															>
 																<Link
-																	data-cy={`nav-${sectionItem.url.slice(1)}`}
+																	data-testid={`nav-${sectionItem.url.slice(1)}`}
 																	onClick={async () => {
 																		action && (await action());
 																	}}

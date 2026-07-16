@@ -150,7 +150,7 @@ export default function DeploymentPage({
 
           <Switch
             label="View parsed"
-            data-cy="logviewer-toggle"
+            data-testid="logviewer-toggle"
             checked={showParsed}
             onCheckedChange={checked => handleShowParsed(checked)}
             id=""
@@ -159,7 +159,7 @@ export default function DeploymentPage({
         </div>
       </section>
 
-      <BasicTable className="border rounded-md mb-4" columns={deploymentColumns} data={[deploymentDataRow]} />
+      <BasicTable data-testid="deployment-data" className="border rounded-md mb-4" columns={deploymentColumns} data={[deploymentDataRow]} />
       <LogViewer
         logs={deployment.buildLog}
         status={deployment.status}

@@ -167,7 +167,7 @@ const InvokeRegisteredTask: FC<Props> = ({ environment, advancedTask, refetch })
       )) || (
         <Button
           className="mt-4"
-          data-cy="task-btn"
+          data-testid="task-btn"
           disabled={(taskArgumentsExist && !argumentVariablesHaveValues) || loading}
           onClick={handleAdvancedTask}
         >

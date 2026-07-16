@@ -23,7 +23,15 @@
     "cypress:runAll": "cypress run --config-file cypress/cypress.config.ts",
     "cypress:runGeneral": "cypress run --config-file cypress/cypress.config.ts --spec 'cypress/e2e/general/**/*.cy.ts'",
     "cypress:runOrganizations": "cypress run --config-file cypress/cypress.config.ts --spec 'cypress/e2e/organizations/**/*.cy.ts'",
-    "cypress:runRbac": "cypress run --config-file cypress/cypress.config.ts --spec 'cypress/e2e/rbac/**/*.cy.ts'"
+    "cypress:runRbac": "cypress run --config-file cypress/cypress.config.ts --spec 'cypress/e2e/rbac/**/*.cy.ts'",
+    "playwright:open": "playwright test --ui",
+    "playwright:runAll": "playwright test",
+    "playwright:runSetup": "playwright test --project=setup",
+    "playwright:runGeneral": "playwright test --project=general",
+    "playwright:runOrganizations": "playwright test --project=organizations",
+    "playwright:runRbac": "playwright test --project=rbac-guest --project=rbac-reporter --project=rbac-developer --project=rbac-maintainer --project=rbac-orgadmin --project=rbac-orgviewer --project=rbac-org-owners",
+    "playwright:report": "playwright show-report",
+    "playwright:auth": "rimraf playwright/.auth && playwright test --project=setup"
   },
   "dependencies": {
     "@apollo/client": "^3.13.8",
@@ -110,6 +118,7 @@
     "@types/react": "19.1.6",
     "@types/react-dom": "19.1.5",
     "@types/react-highlight-words": "^0.20.0",
+    "@playwright/test": "1.56.1",
     "cypress": "14.0.3",
     "cypress-network-idle": "^1.15.0",
     "cypress-real-events": "^1.14.0",
