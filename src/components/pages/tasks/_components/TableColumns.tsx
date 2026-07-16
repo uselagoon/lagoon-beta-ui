@@ -78,7 +78,7 @@ const getTasksTableColumns = (basePath: string, projectId: number, environmentId
 
         return (
           <div>
-            <Link className="hover:text-blue-800 transition-colors" href={`${basePath}/${taskName}`}>
+            <Link data-testid="task-link" className="hover:text-blue-800 transition-colors" href={`${basePath}/${taskName}`}>
               {name}
             </Link>
           </div>
