@@ -10,7 +10,7 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useReadQuery } from '@apollo/client';
-import { DataTable, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@uselagoon/ui-library';
+import { DataTable, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/ui-library';
 
 import ProblemsColumns from './ProblemsTableColumns';
 

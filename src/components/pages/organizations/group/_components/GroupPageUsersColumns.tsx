@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { OrganizationUsersData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/users/(users-page)/page';
 import { EditUserRole } from '@/components/editUserRole/EditUserRole';
 import { handleSort, renderSortIcons } from '@/components/utils';
-import { Badge, Button, DataTableColumnDef } from '@uselagoon/ui-library';
+import { Badge, Button, DataTableColumnDef } from '@/ui-library';
 
 import { GroupMemberUser, UnlinkGroupMember } from './UnlinkGroupMember';
 

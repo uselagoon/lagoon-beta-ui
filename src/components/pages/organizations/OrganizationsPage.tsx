@@ -7,7 +7,7 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { OrganizationsTableColumns } from '@/components/pages/organizations/DataTableColumns';
 import { orgGroupsAndProjectsQuery } from '@/lib/query/organizations/allOrganizationsQuery';
 import { useQuery } from '@apollo/client';
-import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { Button, DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function OrganizationsPage({ organizations }: { organizations: OrgsData['allOrganizations'] }) {

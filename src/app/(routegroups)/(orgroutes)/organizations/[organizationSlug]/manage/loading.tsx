@@ -3,7 +3,7 @@
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { AddUser } from '@/components/pages/organizations/manage/_components/AddUser';
 import { manageTableLoadingCols } from '@/components/pages/organizations/manage/_components/ManageDataTableColumns';
-import { DataTable } from '@uselagoon/ui-library';
+import { DataTable } from '@/ui-library';
 
 export default function Loading() {
   return (

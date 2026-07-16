@@ -3,7 +3,7 @@
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import UsersDataTableColumns from '@/components/pages/organizations/users/UsersDataTableColumns';
 import { organizationNavItems } from '@/components/shared/organizationNavItems';
-import { DataTable, Skeleton } from '@uselagoon/ui-library';
+import { DataTable, Skeleton } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {

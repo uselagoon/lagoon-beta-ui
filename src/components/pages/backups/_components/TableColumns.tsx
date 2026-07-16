@@ -9,7 +9,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@uselagoon/ui-library';
+} from '@/ui-library';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import isBetween from 'dayjs/plugin/isBetween';

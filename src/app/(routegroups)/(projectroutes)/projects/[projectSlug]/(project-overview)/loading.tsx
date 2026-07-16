@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import getProjectEnvsTableColumns from '@/components/pages/environments/ProjectEnvsTableColumns';
 import { RouterType } from '@/components/types';
-import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {

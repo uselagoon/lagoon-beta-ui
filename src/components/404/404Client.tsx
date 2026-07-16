@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 
-import { Button } from '@uselagoon/ui-library';
+import { Button } from '@/ui-library';
 
 export const Client404 = ({ navLink, title }: { navLink: ReactNode; title?: string }) => {
   return (

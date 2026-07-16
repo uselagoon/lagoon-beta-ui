@@ -5,7 +5,7 @@ import { AddUser } from '@/components/addUserToOrg/Adduser';
 import { CreateGroup } from '@/components/createGroup/CreateGroup';
 import { CreateProject } from '@/components/createProject/CreateProject';
 import { Description } from '@/components/pages/organizations/organization/_components/Description';
-import { DetailStat, Skeleton } from '@uselagoon/ui-library';
+import { DetailStat, Skeleton } from '@/ui-library';
 
 export default function Loading() {
   const orgSkeletonItems = [

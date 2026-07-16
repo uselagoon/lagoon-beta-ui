@@ -6,7 +6,7 @@ import {
 } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
 import invokeRegisteredTask from '@/lib/mutation/tasks/invokeRegisteredTask';
 import { useMutation } from '@apollo/client';
-import { Button, Input, Notification, SelectWithOptions } from '@uselagoon/ui-library';
+import { Button, Input, Notification, SelectWithOptions } from '@/ui-library';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 

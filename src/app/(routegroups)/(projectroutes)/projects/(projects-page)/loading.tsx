@@ -2,7 +2,7 @@
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import ProjectsTableColumns from '@/components/pages/projects/DataTableColumns';
-import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { Button, DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {

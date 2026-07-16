@@ -8,7 +8,7 @@ import ProjectNotFound from '@/components/errors/ProjectNotFound';
 import { NewEnvironment } from '@/components/newEnvironment/NewEnvironment';
 import { makeSafe } from '@/components/utils';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import { createLinks } from '../environment/EnvironmentPage';
@@ -93,7 +93,7 @@ export default function ProjectEnvironmentsPage({
       deployType: environment.deployType,
       activeRoutes: <RoutesWrapper>{createLinks(routesToUse)}</RoutesWrapper>,
       envType: envType as any,
-      last_deployment: environment.updated ?? '',
+      last_deployment: environment.deployments?.[0]?.created ?? '',
       region: environment.openshift?.cloudRegion ?? '',
       project: environment.project,
     };

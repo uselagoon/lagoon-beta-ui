@@ -1,7 +1,7 @@
 'use client';
 
 import { capitalize, handleSort, makeSafe, renderSortIcons } from '@/components/utils';
-import {Button, DataTableColumnDef, Badge, Tooltip, TooltipContent, TooltipTrigger} from '@uselagoon/ui-library';
+import {Button, DataTableColumnDef, Badge, Tooltip, TooltipContent, TooltipTrigger} from '@/ui-library';
 import {Route} from "@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/routes/page";
 import { DeleteRouteDialog } from '@/components/deleteRoute/DeleteRoute';
 import { AttachRoute } from '@/components/addRouteToEnvironment/AttachRoute';

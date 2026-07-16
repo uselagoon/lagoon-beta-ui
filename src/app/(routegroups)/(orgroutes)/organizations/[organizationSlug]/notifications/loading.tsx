@@ -3,7 +3,7 @@
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { AddNotification } from '@/components/pages/organizations/notifications/_components/AddNotification';
 import { NotificationsDataTableColumnsLoading } from '@/components/pages/organizations/notifications/_components/NotificationsDataTableColumns';
-import { DataTable } from '@uselagoon/ui-library';
+import { DataTable } from '@/ui-library';
 
 export default function Loading() {
   return (

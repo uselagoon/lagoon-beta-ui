@@ -2,7 +2,7 @@ import { FC, startTransition, useState } from 'react';
 
 
 import { useMutation } from '@apollo/client';
-import { Button, Input, Label, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Button, Input, Label, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import { Trash2, Unlink } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -83,6 +83,7 @@ export const RemoveRouteFromEnvDialog: FC<Props> = ({ domainName, projectName, e
               console.error(permissionResponse?.error);
             }
           }}
+          aria-label="remove-route"
           disabled={loading}
         >
           <Tooltip>

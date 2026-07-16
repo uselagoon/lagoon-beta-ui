@@ -12,7 +12,7 @@ import { DeleteVariableDialog } from '@/components/deleteVariable/DeleteVariable
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import organizationByNameWithEnvVarsValue from '@/lib/query/organizations/organizationByNameWithEnvVarsValue';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import {DataTable, SelectWithOptions, Switch} from '@uselagoon/ui-library';
+import {DataTable, SelectWithOptions, Switch} from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 import { toast } from 'sonner';
 

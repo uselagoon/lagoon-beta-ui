@@ -5,7 +5,7 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useReadQuery } from '@apollo/client';
-import { DataTable, DateRangePicker, SelectWithOptions } from '@uselagoon/ui-library';
+import { DataTable, DateRangePicker, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import { FactsTableColumns, InsightsTableColumns } from './DataTableColumns';

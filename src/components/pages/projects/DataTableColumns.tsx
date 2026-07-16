@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { ProjectType } from '@/app/(routegroups)/(projectroutes)/projects/(projects-page)/page';
 import { handleSort, renderSortIcons } from '@/components/utils';
-import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@uselagoon/ui-library';
+import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -14,7 +14,7 @@ dayjs.extend(relativeTime);
 
 const getLatestDate = (environments: ProjectType['environments']) => {
   return environments
-    .map(env => env.updated)
+    .map(env => env.deployments?.[0]?.created)
     .filter(date => date != null)
     .sort()
     .pop();
@@ -44,11 +44,9 @@ const ProjectsTableColumns: DataTableColumnDef<ProjectType>[] = [
     cell: ({ row }) => {
       const projectName = row.original.name;
       return (
-        <div>
-          <Link className="text-inherit hover:!underline transition-all" href={`/projects/${projectName}`}>
-            {projectName}
-          </Link>
-        </div>
+        <Link className="text-inherit hover:!underline transition-all" href={`/projects/${projectName}`}>
+          {projectName}
+        </Link>
       );
     },
   },

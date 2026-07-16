@@ -2,7 +2,7 @@
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { renderSshColumnsNoActions } from '@/components/pages/settings/DataTableColumns';
-import { DataTable } from '@uselagoon/ui-library';
+import { DataTable } from '@/ui-library';
 
 export default function Loading() {
   return (

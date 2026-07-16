@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import { Button, Notification } from '@uselagoon/ui-library';
+import { Button, Notification } from '@/ui-library';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 

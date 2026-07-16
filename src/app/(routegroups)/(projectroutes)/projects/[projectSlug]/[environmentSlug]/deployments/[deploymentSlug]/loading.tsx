@@ -3,7 +3,7 @@
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import BackButton from '@/components/backButton/BackButton';
 import { deploymentColumns } from '@/components/pages/deployment/DeploymentPage';
-import { BasicTable, Skeleton } from '@uselagoon/ui-library';
+import { BasicTable, Skeleton } from '@/ui-library';
 
 export default function Loading() {
   const skeletonCount = 10;

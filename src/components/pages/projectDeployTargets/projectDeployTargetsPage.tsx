@@ -2,7 +2,7 @@
 
 import { ProjectDeployTargetsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/deploy-targets/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { BasicTable, Table } from '@uselagoon/ui-library';
+import { BasicTable, Table } from '@/ui-library';
 
 interface ProjectDetailsProps {
   project: ProjectDeployTargetsData['project'];

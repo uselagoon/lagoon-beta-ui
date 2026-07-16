@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 
-import {Input, Skeleton, Textarea} from '@uselagoon/ui-library';
+import {Input, Skeleton, Textarea} from '@/ui-library';
 
 import { EditDesc } from './EditDesc';
 import { EditName } from './EditName';

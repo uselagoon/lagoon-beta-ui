@@ -5,7 +5,7 @@ import { humanFileSize } from '@/components/utils';
 import addRestore from '@/lib/mutation/addRestore';
 import getRestoreLocation from '@/lib/mutation/getRestoreLocation';
 import { useLazyQuery, useMutation } from '@apollo/client';
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import { CloudDownload, Download, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { isValidUrl } from 'utils/isValidUrl';

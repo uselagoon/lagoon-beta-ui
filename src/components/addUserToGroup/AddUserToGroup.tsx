@@ -2,7 +2,7 @@ import { FC, startTransition } from 'react';
 
 import addGroupMember from '@/lib/mutation/organizations/addGroupMember';
 import { ApolloError, useMutation } from '@apollo/client';
-import { Sheet } from '@uselagoon/ui-library';
+import { Sheet } from '@/ui-library';
 import { toast } from 'sonner';
 
 import { orgUserRoleOptions } from '../shared/selectOptions';

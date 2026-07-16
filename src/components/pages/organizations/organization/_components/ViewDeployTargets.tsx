@@ -6,7 +6,7 @@ import {
 	DialogContent,
 	DialogHeader,
 	DialogTitle, DialogDescription
-} from "@uselagoon/ui-library";
+} from "@/ui-library";
 import {
 	DeployTarget
 } from "@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page";

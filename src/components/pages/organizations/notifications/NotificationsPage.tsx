@@ -4,7 +4,7 @@ import { OrganizationNotificationData } from '@/app/(routegroups)/(orgroutes)/or
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import { AddNotification } from './_components/AddNotification';

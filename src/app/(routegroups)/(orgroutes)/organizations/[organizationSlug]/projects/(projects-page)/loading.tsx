@@ -4,7 +4,7 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { CreateProject } from '@/components/createProject/CreateProject';
 import { resultsFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
 import { ProjectsDataTableColumns } from '@/components/pages/organizations/projects/_components/ProjectsDataTableColumns';
-import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions } from '@/ui-library';
 
 import { OrgProject } from '../../(organization-overview)/page';
 
@@ -18,11 +18,11 @@ export default function Loading() {
         </div>
         <DataTable
           loading
-          columns={ProjectsDataTableColumns((_: OrgProject) => null, '')}
+          columns={ProjectsDataTableColumns((_: OrgProject) => null, '', false, [])}
           data={[]}
           searchableColumns={['name']}
           initialPageSize={10}
-          renderFilters={table => (
+          renderFilters={() => (
             <div className="flex items-center justify-between">
               <SelectWithOptions
                 options={resultsFilterValues.map(o => ({ label: o.label, value: o.value }))}

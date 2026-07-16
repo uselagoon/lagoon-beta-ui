@@ -4,7 +4,7 @@ import { OrganizationUserData } from '@/app/(routegroups)/(orgroutes)/organizati
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { EditUserRole } from '@/components/editUserRole/EditUserRole';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Checkbox, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { Checkbox, DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import { UnlinkGroup } from './_components/UnlinkGroup';

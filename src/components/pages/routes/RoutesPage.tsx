@@ -2,7 +2,7 @@
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions } from '@/ui-library';
 import {RoutesData} from "@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/routes/page";
 import {RoutesDataTableColumns} from "@/components/pages/routes/_components/RoutesDataTableColumns";
 import {useQueryStates} from "nuqs";

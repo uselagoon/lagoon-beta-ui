@@ -4,7 +4,7 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { GroupPageProjectColumns } from '@/components/pages/organizations/group/_components/GroupPageProjectsColumns';
 import GroupPageUsersColumns from '@/components/pages/organizations/group/_components/GroupPageUsersColumns';
 import { resultsFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
-import { Checkbox, DataTable, SelectWithOptions, Skeleton } from '@uselagoon/ui-library';
+import { Checkbox, DataTable, SelectWithOptions, Skeleton } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {

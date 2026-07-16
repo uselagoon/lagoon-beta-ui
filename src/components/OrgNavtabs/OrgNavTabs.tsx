@@ -2,11 +2,11 @@
 
 import { ReactNode } from 'react';
 
-import { useEnvContext } from 'next-runtime-env';
+import { useEnvContext } from '@/contexts/EnvContext';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 
-import { TabNavigation } from '@uselagoon/ui-library';
+import { TabNavigation } from '@/ui-library';
 
 import { LinkContentWrapper } from '../shared/styles';
 

@@ -6,7 +6,7 @@ import { PreferencesData } from '@/app/(routegroups)/settings/preferences/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import updateUser from '@/lib/mutation/updateUser';
 import { QueryRef, useMutation, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Button, Checkbox, Label } from '@uselagoon/ui-library';
+import { Button, Checkbox, Label } from '@/ui-library';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 

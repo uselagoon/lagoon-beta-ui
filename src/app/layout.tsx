@@ -10,12 +10,13 @@ import { ApolloClientComponentWrapper } from '@/lib/apollo-client-components';
 import ClientSessionWrapper from '../components/auth/ClientSessionWrapper';
 import AppProvider from '../contexts/AppContext';
 import AuthProvider from '../contexts/AuthProvider';
+import { CloneStatusProvider } from '../contexts/CloneStatusContext';
 import LinkProvider from '../contexts/LinkProvider';
 import './globals.css';
 import fs from 'fs';
 import {OverrideProvider} from "@/contexts/OverrideContext";
 import * as process from "node:process";
-import { validateOverrides, type Overrides } from '@uselagoon/ui-library/schemas';
+import { validateOverrides, type Overrides } from '@/ui-library/schemas';
 
 function loadOverrides() : Overrides {
   try {
@@ -55,12 +56,13 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic';
 
+const overrides = loadOverrides();
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const overrides = loadOverrides();
   // ref for exposing custom variables at runtime: https://github.com/expatfile/next-runtime-env/blob/development/docs/EXPOSING_CUSTOM_ENV.md
   noStore();
   return (
@@ -77,7 +79,9 @@ export default async function RootLayout({
                 <RefreshTokenHandler />
                 <ClientSessionWrapper>
                   <ApolloClientComponentWrapper>
-                    <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER!}>{children}</AppProvider>
+                    <CloneStatusProvider>
+                      <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER!}>{children}</AppProvider>
+                    </CloneStatusProvider>
                   </ApolloClientComponentWrapper>
                 </ClientSessionWrapper>
               </AuthProvider>

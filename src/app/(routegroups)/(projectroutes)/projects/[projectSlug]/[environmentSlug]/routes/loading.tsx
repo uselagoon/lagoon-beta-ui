@@ -1,7 +1,7 @@
 'use client';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { DataTable } from '@uselagoon/ui-library';
+import { DataTable } from '@/ui-library';
 import {CreateRoute} from "@/components/createRoute/CreateRoute";
 import {RoutesDataTableColumns} from "@/components/pages/environmentRoutes/_components/RoutesDataTableColumns";
 

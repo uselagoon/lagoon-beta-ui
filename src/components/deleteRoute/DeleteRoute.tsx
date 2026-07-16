@@ -2,7 +2,7 @@ import { FC, startTransition, useState } from 'react';
 
 import deleteRouteFromProject from '@/lib/mutation/deleteRouteFromProject'; 
 import { useMutation } from '@apollo/client';
-import { Button, Input, Label, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Button, Input, Label, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import {Trash, Trash2} from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -81,7 +81,8 @@ export const DeleteRouteDialog: FC<Props> = ({ route, refetch, onClick, ...rest 
           disabled={loading}
         >
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger aria-label="delete-route"
+            >
               <Trash data-cy="delete-route" />
             </TooltipTrigger>
             <TooltipContent>Delete route</TooltipContent>

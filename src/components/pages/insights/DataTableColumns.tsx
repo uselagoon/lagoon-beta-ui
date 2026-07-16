@@ -6,7 +6,7 @@ import {
 } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/insights/page';
 import { Problem } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/problems/page';
 import { handleSort, renderSortIcons } from '@/components/utils';
-import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@uselagoon/ui-library';
+import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';

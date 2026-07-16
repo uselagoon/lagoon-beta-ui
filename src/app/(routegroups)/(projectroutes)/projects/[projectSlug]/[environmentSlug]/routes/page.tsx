@@ -66,6 +66,7 @@ export default async function Routes(props: {
 			{queryRef => (
 				<EnvironmentRoutesPage
 					projectName={projectSlug}
+					environmentName={environmentSlug}
 					queryRef={queryRef as QueryRef<EnvironmentRoutesData>}
 				/>
 			)}

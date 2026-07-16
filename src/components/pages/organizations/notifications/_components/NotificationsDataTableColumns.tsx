@@ -1,7 +1,7 @@
 'use client';
 
 import { Notification } from '@/components/pages/organizations/notifications/_components/EditNotification';
-import {DataTableColumnDef, Label} from '@uselagoon/ui-library';
+import {DataTableColumnDef, Label} from '@/ui-library';
 import Image from 'next/image';
 import {Mail, Webhook} from "lucide-react";
 

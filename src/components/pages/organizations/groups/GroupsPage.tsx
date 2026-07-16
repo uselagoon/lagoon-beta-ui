@@ -7,7 +7,7 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { CreateGroup } from '@/components/createGroup/CreateGroup';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Checkbox, DataTable, SelectWithOptions, TabNavigation } from '@uselagoon/ui-library';
+import { Checkbox, DataTable, SelectWithOptions, TabNavigation } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import GroupsDataTableColumns from './GroupsDataTableColumns';

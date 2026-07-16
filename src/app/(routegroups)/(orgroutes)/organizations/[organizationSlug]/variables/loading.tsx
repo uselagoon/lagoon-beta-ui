@@ -4,7 +4,7 @@ import { OrgEnvVariable } from '@/app/(routegroups)/(orgroutes)/organizations/[o
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { resultsFilterValues } from '@/components/pages/organizations/groups/_components/groupFilterValues';
 import { VariablesDataTableColumnsNoValues } from '@/components/pages/organizations/variables/_components/VariablesDataTableColumns';
-import {DataTable, SelectWithOptions, Switch} from '@uselagoon/ui-library';
+import {DataTable, SelectWithOptions, Switch} from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {

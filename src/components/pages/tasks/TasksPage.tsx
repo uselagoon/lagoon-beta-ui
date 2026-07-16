@@ -2,14 +2,14 @@
 
 import React, { startTransition, useEffect, useState } from 'react';
 
-import { useEnvContext } from 'next-runtime-env';
+import { useEnvContext } from '@/contexts/EnvContext';
 import { usePathname } from 'next/navigation';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import { TasksData } from '../../../app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';

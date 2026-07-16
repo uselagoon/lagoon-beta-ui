@@ -2,7 +2,7 @@ import React from 'react';
 
 import addRouteToProject from '@/lib/mutation/addRouteToProject';
 import { useMutation } from '@apollo/client';
-import { Sheet } from '@uselagoon/ui-library';
+import { Sheet } from '@/ui-library';
 import { toast } from 'sonner';
 import { CirclePlus } from 'lucide-react';
 import { isDNS1123Subdomain } from '@/components/utils';

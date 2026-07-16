@@ -1,16 +1,44 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { OrganizationProjectsData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/projects/(projects-page)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { CreateProject } from '@/components/createProject/CreateProject';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
-import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { QueryRef, useQueryRefHandlers, useReadQuery, useSubscription } from '@apollo/client';
+import { DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
+import organizationProjectChangedSubscription from '@/lib/subscription/organizations/organizationProjectChanged';
+import { STATUSES } from '@/contexts/CloneStatusContext';
 
 import { ProjectsDataTableColumns } from './_components/ProjectsDataTableColumns';
 import { RemoveProject } from './_components/RemoveProject';
 import { resultsFilterValues } from './_components/filterOptions';
+
+type CloneStatusEntry = { projectId: number; status: string };
+
+function loadCloneStatusOverrides(orgSlug: string): Map<number, string> {
+  if (typeof window === 'undefined') return new Map();
+  try {
+    const lsData = window.localStorage.getItem(`lagoon-org-clone-status:${orgSlug}`);
+    if (!lsData) return new Map();
+    const entries: CloneStatusEntry[] = JSON.parse(lsData);
+    return new Map(
+      entries.filter(e => !STATUSES.includes(e.status)).map(e => [e.projectId, e.status])
+    );
+  } catch {
+    return new Map();
+  }
+}
+
+function saveCloneStatusOverrides(orgSlug: string, overrides: Map<number, string>) {
+  if (typeof window === 'undefined') return;
+  const entries: CloneStatusEntry[] = Array.from(overrides.entries()).map(([projectId, status]) => ({
+    projectId,
+    status,
+  }));
+  window.localStorage.setItem(`lagoon-org-clone-status:${orgSlug}`, JSON.stringify(entries));
+}
 
 export default function OrgProjectsPage({
   queryRef,
@@ -59,6 +87,54 @@ export default function OrgProjectsPage({
     await Promise.all([refetch()]);
   };
 
+  let projectCloneEnabled = organization?.featureProjectClone ?? false;
+
+  const [cloneStatusOverrides, setCloneStatusOverrides] = useState<Map<number, string>>(
+    () => loadCloneStatusOverrides(organizationSlug)
+  );
+
+  useEffect(() => {
+    if (cloneStatusOverrides.size === 0) return;
+
+    setCloneStatusOverrides(prev => {
+      const next = new Map(prev);
+      let changed = false;
+
+      for (const project of organization?.projects ?? []) {
+        if (!next.has(project.id)) continue;
+        const serverStatus = project.clone?.status;
+        if (!serverStatus || STATUSES.includes(serverStatus)) {
+          next.delete(project.id);
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        saveCloneStatusOverrides(organizationSlug, next);
+      }
+      return changed ? next : prev;
+    });
+  }, []);
+
+  useSubscription(organizationProjectChangedSubscription, {
+    variables: { organization: organizationSlug },
+    onData: ({ data }) => {
+      const project = data.data?.organizationProjectChanged;
+      if (!project?.clone) return;
+
+      setCloneStatusOverrides(prev => {
+        const next = new Map(prev);
+        next.set(project.id, project.clone.status);
+        const storage = new Map(next);
+        if (STATUSES.includes(project.clone.status)) {
+          storage.delete(project.id);
+        }
+        saveCloneStatusOverrides(organizationSlug, storage);
+        return next;
+      });
+    },
+  });
+
   if (!organization) {
     return <OrganizationNotFound orgName={organizationSlug} />;
   }
@@ -66,6 +142,14 @@ export default function OrgProjectsPage({
   const deployTargetOptions = organization.deployTargets.map(deploytarget => {
     return { label: deploytarget.name, value: deploytarget.id };
   });
+
+  const projectsWithOverrides = [...organization.projects].map(project => {
+    const overrideStatus = cloneStatusOverrides.get(project.id);
+    if (!overrideStatus) return project;
+    return { ...project, clone: { ...(project.clone ?? {}), status: overrideStatus } };
+  });
+
+  const orgKeys = organization?.keys || [];
 
   return (
     <>
@@ -79,9 +163,16 @@ export default function OrgProjectsPage({
             project => (
               <RemoveProject project={project} refetch={refetchData} />
             ),
-            organization.name
+            organization.name,
+            projectCloneEnabled,
+            orgKeys,
+            refetchData
           )}
-          data={organization.projects}
+          data={projectsWithOverrides.sort((a, b) => {
+            const cloningA = a.clone?.status && !STATUSES.includes(a.clone.status) ? 1 : 0;
+            const cloningB = b.clone?.status && !STATUSES.includes(b.clone.status) ? 1 : 0;
+            return cloningB - cloningA;
+          })}
           searchableColumns={['name']}
           onSearch={searchStr => setProjectQuery(searchStr)}
           initialSearch={project_query}

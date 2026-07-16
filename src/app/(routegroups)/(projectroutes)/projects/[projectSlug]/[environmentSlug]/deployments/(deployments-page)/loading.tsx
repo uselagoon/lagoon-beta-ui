@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import getDeploymentTableColumns from '@/components/pages/deployments/_components/TableColumns';
 import { deploymentResultOptions, statusOptions } from '@/components/pages/deployments/_components/filterValues';
-import {Button, DataTable, DateRangePicker, SelectWithOptions} from '@uselagoon/ui-library';
+import { Button, DataTable, DateRangePicker, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 import {GitBranch, Zap} from "lucide-react";
 

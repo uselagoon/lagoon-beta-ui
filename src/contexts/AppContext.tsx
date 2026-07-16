@@ -3,13 +3,13 @@
 import React, { ReactNode, useMemo } from 'react';
 
 import { useSession } from 'next-auth/react';
-import { useEnvContext } from 'next-runtime-env';
+import { useEnvContext } from '@/contexts/EnvContext';
 import { useParams, usePathname } from 'next/navigation';
 
 import { useSidenavItems } from '@/components/dynamicNavigation/useSidenavItems';
-import {RootLayout, ThemeSwitch, Toaster} from '@uselagoon/ui-library';
+import { RootLayout, ThemeSwitch, Toaster } from '@/ui-library';
 import manualSignOut from 'utils/manualSignOut';
-import {useOverrides} from "@/contexts/OverrideContext";
+import { useOverrides } from "@/contexts/OverrideContext";
 
 export type SidebarItem = {
   title: string;
@@ -31,7 +31,9 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
 
   const userData = status === 'authenticated' ? data.user : { name: '', email: '', image: '' };
 
-  const { LAGOON_UI_ICON, LAGOON_VERSION } = useEnvContext();
+  const { LAGOON_UI_ICON, LAGOON_VERSION, LAGOON_UI_YOUR_ACCOUNT_DISABLED } = useEnvContext();
+
+  const disableAccountLink = Boolean(LAGOON_UI_YOUR_ACCOUNT_DISABLED);
 
   const pathname = usePathname();
 
@@ -81,10 +83,12 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         sidenavItems={sidenavItems}
         cardProps={overrides?.components?.announcementCard}
         documentationUrl={overrides?.global?.documentationUrl}
+        disableAccountLink={disableAccountLink}
+        disableChangeFeedLink={overrides?.components?.sidenavFooterMenu?.disableChangeFeedLink}
       >
-         <div className="absolute top-2 right-4">
-           <ThemeSwitch />
-         </div>
+        <div className="absolute top-2 right-4">
+          <ThemeSwitch />
+        </div>
         <section className="my-10">
           {children}
           <Toaster />

@@ -2,7 +2,7 @@
 
 import { AllDeploymentsData } from '@/app/(routegroups)/alldeployments/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import AlldeploymentsTableColumns from './TableColumns';

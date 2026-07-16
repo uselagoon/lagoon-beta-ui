@@ -2,7 +2,7 @@
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { ProjectEnvVarsPartialColumns } from '@/components/pages/projectVariables/_components/DataTableColumns';
-import {DataTable, Switch} from '@uselagoon/ui-library';
+import {DataTable, Switch} from '@/ui-library';
 
 export default function Loading() {
   return (

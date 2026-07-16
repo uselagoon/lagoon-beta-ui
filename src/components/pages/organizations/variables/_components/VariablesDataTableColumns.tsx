@@ -2,7 +2,7 @@
 
 import { OrgEnvVariable } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
 import { handleSort, renderSortIcons } from '@/components/utils';
-import {Button, CopyToClipboard, DataTableColumnDef} from '@uselagoon/ui-library';
+import {Button, CopyToClipboard, DataTableColumnDef} from '@/ui-library';
 
 export const VariablesDataTableColumnsNoValues: DataTableColumnDef<OrgEnvVariable>[] = [
   {

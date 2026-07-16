@@ -1,6 +1,6 @@
 import { Insight } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/insights/page';
 import { gql, useLazyQuery } from '@apollo/client';
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import { Download, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { isValidUrl } from 'utils/isValidUrl';

@@ -2,7 +2,7 @@ import { DeploymentsData } from '@/app/(routegroups)/(projectroutes)/projects/[p
 import deployEnvironmentLatest from '@/lib/mutation/deployEnvironmentLatest';
 import { useMutation } from '@apollo/client';
 import { RefetchFunction } from '@apollo/client/react/hooks/useSuspenseQuery';
-import { Button, Skeleton } from '@uselagoon/ui-library';
+import { Button, Skeleton } from '@/ui-library';
 import { AlertCircle, GitBranch, Loader2, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';

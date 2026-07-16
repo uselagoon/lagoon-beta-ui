@@ -4,7 +4,7 @@ import React from 'react';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import GroupsDataTableColumns from '@/components/pages/organizations/groups/GroupsDataTableColumns';
-import { DataTable, Skeleton } from '@uselagoon/ui-library';
+import { DataTable, Skeleton } from '@/ui-library';
 
 export default function Loading() {
   return (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useEnvContext } from 'next-runtime-env';
+import { useEnvContext } from '@/contexts/EnvContext';
 import { ParamValue } from 'next/dist/server/request/params';
 import { usePathname } from 'next/navigation';
 

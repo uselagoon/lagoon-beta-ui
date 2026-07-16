@@ -3,7 +3,7 @@
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { scopeOptions } from '@/components/pages/environmentVariables/_components/filterValues';
 import { ProjectEnvVarsPartialColumns } from '@/components/pages/projectVariables/_components/DataTableColumns';
-import {Button, DataTable, SelectWithOptions, Switch} from '@uselagoon/ui-library';
+import {Button, DataTable, SelectWithOptions, Switch} from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {

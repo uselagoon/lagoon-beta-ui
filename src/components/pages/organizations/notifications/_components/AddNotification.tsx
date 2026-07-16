@@ -8,7 +8,7 @@ import {
   ADD_WEBHOOK_NOTIFICATION,
 } from '@/lib/mutation/organizations/addNotification';
 import { ApolloError, useMutation } from '@apollo/client';
-import { Sheet } from '@uselagoon/ui-library';
+import { Sheet } from '@/ui-library';
 import { toast } from 'sonner';
 import Image from "next/image";
 import {Mail, Webhook} from "lucide-react";

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { ProjectsData } from '@/app/(routegroups)/(projectroutes)/projects/(projects-page)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { Button, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { Button, DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import DataTableColumns from './DataTableColumns';

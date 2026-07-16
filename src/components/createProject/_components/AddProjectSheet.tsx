@@ -2,7 +2,7 @@ import React from 'react';
 
 import addProjectToOrganization from '@/lib/mutation/organizations/addProjectToOrganization';
 import { useMutation } from '@apollo/client';
-import { Sheet } from '@uselagoon/ui-library';
+import { Sheet } from '@/ui-library';
 import {toast} from "sonner";
 
 const AddProjectSheet = ({

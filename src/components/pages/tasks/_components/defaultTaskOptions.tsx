@@ -48,8 +48,10 @@ export const getDefaultTaskOptions = (advancedTasks: AdvancedTaskOptions[] | und
   ];
 
   // filter default tasks
-  // @ts-ignore
-  options = options.filter(option => !blocklist.includes(option.options.value));
+  options = options.map(option => {
+    option.options = option.options.filter(filteredOption => !blocklist.includes(filteredOption.value));
+    return option;
+  });
 
   if (advancedTasks && advancedTasks.length) {
     const filteredAdvancedTasks = advancedTasks.filter(task => !blocklist.includes(task.value));

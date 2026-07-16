@@ -1,7 +1,7 @@
 'use client';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { BasicTable, Skeleton } from '@uselagoon/ui-library';
+import { BasicTable, Skeleton } from '@/ui-library';
 
 export default function Loading() {
   const deployTargetColumns = [

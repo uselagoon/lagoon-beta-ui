@@ -2,7 +2,7 @@ import React, { FC, startTransition } from 'react';
 
 import addUserToOrganization from '@/lib/mutation/organizations/addUserToOrganization';
 import { useMutation } from '@apollo/client';
-import { Button, Sheet } from '@uselagoon/ui-library';
+import { Button, Sheet } from '@/ui-library';
 import { toast } from 'sonner';
 
 import { adminRoleSelect } from './filterOptions';

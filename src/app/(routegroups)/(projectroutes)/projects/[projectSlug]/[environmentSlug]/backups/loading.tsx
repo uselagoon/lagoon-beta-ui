@@ -3,7 +3,7 @@
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import BackupsTableColumns from '@/components/pages/backups/_components/TableColumns';
 import { backupResultOptions, statusOptions } from '@/components/pages/backups/_components/filterValues';
-import { DataTable, DateRangePicker, SelectWithOptions } from '@uselagoon/ui-library';
+import { DataTable, DateRangePicker, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {

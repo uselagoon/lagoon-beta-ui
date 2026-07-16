@@ -2,7 +2,7 @@ import { FC, startTransition } from 'react';
 
 import addProjectToGroup from '@/lib/mutation/organizations/addProjectToGroup';
 import { ApolloError, useMutation } from '@apollo/client';
-import { Sheet } from '@uselagoon/ui-library';
+import { Sheet } from '@/ui-library';
 import { toast } from 'sonner';
 
 type Props = {

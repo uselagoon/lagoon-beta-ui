@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
-import { Breadcrumb } from '@uselagoon/ui-library';
+import { Breadcrumb } from '@/ui-library';
 
 export const BulkDeploymentsBreadcrumbs = () => {
   const { bulkId } = useParams<{ bulkId: string }>();

@@ -1,7 +1,7 @@
 'use client';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { Button, Skeleton } from '@uselagoon/ui-library';
+import { Button, Skeleton } from '@/ui-library';
 
 export default function Loading() {
   return (

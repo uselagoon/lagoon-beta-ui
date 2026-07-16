@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { OrgGroup } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/groups/(groups-page)/page';
 import { AddUser } from '@/components/addUserToOrg/Adduser';
 import { handleSort, renderSortIcons } from '@/components/utils';
-import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 
 import { DeleteGroup } from './_components/DeleteGroup';
 

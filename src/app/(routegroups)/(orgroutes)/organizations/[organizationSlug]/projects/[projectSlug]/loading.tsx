@@ -6,7 +6,7 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { notificationTypeOptions } from '@/components/pages/organizations/notifications/_components/filterOptions';
 import { OrgProjectGroupColumns } from '@/components/pages/organizations/project/OrgProjectGroupColumns';
 import { OrgProjectNotificationColumns } from '@/components/pages/organizations/project/OrgProjectNotificationColumns';
-import { Checkbox, DataTable, SelectWithOptions, Skeleton } from '@uselagoon/ui-library';
+import { Checkbox, DataTable, SelectWithOptions, Skeleton } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {

@@ -2,7 +2,7 @@ import { FC, startTransition } from 'react';
 
 import addGroupMember from '@/lib/mutation/organizations/addGroupMember';
 import { ApolloError, useMutation } from '@apollo/client';
-import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import { Edit2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -51,7 +51,7 @@ export const EditUserRole: FC<Props> = ({ groupName, email, currentRole, refetch
         data-cy="edit-user-role"
         sheetTrigger={
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger aria-label="edit-role">
               <Edit2Icon />
             </TooltipTrigger>
             <TooltipContent>Edit Role</TooltipContent>

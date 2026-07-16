@@ -1,7 +1,7 @@
 import { ParamValue } from 'next/dist/server/request/params';
 
 import { ProjectDeployTargetsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/deploy-targets/page';
-import { SidebarItem } from '@uselagoon/ui-library/dist/components/Sidenav/Sidenav';
+import { SidebarItem } from '@/ui-library/components/Sidenav/Sidenav';
 import { GitPullRequestDraft } from 'lucide-react';
 
 import { EnvWithProblemsType } from './types';
@@ -78,6 +78,7 @@ export const getOrgNav = (organizationSlug: ParamValue, showVariables?: boolean)
         { title: 'Projects', url: `/organizations/${organizationSlug}/projects` },
         ...(showVariables ? [{ title: 'Variables', url: `/organizations/${organizationSlug}/variables` }] : []),
         { title: 'Notifications', url: `/organizations/${organizationSlug}/notifications` },
+        { title: 'Keys', url: `/organizations/${organizationSlug}/keys` },
         { title: 'Administration', url: `/organizations/${organizationSlug}/manage` },
       ],
     },

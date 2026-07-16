@@ -1,6 +1,6 @@
 import React, { FC, Fragment, useRef, useState } from 'react';
 
-import { Accordion } from '@uselagoon/ui-library';
+import { Accordion } from '@/ui-library';
 import { CircleAlert, CircleCheck, CircleX } from 'lucide-react';
 
 import ScrollableLog from './_components/ScrollableLog';

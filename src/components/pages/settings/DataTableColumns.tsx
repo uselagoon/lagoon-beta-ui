@@ -9,7 +9,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from '@uselagoon/ui-library';
+} from '@/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -112,7 +112,7 @@ export const renderTableColumns = (remove: {
                 });
               }}
             >
-              <Button variant="outline" disabled={remove.loading}>
+              <Button variant="outline" disabled={remove.loading} aria-label="delete-key">
                 <Trash2 data-cy="delete-key" />
               </Button>
             </Notification>

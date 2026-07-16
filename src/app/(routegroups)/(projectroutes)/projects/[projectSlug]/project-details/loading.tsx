@@ -1,9 +1,9 @@
 'use client';
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { DetailStat, Skeleton } from '@uselagoon/ui-library';
+import { DetailStat, Skeleton } from '@/ui-library';
 
-// import { DetailedStats, LoadingSkeleton } from '@uselagoon/ui-library';
+// import { DetailedStats, LoadingSkeleton } from '@/ui-library';
 
 export default function Loading() {
   const detailItems = [

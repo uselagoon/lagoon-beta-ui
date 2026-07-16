@@ -2,7 +2,7 @@
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import ProblemsColumns from '@/components/pages/problems/ProblemsTableColumns';
-import { DataTable } from '@uselagoon/ui-library';
+import { DataTable } from '@/ui-library';
 
 export default function Loading() {
   return (

@@ -6,7 +6,7 @@ import addUserSSHPublicKey from '@/lib/mutation/addUserSSHPublicKey';
 import deleteUserSSHPublicKey from '@/lib/mutation/deleteUserSSHPublicKey';
 import Me from '@/lib/query/me';
 import { ApolloError, QueryRef, useMutation, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DataTable, Sheet } from '@uselagoon/ui-library';
+import { DataTable, Sheet } from '@/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';

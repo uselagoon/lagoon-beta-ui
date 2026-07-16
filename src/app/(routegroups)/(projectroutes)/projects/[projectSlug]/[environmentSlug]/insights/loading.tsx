@@ -2,7 +2,7 @@
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { FactsTableColumns, InsightsTableColumns } from '@/components/pages/insights/DataTableColumns';
-import { DataTable } from '@uselagoon/ui-library';
+import { DataTable } from '@/ui-library';
 
 export default function Loading() {
   return (

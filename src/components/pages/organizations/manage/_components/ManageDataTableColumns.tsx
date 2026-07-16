@@ -1,5 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '@uselagoon/ui-library';
+import { Badge } from '@/ui-library';
 
 import { DeleteUser } from './DeleteUser';
 import { EditUser } from './EditUser';

@@ -4,7 +4,7 @@ import { OrganizationManageData } from '@/app/(routegroups)/(orgroutes)/organiza
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DataTable, SelectWithOptions, TabNavigation } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions, TabNavigation } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 import { resultsFilterValues } from '../groups/_components/groupFilterValues';

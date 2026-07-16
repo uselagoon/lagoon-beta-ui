@@ -9,7 +9,7 @@ import { CreateGroup } from '@/components/createGroup/CreateGroup';
 import { CreateProject } from '@/components/createProject/CreateProject';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DetailStat } from '@uselagoon/ui-library';
+import { DetailStat } from '@/ui-library';
 
 import { Description } from './_components/Description';
 import ViewDeployTargets from "@/components/pages/organizations/organization/_components/ViewDeployTargets";

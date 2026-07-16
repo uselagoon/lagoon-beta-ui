@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, startTransition } from 'react';
 
-import { Button, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Button, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import { Trash, Unlink } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -18,6 +18,7 @@ interface DeleteProps {
   action: () => void | Promise<any>;
   refetch?: () => void;
   loading: boolean;
+  disabled?: boolean;
 }
 
 const DeleteNoConfirm: FC<DeleteProps> = ({
@@ -29,6 +30,7 @@ const DeleteNoConfirm: FC<DeleteProps> = ({
   action,
   refetch,
   loading,
+  disabled,
 }) => {
   const confirmAction = async () => {
     try {
@@ -54,7 +56,7 @@ const DeleteNoConfirm: FC<DeleteProps> = ({
       confirmText={deleteConfirmText ?? 'Confirm'}
       onConfirm={confirmAction}
     >
-      <Button variant="outline" disabled={loading}>
+      <Button variant="outline" disabled={loading || disabled} aria-label="delete">
         <Tooltip>
           <TooltipTrigger>
             {deleteType === 'delete' || deleteType === 'remove' ? (

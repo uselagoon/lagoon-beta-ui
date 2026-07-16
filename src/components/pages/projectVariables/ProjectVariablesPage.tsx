@@ -10,7 +10,7 @@ import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import ProjectNotFound from '@/components/errors/ProjectNotFound';
 import projectByNameWithEnvVarsValueQuery from '@/lib/query/projectByNameWithEnvVarsValueQuery';
 import { QueryRef, useLazyQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import {DataTable, Switch} from '@uselagoon/ui-library';
+import {DataTable, Switch} from '@/ui-library';
 import { toast } from 'sonner';
 
 import { AddNewVariable } from '../../addNewVariable/AddNewVariable';

@@ -1,4 +1,4 @@
-import { Badge, DataTableColumnDef } from '@uselagoon/ui-library';
+import { Badge, DataTableColumnDef } from '@/ui-library';
 
 import { Notification } from '../notifications/_components/EditNotification';
 

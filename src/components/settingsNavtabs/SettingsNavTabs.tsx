@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-import { TabNavigation } from '@uselagoon/ui-library';
+import { TabNavigation } from '@/ui-library';
 
 export const SettingsNavTabs = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();

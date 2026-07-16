@@ -1,5 +1,5 @@
 import { Problem } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/problems/page';
-import { cn } from '@uselagoon/ui-library';
+import { cn } from '@/ui-library';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import utc from 'dayjs/plugin/utc';

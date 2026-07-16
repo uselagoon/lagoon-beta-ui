@@ -6,7 +6,7 @@ import { AllDeploymentsData } from '@/app/(routegroups)/alldeployments/page';
 import { BulkDeployment } from '@/app/(routegroups)/bulkdeployment/[bulkId]/page';
 import { capitalize, handleSort, renderSortIcons } from '@/components/utils';
 import { Row } from '@tanstack/react-table';
-import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@uselagoon/ui-library';
+import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';

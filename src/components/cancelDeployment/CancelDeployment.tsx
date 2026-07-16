@@ -1,7 +1,7 @@
 import { Deployment } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/deployments/(deployments-page)/page';
 import { default as cancelDeploy } from '@/lib/mutation/cancelDeployment';
 import { useMutation } from '@apollo/client';
-import { Button, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Button, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import { Ban } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -48,7 +48,7 @@ export const CancelDeploymentButton = ({
           confirmText="Yes"
           onConfirm={action}
         >
-          <Button variant="ghost" disabled={loading || success}>
+          <Button variant="ghost" disabled={loading || success} aria-label="cancel-deployment">
             <Tooltip>
               <TooltipTrigger>
                 <Ban data-cy="cancel-deployment" />

@@ -2,7 +2,7 @@ import { FC, startTransition } from 'react';
 
 import addProjectToGroup from '@/lib/mutation/organizations/addProjectToGroup';
 import { ApolloError, useMutation } from '@apollo/client';
-import { Sheet } from '@uselagoon/ui-library';
+import { Sheet } from '@/ui-library';
 import { toast } from 'sonner';
 
 type Props = {
@@ -12,13 +12,14 @@ type Props = {
     name: string;
   }[];
   refetch?: () => void;
+  disabled?: boolean;
 };
 
 /**
  * Link group to project sheet
  */
 
-export const AddGroupToProject: FC<Props> = ({ projectName, groups, refetch }) => {
+export const AddGroupToProject: FC<Props> = ({ projectName, groups, refetch, disabled }) => {
   const [addGroup, { error, loading }] = useMutation(addProjectToGroup, {
     refetchQueries: ['getOrganization'],
   });
@@ -56,6 +57,7 @@ export const AddGroupToProject: FC<Props> = ({ projectName, groups, refetch }) =
       sheetFooterButton="Link"
       loading={loading}
       error={!!error}
+      disabled={disabled}
       additionalContent={null}
       sheetFields={[
         {

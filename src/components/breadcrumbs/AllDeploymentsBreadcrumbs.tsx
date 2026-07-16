@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { Breadcrumb } from '@uselagoon/ui-library';
+import { Breadcrumb } from '@/ui-library';
 
 export const AllDeploymentsBreadcrumbs = () => {
   const breadcrumbItems = [

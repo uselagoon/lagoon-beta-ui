@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { OrganizationUsersData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/users/(users-page)/page';
 import { handleSort, renderSortIcons } from '@/components/utils';
-import { Badge, Button, DataTableColumnDef, cn } from '@uselagoon/ui-library';
+import { Badge, Button, DataTableColumnDef, cn } from '@/ui-library';
 
 import { RemoveUser } from './_components/RemoveUser';
 

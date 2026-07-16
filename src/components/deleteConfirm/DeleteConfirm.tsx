@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, startTransition, useState } from 'react';
 
-import { Button, Input, Label, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Button, Input, Label, Notification, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import { Trash } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -90,7 +90,7 @@ export const DeleteConfirm: FC<DeleteProps> = ({
       confirmDisabled={confirmDisabled}
       onConfirm={confirmAction}
     >
-      <Button variant="outline" disabled={loading}>
+      <Button variant="outline" disabled={loading} aria-label="delete">
         <Tooltip>
           <TooltipTrigger>
             {icon ? icon : buttonText ? buttonText : <Trash data-cy="delete-variable" />}

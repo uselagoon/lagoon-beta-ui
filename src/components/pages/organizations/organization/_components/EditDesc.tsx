@@ -2,7 +2,7 @@ import { FC } from 'react';
 
 import updateOrganizationDescription from '@/lib/mutation/organizations/updateOrganizationDescription';
 import { ApolloError, useMutation } from '@apollo/client';
-import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import { Check, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -33,7 +33,7 @@ export const EditDesc: FC<Props> = ({ orgId, description }) => {
   return (
     <Tooltip>
       <TooltipTrigger>
-        <Button disabled={loading} variant="outline" onClick={handleUpdate}>
+        <Button disabled={loading} variant="outline" onClick={handleUpdate} aria-label="save-desc">
           {loading ? <Loader2 className="animate-spin" /> : <Check />}
         </Button>
       </TooltipTrigger>

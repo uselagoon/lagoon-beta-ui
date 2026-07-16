@@ -3,7 +3,7 @@ import React, { FC, Fragment, startTransition } from 'react';
 import { EnvironmentWithTasks } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
 import taskDrushUserLogin from '@/lib/mutation/tasks/taskDrushUserLogin';
 import { useMutation } from '@apollo/client';
-import { Button, Select, SelectWithOptions } from '@uselagoon/ui-library';
+import { Button, Select, SelectWithOptions } from '@/ui-library';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 

@@ -1,6 +1,6 @@
 import updateUserSSHPublicKey from '@/lib/mutation/updateUserSSHPublicKey';
 import { ApolloError, useMutation } from '@apollo/client';
-import { Sheet } from '@uselagoon/ui-library';
+import { Sheet } from '@/ui-library';
 import { Edit2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 

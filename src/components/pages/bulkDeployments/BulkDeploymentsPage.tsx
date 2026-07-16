@@ -2,7 +2,7 @@
 
 import { BulkDeployment } from '@/app/(routegroups)/bulkdeployment/[bulkId]/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { CopyToClipboard, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { CopyToClipboard, DataTable, SelectWithOptions } from '@/ui-library';
 
 import BulkDeploymentColumns from './TableColumns';
 

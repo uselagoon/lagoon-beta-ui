@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react';
 
 import Link from 'next/link';
 
-import { NextLinkProvider } from '@uselagoon/ui-library';
+import { NextLinkProvider } from '@/ui-library';
 
 const LinkProvider = ({ children }: { children: ReactNode }) => {
   return (

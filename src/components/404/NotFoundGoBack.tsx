@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-import { Button } from '@uselagoon/ui-library';
+import { Button } from '@/ui-library';
 
 export const NotFoundGoBack = ({ title }: { title?: string }) => {
   const router = useRouter();

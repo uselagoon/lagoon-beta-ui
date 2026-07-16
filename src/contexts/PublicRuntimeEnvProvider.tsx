@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { EnvProvider } from 'next-runtime-env';
+import { EnvProvider } from '@/contexts/EnvContext';
 
 import fs from 'node:fs';
 

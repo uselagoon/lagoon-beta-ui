@@ -2,7 +2,7 @@ import { FC, startTransition } from 'react';
 
 import addUserToOrganization from '@/lib/mutation/organizations/addUserToOrganization';
 import { ApolloError, useMutation } from '@apollo/client';
-import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import { Edit2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -72,7 +72,7 @@ export const EditUser: FC<Props> = ({ orgId, refetch, user }) => {
 
   return (
     <Tooltip>
-      <TooltipTrigger>
+      <TooltipTrigger aria-label="edit-user">
         <Sheet
           data-cy="edit-user"
           sheetTrigger={<Edit2Icon />}

@@ -1,15 +1,16 @@
-import { FC, startTransition } from 'react';
+import {FC, ReactNode, startTransition} from 'react';
 
 import { EnvVariable } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/project-variables/page';
 import addOrUpdateEnvVariable from '@/lib/mutation/addOrUpdateEnvVariable';
 import { useMutation } from '@apollo/client';
-import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@uselagoon/ui-library';
+import { Sheet, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import { Edit2Icon } from 'lucide-react';
 import { toast } from 'sonner';
 
 type Props = {
   currentEnv: EnvVariable;
   refetch: () => void;
+  additionalContent?: ReactNode;
 } & (
   | {
       type: 'project';
@@ -45,7 +46,7 @@ const scopeOptions = [
   },
 ];
 
-export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) => {
+export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, additionalContent = null, ...rest }) => {
   let envName = '';
   let orgName = '';
   let projName = '';
@@ -98,16 +99,16 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) 
   return (
     <>
       <Tooltip>
-        <TooltipTrigger>
+        <TooltipTrigger aria-label="edit-variable">
           <Sheet
             data-cy="add-variable"
             sheetTrigger={<Edit2Icon />}
-            sheetTitle="Edit a variable"
+            sheetTitle={`Edit a ${type} variable`}
             sheetFooterButton="Update"
             sheetDescription="Create a unique name for your variable. Then choose the scope of the variables availability. For more information see our documentation"
             loading={loading}
             error={false}
-            additionalContent={null}
+            additionalContent={additionalContent}
             sheetFields={[
               {
                 id: 'variable_name',
@@ -131,12 +132,14 @@ export const EditVariable: FC<Props> = ({ currentEnv, refetch, type, ...rest }) 
                 id: 'variable_value',
                 label: 'Variable value',
                 placeholder: 'Enter variable value',
+                type: 'textarea',
                 inputDefault: currentEnv.value,
                 required: true,
               },
             ]}
             buttonAction={(_, { variable_name, variable_scope, variable_value }) => {
               handleUpdateVariable(variable_name, variable_scope, variable_value);
+              return false;
             }}
           />
         </TooltipTrigger>

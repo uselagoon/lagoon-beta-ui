@@ -23,7 +23,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/lib/*": ["./src/lib/*"],
-      "@/components/*": ["./src/components/*"]
+      "@/components/*": ["./src/components/*"],
+      "@ui-lib/*": ["./src/ui-library/*"]
     },
     "target": "ES2017"
   },
@@ -45,6 +46,8 @@
   "exclude": [
     "node_modules",
     "**/cypress/**",
+    "**/*.stories.*",
+    "**/*.stories.d.ts",
     // temp - until ui lib is ready
     "app/(routegroups)",
     "/components"

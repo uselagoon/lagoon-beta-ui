@@ -3,7 +3,7 @@ import React, { FC, startTransition, useState } from 'react';
 import { EnvironmentWithTasks } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
 import taskDrushSqlSync from '@/lib/mutation/tasks/taskDrushSqlSync';
 import { useMutation } from '@apollo/client';
-import { Button, SelectWithOptions } from '@uselagoon/ui-library';
+import { Button, SelectWithOptions } from '@/ui-library';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 

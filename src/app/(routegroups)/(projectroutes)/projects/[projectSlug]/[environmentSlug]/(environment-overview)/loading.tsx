@@ -2,7 +2,7 @@
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import KeyFacts from '@/components/pages/environment/_components/KeyFacts';
-import { DetailStat, Skeleton } from '@uselagoon/ui-library';
+import { DetailStat, Skeleton } from '@/ui-library';
 
 export default function Loading() {
   const environmentDetailSkeletonItems = [

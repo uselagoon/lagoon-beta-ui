@@ -2,7 +2,7 @@
 
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import BulkDeploymentColumns from '@/components/pages/bulkDeployments/TableColumns';
-import { DataTable, SelectWithOptions, Skeleton } from '@uselagoon/ui-library';
+import { DataTable, SelectWithOptions, Skeleton } from '@/ui-library';
 
 export default function Loading() {
   return (

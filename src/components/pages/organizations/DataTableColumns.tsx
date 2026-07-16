@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 import { OrgType } from '@/app/(routegroups)/(orgroutes)/organizations/(organizations-page)/page';
 import { renderSortIcons } from '@/components/utils';
-import { Button, Checkbox, DataTableColumnDef, Skeleton } from '@uselagoon/ui-library';
+import { Button, Checkbox, DataTableColumnDef, Skeleton } from '@/ui-library';
 
 type SortDirection = 'asc' | 'desc' | false;
 

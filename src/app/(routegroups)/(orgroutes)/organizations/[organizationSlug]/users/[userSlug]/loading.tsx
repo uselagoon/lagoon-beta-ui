@@ -3,7 +3,7 @@
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { UserDataTableColumns } from '@/components/pages/organizations/user/_components/UserGroupsTableColumns';
 import { resultsFilterValues } from '@/components/pages/organizations/user/_components/filterValues';
-import { Checkbox, DataTable, SelectWithOptions } from '@uselagoon/ui-library';
+import { Checkbox, DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
 export default function Loading() {
