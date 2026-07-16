@@ -17,8 +17,8 @@ const componentSchemas = {
 
 // check for valid css
 const safeCSSValue = z.string().regex(
-	/^[^;{}<>/*]+$/,
-	'CSS token value must not contain ; { } < > / or *'
+	/^(?!.*\/\*)(?!.*\*\/)[^;{}<>]+$/,
+	'CSS token value must not contain ; { } < >, or CSS comment markers (/* */)'
 );
 
 // shad uses tokens to override styling/components

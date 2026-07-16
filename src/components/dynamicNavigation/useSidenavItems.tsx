@@ -16,8 +16,6 @@ import { getOrgNav, getProjectNav } from './DynamicNavigation';
 import { useExtensions } from '@/contexts/ExtensionContext';
 import { resolveIcon } from '@/lib/extensions/icons';
 
-const disableAccountLink = Boolean(process.env.LAGOON_UI_YOUR_ACCOUNT_DISABLED);
-
 function getSection(items: SidebarItem[], url: string): SidebarItem | null {
   for (const item of items) {
     if (item.url === url) return item;
@@ -88,7 +86,8 @@ export function useSidenavItems(
 
   const pathname = usePathname();
 
-  const { LAGOON_UI_VIEW_ENV_VARIABLES } = useEnvContext();
+  const { LAGOON_UI_VIEW_ENV_VARIABLES, LAGOON_UI_YOUR_ACCOUNT_DISABLED } = useEnvContext();
+  const disableAccountLink = Boolean(LAGOON_UI_YOUR_ACCOUNT_DISABLED);
   const footerItems = useFooterSidenavItems(kcUrl, disableAccountLink);
   const { getNavItemsForTarget, getSidebarSections } = useExtensions();
 
@@ -143,12 +142,13 @@ export function useSidenavItems(
     }
 
     // Add extension items to existing sections
+    const findSectionIndex = (sectionName: string) => items.findIndex(s => s.section === sectionName);
     const targetToIndex: Record<string, number> = {
-      'sidebar-projects': 0,
-      'sidebar-environments': 0,
-      'sidebar-deployments': 1,
-      'sidebar-organizations': 2,
-      'sidebar-settings': 3,
+      'sidebar-projects': findSectionIndex('Projects'),
+      'sidebar-environments': findSectionIndex('Projects'),
+      'sidebar-deployments': findSectionIndex('Deployments'),
+      'sidebar-organizations': findSectionIndex('Organizations'),
+      'sidebar-settings': findSectionIndex('Settings'),
     };
     for (const [target, idx] of Object.entries(targetToIndex)) {
       const extItems = getNavItemsForTarget(target as any);

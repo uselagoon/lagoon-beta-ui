@@ -21,11 +21,18 @@ function validateNavItem(item: unknown, path: string, requireTarget = true): Val
   if (typeof nav.id !== 'string' || !nav.id) errors.push({ path: `${path}.id`, message: 'required string' });
   if (typeof nav.label !== 'string' || !nav.label) errors.push({ path: `${path}.label`, message: 'required string' });
   if (typeof nav.href !== 'string' || !nav.href) errors.push({ path: `${path}.href`, message: 'required string' });
-  if (requireTarget && nav.target !== undefined && !validNavTargets.includes(nav.target as typeof validNavTargets[number])) {
-    errors.push({ path: `${path}.target`, message: `must be one of: ${validNavTargets.join(', ')}` });
+  if (requireTarget) {
+    if (typeof nav.target !== 'string' || !nav.target) {
+      errors.push({ path: `${path}.target`, message: `required and must be one of: ${validNavTargets.join(', ')}` });
+    } else if (!validNavTargets.includes(nav.target as typeof validNavTargets[number])) {
+      errors.push({ path: `${path}.target`, message: `must be one of: ${validNavTargets.join(', ')}` });
+    }
   }
   if (nav.requiredRoles !== undefined && !Array.isArray(nav.requiredRoles)) {
     errors.push({ path: `${path}.requiredRoles`, message: 'must be an array' });
+  }
+  if (nav.excludeRoles !== undefined && !Array.isArray(nav.excludeRoles)) {
+    errors.push({ path: `${path}.excludeRoles`, message: 'must be an array' });
   }
   return errors;
 }
