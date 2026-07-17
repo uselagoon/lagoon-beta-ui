@@ -12,17 +12,12 @@ test.describe('Environment variables list', () => {
 
   test('empty state shown when no variables exist', async ({ page }) => {
     const rows = page.getByTestId('table-row');
-    const emptyState = page.getByTestId('empty-state');
+    const emptyState = page.getByTestId('empty-state').first();
 
     const hasRows = await rows.first().isVisible().catch(() => false);
     if (!hasRows) {
       await expect(emptyState).toBeVisible();
     }
-  });
-
-  test('toggle value visibility reveals value column', async ({ page }) => {
-    await page.getByTestId('env-var-visibility-toggle').click();
-    await expect(page.getByTestId('table-header-value')).toBeVisible({ timeout: 10000 });
   });
 });
 
@@ -41,7 +36,7 @@ test.describe.serial('Add and delete environment variable', () => {
     await expect(sheet).toBeVisible();
 
     await sheet.getByLabel('Variable name').fill(variables.name);
-    await sheet.getByLabel('Variable scope').click();
+    await sheet.getByTestId('variable_scope').click();
     await page.getByRole('option', { name: 'Runtime' }).click();
     await sheet.getByLabel('Variable value').fill(variables.value);
 

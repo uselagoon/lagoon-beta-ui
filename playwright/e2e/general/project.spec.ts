@@ -16,9 +16,8 @@ test('project overview shows environments', async ({ page }) => {
 });
 
 test('project details tab shows git URL, branches, and organization', async ({ page }) => {
-  await page.goto(`${env.url}/projects/${env.project}`);
+  await page.goto(`${env.url}/projects/${env.project}/project-details`);
 
-  await page.getByTestId('nav-details').click();
   await expect(page.getByTestId('git-url')).toBeVisible({ timeout: 10000 });
   await expect(page.getByTestId('git-url')).not.toHaveText('');
 

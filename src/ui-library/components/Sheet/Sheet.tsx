@@ -239,6 +239,7 @@ export default function UISheet({
 										case 'select':
 											return (
 												<SelectWithOptions
+													data-testid={field.id}
 													placeholder={field?.placeholder || ''}
 													options={field?.options || []}
 													value={(fieldValues[field.id] as string) || ''}
