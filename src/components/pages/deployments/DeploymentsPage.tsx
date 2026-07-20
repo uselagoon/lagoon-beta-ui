@@ -112,6 +112,7 @@ export default function DeploymentsPage({
               options={deploymentResultOptions}
               width={100}
               value={String(results || 10)}
+              data-testid="results-per-page"
               placeholder="Results per page"
               onValueChange={newVal => {
                 table.setPageSize(Number(newVal));

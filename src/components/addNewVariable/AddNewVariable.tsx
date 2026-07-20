@@ -92,7 +92,6 @@ export const AddNewVariable: FC<Props> = ({ type, refetch, onClick, additionalCo
 
   return (
     <Sheet
-      data-cy="add-variable"
       sheetTrigger={`Add ${type} variable`}
       sheetTitle={`Create a ${type} variable`}
       sheetFooterButton="Create"

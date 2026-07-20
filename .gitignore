@@ -12,6 +12,11 @@ cache
 # testing
 /coverage
 
+# playwright
+/playwright/.auth/
+/playwright-report/
+/test-results/
+
 # next.js
 /.next/
 /out/

@@ -23,7 +23,7 @@ const valueText = cva('font-sans font-normal text-lg leading-normal tracking-nor
 	},
 });
 
-function formatToCypressString(input: string) {
+function formatToPlaywrightString(input: string) {
 	return input.toLowerCase().replace(/\s+/g, '-');
 }
 
@@ -35,7 +35,7 @@ const DetailStat: React.FC<StatProps> = ({ title, value, lowercaseValue, capital
 	if (capitalizeValue) textTransform = 'capitalize';
 
 	const content = isElement ? (
-		<div className={textTransform} data-cy={formatToCypressString(title)}>
+		<div className={textTransform} data-testid={formatToPlaywrightString(title)}>
 			{value}
 		</div>
 	) : (
@@ -43,7 +43,7 @@ const DetailStat: React.FC<StatProps> = ({ title, value, lowercaseValue, capital
 			className={valueText({
 				transform: lowercaseValue ? 'lowercase' : capitalizeValue ? 'capitalize' : 'none',
 			})}
-			data-cy={formatToCypressString(title)}
+			data-testid={formatToPlaywrightString(title)}
 		>
 			{value}
 		</span>

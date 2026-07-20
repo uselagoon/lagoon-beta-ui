@@ -163,13 +163,14 @@ export default function TasksPage({
         Run a task on this environment
       </span>
 
-      <div className="mb-4" data-cy="task-select">
+      <div className="mb-4" data-testid="task-select">
         <SelectWithOptions
           options={taskoptions}
           onValueChange={val => {
             setSelectedTask(val as TaskType);
           }}
           placeholder="Select a task to run"
+          data-testid="task-select-options"
         />
       </div>
 
