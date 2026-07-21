@@ -44,9 +44,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
-    async authorized({ auth }) {
-      // Logged in users are authenticated, otherwise redirect to login page
-      return !!auth;
+    async authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnLogin = nextUrl.pathname === '/api/login';
+
+      if (isOnLogin) return true;
+
+      if (!isLoggedIn) {
+        const loginUrl = new URL('/api/login', nextUrl);
+        loginUrl.searchParams.set('callbackUrl', nextUrl.pathname + nextUrl.search);
+        return Response.redirect(loginUrl);
+      }
+      
+      return true;
     },
     async jwt({ token, account }: { token: JWT; account?: Account | null | undefined }): Promise<JWT> {
       if (account) {
