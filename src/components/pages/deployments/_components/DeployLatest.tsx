@@ -2,7 +2,7 @@ import { DeploymentsData } from '@/app/(routegroups)/(projectroutes)/projects/[p
 import deployEnvironmentLatest from '@/lib/mutation/deployEnvironmentLatest';
 import { useMutation } from '@apollo/client';
 import { RefetchFunction } from '@apollo/client/react/hooks/useSuspenseQuery';
-import { Button, Skeleton } from '@/ui-library';
+import { Button, ToggleGroup, ToggleGroupItem } from '@/ui-library';
 import { AlertCircle, GitBranch, Loader2, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';
@@ -28,22 +28,27 @@ type DeploymentType = 'full' | 'variables';
 
 const deploymentOptions = [
   {
-    type: 'full' as const,
-    icon: <GitBranch size={20} className="size-5" />,
-    title: 'Full Deployment',
-    description: 'Builds new images and applies all pending changes including variables, routes, and services.',
+    value: 'full' as const,
+    icon: GitBranch,
+    label: 'Full deployment',
+    detail: 'This will rebuild and redeploy everything',
+    description: 'New images are built and all pending changes apply, including variables, routes, and services. This is the safest option if you\'re unsure what changed.',
   },
   {
-    type: 'variables' as const,
-    icon: <Zap size={20} className="size-5" />,
-    title: 'Variables Only Deployment',
+    value: 'variables' as const,
+    icon: Zap,
+    label: 'Variables only',
+    detail: 'Updates variables without rebuilding',
     description: 'Faster deployment that updates runtime variables and restarts pods. Does not rebuild images.',
+    warning: 'Runtime variables update now. Build-scoped changes only take effect after a full deployment.',
   },
 ];
 
 const DeployLatestData: React.FC<Props> = ({ environment }) => {
   const { id, deployType, deployBaseRef, deployHeadRef, deployTitle } = environment;
   const [selectedType, setSelectedType] = useState<DeploymentType>('full');
+  const selected = deploymentOptions.find((o) => o.value === selectedType)!;
+  const Icon = selected.icon;
 
   const [deployEnvironmentLatestMutation, { loading }] = useMutation(deployEnvironmentLatest, {
     onError: err => {
@@ -90,52 +95,47 @@ const DeployLatestData: React.FC<Props> = ({ environment }) => {
       </section>
     );
   }
-
+  
   return (
-    <section className="py-4 px-[18px] rounded-lg border mb-6">
-      <div className="mb-4">
-        <h3 className="text-base font-medium">Deployment Type</h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Choose how you want to deploy these changes</p>
-      </div>
-
-      <div className="flex gap-4">
-        {deploymentOptions.map(option => (
-          <Button
-            key={option.type}
-            variant={selectedType === option.type ? 'default' : 'secondary'}
-            onClick={() => setSelectedType(option.type)}
-            disabled={loading}
-            className={`flex-1 flex h-auto items-start gap-3 p-4 rounded-lg border text-left transition-all`}
-          >
-            <div className="flex gap-3">
-              <div className={`mt-0.5 flex-shrink-0 ${selectedType === option.type ? 'text-blue-500' : 'text-gray-400'}`}>{option.icon}</div>
-              <div className="flex flex-col gap-1">
-                <span className="font-medium text-sm">{option.title}</span>
-                <span className="text-xs opacity-70 font-normal">{option.description}</span>
-              </div>
-            </div>
-          </Button>
-        ))}
-      </div>
-
-      {selectedType === 'variables' && (
-        <div 
-          className="mt-6 p-4 rounded-lg flex gap-3 mt-6 p-4 rounded-lg flex gap-3 bg-amber-50 border border-amber-200 text-amber-900"
+    <section className="py-4 rounded-lg mb-6">
+      <div className="flex gap-4 max-w-[60%] justify-between">
+        <ToggleGroup
+          type="single"
+          size="lg"
+          className="w-2/3"
+          variant="outline"
+          value={selectedType}
+          onValueChange={(val) => val && setSelectedType(val as DeploymentType)}
         >
-          <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
-          <div>
-            <h4 className="font-medium">Partial Deployment Warning</h4>
-            <p className="text-sm mt-1">
-              Some changes will not fully apply with a variables only deployment. Runtime variables will update now. Build scoped behaviour and other changes will only take effect after a full deployment.
-            </p>
-          </div>
-        </div>
-      )}
+          {deploymentOptions.map((option) => {
+            const Icon = option.icon;
+            return (
+              <ToggleGroupItem className="p-4" key={option.value} value={option.value} aria-label={option.label} disabled={loading}>
+                <Icon className={`size-5 mr-2 mt-0.5 flex-shrink-0 ${selectedType === option.value ? 'text-blue-500' : 'text-gray-400'}`} />
+                {option.label}
+              </ToggleGroupItem>
+              
+            );
+          })}
 
-      <div className="flex justify-end mt-6">
-        <Button data-cy="deploy-button" disabled={loading} onClick={() => deployEnvironmentLatestMutation()}>
-          {loading && <Loader2 className="animate-spin" />} Deploy
-        </Button>
+      </ToggleGroup>
+          <Button data-cy="deploy-button" disabled={loading} onClick={() => deployEnvironmentLatestMutation()}>
+            {loading && <Loader2 className="animate-spin" />} Deploy
+          </Button>
+      </div>
+
+      <div className="mt-4 rounded-lg border p-4 flex gap-3 max-w-[60%]">
+        <Icon className="size-5 shrink-0 mt-0.5 text-blue-500" />
+        <div className="space-y-1">
+          <p className="text-sm font-semibold">{selected.detail}</p>
+          <p className="text-sm text-muted-foreground">{selected.description}</p>
+          {selected.warning && (
+            <div className="flex items-start gap-2 mt-2">
+              <AlertCircle className="size-3.5 text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
+              <p className="text-xs text-amber-800 dark:text-amber-400 leading-relaxed">{selected.warning}</p>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

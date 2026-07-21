@@ -5,55 +5,62 @@ import { usePathname } from 'next/navigation';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import getDeploymentTableColumns from '@/components/pages/deployments/_components/TableColumns';
 import { deploymentResultOptions, statusOptions } from '@/components/pages/deployments/_components/filterValues';
-import { Button, DataTable, DateRangePicker, SelectWithOptions } from '@/ui-library';
+import { Button, DataTable, DateRangePicker, SelectWithOptions, ToggleGroup, ToggleGroupItem } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
-import {GitBranch, Zap} from "lucide-react";
+import { GitBranch, Loader2, Zap } from 'lucide-react';
 
 const deploymentOptions = [
   {
-    type: 'full' as const,
-    icon: <GitBranch size={20} className="size-5" />,
-    title: 'Full Deployment',
-    description: 'Builds new images and applies all pending changes including variables, routes, and services.',
+    value: 'full' as const,
+    icon: GitBranch,
+    label: 'Full deployment',
+    detail: 'This will rebuild and redeploy everything',
+    description: 'New images are built and all pending changes apply, including variables, routes, and services. This is the safest option if you\'re unsure what changed.',
   },
   {
-    type: 'variables' as const,
-    icon: <Zap size={20} className="size-5" />,
-    title: 'Variables Only Deployment',
+    value: 'variables' as const,
+    icon: Zap,
+    label: 'Variables only',
+    detail: 'Updates variables without rebuilding',
     description: 'Faster deployment that updates runtime variables and restarts pods. Does not rebuild images.',
+    warning: 'Runtime variables update now. Build-scoped changes only take effect after a full deployment.',
   },
 ];
 
 const DeployLatestSkeleton = () => (
-  <section className="py-4 px-[18px] rounded-lg border mb-6">
-    <div className="mb-4">
-      <h3 className="text-base font-medium">Deployment Type</h3>
-      <p className="text-sm text-gray-500 dark:text-gray-400">Choose how you want to deploy these changes</p>
-    </div>
-
-    <div className="flex gap-4">
-      {deploymentOptions.map(option => (
-        <Button
-          key={option.type}
-          variant={'full' === option.type ? 'default' : 'secondary'}
-          className={`flex-1 flex h-auto items-start gap-3 p-4 rounded-lg border text-left transition-all`}
+    <section className="py-4 rounded-lg mb-6">
+      <div className="flex gap-4 max-w-[60%] justify-between">
+        <ToggleGroup
+          type="single"
+          size="lg"
+          className="w-2/3"
+          variant="outline"
+          value="full"
+          onValueChange={() => {}}
         >
-          <div className="flex gap-3">
-            <div className={`mt-0.5 flex-shrink-0 ${'full' === option.type ? 'text-blue-500' : 'text-gray-400'}`}>{option.icon}</div>
-            <div className="flex flex-col gap-1">
-              <span className="font-medium text-sm">{option.title}</span>
-              <span className="text-xs opacity-70 font-normal">{option.description}</span>
-            </div>
-          </div>
-        </Button>
-      ))}
-    </div>
-    <div className="flex justify-end mt-6">
-      <Button data-cy="deploy-button" disabled={false} onClick={() => {}}>
-        Deploy
-      </Button>
-    </div>
-  </section>
+          {deploymentOptions.map((option) => {
+            const Icon = option.icon;
+            return (
+              <ToggleGroupItem className="p-4" key={option.value} value={option.value} aria-label={option.label}>
+                <Icon className={`size-5 mr-2 mt-0.5 flex-shrink-0 ${"full" === option.value ? 'text-blue-500' : 'text-gray-400'}`} />
+                {option.label}
+              </ToggleGroupItem>
+            );
+          })}
+        </ToggleGroup>
+          <Button data-cy="deploy-button">
+            {<Loader2 className="animate-spin" />} Deploy
+          </Button>
+      </div>
+
+      <div className="mt-4 rounded-lg border p-4 flex gap-3 max-w-[60%]">
+        <GitBranch className="size-5 shrink-0 mt-0.5 text-blue-500" />
+        <div className="space-y-1">
+          <p className="text-sm font-semibold">{deploymentOptions[0].detail}</p>
+          <p className="text-sm text-muted-foreground">{deploymentOptions[0].description}</p>
+        </div>
+      </div>
+    </section>
 );
 
 export default function Loading() {
