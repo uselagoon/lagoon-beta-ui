@@ -7,5 +7,9 @@
     "sidenavFooterMenu": {
       "disableChangeFeedLink": true
     }
+  },
+  "theme": {
+    "light": { "primary": "#3a8cff", "primary-foreground": "#ffffff" },
+    "dark":  { "primary": "#5ba3ff", "primary-foreground": "#0c0c0c" }
   }
 }

@@ -227,7 +227,7 @@ export default function DataTable<TData, TValue>({
 										return (
 											<TableHead
 												key={header.id}
-												className={cn('transition-colors py-1', isSorted && 'bg-gray-100 dark:bg-gray-700')}
+												className={cn('transition-colors py-1', isSorted && 'bg-muted/70')}
 												style={{ width: thWidth }}
 											>
 												<div className="line-clamp-2 break-all leading-snug">
@@ -264,8 +264,8 @@ export default function DataTable<TData, TValue>({
 													style={{ width: tdWidth }}
 													key={visibleCell.id}
 													className={cn(
-														'transition-colors py-6 text-ellipsis',
-														isSorted && 'bg-gray-100 dark:bg-gray-700',
+									'transition-colors py-6 text-ellipsis',
+										isSorted && 'bg-muted/70',
 													)}
 												>
 													<div className="line-clamp-3 break-words leading-snug">

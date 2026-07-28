@@ -6,6 +6,7 @@ import withApolloMock from './decorators/withApolloMock';
 import withEnvProvider from './decorators/withEnvProvider';
 import { withStatefulMocks } from './decorators/withStatefulMocks';
 import withStorybookGlobals from './decorators/withStorybookGlobals';
+import withThemeOverride from './decorators/withThemeOverride';
 import withThemeProvider from './decorators/withThemeProvider';
 import withToaster from './decorators/withToaster';
 import { handlers } from './mocks/handlers';
@@ -72,6 +73,6 @@ const preview: Preview = {
   },
   tags: ['!autodocs'],
 
-  decorators: [withStorybookGlobals, withStatefulMocks, mswDecorator, withEnvProvider, withThemeProvider, withApolloMock, withToaster],
+  decorators: [withThemeOverride, withStorybookGlobals, withStatefulMocks, mswDecorator, withEnvProvider, withThemeProvider, withApolloMock, withToaster],
 };
 export default preview;

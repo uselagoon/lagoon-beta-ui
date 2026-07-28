@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { ProjectData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/(project-overview)/page';
-import projectEnvironmentsQuery from '@/lib/query/projectEnvironmentsQuery';
+import { ProjectData } from '../../../app/(routegroups)/(projectroutes)/projects/[projectSlug]/(project-overview)/page';
+import projectEnvironmentsQuery from '../../../lib/query/projectEnvironmentsQuery';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
 import { sleep } from '../../../../.storybook/mocks/storyHelpers';

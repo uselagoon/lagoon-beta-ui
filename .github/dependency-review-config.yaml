@@ -29,18 +29,24 @@ allow-dependencies-licenses:
 # CC-BY-4.0: Build dependency pulled in by Next & browserslist
 - 'pkg:npm/caniuse-lite'
 # LGPL/MPL: Image optimization for Next
-- 'pkg:npm/%40img%2Fsharp-libvips-darwin-arm64'
-- 'pkg:npm/%40img%2Fsharp-libvips-darwin-x64'
-- 'pkg:npm/%40img%2Fsharp-libvips-linux-arm'
-- 'pkg:npm/%40img%2Fsharp-libvips-linux-arm64'
-- 'pkg:npm/%40img%2Fsharp-libvips-linux-ppc64'
-- 'pkg:npm/%40img%2Fsharp-libvips-linux-riscv64'
-- 'pkg:npm/%40img%2Fsharp-libvips-linux-s390x'
-- 'pkg:npm/%40img%2Fsharp-libvips-linux-x64'
-- 'pkg:npm/%40img%2Fsharp-libvips-linuxmusl-arm64'
-- 'pkg:npm/%40img%2Fsharp-libvips-linuxmusl-x64'
-- 'pkg:npm/%40img%2Fsharp-win32-arm64'
-- 'pkg:npm/%40img%2Fsharp-win32-ia32'
-- 'pkg:npm/%40img%2Fsharp-win32-x64'
+- 'pkg:npm/%40img/sharp-libvips-darwin-arm64'
+- 'pkg:npm/%40img/sharp-libvips-darwin-x64'
+- 'pkg:npm/%40img/sharp-libvips-linux-arm'
+- 'pkg:npm/%40img/sharp-libvips-linux-arm64'
+- 'pkg:npm/%40img/sharp-libvips-linux-ppc64'
+- 'pkg:npm/%40img/sharp-libvips-linux-riscv64'
+- 'pkg:npm/%40img/sharp-libvips-linux-s390x'
+- 'pkg:npm/%40img/sharp-libvips-linux-x64'
+- 'pkg:npm/%40img/sharp-libvips-linuxmusl-arm64'
+- 'pkg:npm/%40img/sharp-libvips-linuxmusl-x64'
+- 'pkg:npm/%40img/sharp-win32-arm64'
+- 'pkg:npm/%40img/sharp-win32-ia32'
+- 'pkg:npm/%40img/sharp-win32-x64'
 # CC0-1.0: Pulled in by storybook
 - 'pkg:npm/type-fest'
+# CC0-1.0 AND MIT: Pulled in by typescript-eslint
+- 'pkg:npm/lodash'
+# BlueOak-1.0.0: Pulled in by storybook
+- 'pkg:npm/minimatch'
+# Missing license: Build dependency
+- 'pkg:npm/baseline-browser-mapping'

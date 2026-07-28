@@ -28,6 +28,15 @@ async function refreshAccessToken(token: JWT) {
   token.expires_at = Math.floor(Date.now() / 1000 + newTokens.expires_in);
   // Some providers only issue refresh tokens once, so preserve if we did not get a new one
   if (newTokens.refresh_token) token.refresh_token = newTokens.refresh_token;
+  try {
+    token.realm_access = {
+      roles: JSON.parse(
+        Buffer.from(newTokens.access_token.split('.')[1], 'base64url').toString()
+      ).realm_access?.roles,
+    };
+  } catch {
+    console.error('Error decoding access_token');
+  }
 
   return token;
 }
@@ -44,19 +53,35 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
-    async authorized({ auth }) {
-      // Logged in users are authenticated, otherwise redirect to login page
-      return !!auth;
+    async authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnLogin = nextUrl.pathname === '/api/login';
+      if (isOnLogin) return true;
+      if (!isLoggedIn) {
+        const loginUrl = new URL('/api/login', nextUrl);
+        loginUrl.searchParams.set('callbackUrl', nextUrl.pathname + nextUrl.search);
+        return Response.redirect(loginUrl);
+      }
+      return true;
     },
     async jwt({ token, account }: { token: JWT; account?: Account | null | undefined }): Promise<JWT> {
       if (account) {
         // account is only available the first time this callback is called on a new session (after the user signs in)
+        let roles: string[] | undefined;
+        try {
+          roles = JSON.parse(
+            Buffer.from((account.access_token as string).split('.')[1], 'base64url').toString()
+          ).realm_access?.roles;
+        } catch {
+          console.error('Error decoding access_token');
+        }
         return {
           ...token,
           access_token: account.access_token as string,
           expires_at: account.expires_at as number,
           refresh_token: account.refresh_token,
           id_token: account.id_token as string,
+          realm_access: { roles },
         };
       } else if (Date.now() < token.expires_at * 1000 - 30000) {
         // access token still valid
@@ -77,7 +102,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       // send properties to the client
-
       session.access_token = token.access_token;
       session.id_token = token.id_token;
       session.roles = token?.realm_access?.roles;
