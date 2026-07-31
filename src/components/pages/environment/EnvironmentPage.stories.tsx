@@ -1,10 +1,10 @@
 import React from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within, screen, waitFor } from '@storybook/test';
+import { expect, userEvent, within, screen, waitFor } from 'storybook/test';
 
-import { EnvironmentData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/(environment-overview)/page';
-import environmentByOpenShiftProjectName from '@/lib/query/environmentByOpenShiftProjectName';
+import { EnvironmentData } from '../../../app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/(environment-overview)/page';
+import environmentByOpenShiftProjectName from '../../../lib/query/environmentByOpenShiftProjectName';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
 import { EnvironmentOverview } from '../../../../.storybook/mocks/storyHelpers';

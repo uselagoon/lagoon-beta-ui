@@ -1,11 +1,11 @@
 import React, { forwardRef } from 'react';
 
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { getOrgNav, getProjectNav } from '@/components/dynamicNavigation/DynamicNavigation';
-import { SidebarSection } from '@/contexts/AppContext';
-import { NextLinkProvider, RootLayout } from '@/ui-library';
+import { getOrgNav, getProjectNav } from '../../components/dynamicNavigation/DynamicNavigation';
+import { NextLinkProvider, RootLayout, SidebarSection } from '../../ui-library';
+import { NextLinkType } from '../../ui-library/typings/nextLink';
 import { BriefcaseBusiness, FolderGit2, KeyRound, ListChecks, ServerCog } from 'lucide-react';
 
 const onNavigate = action('navigate');
@@ -211,7 +211,7 @@ const SidebarNavigationDemo = ({ navigationLevel }: SidebarNavigationDemoProps) 
   };
 
   return (
-    <NextLinkProvider linkComponent={MockLink}>
+    <NextLinkProvider linkComponent={MockLink as NextLinkType}>
       <RootLayout
         appInfo={mockAppInfo}
         userInfo={mockUserInfo}

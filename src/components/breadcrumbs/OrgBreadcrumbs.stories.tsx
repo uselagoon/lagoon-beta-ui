@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react';
 
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Breadcrumb, NextLinkProvider } from '@/ui-library';
+import { Breadcrumb, NextLinkProvider } from '../../ui-library';
+import { NextLinkType } from '../../ui-library/typings/nextLink';
 
 const onNavigate = action('navigate');
 
@@ -81,7 +82,7 @@ const OrgBreadcrumbsDemo = ({ organizationSlug, groupSlug, userSlug, projectSlug
   ];
 
   return (
-    <NextLinkProvider linkComponent={MockLink}>
+    <NextLinkProvider linkComponent={MockLink as NextLinkType}>
       <div className="flex justify-start items-baseline">
         <Breadcrumb activeKey={activeKey} items={breadcrumbItems} currentSlug={currentSlug} type="orgs" />
       </div>

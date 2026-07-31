@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Deployment } from '@/app/(routegroups)/alldeployments/page';
+import { Deployment } from '../../../app/(routegroups)/alldeployments/page';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 
 import AllDeploymentsPage from './AllDeploymentsPage';
 

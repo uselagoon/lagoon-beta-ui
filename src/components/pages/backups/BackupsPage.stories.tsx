@@ -1,10 +1,10 @@
 import React from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, waitFor, within } from '@storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { BackupsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/backups/page';
-import environmentWithBackups from '@/lib/query/environmentWithBackups';
+import { BackupsData } from '../../../app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/backups/page';
+import environmentWithBackups from '../../../lib/query/environmentWithBackups';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
 import BackupsPage from './BackupsPage';

@@ -25,7 +25,7 @@ services:
       dockerfile: Dockerfile
     labels:
       lagoon.type: node
-    command: yarn run dev
+    command: ["/bin/sh", "-c", "yarn build:extensions && yarn run dev"]
     volumes:
       - ./src:/app/src
       - ./utils:/app/utils
@@ -42,6 +42,9 @@ services:
       - ./.env.schema:/app/.env.schema
       - ./package.json:/app/package.json
       - ./yarn.lock:/app/yarn.lock
+      - ./extensions.json:/app/extensions.json
+      - ./extensions:/app/extensions
+      - ./scripts:/app/scripts
     ports:
       - '3003:3003'
     networks:
