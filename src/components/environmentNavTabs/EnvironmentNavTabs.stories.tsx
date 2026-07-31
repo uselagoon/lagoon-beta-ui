@@ -1,9 +1,10 @@
 import React, { forwardRef } from 'react';
 
-import { action } from '@storybook/addon-actions';
+import { action } from 'storybook/actions';
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { Badge, NextLinkProvider, TabNavigation } from '@/ui-library';
+import { Badge, NextLinkProvider, TabNavigation } from '../../ui-library';
+import { NextLinkType } from '../../ui-library/typings/nextLink';
 
 const onNavigate = action('navigate');
 
@@ -42,7 +43,7 @@ const EnvironmentNavTabsDemo = ({
   children,
 }: DemoProps) => {
   return (
-    <NextLinkProvider linkComponent={MockLink}>
+    <NextLinkProvider linkComponent={MockLink as NextLinkType}>
       <section className="flex flex-col gap-4">
         <TabNavigation
           pathname={pathname}

@@ -13,7 +13,9 @@ export default gql`
       environments(type: PRODUCTION) {
         name
         route
-        updated
+        deployments(limit: 1) {
+          created
+        }
         kubernetes {
           id
           name

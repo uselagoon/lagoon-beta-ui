@@ -3,7 +3,6 @@ import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
 import { default as Checkbox } from '../components/Checkbox';
-import { Story } from '@storybook/addon-docs/blocks';
 
 const meta: Meta<typeof Checkbox> = {
 	component: Checkbox,

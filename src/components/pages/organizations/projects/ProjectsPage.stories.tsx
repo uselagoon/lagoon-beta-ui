@@ -1,10 +1,10 @@
 import React from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within, screen, waitFor } from '@storybook/test';
+import { expect, userEvent, within, screen, waitFor } from 'storybook/test';
 
-import { OrganizationProjectsData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/projects/(projects-page)/page';
-import organizationByNameProjects from '@/lib/query/organizations/organizationByName.projects';
+import { OrganizationProjectsData } from '../../../../app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/projects/(projects-page)/page';
+import organizationByNameProjects from '../../../../lib/query/organizations/organizationByName.projects';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
 import { sleep } from '../../../../../.storybook/mocks/storyHelpers';

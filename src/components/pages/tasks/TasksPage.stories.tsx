@@ -1,10 +1,10 @@
 import React from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, fireEvent, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, fireEvent, screen, userEvent, waitFor, within } from 'storybook/test';
 
-import { TasksData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
-import environmentWithTasks from '@/lib/query/environmentWithTasks';
+import { TasksData } from '../../../app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/tasks/(tasks-page)/page';
+import environmentWithTasks from '../../../lib/query/environmentWithTasks';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
 import TasksPage from './TasksPage';

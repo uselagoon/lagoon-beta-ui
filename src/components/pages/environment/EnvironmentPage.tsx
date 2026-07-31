@@ -21,6 +21,7 @@ import KeyFacts from './_components/KeyFacts';
 import LimitedRoutes from './_components/LimitedRoutes';
 import deduplicateFacts from './_components/deduplicateFacts';
 import {makeSafe} from "@/components/utils";
+import { ExtensionZoneRenderer } from '@/components/extensions/ExtensionZoneRenderer';
 
 dayjs.extend(utc);
 
@@ -206,6 +207,15 @@ export default function EnvironmentPage({
 
   return (
     <SectionWrapper>
+      <ExtensionZoneRenderer zone="environment-header"
+        data={{
+          environmentName: environment.name,
+          environmentType: environment.environmentType,
+          deployType: environment.deployType,
+          created: environment.created,
+          updated: environment.updated,
+        }} 
+      />
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Overview</h3>
       <span className="text-[#737373] inline-block font-sans font-normal not-italic text-sm leading-normal tracking-normal mb-6">
         Key information about your environment
@@ -296,6 +306,13 @@ export default function EnvironmentPage({
           />
         </section>
       </div>
+      <ExtensionZoneRenderer zone="environment-footer" data={{
+        environmentName: environment.name,
+        environmentType: environment.environmentType,
+        deployType: environment.deployType,
+        created: environment.created,
+        updated: environment.updated,
+      }} />
     </SectionWrapper>
   );
 }

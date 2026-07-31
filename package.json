@@ -7,7 +7,10 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev --turbopack -p 3003",
-    "build": "yarn typecheck && next build",
+    "build": "yarn build:extensions && yarn typecheck && next build",
+    "build:extensions": "npx tsx scripts/build-extensions.ts",
+    "remove:extension": "npx tsx scripts/remove-extension.ts",
+    "remove:extensions": "npx tsx scripts/remove-all-extensions.ts",
     "typecheck": "tsc --noEmit",
     "start": "next start -p 3000",
     "start:cypress": "next start -H 0.0.0.0 -p 3000",
@@ -72,14 +75,14 @@
     "graphql-ws": "^5.16.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.526.0",
-    "next": "^15.4.4",
+    "next": "^15.5.18",
     "next-auth": "^5.0.0-beta.28",
     "next-themes": "^0.4.6",
     "nuqs": "^1.20.0",
     "postcss": "^8.5.4",
-    "react": "^19.1.0",
+    "react": "19.2.6",
     "react-day-picker": "^9.7.0",
-    "react-dom": "^19.1.0",
+    "react-dom": "19.2.6",
     "react-highlight-words": "^0.21.0",
     "react-hook-form": "^7.58.1",
     "react-loading-skeleton": "^3.5.0",
@@ -93,17 +96,11 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^2.0.2",
+    "@chromatic-com/storybook": "^4.0.0",
     "@faker-js/faker": "8.4.1",
-    "@storybook/addon-essentials": "8.6.14",
-    "@storybook/addon-interactions": "8.6.14",
-    "@storybook/addon-links": "8.6.14",
-    "@storybook/addon-onboarding": "8.6.14",
-    "@storybook/core-events": "8.6.14",
-    "@storybook/nextjs": "8.6.14",
-    "@storybook/react": "8.6.14",
-    "@storybook/test": "8.6.14",
-    "@storybook/test-runner": "0.21.0",
+    "@storybook/addon-docs": "9.1.19",
+    "@storybook/nextjs": "9.1.19",
+    "@storybook/test-runner": "0.22.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/lodash": "^4.17.17",
     "@types/node": "^20",
@@ -119,17 +116,29 @@
     "msw": "^2.4.5",
     "msw-storybook-addon": "^2.0.3",
     "sass-embedded": "^1.97.1",
-    "storybook": "8.6.14",
-    "typescript": "^5",
-    "webpack": "5.98.0"
+    "storybook": "9.1.19",
+    "typescript": "^5"
   },
   "resolutions": {
     "string-width": "4.2.3",
     "@types/react": "19.1.6",
-    "@types/react-dom": "19.1.5"
+    "@types/react-dom": "19.1.5",
+    "axios": "^1.13.6",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "postcss": "^8.5.10",
+    "qs": "^6.15.0",
+    "ws": ">=8.21.0",
+    "js-yaml": ">=4.2.0",
+    "@babel/core": ">=7.29.6 <8"
   },
   "overrides": {
-    "string-width": "4.2.3"
+    "string-width": "4.2.3",
+    "axios": "^1.13.6",
+    "qs": "^6.15.0",
+    "ws": ">=8.21.0",
+    "js-yaml": ">=4.2.0",
+    "@babel/core": ">=7.29.6 <8"
   },
   "msw": {
     "workerDirectory": [

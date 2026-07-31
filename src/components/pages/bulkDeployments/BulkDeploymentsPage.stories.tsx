@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { BulkDeployment } from '@/app/(routegroups)/bulkdeployment/[bulkId]/page';
+import { BulkDeployment } from '../../../app/(routegroups)/bulkdeployment/[bulkId]/page';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 
 import BulkDeploymentsPage from './BulkDeploymentsPage';
 

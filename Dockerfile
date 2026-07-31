@@ -16,31 +16,24 @@ FROM uselagoon/node-22:latest
 WORKDIR /app
 
 # Standalone output bundles only the necessary server-side dependencies,
-# replacing a full node_modules copy with a much smaller footprint
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/overrides.json ./overrides.json
 
+# Required for extensions
+COPY --from=builder /app/extensions.json ./extensions.json
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/utils ./utils
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/yarn.lock ./yarn.lock
+COPY --from=builder /app/next.config.mjs ./next.config.mjs
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app/postcss.config.mjs ./postcss.config.mjs
+
 COPY auth-entrypoint.sh /lagoon/entrypoints/99-auth-entrypoint.sh
-
-ARG LAGOON_VERSION
-ENV LAGOON_VERSION=$LAGOON_VERSION
-
-ARG GRAPHQL_API
-ENV GRAPHQL_API=$GRAPHQL_API
-
-ARG AUTH_KEYCLOAK_ID
-ENV AUTH_KEYCLOAK_ID=$AUTH_KEYCLOAK_ID
-
-ARG AUTH_KEYCLOAK_SECRET
-ENV AUTH_KEYCLOAK_SECRET=$AUTH_KEYCLOAK_SECRET
-
-ARG AUTH_SECRET
-ENV AUTH_SECRET=$AUTH_SECRET
-
-ARG AUTH_KEYCLOAK_ISSUER
-ENV AUTH_KEYCLOAK_ISSUER=$AUTH_KEYCLOAK_ISSUER
 
 LABEL org.opencontainers.image.title="lagoon-beta-ui" \
       org.opencontainers.image.description="The Lagoon UI - a Next.js interface for managing Lagoon projects and environments" \

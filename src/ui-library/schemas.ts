@@ -15,6 +15,51 @@ const componentSchemas = {
 	changeFeed: ChangeFeedContainerSchema,
 };
 
+// check for valid css
+const safeCSSValue = z.string().regex(
+	/^(?!.*\/\*)(?!.*\*\/)[^;{}<>]+$/,
+	'CSS token value must not contain ; { } < >, or CSS comment markers (/* */)'
+);
+
+// shad uses tokens to override styling/components
+export const ThemeTokensSchema = z.object({
+	background: safeCSSValue.optional(),
+	foreground: safeCSSValue.optional(),
+	card: safeCSSValue.optional(),
+	'card-foreground': safeCSSValue.optional(),
+	popover: safeCSSValue.optional(),
+	'popover-foreground': safeCSSValue.optional(),
+	primary: safeCSSValue.optional(),
+	'primary-foreground': safeCSSValue.optional(),
+	secondary: safeCSSValue.optional(),
+	'secondary-foreground': safeCSSValue.optional(),
+	muted: safeCSSValue.optional(),
+	'muted-foreground': safeCSSValue.optional(),
+	accent: safeCSSValue.optional(),
+	'accent-foreground': safeCSSValue.optional(),
+	destructive: safeCSSValue.optional(),
+	'destructive-foreground': safeCSSValue.optional(),
+	border: safeCSSValue.optional(),
+	input: safeCSSValue.optional(),
+	ring: safeCSSValue.optional(),
+	radius: safeCSSValue.optional(),
+	sidebar: safeCSSValue.optional(),
+	'sidebar-foreground': safeCSSValue.optional(),
+	'sidebar-primary': safeCSSValue.optional(),
+	'sidebar-primary-foreground': safeCSSValue.optional(),
+	'sidebar-accent': safeCSSValue.optional(),
+	'sidebar-accent-foreground': safeCSSValue.optional(),
+	'sidebar-border': safeCSSValue.optional(),
+	'sidebar-ring': safeCSSValue.optional(),
+}).strict();
+
+export const ThemeSchema = z.object({
+	light: ThemeTokensSchema.optional(),
+	dark: ThemeTokensSchema.optional(),
+}).strict();
+
+export type ThemeTokens = z.infer<typeof ThemeTokensSchema>;
+export type Theme = z.infer<typeof ThemeSchema>;
 
 export const OverridesSchema = z.object({
 	global: z.object({
@@ -25,6 +70,7 @@ export const OverridesSchema = z.object({
 		sidenavFooterMenu: SidenavFooterMenuSchema.optional(),
 		changeFeed: ChangeFeedContainerSchema.optional(),
 	}).strict().optional(),
+	theme: ThemeSchema.optional(),
 }).strict();
 
 export type Overrides = z.infer<typeof OverridesSchema>;
@@ -81,6 +127,19 @@ export function validateOverrides(data: unknown): {
 						errors.push({ key: `Components.${name}`, message: issue.message });
 					});
 				}
+			}
+		}
+	}
+
+	if (rawData.theme !== undefined && rawData.theme !== null) {
+		try {
+			result.theme = ThemeSchema.parse(rawData.theme);
+		} catch (error) {
+			if (error instanceof z.ZodError) {
+				error.issues.forEach(issue => {
+					const path = issue.path.length > 0 ? issue.path.join('.') : 'theme';
+					errors.push({ key: `Theme.${path}`, message: issue.message });
+				});
 			}
 		}
 	}

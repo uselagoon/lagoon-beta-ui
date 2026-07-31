@@ -1,10 +1,10 @@
 import React from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, fireEvent, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, fireEvent, screen, userEvent, waitFor, within } from 'storybook/test';
 
-import { DeploymentsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/deployments/(deployments-page)/page';
-import environmentWithDeployments from '@/lib/query/environmentWithDeployments';
+import { DeploymentsData } from '../../../app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/deployments/(deployments-page)/page';
+import environmentWithDeployments from '../../../lib/query/environmentWithDeployments';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
 import DeploymentsPage from './DeploymentsPage';
