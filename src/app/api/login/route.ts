@@ -8,8 +8,9 @@ import { signIn } from '../../../auth';
 
 export async function GET(req: Request) {
   const searchParams = new URL(req.url).searchParams;
+  const idpHint = searchParams.get('idpHint') ?? process.env.KEYCLOAK_IDP_HINT ?? '';
   return signIn('keycloak',
     { redirectTo: searchParams.get('callbackUrl') ?? '' },
-    { 'kc_idp_hint': searchParams.get('idpHint') ?? ''}
+    { 'kc_idp_hint': idpHint}
   );
 }
