@@ -41,6 +41,12 @@ async function refreshAccessToken(token: JWT) {
   return token;
 }
 
+const loginRedirect = (nextUrl: URL) => {
+  const loginUrl = new URL('/api/login', nextUrl);
+  loginUrl.searchParams.set('callbackUrl', nextUrl.pathname + nextUrl.search);
+  return Response.redirect(loginUrl);
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Keycloak({
@@ -58,9 +64,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const isOnLogin = nextUrl.pathname === '/api/login';
       if (isOnLogin) return true;
       if (!isLoggedIn) {
-        const loginUrl = new URL('/api/login', nextUrl);
-        loginUrl.searchParams.set('callbackUrl', nextUrl.pathname + nextUrl.search);
-        return Response.redirect(loginUrl);
+        return loginRedirect(nextUrl);
+      }
+      if (auth?.error === 'RefreshTokenError') {
+        return loginRedirect(nextUrl);
       }
       return true;
     },
