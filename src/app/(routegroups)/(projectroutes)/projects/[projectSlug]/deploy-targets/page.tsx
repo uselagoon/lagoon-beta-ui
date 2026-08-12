@@ -36,6 +36,7 @@ type ProjectWithDeployTargets = {
   environments: {
     environmentType: 'production' | 'development';
     name: string;
+    openshiftProjectName: string;
   }[];
 };
 

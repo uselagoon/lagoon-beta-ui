@@ -10,6 +10,7 @@ import { makeSafe } from '../utils';
 type EnvironmentSummary = {
   name: string;
   environmentType: 'production' | 'development';
+  openshiftProjectName: string;
 };
 
 export const getProjectNav = (
@@ -53,7 +54,7 @@ export const getEnvironmentNav = (
   const showRoutesTab = environmentData?.environment?.project?.featureApiRoutes;
 
   return environments.map((env) => {
-    const slug = `${projectSlug}-${makeSafe(env.name)}`;
+    const slug = env.openshiftProjectName ?? `${projectSlug}-${makeSafe(env.name)}`;
     return {
       title: env.name,
       url: `/projects/${projectSlug}/${slug}`,
