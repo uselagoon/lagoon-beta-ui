@@ -57,7 +57,7 @@ const initialBackups = [
 
 const backupEnvMeta = {
   id: 1,
-  openshiftProjectName: 'project-main',
+  kubernetesNamespaceName: 'project-main',
   deployType: 'branch',
   deployBaseRef: 'main',
   deployHeadRef: 'main',
@@ -86,9 +86,9 @@ const meta: Meta<typeof BackupsPage> = {
     },
   },
   render: () => (
-    <MockPreloadQuery<BackupsData, { openshiftProjectName: string; limit: null }>
+    <MockPreloadQuery<BackupsData, { kubernetesNamespaceName: string; limit: null }>
       query={environmentWithBackups}
-      variables={{ openshiftProjectName: 'project-main', limit: null }}
+      variables={{ kubernetesNamespaceName: 'project-main', limit: null }}
     >
       {queryRef => <BackupsPage queryRef={queryRef} environmentSlug="project-main" />}
     </MockPreloadQuery>

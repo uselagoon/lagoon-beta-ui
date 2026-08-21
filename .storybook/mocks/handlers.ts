@@ -274,14 +274,14 @@ export const handlers = [
   }),
 
   lagoonGraphQL.query('getEnvironment', ({ variables, query }) => {
-    const openshiftProjectName = variables.openshiftProjectName as string;
+    const kubernetesNamespaceName = variables.kubernetesNamespaceName as string;
 
-    if (query.includes('environmentByOpenshiftProjectName') && !query.includes('insights') && !query.includes('apiRoutes') && !query.includes('backups') && !query.includes('tasks') && !query.includes('deployments') && !query.includes('envVariables') && !/facts\s*\{/.test(query)) {
-      const envOverview = getState<Record<string, unknown>>('environmentOverview', openshiftProjectName);
+    if (query.includes('environmentByKubernetesNamespaceName') && !query.includes('insights') && !query.includes('apiRoutes') && !query.includes('backups') && !query.includes('tasks') && !query.includes('deployments') && !query.includes('envVariables') && !/facts\s*\{/.test(query)) {
+      const envOverview = getState<Record<string, unknown>>('environmentOverview', kubernetesNamespaceName);
       if (envOverview) {
         return HttpResponse.json({ data: { environment: envOverview } });
       }
-      return HttpResponse.json({ data: { environment: createDefaultEnvironment(openshiftProjectName) } });
+      return HttpResponse.json({ data: { environment: createDefaultEnvironment(kubernetesNamespaceName) } });
     }
 
     if (query.includes('environmentById')) {
@@ -301,8 +301,8 @@ export const handlers = [
     }
 
     if (query.includes('apiRoutes')) {
-      const routes = getStateArray('routes', openshiftProjectName, defaultRoutes);
-      const routeEnvMeta = getState('routeEnvironmentMeta', openshiftProjectName) ?? createDefaultRouteEnvMeta(openshiftProjectName);
+      const routes = getStateArray('routes', kubernetesNamespaceName, defaultRoutes);
+      const routeEnvMeta = getState('routeEnvironmentMeta', kubernetesNamespaceName) ?? createDefaultRouteEnvMeta(kubernetesNamespaceName);
 
       return HttpResponse.json({
         data: { environmentRoutes: { ...routeEnvMeta, apiRoutes: routes } },
@@ -310,8 +310,8 @@ export const handlers = [
     }
 
     if (query.includes('backups') && !query.includes('tasks')) {
-      const backups = getStateArray('backups', openshiftProjectName, defaultBackups);
-      const backupEnvMeta = getState('backupEnvironmentMeta', openshiftProjectName) ?? createDefaultBackupEnvMeta(openshiftProjectName);
+      const backups = getStateArray('backups', kubernetesNamespaceName, defaultBackups);
+      const backupEnvMeta = getState('backupEnvironmentMeta', kubernetesNamespaceName) ?? createDefaultBackupEnvMeta(kubernetesNamespaceName);
 
       return HttpResponse.json({
         data: { environment: { ...backupEnvMeta, backups } },
@@ -319,13 +319,13 @@ export const handlers = [
     }
 
     if (query.includes('insights') && /facts\s*\{/.test(query)) {
-      const insightsEnv = getState<Record<string, unknown>>('insightsEnvironment', openshiftProjectName);
+      const insightsEnv = getState<Record<string, unknown>>('insightsEnvironment', kubernetesNamespaceName);
 
       if (insightsEnv) {
         return HttpResponse.json({ data: { environment: insightsEnv } });
       }
 
-      const envOverview = getState<Record<string, unknown>>('environmentOverview', openshiftProjectName);
+      const envOverview = getState<Record<string, unknown>>('environmentOverview', kubernetesNamespaceName);
       if (envOverview) {
         return HttpResponse.json({
           data: {
@@ -338,7 +338,7 @@ export const handlers = [
         });
       }
 
-      return HttpResponse.json({ data: { environment: createDefaultInsightsEnv(openshiftProjectName) } });
+      return HttpResponse.json({ data: { environment: createDefaultInsightsEnv(kubernetesNamespaceName) } });
     }
 
     if (query.includes('tasks') && !query.includes('advancedTasks')) {
@@ -351,9 +351,9 @@ export const handlers = [
     }
 
     if (query.includes('tasks') && query.includes('advancedTasks')) {
-      const tasks = getStateArray('tasks', openshiftProjectName, defaultTasks);
-      const advancedTasks = getStateArray('advancedTasks', openshiftProjectName, defaultAdvancedTasks);
-      const taskEnvMeta = getState('taskEnvironmentMeta', openshiftProjectName) ?? createDefaultTaskEnvMeta(openshiftProjectName);
+      const tasks = getStateArray('tasks', kubernetesNamespaceName, defaultTasks);
+      const advancedTasks = getStateArray('advancedTasks', kubernetesNamespaceName, defaultAdvancedTasks);
+      const taskEnvMeta = getState('taskEnvironmentMeta', kubernetesNamespaceName) ?? createDefaultTaskEnvMeta(kubernetesNamespaceName);
 
       return HttpResponse.json({
         data: { environment: { ...taskEnvMeta, tasks, advancedTasks } },
@@ -361,8 +361,8 @@ export const handlers = [
     }
 
     if (query.includes('deployments')) {
-      const deployments = getStateArray('deployments', openshiftProjectName, defaultDeployments);
-      const envMeta = getState('environmentMeta', openshiftProjectName) ?? createDefaultEnvMeta(openshiftProjectName);
+      const deployments = getStateArray('deployments', kubernetesNamespaceName, defaultDeployments);
+      const envMeta = getState('environmentMeta', kubernetesNamespaceName) ?? createDefaultEnvMeta(kubernetesNamespaceName);
 
       return HttpResponse.json({
         data: { environment: { ...envMeta, deployments } },
@@ -374,20 +374,20 @@ export const handlers = [
 
     const defaultEnv = {
       id: 1,
-      name: openshiftProjectName,
+      name: kubernetesNamespaceName,
       created: '2024-01-01T00:00:00Z',
       updated: '2024-06-01T00:00:00Z',
       deployType: 'branch',
       environmentType: 'production',
       routes: 'https://example.com',
-      openshiftProjectName,
+      kubernetesNamespaceName,
       pendingChanges: [],
     };
 
     const getProjectBlock = (withValues: boolean) => {
       const projectVars = withValues
-        ? getStateArray('envProjectVariablesWithValues', openshiftProjectName, defaultProjectVariablesWithValues)
-        : getStateArray('envProjectVariables', openshiftProjectName, defaultProjectVariables);
+        ? getStateArray('envProjectVariablesWithValues', kubernetesNamespaceName, defaultProjectVariablesWithValues)
+        : getStateArray('envProjectVariables', kubernetesNamespaceName, defaultProjectVariables);
 
       return {
         name: 'test-project',
@@ -404,7 +404,7 @@ export const handlers = [
     };
 
     if (includesValue) {
-      const unauthorizedViewValues = getState<boolean>('unauthorizedViewValues', openshiftProjectName) ?? false;
+      const unauthorizedViewValues = getState<boolean>('unauthorizedViewValues', kubernetesNamespaceName) ?? false;
       
       if (unauthorizedViewValues) {
         return HttpResponse.json({
@@ -413,7 +413,7 @@ export const handlers = [
         } as never);
       }
 
-      const envVariables = getStateArray('envEnvVariablesWithValues', openshiftProjectName, defaultEnvVariablesWithValues);
+      const envVariables = getStateArray('envEnvVariablesWithValues', kubernetesNamespaceName, defaultEnvVariablesWithValues);
 
       if (includesProjectEnvVars) {
         return HttpResponse.json({
@@ -426,7 +426,7 @@ export const handlers = [
       });
     }
 
-    const envVariables = getStateArray('envEnvVariables', openshiftProjectName, defaultEnvVariables);
+    const envVariables = getStateArray('envEnvVariables', kubernetesNamespaceName, defaultEnvVariables);
 
     return HttpResponse.json({
       data: { environmentVars: { ...defaultEnv, envVariables, project: getProjectBlock(false) } },
@@ -475,7 +475,6 @@ export const handlers = [
                 deployTitle: 'main',
                 updated: new Date().toISOString(),
                 routes: 'https://example.com',
-                openshiftProjectName: `${projectName}-main`,
                 kubernetesNamespaceName: `${projectName}-main`,
                 openshift: { friendlyName: 'Production', cloudRegion: 'US-EAST' },
                 project: { name: projectName, problemsUi: 0, factsUi: 5 },

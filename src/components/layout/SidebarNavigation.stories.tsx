@@ -112,7 +112,7 @@ function generateSidenavItems(level: NavigationLevel): SidebarSection[] {
     environment: {
       id: '1',
       name: 'main',
-      openshiftProjectName: 'my-project-main',
+      kubernetesNamespaceName: 'my-project-main',
       project: {
         id: '1',
         name: 'my-project',

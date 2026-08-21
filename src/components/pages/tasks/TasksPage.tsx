@@ -90,7 +90,7 @@ export default function TasksPage({
   }, [environment?.tasks, refetch]);
 
   if (!environment) {
-    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
+    return <EnvironmentNotFound kubernetesNamespaceName={environmentSlug} />;
   }
 
   const advancedTasks = environment?.advancedTasks?.map(task => {

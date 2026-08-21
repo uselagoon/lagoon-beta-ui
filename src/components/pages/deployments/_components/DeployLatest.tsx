@@ -13,7 +13,7 @@ interface Props {
   refetch?: RefetchFunction<
     DeploymentsData,
     {
-      openshiftProjectName: string;
+      kubernetesNamespaceName: string;
       limit: null | number;
     }
   >;

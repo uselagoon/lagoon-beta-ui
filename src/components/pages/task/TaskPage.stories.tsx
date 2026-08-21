@@ -82,7 +82,7 @@ type TaskFile = {
 type TaskEnvironment = {
   id: number;
   name: string;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   project: {
     id: number;
     name: string;
@@ -105,7 +105,7 @@ type TaskEnvironment = {
 const initialEnvironment: TaskEnvironment = {
   id: 1,
   name: 'main',
-  openshiftProjectName: 'project-main',
+  kubernetesNamespaceName: 'project-main',
   project: {
     id: 1,
     name: 'test-project',
@@ -143,9 +143,9 @@ const meta: Meta<typeof TaskPage> = {
     initialMockState: createTaskMockState(initialEnvironment),
   },
   render: () => (
-    <MockPreloadQuery<TaskData, { openshiftProjectName: string; taskName: string }>
+    <MockPreloadQuery<TaskData, { kubernetesNamespaceName: string; taskName: string }>
       query={environmentWithTask}
-      variables={{ openshiftProjectName: 'project-main', taskName: 'task-1234' }}
+      variables={{ kubernetesNamespaceName: 'project-main', taskName: 'task-1234' }}
     >
       {queryRef => <TaskPage queryRef={queryRef} taskName="task-1234" />}
     </MockPreloadQuery>

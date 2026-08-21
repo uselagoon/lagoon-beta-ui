@@ -97,7 +97,7 @@ export function useSidenavItems(
   });
 
   const { data: environmentData, loading: envLoading } = useQuery(environmentWithProblems, {
-    variables: { openshiftProjectName: environmentSlug },
+    variables: { kubernetesNamespaceName: environmentSlug },
     skip: !environmentSlug,
   });
 

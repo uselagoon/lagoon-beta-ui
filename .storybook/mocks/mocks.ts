@@ -285,7 +285,7 @@ export const generateEnvironments = (args = Object.create(null)) => {
     deployTitle: name,
     autoIdle: faker.helpers.arrayElement([0, 1]),
     environmentType: name === 'master' ? 'production' : 'development',
-    openshiftProjectName: `${project.name}-${name}`.toLowerCase(),
+    kubernetesNamespaceName: `${project.name}-${name}`.toLowerCase(),
     updated,
     created,
     deleted,

@@ -88,7 +88,7 @@ export default function ProjectEnvironmentsPage({
         : environment.routes;
 
     return {
-      name: environment.openshiftProjectName,
+      name: environment.kubernetesNamespaceName,
       title: environment.name,
       deployType: environment.deployType,
       activeRoutes: <RoutesWrapper>{createLinks(routesToUse)}</RoutesWrapper>,

@@ -31,7 +31,7 @@ export default gql`
         deployType
         environmentType
         routes
-        openshiftProjectName
+        kubernetesNamespaceName
         openshift {
           friendlyName
           cloudRegion

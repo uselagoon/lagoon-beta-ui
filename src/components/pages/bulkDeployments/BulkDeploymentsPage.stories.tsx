@@ -25,7 +25,7 @@ const generateMockBulkDeployments = (count: number = 10): BulkDeployment[] => {
         : null,
     environment: {
       name: `environment-${index + 1}`,
-      openshiftProjectName: `project-${index + 1}-env-${index + 1}`,
+      kubernetesNamespaceName: `project-${index + 1}-env-${index + 1}`,
       project: {
         name: `project-${['alpha', 'beta', 'gamma', 'delta'][index % 4]}`,
       },
