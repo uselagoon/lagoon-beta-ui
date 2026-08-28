@@ -13,7 +13,7 @@ import { CancelClone } from '@/components/cloneProject/_components/CancelClone';
 const setCloneBadge = (status?: string) => {
   if (!status) return null;
   if (status === 'FAILED' || status === 'CANCELLED') {
-    return <Badge variant="destructive">Clone Failed</Badge>;
+    return <Badge variant="destructive">Clone {status === 'FAILED' ? 'Failed' : 'Cancelled'}</Badge>;
   } else if (status != "COMPLETE") {
     return <Badge variant="info">Cloning</Badge>;
   } else {
@@ -76,6 +76,7 @@ export const ProjectsDataTableColumns = (
       const cloneID = row.original?.clone?.id;
       const cloneStatus = row.original?.clone?.status;
       const inactiveCloneStatus = new Set(['INCOMPATIBLE_REQUIREMENTS', 'FAILED', 'CANCELLED', 'COMPLETE']);
+      const disabledClone = cloneStatus === 'FAILED' || cloneStatus === 'CANCELLED';
       const publicGitUrl = row.original.gitUrl?.startsWith('http://') ?? false;
       return (
         <div className="flex gap-4 justify-end items-center">
@@ -91,7 +92,7 @@ export const ProjectsDataTableColumns = (
               ) : (
                 <Tooltip>
                   <TooltipTrigger>
-                    <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} publicGitUrl={publicGitUrl} keys={orgKeys} />
+                    <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} publicGitUrl={publicGitUrl} keys={orgKeys} disabled={disabledClone} />
                   </TooltipTrigger>
                   <TooltipContent>Clone this Project</TooltipContent>
                 </Tooltip>
