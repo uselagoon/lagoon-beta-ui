@@ -41,6 +41,18 @@ async function refreshAccessToken(token: JWT) {
   return token;
 }
 
+// check if the token is actually expired, not just rotating
+function isRefreshTokenExpired(refreshToken?: string): boolean {
+  if (!refreshToken) return true;
+  try {
+    const { exp } = JSON.parse(Buffer.from(refreshToken.split('.')[1], 'base64url').toString());
+    if (typeof exp !== 'number') return false;
+    return Date.now() >= exp * 1000;
+  } catch {
+    return false;
+  }
+}
+
 const loginRedirect = (nextUrl: URL) => {
   const loginUrl = new URL('/api/login', nextUrl);
   loginUrl.searchParams.set('callbackUrl', nextUrl.pathname + nextUrl.search);
@@ -100,9 +112,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return await refreshAccessToken(token);
         } catch (error) {
           console.error('Error refreshing access_token', error);
-          //if we fail to refresh the token, return an error so we can handle it on the page
-
-          token.error = 'RefreshTokenError';
+          if (isRefreshTokenExpired(token.refresh_token)) {
+            token.error = 'RefreshTokenError';
+          }
           return token;
         }
       }
