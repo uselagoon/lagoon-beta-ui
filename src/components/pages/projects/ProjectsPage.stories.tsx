@@ -17,11 +17,6 @@ const generateMockProjects = (count: number = 10): ProjectType[] => {
         name: 'main',
         route: `https://project-${index + 1}.example.com`,
         updated: new Date(Date.now() - index * 86400000).toISOString(),
-        kubernetes: {
-          id: 1,
-          name: 'prod-cluster',
-          cloudRegion: ['US', 'EU', 'APAC'][index % 3],
-        },
       },
     ],
   }));

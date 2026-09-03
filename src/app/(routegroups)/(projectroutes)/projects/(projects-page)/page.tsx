@@ -25,11 +25,6 @@ export type ProjectType = {
       route: string;
       updated: string;
       deployments?: Deployment[];
-      kubernetes: {
-        id: number;
-        name: string;
-        cloudRegion: string | null;
-      };
     }
   ];
 };
