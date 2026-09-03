@@ -16,11 +16,6 @@ export default gql`
         deployments(limit: 1) {
           created
         }
-        kubernetes {
-          id
-          name
-          cloudRegion
-        }
       }
     }
   }
