@@ -212,7 +212,7 @@ const createMockData = (args: DeploymentArgs): DeploymentData => {
   const buildLog = args.withWarnings ? warningDeploymentLogs : config.buildLog;
   return {
     environment: {
-      openshiftProjectName: 'project-main',
+      kubernetesNamespaceName: 'project-main',
       project: {
         name: 'test-project',
         problemsUi: true,
@@ -268,7 +268,7 @@ const meta = {
       <MockPreloadQuery
         key={key}
         query={environmentWithDeployment}
-        variables={{ openshiftProjectName: 'project-main', deploymentName: 'build-42' }}
+        variables={{ kubernetesNamespaceName: 'project-main', deploymentName: 'build-42' }}
         mockData={mockData}
       >
         {queryRef => <DeploymentPage queryRef={queryRef} deploymentName="build-42" />}

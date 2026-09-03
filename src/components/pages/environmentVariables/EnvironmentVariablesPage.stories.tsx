@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { EnvVariablesData } from '../../../app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/environment-variables/page';
-import environmentByOpenShiftProjectNameWithEnvVars from '../../../lib/query/environmentByOpenShiftProjectNameWithEnvVars';
+import environmentByKubernetesNamespaceNameWithEnvVars from '../../../lib/query/environmentByKubernetesNamespaceNameWithEnvVars';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 
@@ -43,9 +43,9 @@ const meta: Meta<typeof EnvironmentVariablesPage> = {
     },
   },
   render: () => (
-    <MockPreloadQuery<EnvVariablesData, { openshiftProjectName: string; limit: null }>
-      query={environmentByOpenShiftProjectNameWithEnvVars}
-      variables={{ openshiftProjectName: 'project-main', limit: null }}
+    <MockPreloadQuery<EnvVariablesData, { kubernetesNamespaceName: string; limit: null }>
+      query={environmentByKubernetesNamespaceNameWithEnvVars}
+      variables={{ kubernetesNamespaceName: 'project-main', limit: null }}
     >
       {queryRef => (
         <EnvironmentVariablesPage queryRef={queryRef} projectName="test-project" environmentName="project-main" />

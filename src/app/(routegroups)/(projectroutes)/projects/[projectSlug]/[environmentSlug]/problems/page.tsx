@@ -40,7 +40,7 @@ export type Problem = {
 
 type Environment = {
   id: number;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   project: {
     name: string;
     problemsUi: boolean;
@@ -71,7 +71,7 @@ export default async function Problems(props: { params: Promise<{ environmentSlu
       query={environmentWithProblems}
       variables={{
         displayName: 'Problems',
-        openshiftProjectName: environmentSlug,
+        kubernetesNamespaceName: environmentSlug,
         limit: null,
       }}
     >

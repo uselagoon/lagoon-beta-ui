@@ -48,7 +48,7 @@ export default function InsightsPage({
   });
 
   if (!environment) {
-    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
+    return <EnvironmentNotFound kubernetesNamespaceName={environmentSlug} />;
   }
 
   const setFactQuery = (str: string) => {

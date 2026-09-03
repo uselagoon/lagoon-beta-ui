@@ -16,7 +16,7 @@ export default gql`
       priority
       environment {
         name
-        openshiftProjectName
+        kubernetesNamespaceName
         project {
           name
         }

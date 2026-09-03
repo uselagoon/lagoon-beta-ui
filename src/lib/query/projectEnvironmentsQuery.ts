@@ -18,7 +18,7 @@ export default gql`
         deployments(limit: 1) {
           created
         }
-        openshiftProjectName
+        kubernetesNamespaceName
         project {
           problemsUi
           factsUi

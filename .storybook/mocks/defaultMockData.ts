@@ -286,7 +286,7 @@ export const defaultEmptyNotifications = {
   emails: [],
 };
 
-export function createDefaultEnvironment(openshiftProjectName: string) {
+export function createDefaultEnvironment(kubernetesNamespaceName: string) {
   return {
     id: 1,
     name: 'main',
@@ -295,7 +295,7 @@ export function createDefaultEnvironment(openshiftProjectName: string) {
     deployType: 'branch',
     environmentType: 'production',
     routes: 'https://example.com,https://www.example.com',
-    openshiftProjectName,
+    kubernetesNamespaceName,
     project: {
       name: 'test-project',
       gitUrl: 'git@github.com:example/test-project.git',
@@ -334,18 +334,18 @@ export function createDefaultProject(projectName: string) {
         deployType: 'branch',
         environmentType: 'production',
         routes: 'https://example.com',
-        openshiftProjectName: `${projectName}-main`,
+        kubernetesNamespaceName: `${projectName}-main`,
         openshift: { friendlyName: 'Production Cluster', cloudRegion: 'us-east-1' },
       },
     ],
   };
 }
 
-export function createDefaultEnvMeta(openshiftProjectName: string) {
+export function createDefaultEnvMeta(kubernetesNamespaceName: string) {
   return {
     id: 1,
     name: 'main',
-    openshiftProjectName,
+    kubernetesNamespaceName,
     deployType: 'branch',
     deployBaseRef: 'main',
     deployHeadRef: 'main',
@@ -358,11 +358,11 @@ export function createDefaultEnvMeta(openshiftProjectName: string) {
   };
 }
 
-export function createDefaultTaskEnvMeta(openshiftProjectName: string) {
+export function createDefaultTaskEnvMeta(kubernetesNamespaceName: string) {
   return {
     id: 1,
     name: 'main',
-    openshiftProjectName,
+    kubernetesNamespaceName,
     project: {
       id: 1,
       name: 'test-project',
@@ -376,10 +376,10 @@ export function createDefaultTaskEnvMeta(openshiftProjectName: string) {
   };
 }
 
-export function createDefaultBackupEnvMeta(openshiftProjectName: string) {
+export function createDefaultBackupEnvMeta(kubernetesNamespaceName: string) {
   return {
     id: 1,
-    openshiftProjectName,
+    kubernetesNamespaceName,
     deployType: 'branch',
     deployBaseRef: 'main',
     deployHeadRef: 'main',
@@ -392,12 +392,11 @@ export function createDefaultBackupEnvMeta(openshiftProjectName: string) {
   };
 }
 
-export function createDefaultRouteEnvMeta(openshiftProjectName: string) {
+export function createDefaultRouteEnvMeta(kubernetesNamespaceName: string) {
   return {
     id: 1,
     name: 'main',
-    kubernetesNamespaceName: openshiftProjectName,
-    openshiftProjectName,
+    kubernetesNamespaceName,
     environmentType: 'production',
     project: {
       id: 1,
@@ -427,11 +426,11 @@ export function createDefaultProjectRouteMeta(projectName: string) {
   };
 }
 
-export function createDefaultInsightsEnv(openshiftProjectName: string) {
+export function createDefaultInsightsEnv(kubernetesNamespaceName: string) {
   return {
     id: 1,
     name: 'main',
-    openshiftProjectName,
+    kubernetesNamespaceName,
     project: {
       id: 1,
       name: 'test-project',

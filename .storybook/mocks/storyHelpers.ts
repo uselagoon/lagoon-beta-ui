@@ -75,7 +75,7 @@ export type Deployment = {
 export type EnvironmentWithDeployments = {
   id: number;
   name: string;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   deployType: string;
   deployBaseRef: string;
   deployHeadRef: string;
@@ -122,7 +122,7 @@ export type AdvancedTask = {
 export type EnvironmentWithTasks = {
   id: number;
   name: string;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   project: {
     id: number;
     name: string;
@@ -151,7 +151,7 @@ export type Backup = {
 
 export type EnvironmentWithBackups = {
   id: number;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   deployType: string;
   deployBaseRef: string;
   deployHeadRef: string;
@@ -311,7 +311,7 @@ export type EnvironmentOverview = {
   deployType: string;
   environmentType: string;
   routes: string;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   project: {
     name: string;
     gitUrl: string;
