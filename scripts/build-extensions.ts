@@ -107,8 +107,13 @@ function generateRegistry(extensions: string[]): void {
 
 function main(): void {
   console.log('Building extensions...\n');
-  const extensions = findExtensions();
+  const disabledExtensions = (process.env.LAGOON_UI_DISABLE_EXTENSIONS || '').split(',').map(name => name.trim()).filter(name => name.length > 0);
+
+  const extensions = findExtensions().filter(extName => !disabledExtensions.includes(extName));
   console.log(`Found ${extensions.length} extension(s): ${extensions.join(', ') || '(none)'}\n`);
+  if (disabledExtensions.length > 0) {
+    console.log(`Disabled etxensions: ${disabledExtensions.join(', ')}`);
+  }
 
   const manifests: ExtensionManifest[] = [];
   for (const extName of extensions) {
