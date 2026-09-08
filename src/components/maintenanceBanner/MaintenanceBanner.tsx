@@ -129,7 +129,7 @@ export default function MaintenanceBanner({
           </div>
         </div>
       </div>
-      <CollapsibleContent className="relative z-[1] border-3 rounded-lg bg-background pt-3">
+      <CollapsibleContent className="relative z-[1] border-3 rounded-lg bg-background p-4">
         {items.map(item => (
           <BannerCard key={item.id} item={item} />
         ))}

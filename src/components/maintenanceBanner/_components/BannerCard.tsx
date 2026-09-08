@@ -21,7 +21,7 @@ export default function BannerCard({ item }: { item: BannerItem }) {
     );
 
   return (
-    <div className="w-[90%] mx-auto border bg-[var(--card)] rounded-xl mb-4 px-4 py-2">
+    <div className="w-full mx-auto border bg-[var(--card)] rounded-xl mb-4 p-3">
       <div className="flex items-start gap-2">
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center ${
@@ -30,15 +30,15 @@ export default function BannerCard({ item }: { item: BannerItem }) {
         >
           {icon}
         </div>
-        <div className="flex flex-col w-[90%] gap-2">
-          <div className="flex gap-4 items-center">
-            <h4 className="text-md font-medium">{item.name}</h4>
+        <div className="flex flex-col w-full gap-2">
+          <div className="flex gap-2 items-center">
+            <h4 className="text-md font-medium truncate max-w-xs">{item.name}</h4>
             <Badge className="ml-auto" variant={item.type === 'Incident' ? 'danger' : 'lagoon'}>
               {item.type}
             </Badge>
           </div>
-          <div className="grid grid-cols-2 text-sm">
-            <div className="flex items-end gap-2">
+          <div className="grid text-sm">
+            <div className="flex items-end gap-2 mb-1">
               <span className="text-[var(--muted-foreground)] text-xs uppercase">Status</span>
               <span className="capitalize">{item.status}</span>
             </div>
