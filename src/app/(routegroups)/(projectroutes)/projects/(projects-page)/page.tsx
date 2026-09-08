@@ -3,7 +3,6 @@ import { Metadata } from 'next';
 import ProjectsPage from '@/components/pages/projects/ProjectsPage';
 import { getClient } from '@/lib/apolloClient';
 import allProjectsQuery from '@/lib/query/allProjectsQuery';
-import { Deployment } from '../[projectSlug]/[environmentSlug]/deployments/[deploymentSlug]/page';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +23,6 @@ export type ProjectType = {
       name: string;
       route: string;
       updated: string;
-      deployments?: Deployment[];
     }
   ];
 };

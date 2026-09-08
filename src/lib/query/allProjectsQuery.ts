@@ -13,9 +13,6 @@ export default gql`
       environments(type: PRODUCTION) {
         name
         route
-        deployments(limit: 1) {
-          created
-        }
       }
     }
   }
