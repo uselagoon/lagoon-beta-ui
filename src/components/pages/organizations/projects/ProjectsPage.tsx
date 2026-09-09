@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { OrganizationProjectsData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/projects/(projects-page)/page';
+import { OrgProject } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import { CreateProject } from '@/components/createProject/CreateProject';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
@@ -143,10 +144,10 @@ export default function OrgProjectsPage({
     return { label: deploytarget.name, value: deploytarget.id };
   });
 
-  const projectsWithOverrides = [...organization.projects].map(project => {
+  const projectsWithOverrides: OrgProject[] = [...organization.projects].map(project => {
     const overrideStatus = cloneStatusOverrides.get(project.id);
     if (!overrideStatus) return project;
-    return { ...project, clone: { ...(project.clone ?? {}), status: overrideStatus } };
+    return { ...project, clone: { ...(project.clone ?? {}), status: overrideStatus } } as OrgProject;
   });
 
   const orgKeys = organization?.keys || [];
@@ -164,6 +165,7 @@ export default function OrgProjectsPage({
               <RemoveProject project={project} refetch={refetchData} />
             ),
             organization.name,
+            organization.id,
             projectCloneEnabled,
             orgKeys,
             refetchData
