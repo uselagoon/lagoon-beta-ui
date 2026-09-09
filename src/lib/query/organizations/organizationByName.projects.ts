@@ -12,6 +12,7 @@ export default gql`
         groupCount
         gitUrl
         clone {
+          id
           status
         }
       }

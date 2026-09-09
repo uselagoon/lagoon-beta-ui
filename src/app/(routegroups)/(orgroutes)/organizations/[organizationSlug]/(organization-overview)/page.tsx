@@ -25,6 +25,7 @@ export type OrgProject = {
   name: string;
   groupCount?: number;
   clone?: {
+    id: number;
     status: string;
   };
   organizationKey?: number;
