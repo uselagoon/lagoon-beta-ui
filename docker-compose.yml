@@ -17,6 +17,7 @@ x-environment: &default-environment
   LAGOON_UI_TOURS_ENABLED: enabled
   NODE_TLS_REJECT_UNAUTHORIZED: 0
   DISABLE_SUBSCRIPTIONS: 'true'
+  LAGOON_UI_DISABLE_EXTENSIONS: "${LAGOON_UI_DISABLE_EXTENSIONS:-}"
 
 services:
   ui:
