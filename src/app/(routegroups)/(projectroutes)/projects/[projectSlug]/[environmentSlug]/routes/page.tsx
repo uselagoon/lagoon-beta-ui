@@ -60,7 +60,7 @@ export default async function Routes(props: {
 		<PreloadQuery
 			query={environmentWithRoutes}
 			variables={{
-				openshiftProjectName: environmentSlug
+				kubernetesNamespaceName: environmentSlug
 			}}
 		>
 			{queryRef => (

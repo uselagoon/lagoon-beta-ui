@@ -97,7 +97,7 @@ const BulkDeploymentColumns: DataTableColumnDef<BulkDeployment>[] = [
         <div>
           <Link
             className="hover:text-blue-800 transition-colors"
-            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}`}
+            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.kubernetesNamespaceName}`}
           >
             {deployment.environment?.name}
           </Link>
@@ -129,7 +129,7 @@ const BulkDeploymentColumns: DataTableColumnDef<BulkDeployment>[] = [
       return (
         <Link
           className="hover:text-blue-800 transition-colors"
-          href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}/deployments/${deployment.name}`}
+          href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.kubernetesNamespaceName}/deployments/${deployment.name}`}
         >
           {deployment.name}
         </Link>
@@ -272,7 +272,7 @@ const BulkDeploymentColumns: DataTableColumnDef<BulkDeployment>[] = [
       return (
         <>
           <Link
-            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}/deployments/${deployment.name}`}
+            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.kubernetesNamespaceName}/deployments/${deployment.name}`}
           >
             <Button variant="link">
               <Tooltip>

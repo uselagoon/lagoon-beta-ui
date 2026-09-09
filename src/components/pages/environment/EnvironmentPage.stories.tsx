@@ -4,7 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within, screen, waitFor } from 'storybook/test';
 
 import { EnvironmentData } from '../../../app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/(environment-overview)/page';
-import environmentByOpenShiftProjectName from '../../../lib/query/environmentByOpenShiftProjectName';
+import environmentByKubernetesNamespaceName from '../../../lib/query/environmentByKubernetesNamespaceName';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
 import { EnvironmentOverview } from '../../../../.storybook/mocks/storyHelpers';
@@ -18,7 +18,7 @@ const initialEnvironment: EnvironmentOverview = {
   deployType: 'branch',
   environmentType: 'production',
   routes: 'https://example.com,https://www.example.com',
-  openshiftProjectName: 'project-main',
+  kubernetesNamespaceName: 'project-main',
   project: {
     name: 'test-project',
     gitUrl: 'git@github.com:example/test-project.git',
@@ -42,7 +42,7 @@ const standbyEnvironment: EnvironmentOverview = {
   deployType: 'branch',
   environmentType: 'production',
   routes: 'https://standby.example.com',
-  openshiftProjectName: 'project-standby',
+  kubernetesNamespaceName: 'project-standby',
   project: {
     name: 'test-project',
     gitUrl: 'git@github.com:example/test-project.git',
@@ -72,9 +72,9 @@ const meta: Meta<typeof EnvironmentPage> = {
     },
   },
   render: () => (
-    <MockPreloadQuery<EnvironmentData, { openshiftProjectName: string }>
-      query={environmentByOpenShiftProjectName}
-      variables={{ openshiftProjectName: 'project-main' }}
+    <MockPreloadQuery<EnvironmentData, { kubernetesNamespaceName: string }>
+      query={environmentByKubernetesNamespaceName}
+      variables={{ kubernetesNamespaceName: 'project-main' }}
     >
       {queryRef => <EnvironmentPage queryRef={queryRef} environmentSlug="project-main" />}
     </MockPreloadQuery>
@@ -95,9 +95,9 @@ export const WithStandbyEnvironment: Story = {
     },
   },
   render: () => (
-    <MockPreloadQuery<EnvironmentData, { openshiftProjectName: string }>
-      query={environmentByOpenShiftProjectName}
-      variables={{ openshiftProjectName: 'project-standby' }}
+    <MockPreloadQuery<EnvironmentData, { kubernetesNamespaceName: string }>
+      query={environmentByKubernetesNamespaceName}
+      variables={{ kubernetesNamespaceName: 'project-standby' }}
     >
       {queryRef => <EnvironmentPage queryRef={queryRef} environmentSlug="project-standby" />}
     </MockPreloadQuery>
@@ -113,9 +113,9 @@ export const SwitchActiveStandby: Story = {
     },
   },
   render: () => (
-    <MockPreloadQuery<EnvironmentData, { openshiftProjectName: string }>
-      query={environmentByOpenShiftProjectName}
-      variables={{ openshiftProjectName: 'project-standby' }}
+    <MockPreloadQuery<EnvironmentData, { kubernetesNamespaceName: string }>
+      query={environmentByKubernetesNamespaceName}
+      variables={{ kubernetesNamespaceName: 'project-standby' }}
     >
       {queryRef => <EnvironmentPage queryRef={queryRef} environmentSlug="project-standby" />}
     </MockPreloadQuery>

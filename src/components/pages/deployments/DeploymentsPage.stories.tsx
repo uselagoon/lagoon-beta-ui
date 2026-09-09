@@ -164,7 +164,7 @@ const initialDeployments = [
 const envMeta = {
   id: 1,
   name: 'main',
-  openshiftProjectName: 'project-main',
+  kubernetesNamespaceName: 'project-main',
   deployType: 'branch',
   deployBaseRef: 'main',
   deployHeadRef: 'main',
@@ -193,9 +193,9 @@ const meta: Meta<typeof DeploymentsPage> = {
     },
   },
   render: () => (
-    <MockPreloadQuery<DeploymentsData, { openshiftProjectName: string; limit: null }>
+    <MockPreloadQuery<DeploymentsData, { kubernetesNamespaceName: string; limit: null }>
       query={environmentWithDeployments}
-      variables={{ openshiftProjectName: 'project-main', limit: null }}
+      variables={{ kubernetesNamespaceName: 'project-main', limit: null }}
     >
       {queryRef => <DeploymentsPage queryRef={queryRef} environmentSlug="project-main" />}
     </MockPreloadQuery>

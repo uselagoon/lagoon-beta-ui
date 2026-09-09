@@ -22,7 +22,7 @@ const generateMockDeployments = (count: number = 20): Deployment[] => {
         : null,
     environment: {
       name: `env-${index + 1}`,
-      openshiftProjectName: `project-${index + 1}-env-${index + 1}`,
+      kubernetesNamespaceName: `project-${index + 1}-env-${index + 1}`,
       openshift: {
         id: 1,
         name: 'cluster-1',

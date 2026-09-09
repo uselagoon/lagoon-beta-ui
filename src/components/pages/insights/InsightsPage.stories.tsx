@@ -13,7 +13,7 @@ import InsightsPage from './InsightsPage';
 type InsightsEnvironment = {
   id: number;
   name: string;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   project: {
     id: number;
     name: string;
@@ -47,7 +47,7 @@ const oneDay = 86400000;
 const initialEnvironment: InsightsEnvironment = {
   id: 1,
   name: 'main',
-  openshiftProjectName: 'project-main',
+  kubernetesNamespaceName: 'project-main',
   project: {
     id: 1,
     name: 'test-project',
@@ -107,9 +107,9 @@ const meta: Meta<typeof InsightsPage> = {
     initialMockState: createInsightsMockState(initialEnvironment),
   },
   render: () => (
-    <MockPreloadQuery<InsightsData, { openshiftProjectName: string; limit: null }>
+    <MockPreloadQuery<InsightsData, { kubernetesNamespaceName: string; limit: null }>
       query={environmentWIthInsightsAndFacts}
-      variables={{ openshiftProjectName: 'project-main', limit: null }}
+      variables={{ kubernetesNamespaceName: 'project-main', limit: null }}
     >
       {queryRef => <InsightsPage queryRef={queryRef} environmentSlug="project-main" />}
     </MockPreloadQuery>

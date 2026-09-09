@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  query getEnvironment($openshiftProjectName: String!, $deploymentName: String!) {
-    environment: environmentByOpenshiftProjectName(openshiftProjectName: $openshiftProjectName) {
-      openshiftProjectName
+  query getEnvironment($kubernetesNamespaceName: String!, $deploymentName: String!) {
+    environment: environmentByKubernetesNamespaceName(kubernetesNamespaceName: $kubernetesNamespaceName) {
+      kubernetesNamespaceName
       project {
         name
         problemsUi

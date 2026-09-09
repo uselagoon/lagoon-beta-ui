@@ -22,7 +22,7 @@ export type BulkDeployment = {
   priority: number | null;
   environment: {
     name: string;
-    openshiftProjectName: string;
+    kubernetesNamespaceName: string;
     project: {
       name: string;
     };

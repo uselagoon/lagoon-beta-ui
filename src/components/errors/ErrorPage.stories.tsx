@@ -65,7 +65,7 @@ export const ProjectNotFoundExample: Story = {
 };
 
 export const EnvironmentNotFoundExample: Story = {
-  render: () => <EnvironmentNotFound openshiftProjectName="my-project-staging" />,
+  render: () => <EnvironmentNotFound kubernetesNamespaceName="my-project-staging" />,
 };
 
 export const DeploymentNotFoundExample: Story = {

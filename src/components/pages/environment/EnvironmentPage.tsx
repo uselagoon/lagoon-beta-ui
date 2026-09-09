@@ -8,7 +8,7 @@ import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
 import deleteEnvironment from '@/lib/mutation/deleteEnvironment';
 import switchActiveStandby from '@/lib/mutation/switchActiveStandby';
-import environmentByOpenShiftProjectNameWithFacts from '@/lib/query/environmentWIthInsightsAndFacts';
+import environmentByKubernetesNamespaceNameWithFacts from '@/lib/query/environmentWIthInsightsAndFacts';
 import { QueryRef, useMutation, useQuery, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import {Badge, DetailStat} from '@/ui-library';
 import dayjs from 'dayjs';
@@ -61,9 +61,9 @@ export default function EnvironmentPage({
     data: factsData,
     loading: factsLoading,
     error: factsError,
-  } = useQuery(environmentByOpenShiftProjectNameWithFacts, {
+  } = useQuery(environmentByKubernetesNamespaceNameWithFacts, {
     variables: {
-      openshiftProjectName: environmentSlug,
+      kubernetesNamespaceName: environmentSlug,
     },
   });
 
@@ -77,7 +77,7 @@ export default function EnvironmentPage({
   });
 
   if (!environment) {
-    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
+    return <EnvironmentNotFound kubernetesNamespaceName={environmentSlug} />;
   }
 
   let gitUrlParsed;

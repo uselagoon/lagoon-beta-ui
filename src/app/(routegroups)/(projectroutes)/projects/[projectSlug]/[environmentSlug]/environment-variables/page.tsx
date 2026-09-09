@@ -1,6 +1,6 @@
 import EnvironmentVariablesPage from '@/components/pages/environmentVariables/EnvironmentVariablesPage';
 import { PreloadQuery } from '@/lib/apolloClient';
-import environmentByOpenShiftProjectNameWithEnvVars from '@/lib/query/environmentByOpenShiftProjectNameWithEnvVars';
+import environmentByKubernetesNamespaceNameWithEnvVars from '@/lib/query/environmentByKubernetesNamespaceNameWithEnvVars';
 import { QueryRef } from '@apollo/client';
 
 type Props = {
@@ -17,7 +17,7 @@ export type EnvVariable = {
 type Environment = {
   id: number;
   name: string;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   project: {
     name: string;
     problemsUi: boolean;
@@ -48,10 +48,10 @@ export default async function EnvironmentVariables(props: {
 
   return (
     <PreloadQuery
-      query={environmentByOpenShiftProjectNameWithEnvVars}
+      query={environmentByKubernetesNamespaceNameWithEnvVars}
       variables={{
         displayName: 'Variables',
-        openshiftProjectName: environmentSlug,
+        kubernetesNamespaceName: environmentSlug,
         limit: null,
       }}
     >

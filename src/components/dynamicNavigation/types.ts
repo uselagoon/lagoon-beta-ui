@@ -2,7 +2,7 @@ export type EnvWithProblemsType = {
   environment: {
     id: string;
     name: string;
-    openshiftProjectName: string;
+    kubernetesNamespaceName: string;
     project: {
       id: string;
       name: string;

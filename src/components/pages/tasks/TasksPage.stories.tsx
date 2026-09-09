@@ -58,7 +58,7 @@ const initialAdvancedTasks = [
 const taskEnvMeta = {
   id: 1,
   name: 'main',
-  openshiftProjectName: 'project-main',
+  kubernetesNamespaceName: 'project-main',
   project: {
     id: 1,
     name: 'test-project',
@@ -91,9 +91,9 @@ const meta: Meta<typeof TasksPage> = {
     },
   },
   render: () => (
-    <MockPreloadQuery<TasksData, { openshiftProjectName: string; limit: null }>
+    <MockPreloadQuery<TasksData, { kubernetesNamespaceName: string; limit: null }>
       query={environmentWithTasks}
-      variables={{ openshiftProjectName: 'project-main', limit: null }}
+      variables={{ kubernetesNamespaceName: 'project-main', limit: null }}
     >
       {queryRef => <TasksPage queryRef={queryRef} environmentSlug="project-main" />}
     </MockPreloadQuery>

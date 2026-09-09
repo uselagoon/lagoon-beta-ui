@@ -91,7 +91,7 @@ export default function EnvironmentVariablesPage({
   const [getEnvVarValues, { loading: envLoading, data: envValues }] = useLazyQuery(
     environmentByProjectNameWithEnvVarsValueQuery,
     {
-      variables: { openshiftProjectName: environmentVars?.openshiftProjectName },
+      variables: { kubernetesNamespaceName: environmentVars?.kubernetesNamespaceName },
       onError: err => {
         console.error(err);
         toast.error('Unauthorized', {
@@ -105,7 +105,7 @@ export default function EnvironmentVariablesPage({
   const [getPrjEnvVarValues, { loading: prjLoading, data: prjEnvValues }] = useLazyQuery(
     environmentProjectByProjectNameWithEnvVarsValueQuery,
     {
-      variables: { openshiftProjectName: environmentVars?.openshiftProjectName },
+      variables: { kubernetesNamespaceName: environmentVars?.kubernetesNamespaceName },
       onError: err => {
         console.error(err);
         toast.error('Unauthorized', {
@@ -118,7 +118,7 @@ export default function EnvironmentVariablesPage({
   );
 
   const [checkEnvVars] = useLazyQuery(environmentByProjectNameWithEnvVarsValueQuery, {
-    variables: { openshiftProjectName: environmentVars?.openshiftProjectName },
+    variables: { kubernetesNamespaceName: environmentVars?.kubernetesNamespaceName },
     onError: err => {
       console.error(err);
       toast.error('Unauthorized', {
@@ -137,7 +137,7 @@ export default function EnvironmentVariablesPage({
   const stableDeletePermissionCheck = useCallback(() => permissionCheck('delete'), []);
 
   if (!environmentVars) {
-    return <EnvironmentNotFound openshiftProjectName={environmentName} />;
+    return <EnvironmentNotFound kubernetesNamespaceName={environmentName} />;
   }
 
   const setSearch = (val: string) => {

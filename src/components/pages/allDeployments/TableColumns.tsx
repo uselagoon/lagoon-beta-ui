@@ -98,7 +98,7 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
         <div>
           <Link
             className="hover:text-blue-800 transition-colors"
-            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}`}
+            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.kubernetesNamespaceName}`}
           >
             {deployment.environment?.name}
           </Link>
@@ -149,7 +149,7 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
         <div>
           <Link
             className="hover:text-blue-800 transition-colors"
-            href={`/projects/${environment?.project.name}/${environment?.openshiftProjectName}/deployments/${name}`}
+            href={`/projects/${environment?.project.name}/${environment?.kubernetesNamespaceName}/deployments/${name}`}
           >
             {name}
           </Link>
@@ -301,7 +301,7 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
       return (
         <>
           <Link
-            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}/deployments/${deployment.name}`}
+            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.kubernetesNamespaceName}/deployments/${deployment.name}`}
           >
             <Button variant="link">
               <Tooltip>

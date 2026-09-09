@@ -2,8 +2,8 @@ import FactsFragment from '@/lib/fragment/fact';
 import gql from 'graphql-tag';
 
 export default gql`
-  query getEnvironment($openshiftProjectName: String!) {
-    environment: environmentByOpenshiftProjectName(openshiftProjectName: $openshiftProjectName) {
+  query getEnvironment($kubernetesNamespaceName: String!) {
+    environment: environmentByKubernetesNamespaceName(kubernetesNamespaceName: $kubernetesNamespaceName) {
       id
       facts {
         ...factFields

@@ -78,9 +78,9 @@ const meta: Meta<typeof EnvironmentRoutesPage> = {
     },
   },
   render: () => (
-    <MockPreloadQuery<EnvironmentRoutesData, { openshiftProjectName: string }>
+    <MockPreloadQuery<EnvironmentRoutesData, { kubernetesNamespaceName: string }>
       query={environmentWithRoutes}
-      variables={{ openshiftProjectName: 'project-main' }}
+      variables={{ kubernetesNamespaceName: 'project-main' }}
     >
       {queryRef => <EnvironmentRoutesPage queryRef={queryRef} projectName="test-project" environmentName="main" />}
     </MockPreloadQuery>

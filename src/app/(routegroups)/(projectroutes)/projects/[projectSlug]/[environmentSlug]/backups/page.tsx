@@ -22,7 +22,7 @@ export type Backup = {
 
 type Environment = {
   id: number;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   deployType: string;
   deployBaseRef: string;
   deployHeadRef: string;
@@ -57,7 +57,7 @@ export default async function Backups(props: { params: Promise<{ environmentSlug
       query={environmentWithBackups}
       variables={{
         displayName: 'Backups',
-        openshiftProjectName: environmentSlug,
+        kubernetesNamespaceName: environmentSlug,
         limit: null,
       }}
     >

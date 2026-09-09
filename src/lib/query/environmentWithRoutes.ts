@@ -1,12 +1,11 @@
 import { gql } from '@apollo/client';
 
 export default gql`
-  query getEnvironment($openshiftProjectName: String!) {
-    environmentRoutes: environmentByOpenshiftProjectName(openshiftProjectName: $openshiftProjectName) {
+  query getEnvironment($kubernetesNamespaceName: String!) {
+    environmentRoutes: environmentByKubernetesNamespaceName(kubernetesNamespaceName: $kubernetesNamespaceName) {
       id
       name
       kubernetesNamespaceName
-      openshiftProjectName
       environmentType
       project {
         id
