@@ -27,7 +27,6 @@ const DrushSqlSync: FC<Props> = ({ environment, refetch, allButCurrentEnvironmen
         description: (err as { message: string })?.message,
       });
     },
-    refetchQueries: ['getEnvironment'],
   });
 
   const handleTask = async () => {
