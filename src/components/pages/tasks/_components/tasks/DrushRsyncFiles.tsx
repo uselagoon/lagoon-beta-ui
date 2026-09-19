@@ -24,7 +24,6 @@ const DrushRsyncFiles: FC<Props> = ({ environment, refetch, allButCurrentEnviron
       console.error(err);
       toast.error('There was a problem running drush rsync.', { id: 'task_error', description: err?.message });
     },
-    refetchQueries: ['getEnvironment'],
   });
 
   const handleTask = async () => {
