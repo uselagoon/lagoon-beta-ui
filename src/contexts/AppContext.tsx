@@ -11,6 +11,7 @@ import { RootLayout, ThemeSwitch, Toaster, SidebarItem, SidebarSection } from '@
 import manualSignOut from 'utils/manualSignOut';
 import { useOverrides } from "@/contexts/OverrideContext";
 import MaintenanceBanner from '@/components/maintenanceBanner/MaintenanceBanner';
+import { mockStatusMapper } from '@/components/maintenanceBanner/maintenanceBanner.mock';
 
 
 const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: string; logo?: ReactNode }) => {
@@ -73,7 +74,8 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         disableChangeFeedLink={overrides?.components?.sidenavFooterMenu?.disableChangeFeedLink}
       >
         <div className="absolute top-2 right-10">
-          <MaintenanceBanner />
+          {/* <MaintenanceBanner /> */}
+          <MaintenanceBanner mapper={mockStatusMapper} />
         </div>
         <div className="absolute top-2 right-4">
           <ThemeSwitch />
