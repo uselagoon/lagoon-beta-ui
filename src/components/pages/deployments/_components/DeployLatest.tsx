@@ -42,9 +42,9 @@ export const deploymentOptions: DeploymentOption[] = [
     icon: GitBranch,
     label: 'Full deployment',
     cta: 'Deploy everything',
-    headline: 'Rebuilds and redeploys everything',
+    headline: 'Runs the full build and deploy',
     description:
-      'New images are built and every pending change is applied, including variables, routes and services. Choose this if you are not sure what changed.',
+      'Rebuilds any images with pending changes and applies your current configuration. The safe choice if you are unsure what changed.',
   },
   {
     value: 'variables',
