@@ -75,8 +75,8 @@ export default function TasksPage({
 
   // polling every 20s if status needs to be checked
   useEffect(() => {
-    const shouldPoll = environment?.tasks?.some(({ status }) =>
-      ['new', 'pending', 'queued', 'running'].includes(status)
+    const shouldPoll = environment?.tasks?.some(({ status, completed }) =>
+      !completed && ['new', 'pending', 'queued', 'running'].includes(status)
     );
     if (shouldPoll) {
       const intId = setInterval(() => {

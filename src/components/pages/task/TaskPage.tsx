@@ -154,7 +154,7 @@ export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<Ta
 
       return () => clearInterval(intId);
     }
-  }, [currentTask, refetch]);
+  }, [currentTask?.status, refetch]);
 
   if (!environment?.tasks.length) {
     return <TaskNotFound taskName={taskName} />;

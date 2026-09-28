@@ -38,7 +38,6 @@ const InvokeRegisteredTask: FC<Props> = ({ environment, advancedTask, refetch })
     variables: {
       environment: environment.id,
     },
-    refetchQueries: ['getEnvironment'],
   });
 
   const handleAdvancedTask = async () => {
