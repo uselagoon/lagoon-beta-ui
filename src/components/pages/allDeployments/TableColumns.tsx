@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { ExternalLink, Loader2 } from 'lucide-react';
+import { getBadgeVariant } from 'utils/setBadgeStatus';
 
 import CancelDeployment from '../../cancelDeployment/CancelDeployment';
 
@@ -235,7 +236,7 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
       return (
         <section className="flex flex-col items-start gap-2">
           <div className="flex items-center">
-            <Badge variant="default">
+            <Badge variant={getBadgeVariant(status, buildStep)}>
               {capitalize(status)}
               {!['complete', 'cancelled', 'failed'].includes(status) && <Loader2 className="h-4 w-4 animate-spin t"/>}
             </Badge>
@@ -244,7 +245,7 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
           {!['complete', 'cancelled', 'failed'].includes(status) && cleanedBuildStep && (
             <Tooltip>
               <TooltipTrigger>
-                <Badge className="bg-blue-500 text-white dark:bg-blue-600" variant="secondary">
+                <Badge variant="info">
                   {cleanedBuildStep}
                 </Badge>
               </TooltipTrigger>
@@ -255,7 +256,7 @@ const AlldeploymentsTableColumns: DataTableColumnDef<Deployment>[] = [
           {cleanedBuildStep && ['deployCompletedWithWarnings'].includes(cleanedBuildStep) && (
             <Tooltip>
               <TooltipTrigger>
-                <Badge className="text-[#ffbe00]" variant="secondary">
+                <Badge variant="warning">
                   Completed with warnings
                 </Badge>
               </TooltipTrigger>

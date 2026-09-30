@@ -14,6 +14,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { Download } from 'lucide-react';
 import { isValidUrl } from 'utils/isValidUrl';
+import { getBadgeVariant } from 'utils/setBadgeStatus';
 
 import BackButton from '../../backButton/BackButton';
 import CancelTask from '../../cancelTask/CancelTask';
@@ -167,7 +168,7 @@ export default function TaskPage({ queryRef, taskName }: { queryRef: QueryRef<Ta
     </Tooltip>
 
   const getStatusBadge = (status: string) => {
-    return <Badge variant="default">{status}</Badge>;
+    return <Badge variant={getBadgeVariant(status, null)}>{status}</Badge>;
   }
 
   const taskDataRow = {

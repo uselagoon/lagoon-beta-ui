@@ -65,7 +65,7 @@ const getDeploymentTableColumns = (basePath: string) =>
             {!['complete', 'cancelled', 'failed'].includes(status) && cleanedBuildStep && (
               <Tooltip>
                 <TooltipTrigger>
-                  <Badge className="bg-blue-500 text-white dark:bg-blue-600" variant="secondary">
+                  <Badge variant="info">
                     {cleanedBuildStep}
                   </Badge>
                 </TooltipTrigger>
@@ -76,9 +76,9 @@ const getDeploymentTableColumns = (basePath: string) =>
             {cleanedBuildStep && ['deployCompletedWithWarnings'].includes(cleanedBuildStep) && (
               <Tooltip>
                 <TooltipTrigger>
-                  <Badge className="text-[#ffbe00]" variant="outline">
+                  <span className="text-xs text-[var(--badge-warning-bg)]">
                     Completed with warnings
-                  </Badge>
+                  </span>
                 </TooltipTrigger>
                 <TooltipContent>{cleanedBuildStep}</TooltipContent>
               </Tooltip>
