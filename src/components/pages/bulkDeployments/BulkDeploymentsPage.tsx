@@ -2,7 +2,7 @@
 
 import { BulkDeployment } from '@/app/(routegroups)/bulkdeployment/[bulkId]/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
-import { CopyToClipboard, DataTable, SelectWithOptions } from '@/ui-library';
+import { DataTable, SelectWithOptions } from '@/ui-library';
 
 import BulkDeploymentColumns from './TableColumns';
 
@@ -10,10 +10,7 @@ export default function BulkDeploymentsPage({ bulkDeployments }: { bulkDeploymen
   const bulkName = bulkDeployments[0].bulkName;
   return (
     <SectionWrapper>
-      <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0 flex gap-2">
-        {bulkName}
-        <CopyToClipboard text={bulkName} iconOnly />
-      </h2>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">{bulkName ? bulkName : "Bulk Deployment"}</h3>
       <DataTable
         columns={BulkDeploymentColumns}
         data={bulkDeployments}
