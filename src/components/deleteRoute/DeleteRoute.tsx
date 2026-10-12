@@ -72,6 +72,7 @@ export const DeleteRouteDialog: FC<Props> = ({ route, refetch, onClick, ...rest 
       >
         <Button
           variant="outline"
+          className="hover:bg-[var(--destructive)]! transition-colors duration-300"
           onClick={async () => {
             let permissionResponse = onClick ? await onClick() : {};
             if (permissionResponse?.error) {

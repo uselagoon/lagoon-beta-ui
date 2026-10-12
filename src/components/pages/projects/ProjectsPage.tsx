@@ -34,10 +34,9 @@ export default function ProjectsPage({ data }: { data: ProjectsData }) {
     <>
       <SectionWrapper>
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Projects</h3>
-        <Button className="px-0" variant="link">
+        <p className='text-sm pt-1'>
           View all projects
-        </Button>
-
+        </p>
         <DataTable
           columns={DataTableColumns}
           data={data.allProjects}

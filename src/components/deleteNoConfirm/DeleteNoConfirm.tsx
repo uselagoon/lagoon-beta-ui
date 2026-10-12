@@ -56,7 +56,7 @@ const DeleteNoConfirm: FC<DeleteProps> = ({
       confirmText={deleteConfirmText ?? 'Confirm'}
       onConfirm={confirmAction}
     >
-      <Button variant="outline" disabled={loading || disabled} aria-label="delete">
+      <Button className={deleteType !== 'unlink' ? `hover:bg-[var(--destructive)]! transition-colors duration-300` : undefined} variant="outline" disabled={loading || disabled} aria-label="delete">
         <Tooltip>
           <TooltipTrigger>
             {deleteType === 'delete' || deleteType === 'remove' ? (

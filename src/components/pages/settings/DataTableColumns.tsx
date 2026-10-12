@@ -112,7 +112,7 @@ export const renderTableColumns = (remove: {
                 });
               }}
             >
-              <Button variant="outline" disabled={remove.loading} aria-label="delete-key">
+              <Button className="hover:bg-[var(--destructive)]! transition-colors duration-300" variant="outline" disabled={remove.loading} aria-label="delete-key">
                 <Trash2 data-cy="delete-key" />
               </Button>
             </Notification>
