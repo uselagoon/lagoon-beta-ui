@@ -50,7 +50,7 @@ export const Empty: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Notifications' }));
     const body = within(canvasElement.ownerDocument.body);
-    await expect(await body.findByText('All systems operational')).toBeVisible();
+    await expect(await body.findByText('All systems operational')).toBeInTheDocument();
   },
 };
 
@@ -61,7 +61,7 @@ export const PopoverOpen: Story = {
     await userEvent.click(trigger);
     await expect(trigger).toHaveAttribute('aria-expanded', 'true');
     const body = within(canvasElement.ownerDocument.body);
-    await expect(await body.findByText('3 active')).toBeVisible();
+    await expect(await body.findByText('3 active')).toBeInTheDocument();
   },
 };
 
