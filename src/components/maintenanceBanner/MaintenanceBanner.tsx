@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Collapsible, CollapsibleTrigger, CollapsibleContent, Button } from '@/ui-library';
-import { Info, ChevronDown, X } from 'lucide-react';
-import BannerCard from './_components/BannerCard';
+import { useEffect, useRef, useState } from 'react';
+import { Badge, Button, Popover, PopoverContent, PopoverTrigger } from '@/ui-library';
+import { Check, ExternalLink } from 'lucide-react';
+import NotificationRow from './_components/NotificationRow';
+import NotificationSheet from './_components/NotificationSheet';
+import { formatUpdated, getWorstSeverity } from './_components/format';
 
 export type Maintenance = {
   id: string;
@@ -23,6 +25,8 @@ export type Incident = {
   impact: string;
   shortlink: string;
   status: string;
+  created_at?: string;
+  updated_at?: string;
   type: 'Incident';
 };
 
@@ -33,6 +37,7 @@ export type StatusMapper = (data: unknown) => BannerItem[];
 
 const DEFAULT_ENDPOINT = 'https://status.amazee.io/api/v2/summary.json';
 const DEFAULT_POLL_INTERVAL = 180000;
+const DEFAULT_STATUS_PAGE_URL = 'https://status.amazee.io';
 
 type StatuspagePayload = {
   incidents?: Array<{ id: string; name: string; impact: string; shortlink: string; status: string }>;
@@ -73,6 +78,7 @@ export type MaintenanceBannerProps = {
   pollInterval?: number;
   mapper?: StatusMapper;
   title?: string;
+  statusPageUrl?: string;
   onError?: (error: unknown) => void;
 };
 
@@ -80,10 +86,15 @@ export default function MaintenanceBanner({
   endpoint = DEFAULT_ENDPOINT,
   pollInterval = DEFAULT_POLL_INTERVAL,
   mapper = statuspageMapper as StatusMapper,
-  title = 'Active Service Disruptions',
+  title = 'Notifications',
+  statusPageUrl = DEFAULT_STATUS_PAGE_URL,
   onError,
 }: MaintenanceBannerProps) {
   const [items, setItems] = useState<BannerItem[]>([]);
+  const [updatedAt, setUpdatedAt] = useState<number | null>(null);
+  const [selected, setSelected] = useState<BannerItem | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const selectedRowRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -93,7 +104,10 @@ export default function MaintenanceBanner({
       try {
         const response = await fetch(endpoint, { signal: controller.signal });
         const data = await response.json();
-        if (!cancelled) setItems(mapper(data));
+        if (!cancelled) {
+          setItems(mapper(data));
+          setUpdatedAt(Date.now());
+        }
       } catch (error) {
         if (!cancelled) onError?.(error);
       }
@@ -109,31 +123,83 @@ export default function MaintenanceBanner({
     };
   }, [endpoint, pollInterval, mapper, onError]);
 
-  if (items.length === 0) return null;
+  const openSheet = (item: BannerItem, row: HTMLButtonElement) => {
+    selectedRowRef.current = row;
+    setSelected(item);
+    setSheetOpen(true);
+  };
+
+  // the sheet has no trigger, so return focus to the row that opened it
+  const restoreRowFocus = (event: Event) => {
+    event.preventDefault();
+    selectedRowRef.current?.focus();
+  };
+
+  const groups = [
+    { label: 'Incidents', items: items.filter(item => item.type === 'Incident') },
+    { label: 'Maintenance', items: items.filter(item => item.type === 'Maintenance') },
+  ].filter(group => group.items.length > 0);
 
   return (
-    <Collapsible className="w-full max-w-xl rounded-lg bg-[var(--background)]">
-      <div className="pb-2 px-3">
-        <div className="flex items-center justify-end">
-          <div className="flex gap-2 items-center">
-            <div>
-              <CollapsibleTrigger className="flex items-center gap-1">
-                <div className="w-5 h-5 rounded-xl flex items-center justify-center bg-[var(--badge-warning-bg)]/25">
-                  <Info className="w-5 h-5 text-[var(--badge-warning-bg)]" />
-                </div>
-                <p className="text-sm text-[var(--muted-foreground)]">
-                  ({items.length})
-                </p>
-              </CollapsibleTrigger>
-            </div>
+    <>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="sm">
+            Notifications
+            {items.length > 0 && (
+              <Badge variant={getWorstSeverity(items)} className="min-w-5 rounded-full px-1.5 tabular-nums">
+                {items.length}
+              </Badge>
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent
+          align="end"
+          className="w-[360px] max-w-[calc(100vw-3rem)] bg-[var(--card)] p-0"
+          // keep the list open behind the sheet so focus can return to its row
+          onInteractOutside={event => sheetOpen && event.preventDefault()}
+        >
+          <div className="flex items-baseline justify-between px-3.5 pt-3 pb-2">
+            <h2 className="text-sm font-semibold">{title}</h2>
+            <span className="text-xs text-[var(--muted-foreground)]">{items.length} active</span>
           </div>
-        </div>
-      </div>
-      <CollapsibleContent className="relative z-[1] border-3 rounded-lg bg-background p-4">
-        {items.map(item => (
-          <BannerCard key={item.id} item={item} />
-        ))}
-      </CollapsibleContent>
-    </Collapsible>
+          {groups.length === 0 ? (
+            <div className="flex items-center gap-2.5 p-3.5">
+              <div className="grid size-7 place-items-center rounded-full bg-[var(--badge-success-bg)]/20">
+                <Check className="size-4 text-[var(--badge-success-bg)]" strokeWidth={2.5} aria-hidden="true" />
+              </div>
+              <p className="text-sm">
+                All systems operational
+                <span className="block text-xs text-[var(--muted-foreground)]">No incidents or maintenance right now</span>
+              </p>
+            </div>
+          ) : (
+            groups.map(group => (
+              <div key={group.label}>
+                <h3 className="px-3.5 pt-2 pb-0.5 text-[11px] font-medium tracking-wide text-[var(--muted-foreground)] uppercase">
+                  {group.label}
+                </h3>
+                {group.items.map(item => (
+                  <NotificationRow key={item.id} item={item} onSelect={openSheet} />
+                ))}
+              </div>
+            ))
+          )}
+          <div className="mt-1.5 flex items-center justify-between border-t px-3.5 py-2.5 text-xs text-[var(--muted-foreground)]">
+            <span>{formatUpdated(updatedAt)}</span>
+            <a
+              href={statusPageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[var(--badge-lagoon-bg)] hover:text-[var(--badge-lagoon-hover)]"
+            >
+              {statusPageUrl.replace(/^https?:\/\//, '')}
+              <ExternalLink className="size-3" aria-hidden="true" />
+            </a>
+          </div>
+        </PopoverContent>
+      </Popover>
+      <NotificationSheet item={selected} open={sheetOpen} onOpenChange={setSheetOpen} onCloseAutoFocus={restoreRowFocus} />
+    </>
   );
 }
