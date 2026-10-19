@@ -73,14 +73,12 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         footerItems={footerItems}
         disableChangeFeedLink={overrides?.components?.sidenavFooterMenu?.disableChangeFeedLink}
       >
-        <div className="absolute top-2 right-10">
+        <div className="flex items-center justify-end gap-2 h-12">
           {/* <MaintenanceBanner /> */}
           <MaintenanceBanner mapper={mockStatusMapper} />
-        </div>
-        <div className="absolute top-2 right-4">
           <ThemeSwitch />
         </div>
-        <section className="my-10">
+        <section className="my-3">
           {children}
           <Toaster />
         </section>
