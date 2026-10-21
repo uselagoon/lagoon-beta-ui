@@ -122,6 +122,7 @@ export const DeleteVariableDialog: FC<Props> = ({ currentEnv, refetch, type, onC
         <Button
           variant="outline"
           aria-label="delete-variable"
+          className="hover:bg-[var(--destructive)]! transition-colors duration-300"
           onClick={async () => {
             let permissionResponse = onClick ? await onClick() : {};
             if (permissionResponse?.error) {
