@@ -10,8 +10,7 @@ import { useSidenavItems } from '@/components/dynamicNavigation/useSidenavItems'
 import { RootLayout, ThemeSwitch, Toaster, SidebarItem, SidebarSection } from '@/ui-library';
 import manualSignOut from 'utils/manualSignOut';
 import { useOverrides } from "@/contexts/OverrideContext";
-import MaintenanceBanner from '@/components/maintenanceBanner/MaintenanceBanner';
-import { mockStatusMapper } from '@/components/maintenanceBanner/maintenanceBanner.mock';
+import { ExtensionZoneRenderer } from '@/components/extensions/ExtensionZoneRenderer';
 
 
 const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: string; logo?: ReactNode }) => {
@@ -74,13 +73,13 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         disableChangeFeedLink={overrides?.components?.sidenavFooterMenu?.disableChangeFeedLink}
       >
         <div className="flex items-center justify-end gap-2 h-12">
-          {/* <MaintenanceBanner /> */}
-          <MaintenanceBanner mapper={mockStatusMapper} />
+          <ExtensionZoneRenderer zone="global-header" />
           <ThemeSwitch />
         </div>
         <section className="my-3">
           {children}
           <Toaster />
+          <ExtensionZoneRenderer zone="global-footer" />
         </section>
       </RootLayout>
     </>

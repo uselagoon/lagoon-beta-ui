@@ -83,7 +83,6 @@ export default async function RootLayout({
             <LinkProvider>
               <AuthProvider>
                 <ExtensionProvider extensions={extensions}>
-                  <ExtensionZoneRenderer zone="global-header" />
                   <RefreshTokenHandler />
                   <ClientSessionWrapper>
                     <ApolloClientComponentWrapper>
@@ -92,7 +91,6 @@ export default async function RootLayout({
                       </CloneStatusProvider>
                     </ApolloClientComponentWrapper>
                   </ClientSessionWrapper>
-                  <ExtensionZoneRenderer zone="global-footer" />
                 </ExtensionProvider>
               </AuthProvider>
             </LinkProvider>
