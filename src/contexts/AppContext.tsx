@@ -10,6 +10,7 @@ import { useSidenavItems } from '@/components/dynamicNavigation/useSidenavItems'
 import { RootLayout, ThemeSwitch, Toaster, SidebarItem, SidebarSection } from '@/ui-library';
 import manualSignOut from 'utils/manualSignOut';
 import { useOverrides } from "@/contexts/OverrideContext";
+import { ExtensionZoneRenderer } from '@/components/extensions/ExtensionZoneRenderer';
 
 
 const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: string; logo?: ReactNode }) => {
@@ -71,12 +72,14 @@ const AppProvider = ({ children, kcUrl, logo }: { children: ReactNode; kcUrl: st
         footerItems={footerItems}
         disableChangeFeedLink={overrides?.components?.sidenavFooterMenu?.disableChangeFeedLink}
       >
-        <div className="absolute top-2 right-4">
+        <div className="flex items-center justify-end gap-2 h-12">
+          <ExtensionZoneRenderer zone="global-header" />
           <ThemeSwitch />
         </div>
-        <section className="my-10">
+        <section className="my-3">
           {children}
           <Toaster />
+          <ExtensionZoneRenderer zone="global-footer" />
         </section>
       </RootLayout>
     </>
