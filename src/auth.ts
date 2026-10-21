@@ -3,6 +3,8 @@ import { JWT } from 'next-auth/jwt';
 import 'next-auth/jwt';
 import Keycloak from 'next-auth/providers/keycloak';
 
+const refresh_timout = 10_000;
+
 async function refreshAccessToken(token: JWT) {
   const reqUrl = `${process.env.AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/token`;
 
@@ -14,6 +16,7 @@ async function refreshAccessToken(token: JWT) {
       grant_type: 'refresh_token',
       refresh_token: token.refresh_token!,
     }),
+    signal: AbortSignal.timeout(refresh_timout),
   });
 
   const refreshToken = await response.json();
@@ -52,6 +55,8 @@ function isRefreshTokenExpired(refreshToken?: string): boolean {
     return false;
   }
 }
+
+const isInvalidGrant = (e: any): boolean => e?.error === 'invalid_grant';
 
 const loginRedirect = (nextUrl: URL) => {
   const loginUrl = new URL('/api/login', nextUrl);
@@ -105,6 +110,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       } else if (Date.now() < token.expires_at * 1000 - 30000) {
         // access token still valid
         return token;
+      } else if (token.error === 'RefreshTokenError') {
+        return token;
       } else {
         if (!token.refresh_token) throw new TypeError('Missing refresh_token');
 
@@ -112,7 +119,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return await refreshAccessToken(token);
         } catch (error) {
           console.error('Error refreshing access_token', error);
-          if (isRefreshTokenExpired(token.refresh_token)) {
+          if (isInvalidGrant(error) || isRefreshTokenExpired(token.refresh_token)) {
             token.error = 'RefreshTokenError';
           }
           return token;

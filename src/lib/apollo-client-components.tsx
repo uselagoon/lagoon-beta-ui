@@ -17,6 +17,48 @@ import manualSignOut from 'utils/manualSignOut';
  * reference: https://www.npmjs.com/package/@apollo/client-integration-nextjs
  */
 
+type SessionResponse = { access_token?: string; error?: string } | null;
+
+const token_expiry_buffer_ms = 60_000;
+
+function getExpiry(accessToken: string): number {
+  try {
+    const { expiry } = JSON.parse(atob(accessToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    if (typeof expiry === 'number') {
+      return expiry * 1000;
+    }
+    return 0;
+  } catch {
+    return 0;
+  }
+}
+
+// caches /api/auth/session so we don't spam requests with every operation
+function createSession() {
+  let cached: { data: SessionResponse; validUntil: number } | null = null;
+  let inFlight: Promise<SessionResponse> | null = null;
+
+  return async (): Promise<SessionResponse> => {
+    if (cached && Date.now() < cached.validUntil) {
+      return cached.data;
+    }
+
+    if (!inFlight) {
+      inFlight = fetch('/api/auth/session')
+        .then(async (response) => (response.ok ? ((await response.json()) as SessionResponse) : null))
+        .then((data) => {
+          const expiry = data?.access_token && !data.error ? getExpiry(data.access_token) : 0;
+          cached = expiry ? { data, validUntil: expiry - token_expiry_buffer_ms } : null;
+          return data;
+        })
+        .finally(() => {
+          inFlight = null;
+        });
+    }
+    return inFlight;
+  };
+}
+
 /*
   makeclient runs once and persists throughout the entire lifecycle of ApolloNextAppProvider.
 */
@@ -26,6 +68,8 @@ function makeClient(
   disableSubscriptions: boolean,
   getAccessToken: () => string | null
 ) {
+  const getSession = createSession();
+
   const httpLink = new HttpLink({
     uri: GRAPHQL_API,
     fetchOptions: { cache: 'no-store' },
@@ -36,8 +80,7 @@ function makeClient(
   });
   const asyncAuthLink = setContext(async (_, { headers }) => {
     try {
-      const response = await fetch('/api/auth/session'); // same as useSession() in components
-      const data = response.ok ? await response.json() : null;
+      const data = await getSession();
 
       if (!data) {
         await manualSignOut();
@@ -71,8 +114,7 @@ function makeClient(
           // todo: fetch a new token on reconnect
           retryAttempts: 3,
           headers: async () => {
-            const response = await fetch('/api/auth/session');
-            const data = response.ok ? await response.json() : null;
+            const data = await getSession();
             if (!data?.access_token) return {} as Record<string, string>;
             return { authorization: `Bearer ${data.access_token}` };
           },
