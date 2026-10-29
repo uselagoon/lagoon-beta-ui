@@ -84,7 +84,7 @@ export default async function RootLayout({
               <AuthProvider>
                 <ExtensionProvider extensions={extensions}>
                   <RefreshTokenHandler />
-                  <ClientSessionWrapper>
+                  <ClientSessionWrapper publicContent={children}>
                     <ApolloClientComponentWrapper>
                       <CloneStatusProvider>
                         <AppProvider kcUrl={process.env.AUTH_KEYCLOAK_ISSUER!}>{children}</AppProvider>

@@ -79,7 +79,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnLogin = nextUrl.pathname === '/api/login';
-      if (isOnLogin) return true;
+      const isOnAuthError = nextUrl.pathname === '/autherror';
+      if (isOnLogin || isOnAuthError) return true;
       if (!isLoggedIn) {
         return loginRedirect(nextUrl);
       }
