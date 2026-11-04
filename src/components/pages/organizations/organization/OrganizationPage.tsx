@@ -8,12 +8,16 @@ import { AddUser } from '@/components/addUserToOrg/Adduser';
 import { CreateGroup } from '@/components/createGroup/CreateGroup';
 import { CreateProject } from '@/components/createProject/CreateProject';
 import OrganizationNotFound from '@/components/errors/OrganizationNotFound';
-import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { DetailStat } from '@/ui-library';
+import { QueryRef, useMutation, useQueryRefHandlers, useReadQuery } from '@apollo/client';
+import { CopyToClipboard, DetailStat } from '@/ui-library';
+import { toast } from 'sonner';
 
 import { Description } from './_components/Description';
 import ViewDeployTargets from "@/components/pages/organizations/organization/_components/ViewDeployTargets";
 import { ExtensionZoneRenderer } from '@/components/extensions/ExtensionZoneRenderer';
+import { RegenerateWebhookToken } from '@/components/regenerateWebhookToken/RegenerateWebhookToken';
+import { HighlightedText } from '@/components/cancelDeployment/styles';
+import updateOrganizationWebhookToken from '@/lib/mutation/organizations/updateOrganizationWebhookToken';
 
 type Notification = 'slacks' | 'rocketchats' | 'webhook' | 'teams' | 'emails';
 export default function OrganizationPage({
@@ -28,6 +32,13 @@ export default function OrganizationPage({
   const {
     data: { organization },
   } = useReadQuery(queryRef);
+
+  const [updateWebhookTokenMutation, { loading: regenerateLoading }] = useMutation(updateOrganizationWebhookToken, {
+    onCompleted: () => {
+      toast.success('Generated webhook token successfully');
+      refetch();
+    },
+  });
 
   if (!organization) {
     return <OrganizationNotFound orgName={orgSlug} />;
@@ -109,6 +120,35 @@ export default function OrganizationPage({
           },
         ]
       : []),
+    {
+      key: 'webhook_token',
+      label: 'WEBHOOK TOKEN',
+      children: (
+        <>
+          <div className="flex items-center gap-2">
+            {organization.webhookToken && (
+              <div className="min-w-0 mr-1">
+                <CopyToClipboard type="hiddenWithIcon" withToolTip text={organization.webhookToken} />
+              </div>
+            )}
+            <RegenerateWebhookToken
+              hasToken={!!organization.webhookToken}
+              loading={regenerateLoading}
+              message={
+                <span className="block space-y-3">
+                  <span className="block">
+                    This will replace the webhook token for organization <HighlightedText>{organization.name}</HighlightedText>. The current token will stop working immediately, ensure the regenerated token is updated in your Git provider's webhook settings for webhooks to continue functioning.
+                  </span>
+                  <span className="block">Are you sure you want to proceed?</span>
+                </span>
+              }
+              onGenerate={webhookToken => updateWebhookTokenMutation({ variables: { id: organization.id, webhookToken } })}
+            />
+          </div>
+        </>
+      ),
+      lowercaseValue: true,
+    },
   ];
 
   const deployTargetOptions = organization.deployTargets.map(deploytarget => {

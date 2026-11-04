@@ -4,6 +4,7 @@ import { useEnvContext } from '@/contexts/EnvContext';
 
 import deployEnvironmentBranch from '@/lib/mutation/deployEnvironmentBranch';
 import projectByNameWithDeployKeyQuery from '@/lib/query/projectByNameWithDeployKeyQuery';
+import { useWHTokenPermission } from '@/hooks/useWHTokenPermission';
 import { ApolloError, useMutation, useQuery } from '@apollo/client';
 import { Accordion, CopyToClipboard, Input, Sheet } from '@/ui-library';
 import { toast } from 'sonner';
@@ -16,6 +17,9 @@ export const NewEnvironment: FC<Props> = ({ projectName, refetch }) => {
   const { error, data: deployKeyValue } = useQuery(projectByNameWithDeployKeyQuery, {
     variables: { name: projectName },
   });
+
+  // temporary workaround until we can properly surface permissions in the UI
+  const { webhookToken } = useWHTokenPermission(projectName);
 
   const [key, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -115,6 +119,22 @@ export const NewEnvironment: FC<Props> = ({ projectName, refetch }) => {
         </div>
       ),
     },
+    ...(webhookToken
+      ? [
+          {
+            id: 'webhook_token',
+            trigger: 'Add a Project webhook token',
+            content: (
+              <div className="flex flex-col gap-2">
+                <div data-id="copy" className="border p-2 bg-transparent rounded-sm">
+                  <CopyToClipboard type="hiddenWithIcon" withToolTip text={webhookToken} />
+                </div>
+                Add this token to your Git provider's webhook settings (the &quot;Secret&quot; or &quot;Secret token&quot; field) so Lagoon can verify that incoming webhooks come from your provider.
+              </div>
+            ),
+          },
+        ]
+    : []),
   ];
 
   return (
