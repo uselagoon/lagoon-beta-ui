@@ -1,6 +1,9 @@
 import { signOut } from 'next-auth/react';
 
+import { clearWHTokenCache } from '@/hooks/useWHTokenPermission';
+
 export default async function manualSignOut() {
+  clearWHTokenCache();
   const response = await fetch('/api/logout', {
     method: 'GET',
     next: {

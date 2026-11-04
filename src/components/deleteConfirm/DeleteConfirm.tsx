@@ -9,7 +9,7 @@ import { HighlightedText } from '../cancelDeployment/styles';
 interface DeleteProps {
   deleteType: string;
   deleteName: string;
-  deleteMessage?: string;
+  deleteMessage?: string | ReactNode;
   icon?: ReactNode;
   renderAsButton?: boolean;
   action: () => void | Promise<any>;
@@ -17,6 +17,7 @@ interface DeleteProps {
   loading: boolean;
   data?: Record<string, any> | null;
   buttonText?: string;
+  deleteText?: string;
 }
 
 /**
@@ -34,6 +35,7 @@ export const DeleteConfirm: FC<DeleteProps> = ({
   data,
   renderAsButton = true,
   buttonText = '',
+  deleteText = '',
 }) => {
   const [inputValue, setInputValue] = useState('');
 
@@ -54,6 +56,21 @@ export const DeleteConfirm: FC<DeleteProps> = ({
     }
   };
 
+  const content = icon ? icon : buttonText ? buttonText : <Trash data-cy="delete-variable" />;
+
+  const trigger = (
+    <Tooltip>
+      {renderAsButton ? (
+        <TooltipTrigger>{content}</TooltipTrigger>
+      ) : (
+        <TooltipTrigger asChild>
+          <span className="flex items-center">{content}</span>
+        </TooltipTrigger>
+      )}
+      <TooltipContent>Delete {deleteType}</TooltipContent>
+    </Tooltip>
+  );
+
   return (
     <Notification
       title="Confirm deletion"
@@ -69,7 +86,7 @@ export const DeleteConfirm: FC<DeleteProps> = ({
             </p>
           )}
 
-          <p>Type the name of the {deleteType} to confirm.</p>
+          {deleteText ? <p>{deleteText}</p> : <p>Type the name of the {deleteType} to confirm.</p>}
 
           <div className="grid gap-2">
             <Label htmlFor="variable_name" className="sr-only">
@@ -90,14 +107,15 @@ export const DeleteConfirm: FC<DeleteProps> = ({
       confirmDisabled={confirmDisabled}
       onConfirm={confirmAction}
     >
-      <Button variant="outline" className="hover:bg-[var(--destructive)]! transition-colors duration-300" disabled={loading} aria-label="delete">
-        <Tooltip>
-          <TooltipTrigger>
-            {icon ? icon : buttonText ? buttonText : <Trash data-cy="delete-variable" />}
-          </TooltipTrigger>
-          <TooltipContent>Delete {deleteType}</TooltipContent>
-        </Tooltip>
-      </Button>
+      {renderAsButton ? (
+        <Button variant="outline" disabled={loading} aria-label="delete">
+          {trigger}
+        </Button>
+      ) : (
+        <div className="flex items-center self-center cursor-pointer" aria-label="delete">
+          {trigger}
+        </div>
+      )}
     </Notification>
   );
 };

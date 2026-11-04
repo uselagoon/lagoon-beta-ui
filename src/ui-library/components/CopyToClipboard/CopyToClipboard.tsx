@@ -72,6 +72,8 @@ const CopyToClipboard: React.FC<ClipboardProps> = ({
 		width: iconOnly ? 'max-content' : undefined,
 	};
 
+  const VisibleIcon = manualUnblur ? EyeOff : Eye;
+
 	return (
 		<div className="flex items-center justify-between w-full gap-2" style={containerStyle}>
 			{!iconOnly && (
@@ -94,23 +96,32 @@ const CopyToClipboard: React.FC<ClipboardProps> = ({
 			<div className="flex items-center gap-3">
 				{!copied ? (
 					<>
-						<Copy
-							className="w-4 h-4 text-muted-foreground dark:hover:text-gray-100 hover:text-black transition-colors active:text-gray-300 cursor-pointer"
-							data-cy="copy-button"
-							onClick={handleCopy}
-						/>
+            <Tooltip>
+							<TooltipTrigger asChild>
+                <Copy
+                  className="w-4 h-4 text-muted-foreground dark:hover:text-gray-100 hover:text-black transition-colors active:text-gray-300 cursor-pointer"
+                  data-cy="copy-button"
+                  onClick={handleCopy}
+                />
+							</TooltipTrigger>
+							<TooltipContent>
+								<p>Copy content</p>
+							</TooltipContent>
+						</Tooltip>
+
 						{type === 'hiddenWithIcon' &&
-							(manualUnblur ? (
-								<EyeOff
-									className="w-4 h-4 ml-3 cursor-pointer text-muted-foreground dark:hover:text-gray-100 hover:text-black transition-colors active:text-gray-300"
-									onClick={handleBlurToggle}
-								/>
-							) : (
-								<Eye
-									className="w-4 h-4 ml-3 cursor-pointer text-muted-foreground dark:hover:text-gray-100 hover:text-black transition-colors active:text-gray-300"
-									onClick={handleBlurToggle}
-								/>
-							))}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <VisibleIcon
+                    className="w-4 h-4 cursor-pointer text-muted-foreground dark:hover:text-gray-100 hover:text-black transition-colors active:text-gray-300"
+                    onClick={handleBlurToggle}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Toggle visibility</p>
+                </TooltipContent>
+              </Tooltip>
+            }
 					</>
 				) : (
 					<div className="flex items-center gap-3">
@@ -124,17 +135,18 @@ const CopyToClipboard: React.FC<ClipboardProps> = ({
 						</Tooltip>
 
 						{type === 'hiddenWithIcon' &&
-							(manualUnblur ? (
-								<EyeOff
-									className="w-4 h-4 ml-3 cursor-pointer text-muted-foreground hover:bg-gray-200 active:bg-gray-300"
-									onClick={handleBlurToggle}
-								/>
-							) : (
-								<Eye
-									className="w-4 h-4 ml-3 cursor-pointer text-muted-foreground hover:bg-gray-200 active:bg-gray-300"
-									onClick={handleBlurToggle}
-								/>
-							))}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <VisibleIcon
+                    className="w-4 h-4 cursor-pointer text-muted-foreground dark:hover:text-gray-100 hover:text-black transition-colors active:text-gray-300"
+                    onClick={handleBlurToggle}
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Toggle visibility</p>
+                </TooltipContent>
+              </Tooltip>
+            }
 					</div>
 				)}
 			</div>

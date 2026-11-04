@@ -91,6 +91,7 @@ type Organization = {
   teams: OrgTeams[];
   webhook: OrgWebhook[];
   emails: OrgEmail[];
+  webhookToken: string;
 };
 
 export interface OrganizationData {

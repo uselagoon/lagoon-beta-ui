@@ -54,6 +54,7 @@ export default gql`
         __typename
         ...Email
       }
+      webhookToken
     }
   }
   ${SlackFragment}

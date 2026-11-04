@@ -28,7 +28,6 @@ export const RemoveProject: React.FC<RemoveProjectProps> = ({ project, refetch }
         loading={loading}
         data={data}
         action={() => removeOrgProject()}
-        renderAsButton={false}
         refetch={refetch}
       />
     </>
