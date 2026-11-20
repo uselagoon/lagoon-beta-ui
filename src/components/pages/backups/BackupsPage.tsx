@@ -1,12 +1,14 @@
 'use client';
 
-import React, { startTransition, useEffect } from 'react';
+import React from 'react';
 
 import { BackupsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/backups/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
-import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
+import backupChangedSubscription, { backupChangedFragment } from '@/lib/subscription/environmentBackupChanged';
+import { useEnvironmentSubscription } from '@/hooks/useEnvironmentSubscription';
+import { QueryRef, useReadQuery } from '@apollo/client';
 import { DataTable, DateRangePicker, Select, SelectWithOptions, Table } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
 
@@ -26,7 +28,6 @@ export default function BackupsPage({
       parse: (value: string | undefined) => (value !== undefined ? Number(value) : undefined),
     },
   });
-  const { refetch } = useQueryRefHandlers(queryRef);
   const [isPaginationDisabled, setIsPaginationDisabled] = React.useState(false);
 
   const {
@@ -39,20 +40,15 @@ export default function BackupsPage({
     environmentSlug,
   });
 
-  // polling every 20s if status needs to be checked
-  useEffect(() => {
-    // only poll if any backup has a 'restore.status' of 'pending'
-    const shouldPoll = environment?.backups?.some(({ restore }) => restore?.status === 'pending');
-
-    if (shouldPoll) {
-      const intId = setInterval(() => {
-        startTransition(async () => {
-          await refetch();
-        });
-      }, 20000);
-      return () => clearInterval(intId);
-    }
-  }, [environment?.backups, refetch]);
+  useEnvironmentSubscription({
+    subscription: backupChangedSubscription,
+    fragment: backupChangedFragment,
+    fragmentName: 'BackupChangedFields',
+    typename: 'Backup',
+    dataKey: 'backupChanged',
+    listField: 'backups',
+    environmentId: environment?.id,
+  });
 
   if (!environment) {
     return <EnvironmentNotFound kubernetesNamespaceName={environmentSlug} />;

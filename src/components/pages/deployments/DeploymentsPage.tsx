@@ -1,13 +1,13 @@
 'use client';
 
-import { startTransition, useEffect } from 'react';
-
 import { usePathname } from 'next/navigation';
 
 import { DeploymentsData } from '@/app/(routegroups)/(projectroutes)/projects/[projectSlug]/[environmentSlug]/deployments/(deployments-page)/page';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
+import deploymentChangedSubscription, { deploymentChangedFragment } from '@/lib/subscription/environmentDeploymentChanged';
+import { useEnvironmentSubscription } from '@/hooks/useEnvironmentSubscription';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, DateRangePicker, SelectWithOptions, Table } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
@@ -44,21 +44,15 @@ export default function DeploymentsPage({
     environmentSlug,
   });
 
-  // polling every 20s if status needs to be checked
-  useEffect(() => {
-    const shouldPoll = environment?.deployments?.some(({ status }) =>
-      ['new', 'pending', 'queued', 'running'].includes(status)
-    );
-    if (shouldPoll) {
-      const intId = setInterval(() => {
-        startTransition(async () => {
-          await refetch();
-        });
-      }, 20000);
-
-      return () => clearInterval(intId);
-    }
-  }, [environment?.deployments, refetch]);
+  useEnvironmentSubscription({
+    subscription: deploymentChangedSubscription,
+    fragment: deploymentChangedFragment,
+    fragmentName: 'DeploymentChangedFields',
+    typename: 'Deployment',
+    dataKey: 'deploymentChanged',
+    listField: 'deployments',
+    environmentId: environment?.id,
+  });
 
   if (!environment) {
     return <EnvironmentNotFound kubernetesNamespaceName={environmentSlug} />;
