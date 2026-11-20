@@ -6,7 +6,6 @@ import { useEnvContext } from '@/contexts/EnvContext';
 import { ApolloLink, HttpLink, ServerError, FetchResult, Observable, Operation } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
-import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { ApolloClient, ApolloNextAppProvider, InMemoryCache } from '@apollo/experimental-nextjs-app-support';
 import { createClient } from 'graphql-sse';
