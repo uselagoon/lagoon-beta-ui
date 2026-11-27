@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { OrganizationUsersData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/users/(users-page)/page';
-import usersByOrganization from '@/lib/query/organizations/usersByOrganization';
+import { OrganizationUsersData } from '../../../../app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/users/(users-page)/page';
+import usersByOrganization from '../../../../lib/query/organizations/usersByOrganization';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, fireEvent, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, fireEvent, screen, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
 import UsersPage from './UsersPage';

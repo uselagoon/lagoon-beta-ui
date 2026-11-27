@@ -17,6 +17,7 @@ x-environment: &default-environment
   LAGOON_UI_TOURS_ENABLED: enabled
   NODE_TLS_REJECT_UNAUTHORIZED: 0
   DISABLE_SUBSCRIPTIONS: 'true'
+  LAGOON_UI_DISABLE_EXTENSIONS: "${LAGOON_UI_DISABLE_EXTENSIONS:-}"
 
 services:
   ui:
@@ -25,7 +26,7 @@ services:
       dockerfile: Dockerfile
     labels:
       lagoon.type: node
-    command: yarn run dev
+    command: ["/bin/sh", "-c", "yarn build:extensions && yarn run dev"]
     volumes:
       - ./src:/app/src
       - ./utils:/app/utils
@@ -42,6 +43,9 @@ services:
       - ./.env.schema:/app/.env.schema
       - ./package.json:/app/package.json
       - ./yarn.lock:/app/yarn.lock
+      - ./extensions.json:/app/extensions.json
+      - ./extensions:/app/extensions
+      - ./scripts:/app/scripts
     ports:
       - '3003:3003'
     networks:

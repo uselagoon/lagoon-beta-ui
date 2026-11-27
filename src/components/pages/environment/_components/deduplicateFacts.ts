@@ -18,7 +18,20 @@ const deduplicateFacts = (facts: KeyfactType[]) => {
     seen.add(key);
     return true;
   });
-  return uniqueFacts;
+
+  const grouped = new Map<string, typeof facts>();
+
+  for (const fact of uniqueFacts) {
+    const groupKey = `${fact.category}-${fact.name}`;
+    const group = grouped.get(groupKey);
+    if (group) {
+      group.push(fact);
+    } else {
+      grouped.set(groupKey, [fact]);
+    }
+  }
+
+  return Array.from(grouped.values()).flat();
 };
 
 export default deduplicateFacts;

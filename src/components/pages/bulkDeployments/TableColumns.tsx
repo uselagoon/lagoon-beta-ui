@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 import { ExternalLink } from 'lucide-react';
+import { getBadgeVariant } from 'utils/setBadgeStatus';
 
 import CancelDeployment from '../../cancelDeployment/CancelDeployment';
 
@@ -97,7 +98,7 @@ const BulkDeploymentColumns: DataTableColumnDef<BulkDeployment>[] = [
         <div>
           <Link
             className="hover:text-blue-800 transition-colors"
-            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}`}
+            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.kubernetesNamespaceName}`}
           >
             {deployment.environment?.name}
           </Link>
@@ -129,7 +130,7 @@ const BulkDeploymentColumns: DataTableColumnDef<BulkDeployment>[] = [
       return (
         <Link
           className="hover:text-blue-800 transition-colors"
-          href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}/deployments/${deployment.name}`}
+          href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.kubernetesNamespaceName}/deployments/${deployment.name}`}
         >
           {deployment.name}
         </Link>
@@ -209,12 +210,12 @@ const BulkDeploymentColumns: DataTableColumnDef<BulkDeployment>[] = [
       const { status, buildStep } = row.original;
       return (
         <section className="flex flex-col items-start gap-2">
-          <Badge variant="default">{capitalize(status)}</Badge>
+          <Badge variant={getBadgeVariant(status, buildStep)}>{capitalize(status)}</Badge>
 
           {!['complete', 'cancelled', 'failed'].includes(status) && buildStep && (
             <Tooltip>
               <TooltipTrigger>
-                <Badge className="bg-blue-500 text-white dark:bg-blue-600" variant="secondary">
+                <Badge variant="info">
                   {buildStep}
                 </Badge>
               </TooltipTrigger>
@@ -225,7 +226,7 @@ const BulkDeploymentColumns: DataTableColumnDef<BulkDeployment>[] = [
           {buildStep && ['deployCompletedWithWarnings'].includes(buildStep) && (
             <Tooltip>
               <TooltipTrigger>
-                <Badge className="text-[#ffbe00]" variant="secondary">
+                <Badge variant="warning">
                   Completed with warnings
                 </Badge>
               </TooltipTrigger>
@@ -272,7 +273,7 @@ const BulkDeploymentColumns: DataTableColumnDef<BulkDeployment>[] = [
       return (
         <>
           <Link
-            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.openshiftProjectName}/deployments/${deployment.name}`}
+            href={`/projects/${deployment.environment?.project.name}/${deployment.environment?.kubernetesNamespaceName}/deployments/${deployment.name}`}
           >
             <Button variant="link">
               <Tooltip>

@@ -2,11 +2,11 @@ import FactsFragment from '@/lib/fragment/fact';
 import { gql } from '@apollo/client';
 
 export default gql`
-  query getEnvironment($openshiftProjectName: String!) {
-    environment: environmentByOpenshiftProjectName(openshiftProjectName: $openshiftProjectName) {
+  query getEnvironment($kubernetesNamespaceName: String!) {
+    environment: environmentByKubernetesNamespaceName(kubernetesNamespaceName: $kubernetesNamespaceName) {
       id
       name
-      openshiftProjectName
+      kubernetesNamespaceName
       project {
         id
         name

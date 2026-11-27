@@ -16,7 +16,7 @@ export type Deployment = {
   completed: string | null;
   environment?: {
     name: string;
-    openshiftProjectName: string;
+    kubernetesNamespaceName: string;
     openshift: {
       id: number;
       name: string;
@@ -36,7 +36,7 @@ export type Deployment = {
 type Environment = {
   id: number;
   name: string;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   deployType: string;
   deployBaseRef: string;
   deployHeadRef: string;
@@ -71,7 +71,7 @@ export default async function Deployments(props: { params: Promise<{ environment
       query={environmentWithDeployments}
       variables={{
         displayName: 'Deployments',
-        openshiftProjectName: environmentSlug,
+        kubernetesNamespaceName: environmentSlug,
         limit: null,
       }}
     >

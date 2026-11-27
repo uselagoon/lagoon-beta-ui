@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { OrganizationVariablesData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
-import organizationByNameWithEnvVars from '@/lib/query/organizations/organizationByNameWithEnvVars';
+import { OrganizationVariablesData } from '../../../../app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/variables/page';
+import organizationByNameWithEnvVars from '../../../../lib/query/organizations/organizationByNameWithEnvVars';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
 import OrgVariablesPage from './VariablesPage';

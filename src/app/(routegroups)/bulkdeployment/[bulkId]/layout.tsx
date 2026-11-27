@@ -10,7 +10,6 @@ export default async function ProjectRoutesLayout({
 }>) {
   return (
     <>
-      <BulkDeploymentsBreadcrumbs />
       {children}
     </>
   );

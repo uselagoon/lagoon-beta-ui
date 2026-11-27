@@ -23,6 +23,7 @@ type SheetProps = React.ComponentProps<typeof Sheet> & {
 	sheetDescription?: string;
 	sheetFooterButton?: string;
 	loading?: boolean;
+	disabled?: boolean;
 	buttonAction?: (
 		e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
 		values: any,
@@ -52,6 +53,7 @@ export default function UISheet({
 	buttonAction = () => {},
 	sheetFields,
 	loading = false,
+	disabled = false,
 	additionalContent = null,
 	error = false,
 	onFieldChange,
@@ -192,7 +194,7 @@ export default function UISheet({
 	return (
 		<Sheet open={sheetOpen} onOpenChange={setSheetOpen} {...rest}>
 			<SheetTrigger asChild>
-				<Button>{sheetTrigger}</Button>
+				<Button disabled={disabled}>{sheetTrigger}</Button>
 			</SheetTrigger>
 			<SheetContent className="flex flex-col h-full">
 				<SheetHeader>

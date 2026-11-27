@@ -4,6 +4,7 @@ import organizationByNameProjects from '@/lib/query/organizations/organizationBy
 import { QueryRef } from '@apollo/client';
 
 import { DeployTarget, OrgProject } from '../../(organization-overview)/page';
+import { OrganizationKey } from '../../keys/page';
 
 type Props = {
   params: Promise<{ organizationSlug: string }>;
@@ -16,6 +17,8 @@ export type OrganizationProjectsData = {
     friendlyName: string;
     projects: OrgProject[];
     deployTargets: DeployTarget[];
+    featureProjectClone: boolean;
+    keys: OrganizationKey[];
   };
 };
 

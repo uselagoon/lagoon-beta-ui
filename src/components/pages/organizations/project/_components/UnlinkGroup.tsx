@@ -13,9 +13,10 @@ type UnlinkGroupModalProps = {
   group: Group;
   projectName: string;
   refetch: () => void;
+  disabled?: boolean;
 };
 
-export const UnlinkGroup: React.FC<UnlinkGroupModalProps> = ({ group, projectName, refetch }) => {
+export const UnlinkGroup: React.FC<UnlinkGroupModalProps> = ({ group, projectName, refetch, disabled }) => {
   const { name } = group;
 
   const [unlinkGroup, { loading }] = useMutation(removeGroupFromProject, {
@@ -31,6 +32,7 @@ export const UnlinkGroup: React.FC<UnlinkGroupModalProps> = ({ group, projectNam
       deleteItemType="group"
       title="Unlink group ?"
       loading={loading}
+      disabled={disabled}
       deleteMessage={
         <>
           <p>

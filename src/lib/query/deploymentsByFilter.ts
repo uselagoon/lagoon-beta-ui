@@ -13,7 +13,7 @@ export default gql`
       completed
       environment {
         name
-        openshiftProjectName
+        kubernetesNamespaceName
         openshift {
           id
           name
