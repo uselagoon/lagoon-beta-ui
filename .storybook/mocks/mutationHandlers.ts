@@ -814,7 +814,6 @@ export const mutationHandlers = [
         deployTitle: branch,
         updated: new Date().toISOString(),
         routes: null,
-        openshiftProjectName: `${project}-${branch}`,
         kubernetesNamespaceName: `${project}-${branch}`,
         openshift: { friendlyName: 'Development', cloudRegion: 'US-WEST' },
         project: { name: project, problemsUi: 0, factsUi: 0 },

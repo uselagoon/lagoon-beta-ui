@@ -15,8 +15,10 @@ export default gql`
         deployType
         environmentType
         routes
-        updated
-        openshiftProjectName
+        deployments(limit: 1) {
+          created
+        }
+        kubernetesNamespaceName
         project {
           problemsUi
           factsUi

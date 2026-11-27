@@ -28,9 +28,9 @@ export default function Loading() {
     <>
       <SectionWrapper>
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organizations</h3>
-        <Button className="px-0" variant="link">
+        <p className='text-sm pt-1'>
           View all organizations
-        </Button>
+        </p>
         <DataTable
           loading
           columns={OrganizationsTableColumns}

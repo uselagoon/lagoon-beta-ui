@@ -17,7 +17,7 @@ const EnvironmentNavTabs = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
 
   const { loading, error, data } = useQuery(environmentWithProblems, {
-    variables: { openshiftProjectName: environmentSlug },
+    variables: { kubernetesNamespaceName: environmentSlug },
   });
 
   const showFactsTab = data?.environment?.project?.factsUi === 1;

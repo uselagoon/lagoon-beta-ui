@@ -3,13 +3,31 @@
 import Link from 'next/link';
 
 import { OrgProject } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page';
+import { CloneProject } from '@/components/cloneProject/CloneProject';
 import { handleSort, renderSortIcons } from '@/components/utils';
-import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@/ui-library';
+import { Badge, Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger, cn } from '@/ui-library';
 import { FolderCog } from 'lucide-react';
+import { OrganizationKey } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/keys/page';
+import { CancelClone } from '@/components/cloneProject/_components/CancelClone';
+
+const setCloneBadge = (status?: string) => {
+  if (!status) return null;
+  if (status === 'FAILED' || status === 'CANCELLED') {
+    return <Badge variant="destructive">Clone {status === 'FAILED' ? 'Failed' : 'Cancelled'}</Badge>;
+  } else if (status != "COMPLETE") {
+    return <Badge variant="info">Cloning</Badge>;
+  } else {
+    return <Badge variant="success">Clone</Badge>;
+  }
+}
 
 export const ProjectsDataTableColumns = (
   deleteProjectModal: (project: OrgProject) => React.ReactNode,
-  orgName: string
+  orgName: string,
+  orgId: number,
+  projectCloneEnabled: boolean,
+  orgKeys: OrganizationKey[],
+  refetch?: () => void
 ): DataTableColumnDef<OrgProject>[] => [
   {
     accessorKey: 'name',
@@ -23,12 +41,15 @@ export const ProjectsDataTableColumns = (
       );
     },
     cell: ({ row }) => {
-      const { name } = row.original;
+      const { name, clone } = row.original;
 
       return (
-        <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${orgName}/projects/${name}`}>
-          {name}
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${orgName}/projects/${name}`}>
+            {name}
+          </Link>
+          {setCloneBadge(clone?.status)}
+        </div>
       );
     },
   },
@@ -52,8 +73,32 @@ export const ProjectsDataTableColumns = (
     id: 'actions',
     header: () => <div className="text-right mr-4">Actions</div>,
     cell: ({ row }) => {
+      const cloneID = row.original?.clone?.id;
+      const cloneStatus = row.original?.clone?.status;
+      const inactiveCloneStatus = new Set(['INCOMPATIBLE_REQUIREMENTS', 'FAILED', 'CANCELLED', 'COMPLETE']);
+      const disabledClone = cloneStatus === 'FAILED' || cloneStatus === 'CANCELLED';
+      const publicGitUrl = row.original.gitUrl?.startsWith('http://') ?? false;
       return (
         <div className="flex gap-4 justify-end items-center">
+          {projectCloneEnabled && (
+            <>
+              {cloneStatus != undefined && !inactiveCloneStatus.has(cloneStatus) ? (
+                <Tooltip>
+                  <TooltipTrigger>
+                    {cloneID && <CancelClone cloneID={cloneID} orgID={orgId} cloneStatus={cloneStatus} destProject={row.original.name} onCancel={refetch} />}
+                  </TooltipTrigger>
+                  <TooltipContent>Cancel this Clone</TooltipContent>
+                </Tooltip>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <CloneProject projectName={row.original.name} organizationSlug={orgName} refetch={refetch} publicGitUrl={publicGitUrl} keys={orgKeys} disabled={disabledClone} />
+                  </TooltipTrigger>
+                  <TooltipContent>Clone this Project</TooltipContent>
+                </Tooltip>
+              )}
+            </>
+          )}
           <Button>
             <Link target="_blank" href={`/projects/${row.original.name}`}>
               <Tooltip>

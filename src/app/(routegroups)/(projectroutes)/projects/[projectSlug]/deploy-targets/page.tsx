@@ -35,6 +35,8 @@ type ProjectWithDeployTargets = {
   }[];
   environments: {
     environmentType: 'production' | 'development';
+    name: string;
+    kubernetesNamespaceName: string;
   }[];
 };
 

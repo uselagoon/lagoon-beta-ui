@@ -11,7 +11,7 @@ import ProblemsPage from './ProblemsPage';
 const mockData: ProblemsData = {
   environment: {
     id: 1,
-    openshiftProjectName: 'project-main',
+    kubernetesNamespaceName: 'project-main',
     project: {
       name: 'test-project',
       problemsUi: true,
@@ -84,7 +84,7 @@ const meta: Meta<typeof ProblemsPage> = {
   render: () => (
     <MockPreloadQuery
       query={environmentWithProblems}
-      variables={{ openshiftProjectName: 'project-main', limit: null }}
+      variables={{ kubernetesNamespaceName: 'project-main', limit: null }}
       mockData={mockData}
     >
       {queryRef => <ProblemsPage queryRef={queryRef} environmentSlug="project-main" />}

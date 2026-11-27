@@ -1,0 +1,20 @@
+'use client';
+
+import React from 'react';
+
+import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
+import KeysDataTableColumns from '@/components/pages/organizations/keys/KeysDataTableColumns';
+import { DataTable, Skeleton } from '@/ui-library';
+
+export default function Loading() {
+  return (
+    <SectionWrapper>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">Organization Keys</h3>
+      <div className="flex gap-4 items-center">
+        <span className="inline-block my-4 mr-4">Create a new key</span>
+        <Skeleton className="h-8 w-[100px]" />
+      </div>
+      <DataTable loading columns={KeysDataTableColumns()} data={[]} />
+    </SectionWrapper>
+  );
+}

@@ -22,7 +22,7 @@ export type Deployment = {
 };
 
 type Environment = {
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   project: {
     name: string;
     problemsUi: boolean;
@@ -54,7 +54,7 @@ export default async function Deployment(props: {
       query={environmentWithDeployment}
       variables={{
         displayName: 'Deployment',
-        openshiftProjectName: environmentSlug,
+        kubernetesNamespaceName: environmentSlug,
         deploymentName: deploymentSlug,
       }}
     >

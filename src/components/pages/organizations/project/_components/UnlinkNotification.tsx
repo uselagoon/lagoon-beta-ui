@@ -11,6 +11,7 @@ type UnlinkNotificationModalProps = {
   notification: Notification;
   projectName: string;
   refetch: () => void;
+  disabled?: boolean;
 };
 
 export const getNotificationType = (type: string) => {
@@ -29,7 +30,7 @@ export const getNotificationType = (type: string) => {
       return undefined;
   }
 };
-export const UnlinkNotification: React.FC<UnlinkNotificationModalProps> = ({ notification, projectName, refetch }) => {
+export const UnlinkNotification: React.FC<UnlinkNotificationModalProps> = ({ notification, projectName, refetch, disabled }) => {
   const { name, type } = notification;
 
   const [unlinkNotification, { loading }] = useMutation(removeNotificationFromProject, {
@@ -46,6 +47,7 @@ export const UnlinkNotification: React.FC<UnlinkNotificationModalProps> = ({ not
       deleteItemType="notification"
       title="Unlink notification ?"
       loading={loading}
+      disabled={disabled}
       deleteMessage={
         <>
           <p>

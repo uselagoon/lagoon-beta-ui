@@ -3,6 +3,8 @@ import { JWT } from 'next-auth/jwt';
 import 'next-auth/jwt';
 import Keycloak from 'next-auth/providers/keycloak';
 
+const refresh_timout = 10_000;
+
 async function refreshAccessToken(token: JWT) {
   const reqUrl = `${process.env.AUTH_KEYCLOAK_ISSUER}/protocol/openid-connect/token`;
 
@@ -14,6 +16,7 @@ async function refreshAccessToken(token: JWT) {
       grant_type: 'refresh_token',
       refresh_token: token.refresh_token!,
     }),
+    signal: AbortSignal.timeout(refresh_timout),
   });
 
   const refreshToken = await response.json();
@@ -28,8 +31,37 @@ async function refreshAccessToken(token: JWT) {
   token.expires_at = Math.floor(Date.now() / 1000 + newTokens.expires_in);
   // Some providers only issue refresh tokens once, so preserve if we did not get a new one
   if (newTokens.refresh_token) token.refresh_token = newTokens.refresh_token;
+  try {
+    token.realm_access = {
+      roles: JSON.parse(
+        Buffer.from(newTokens.access_token.split('.')[1], 'base64url').toString()
+      ).realm_access?.roles,
+    };
+  } catch {
+    console.error('Error decoding access_token');
+  }
 
   return token;
+}
+
+// check if the token is actually expired, not just rotating
+function isRefreshTokenExpired(refreshToken?: string): boolean {
+  if (!refreshToken) return true;
+  try {
+    const { exp } = JSON.parse(Buffer.from(refreshToken.split('.')[1], 'base64url').toString());
+    if (typeof exp !== 'number') return false;
+    return Date.now() >= exp * 1000;
+  } catch {
+    return false;
+  }
+}
+
+const isInvalidGrant = (e: any): boolean => e?.error === 'invalid_grant';
+
+const loginRedirect = (nextUrl: URL) => {
+  const loginUrl = new URL('/api/login', nextUrl);
+  loginUrl.searchParams.set('callbackUrl', nextUrl.pathname + nextUrl.search);
+  return Response.redirect(loginUrl);
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -44,22 +76,41 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
-    async authorized({ auth }) {
-      // Logged in users are authenticated, otherwise redirect to login page
-      return !!auth;
+    async authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnLogin = nextUrl.pathname === '/api/login';
+      if (isOnLogin) return true;
+      if (!isLoggedIn) {
+        return loginRedirect(nextUrl);
+      }
+      if (auth?.error === 'RefreshTokenError') {
+        return loginRedirect(nextUrl);
+      }
+      return true;
     },
     async jwt({ token, account }: { token: JWT; account?: Account | null | undefined }): Promise<JWT> {
       if (account) {
         // account is only available the first time this callback is called on a new session (after the user signs in)
+        let roles: string[] | undefined;
+        try {
+          roles = JSON.parse(
+            Buffer.from((account.access_token as string).split('.')[1], 'base64url').toString()
+          ).realm_access?.roles;
+        } catch {
+          console.error('Error decoding access_token');
+        }
         return {
           ...token,
           access_token: account.access_token as string,
           expires_at: account.expires_at as number,
           refresh_token: account.refresh_token,
           id_token: account.id_token as string,
+          realm_access: { roles },
         };
       } else if (Date.now() < token.expires_at * 1000 - 30000) {
         // access token still valid
+        return token;
+      } else if (token.error === 'RefreshTokenError') {
         return token;
       } else {
         if (!token.refresh_token) throw new TypeError('Missing refresh_token');
@@ -68,16 +119,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return await refreshAccessToken(token);
         } catch (error) {
           console.error('Error refreshing access_token', error);
-          //if we fail to refresh the token, return an error so we can handle it on the page
-
-          token.error = 'RefreshTokenError';
+          if (isInvalidGrant(error) || isRefreshTokenExpired(token.refresh_token)) {
+            token.error = 'RefreshTokenError';
+          }
           return token;
         }
       }
     },
     async session({ session, token }) {
       // send properties to the client
-
       session.access_token = token.access_token;
       session.id_token = token.id_token;
       session.roles = token?.realm_access?.roles;

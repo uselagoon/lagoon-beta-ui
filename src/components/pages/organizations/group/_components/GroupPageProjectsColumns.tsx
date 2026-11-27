@@ -1,14 +1,18 @@
 import Link from 'next/link';
 
-import { OrgProject } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/(organization-overview)/page';
 import { handleSort, renderSortIcons } from '@/components/utils';
 import { Button, DataTableColumnDef, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import { FolderCog } from 'lucide-react';
 
+type GroupProject = {
+  id: number;
+  name: string;
+};
+
 export const GroupPageProjectColumns = (
-  unlink: (project: OrgProject) => React.ReactNode,
+  unlink: (project: GroupProject) => React.ReactNode,
   orgName: string
-): DataTableColumnDef<OrgProject>[] => [
+): DataTableColumnDef<GroupProject>[] => [
   {
     accessorKey: 'name',
     width: '80%',
