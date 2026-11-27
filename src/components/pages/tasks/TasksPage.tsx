@@ -1,6 +1,6 @@
 'use client';
 
-import React, { startTransition, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useEnvContext } from '@/contexts/EnvContext';
 import { usePathname } from 'next/navigation';
@@ -8,6 +8,8 @@ import { usePathname } from 'next/navigation';
 import SectionWrapper from '@/components/SectionWrapper/SectionWrapper';
 import EnvironmentNotFound from '@/components/errors/EnvironmentNotFound';
 import { usePendingChangesNotification } from '@/hooks/usePendingChangesNotification';
+import taskChangedSubscription, { taskChangedFragment } from '@/lib/subscription/environmentTaskChanged';
+import { useEnvironmentSubscription } from '@/hooks/useEnvironmentSubscription';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
 import { DataTable, SelectWithOptions } from '@/ui-library';
 import { useQueryStates } from 'nuqs';
@@ -73,21 +75,15 @@ export default function TasksPage({
   const { LAGOON_UI_TASK_BLOCKLIST } = useEnvContext();
   const blockedTasks = JSON.parse(LAGOON_UI_TASK_BLOCKLIST as string) as string[];
 
-  // polling every 20s if status needs to be checked
-  useEffect(() => {
-    const shouldPoll = environment?.tasks?.some(({ status }) =>
-      ['new', 'pending', 'queued', 'running'].includes(status)
-    );
-    if (shouldPoll) {
-      const intId = setInterval(() => {
-        startTransition(async () => {
-          await refetch();
-        });
-      }, 20000);
-
-      return () => clearInterval(intId);
-    }
-  }, [environment?.tasks, refetch]);
+  useEnvironmentSubscription({
+    subscription: taskChangedSubscription,
+    fragment: taskChangedFragment,
+    fragmentName: 'TaskChangedFields',
+    typename: 'Task',
+    dataKey: 'taskChanged',
+    listField: 'tasks',
+    environmentId: environment?.id,
+  });
 
   if (!environment) {
     return <EnvironmentNotFound kubernetesNamespaceName={environmentSlug} />;
