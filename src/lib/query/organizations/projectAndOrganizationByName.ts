@@ -10,6 +10,7 @@ export default gql`
     project: orgProjectByName(name: $project) {
       id
       name
+      gitUrl
       groups {
         type
         id
@@ -19,6 +20,10 @@ export default gql`
       notifications {
         name
         type
+      }
+      clone {
+        id
+        status
       }
     }
 
@@ -33,6 +38,7 @@ export default gql`
         type
         name
       }
+      featureProjectClone
       slacks: notifications(type: SLACK) {
         __typename
         ...Slack

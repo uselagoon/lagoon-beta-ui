@@ -1,5 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Story } from '@storybook/addon-docs/blocks';
 import { default as Pagination } from '../components/Pagination';
 
 const meta: Meta<typeof Pagination> = {

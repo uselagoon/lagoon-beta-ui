@@ -17,7 +17,7 @@ export type Deployment = {
   completed: string | null;
   environment?: {
     name: string;
-    openshiftProjectName: string;
+    kubernetesNamespaceName: string;
     openshift: {
       id: number;
       name: string;

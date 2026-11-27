@@ -28,7 +28,7 @@ export type Insight = {
 
 type Environment = {
   id: number;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   project: {
     name: string;
     problemsUi: boolean;
@@ -60,7 +60,7 @@ export default async function Insights(props: { params: Promise<{ environmentSlu
       query={environmentWIthInsightsAndFacts}
       variables={{
         displayName: 'Insights',
-        openshiftProjectName: environmentSlug,
+        kubernetesNamespaceName: environmentSlug,
         limit: null,
       }}
     >

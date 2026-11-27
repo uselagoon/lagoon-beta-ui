@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { SettingsData } from '@/app/(routegroups)/settings/(ssh-keys)/page';
-import me from '@/lib/query/me';
+import { SettingsData } from '../../../app/(routegroups)/settings/(ssh-keys)/page';
+import me from '../../../lib/query/me';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockPreloadQuery } from '../../../../.storybook/decorators/MockPreloadQuery';
 import { sleep } from '../../../../.storybook/mocks/storyHelpers';

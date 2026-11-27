@@ -61,7 +61,7 @@ export default function DeploymentsPage({
   }, [environment?.deployments, refetch]);
 
   if (!environment) {
-    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
+    return <EnvironmentNotFound kubernetesNamespaceName={environmentSlug} />;
   }
   return (
     <SectionWrapper>

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { Deployment } from '@/app/(routegroups)/alldeployments/page';
+import { Deployment } from '../../../app/(routegroups)/alldeployments/page';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 
 import AllDeploymentsPage from './AllDeploymentsPage';
 
@@ -22,7 +22,7 @@ const generateMockDeployments = (count: number = 20): Deployment[] => {
         : null,
     environment: {
       name: `env-${index + 1}`,
-      openshiftProjectName: `project-${index + 1}-env-${index + 1}`,
+      kubernetesNamespaceName: `project-${index + 1}-env-${index + 1}`,
       openshift: {
         id: 1,
         name: 'cluster-1',

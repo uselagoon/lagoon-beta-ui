@@ -1,7 +1,7 @@
 import EnvironmentPage from '@/components/pages/environment/EnvironmentPage';
 import { keyFactImageType } from '@/constants/keyFactImageMap';
 import { PreloadQuery } from '@/lib/apolloClient';
-import environmentByOpenShiftProjectName from '@/lib/query/environmentByOpenShiftProjectName';
+import environmentByKubernetesNamespaceName from '@/lib/query/environmentByKubernetesNamespaceName';
 import { QueryRef } from '@apollo/client';
 
 type Props = {
@@ -29,7 +29,7 @@ export type EnvironmentData = {
     deployType: string;
     environmentType: string;
     routes: string;
-    openshiftProjectName: string;
+    kubernetesNamespaceName: string;
     project: {
       name: string;
       gitUrl: string;
@@ -62,10 +62,10 @@ export default async function Environment(props: {
 
   return (
     <PreloadQuery
-      query={environmentByOpenShiftProjectName}
+      query={environmentByKubernetesNamespaceName}
       variables={{
         displayName: 'Environment',
-        openshiftProjectName: environmentSlug,
+        kubernetesNamespaceName: environmentSlug,
       }}
     >
       {queryRef => (

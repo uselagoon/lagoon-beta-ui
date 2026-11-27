@@ -1,8 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { Story } from '@storybook/addon-docs/blocks';
 import { default as ActionButton } from '../components/ActionButton';
 import {GitBranch, Zap} from "lucide-react";
-import {Button} from "@ui-lib/components/ui/button.tsx";
+import {Button} from "../components/ui/button";
 import {useState} from "react";
 
 const meta: Meta<typeof ActionButton> = {

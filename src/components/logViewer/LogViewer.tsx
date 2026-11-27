@@ -185,6 +185,8 @@ const LogNodeRenderer: React.FC<{
       }
     }
 
+    const setOpen = visible || hasWarning;
+
     const nodeChildren = node.nodes.map(element => {
       return (
         <LogNodeRenderer
@@ -226,7 +228,7 @@ const LogNodeRenderer: React.FC<{
       },
     ];
 
-    const accordion = <Accordion type="multiple" items={accordionItems} defaultValue={visible ? [String(node.key)] : []} />;
+    const accordion = <Accordion type="multiple" items={accordionItems} defaultValue={setOpen ? [String(node.key)] : []} />;
 
     if (showSuccessSteps) {
       return accordion;

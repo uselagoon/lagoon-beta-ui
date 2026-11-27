@@ -14,6 +14,10 @@ export default gql`
       productionRoutes
       standbyRoutes
       developmentEnvironmentsLimit
+      organizationDetails {
+        name
+        friendlyName
+      }
       environments {
         environmentType
       }
