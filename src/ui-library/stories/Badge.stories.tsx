@@ -1,6 +1,5 @@
 import { Check, ArrowRight, CircleAlert } from 'lucide-react';
 import { Meta, StoryObj } from '@storybook/react';
-import { Story } from '@storybook/addon-docs/blocks';
 
 import { Badge } from '../components/ui/badge';
 

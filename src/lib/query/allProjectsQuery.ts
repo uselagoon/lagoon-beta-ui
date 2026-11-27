@@ -13,12 +13,6 @@ export default gql`
       environments(type: PRODUCTION) {
         name
         route
-        updated
-        kubernetes {
-          id
-          name
-          cloudRegion
-        }
       }
     }
   }

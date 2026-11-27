@@ -11,7 +11,7 @@ import CancelDeployment from '@/components/cancelDeployment/CancelDeployment';
 import DeploymentNotFound from '@/components/errors/DeploymentNotFound';
 import LogViewer from '@/components/logViewer/LogViewer';
 import { QueryRef, useQueryRefHandlers, useReadQuery } from '@apollo/client';
-import { Badge, BasicTable, Button, Switch, Table } from '@/ui-library';
+import { Badge, BasicTable, Switch, Tooltip, TooltipContent, TooltipTrigger } from '@/ui-library';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
@@ -116,7 +116,10 @@ export default function DeploymentPage({
     ) : (
       deployment.name
     ),
-    created: dayjs.utc(deployment.created).local().fromNow(),
+    created: <Tooltip>
+      <TooltipTrigger>{dayjs.utc(deployment.created).local().fromNow()}</TooltipTrigger>
+      <TooltipContent>{dayjs.utc(deployment.created).local().format('YYYY-MM-DD HH:mm:ss')}</TooltipContent>
+    </Tooltip>,
     duration: getDeploymentDuration(deployment),
     key: String(deployment.id),
     actions: ['new', 'pending', 'queued', 'running'].includes(deployment.status) && (

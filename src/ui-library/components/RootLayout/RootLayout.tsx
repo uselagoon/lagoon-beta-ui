@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { SidebarProvider } from '../ui/sidebar';
 import Sidenav from '../Sidenav';
 import ThemeProvider from '@ui-lib/providers/ThemeProvider';
-import { AppInfo, SidebarItem, SidebarSection, UserInfo } from '@ui-lib/components/Sidenav/Sidenav';
+import { AppInfo, FooterItem, SidebarItem, SidebarSection, UserInfo } from '@ui-lib/components/Sidenav/Sidenav';
 import { AnnouncementCardProps } from '@ui-lib/components/AnnouncementCard/AnnouncementCard';
 
 export type EnvNavFn = (projectSlug: string, environmentSlug: string) => Promise<SidebarItem[]>;
@@ -19,6 +19,7 @@ interface RootLayoutProps {
 	userInfo: UserInfo;
 	appInfo: AppInfo;
 	sidenavItems: SidebarSection[];
+	footerItems?: FooterItem[];
 	children: ReactNode;
 	signOutFn: () => Promise<void>;
 	currentPath: string;
@@ -40,6 +41,7 @@ export default function RootLayout({
 	children,
 	sidenavItems,
 	documentationUrl,
+	footerItems,
 	cardProps,
 	disableAccountLink,
 	disableChangeFeedLink,
@@ -48,7 +50,7 @@ export default function RootLayout({
 		<ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
 			<SidebarProvider defaultOpen>
 				<div className="flex h-screen w-full overflow-hidden">
-					<Sidenav {...{ userInfo, appInfo, signOutFn, currentPath, sidenavItems, documentationUrl, cardProps, disableAccountLink, disableChangeFeedLink }} />
+					<Sidenav {...{ userInfo, appInfo, signOutFn, currentPath, sidenavItems, documentationUrl, footerItems, cardProps, disableAccountLink, disableChangeFeedLink }} />
 					<main className="flex-1 overflow-y-auto ml-0 lg:ml-[290px]">
 						<div className="mx-[16px]">
 							{children}

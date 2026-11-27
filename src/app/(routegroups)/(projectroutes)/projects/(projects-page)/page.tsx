@@ -23,11 +23,6 @@ export type ProjectType = {
       name: string;
       route: string;
       updated: string;
-      kubernetes: {
-        id: number;
-        name: string;
-        cloudRegion: string | null;
-      };
     }
   ];
 };

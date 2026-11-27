@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { OrganizationNotificationData } from '@/app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/notifications/page';
-import organizationByNameNotification from '@/lib/query/organizations/organizationByName.notification';
+import { OrganizationNotificationData } from '../../../../app/(routegroups)/(orgroutes)/organizations/[organizationSlug]/notifications/page';
+import organizationByNameNotification from '../../../../lib/query/organizations/organizationByName.notification';
 import type { Meta, StoryObj } from '@storybook/react';
-import { expect, screen, userEvent, waitFor, within } from '@storybook/test';
+import { expect, screen, userEvent, waitFor, within } from 'storybook/test';
 
 import { MockPreloadQuery } from '../../../../../.storybook/decorators/MockPreloadQuery';
 import { OrgNotifications, sleep } from '../../../../../.storybook/mocks/storyHelpers';

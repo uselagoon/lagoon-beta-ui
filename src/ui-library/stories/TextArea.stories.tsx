@@ -4,7 +4,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { default as Textarea } from '../components/TextArea';
 
-import { Controls, Primary, Stories, Story, Title } from '@storybook/addon-docs/blocks';
+import { Controls, Primary, Stories, Title } from '@storybook/addon-docs/blocks';
 
 const meta: Meta<typeof Textarea> = {
 	component: Textarea,

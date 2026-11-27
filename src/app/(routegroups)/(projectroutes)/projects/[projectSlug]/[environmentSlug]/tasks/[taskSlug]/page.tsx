@@ -29,7 +29,7 @@ export type Task = {
 type Environment = {
   id: number;
   name: string;
-  openshiftProjectName: string;
+  kubernetesNamespaceName: string;
   project: {
     id: number;
     name: string;
@@ -60,7 +60,7 @@ export default async function Task(props: {
       query={environmentWithTask}
       variables={{
         displayName: 'Task',
-        openshiftProjectName: environmentSlug,
+        kubernetesNamespaceName: environmentSlug,
         taskName: taskSlug,
       }}
     >

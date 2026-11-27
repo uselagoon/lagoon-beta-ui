@@ -40,10 +40,11 @@ export const fieldCount = (
 
 export const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
   {
-    accessorKey: 'name',
+    accessorFn: row => `${row.friendlyName ?? ''} ${row.name}`.trim(),
+    id: 'name',
     sortingFn: (rowA, rowB, columnId) => {
-      const a = rowA.getValue(columnId) as string;
-      const b = rowB.getValue(columnId) as string;
+      const a = (rowA.original.friendlyName ?? rowA.original.name) as string;
+      const b = (rowB.original.friendlyName ?? rowB.original.name) as string;
       return a.localeCompare(b);
     },
     header: ({ column }) => {
@@ -58,7 +59,7 @@ export const OrganizationsTableColumns: DataTableColumnDef<OrgType>[] = [
     },
 
     cell: ({ row }) => {
-      const organizationName = row.original.friendlyName;
+      const organizationName = row.original.friendlyName || row.original.name;
       return (
         <div className="max-w-[25vw]">
           <Link className="hover:text-blue-800 transition-colors" href={`/organizations/${row.original.name}`}>

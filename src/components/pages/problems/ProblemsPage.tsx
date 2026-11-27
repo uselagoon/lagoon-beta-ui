@@ -43,7 +43,7 @@ export default function ProblemsPage({
   const [selectedProblemId, setSelectedProblemId] = useState<number | null>(null);
 
   if (!environment) {
-    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
+    return <EnvironmentNotFound kubernetesNamespaceName={environmentSlug} />;
   }
 
   const { problems } = environment;

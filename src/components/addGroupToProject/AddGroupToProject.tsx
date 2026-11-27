@@ -12,13 +12,14 @@ type Props = {
     name: string;
   }[];
   refetch?: () => void;
+  disabled?: boolean;
 };
 
 /**
  * Link group to project sheet
  */
 
-export const AddGroupToProject: FC<Props> = ({ projectName, groups, refetch }) => {
+export const AddGroupToProject: FC<Props> = ({ projectName, groups, refetch, disabled }) => {
   const [addGroup, { error, loading }] = useMutation(addProjectToGroup, {
     refetchQueries: ['getOrganization'],
   });
@@ -56,6 +57,7 @@ export const AddGroupToProject: FC<Props> = ({ projectName, groups, refetch }) =
       sheetFooterButton="Link"
       loading={loading}
       error={!!error}
+      disabled={disabled}
       additionalContent={null}
       sheetFields={[
         {

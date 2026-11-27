@@ -55,7 +55,7 @@ export default function BackupsPage({
   }, [environment?.backups, refetch]);
 
   if (!environment) {
-    return <EnvironmentNotFound openshiftProjectName={environmentSlug} />;
+    return <EnvironmentNotFound kubernetesNamespaceName={environmentSlug} />;
   }
 
   return (

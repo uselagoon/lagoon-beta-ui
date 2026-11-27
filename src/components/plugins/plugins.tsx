@@ -2,7 +2,7 @@
 
 import React, { ReactNode } from 'react';
 
-import { useEnvContext } from 'next-runtime-env';
+import { useEnvContext } from '@/contexts/EnvContext';
 
 type ParsedPlugins = {
   head?: HeadScript[];
